@@ -177,6 +177,8 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
         description: description || undefined,
         componentVisibility,
         heroImages: data.heroImages || [],
+        features: [],
+        testimonials: [],
         instructorId: data.instructorId === "" || data.instructorId === "none" ? null : data.instructorId,
         courseId: data.courseId === "" || data.courseId === "none" ? null : data.courseId,
       };

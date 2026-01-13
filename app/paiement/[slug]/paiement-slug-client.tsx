@@ -44,12 +44,12 @@ export function PaiementSlugClient() {
           // Ensure all Decimal values are converted to numbers
           setCourse({
             ...courseData,
-            price: typeof courseData.price === 'object' && 'toNumber' in courseData.price 
-              ? courseData.price.toNumber() 
+            price: typeof courseData.price === 'object' && courseData.price !== null && 'toNumber' in courseData.price 
+              ? (courseData.price as { toNumber: () => number }).toNumber() 
               : Number(courseData.price),
             appointmentHourlyRate: courseData.appointmentHourlyRate 
-              ? (typeof courseData.appointmentHourlyRate === 'object' && 'toNumber' in courseData.appointmentHourlyRate
-                  ? courseData.appointmentHourlyRate.toNumber()
+              ? (typeof courseData.appointmentHourlyRate === 'object' && courseData.appointmentHourlyRate !== null && 'toNumber' in courseData.appointmentHourlyRate
+                  ? (courseData.appointmentHourlyRate as { toNumber: () => number }).toNumber()
                   : Number(courseData.appointmentHourlyRate))
               : null,
           });
@@ -75,12 +75,12 @@ export function PaiementSlugClient() {
           // Ensure all Decimal values are converted to numbers
           setCourse({
             ...courseData,
-            price: typeof courseData.price === 'object' && 'toNumber' in courseData.price 
-              ? courseData.price.toNumber() 
+            price: typeof courseData.price === 'object' && courseData.price !== null && 'toNumber' in courseData.price 
+              ? (courseData.price as { toNumber: () => number }).toNumber() 
               : Number(courseData.price),
             appointmentHourlyRate: courseData.appointmentHourlyRate 
-              ? (typeof courseData.appointmentHourlyRate === 'object' && 'toNumber' in courseData.appointmentHourlyRate
-                  ? courseData.appointmentHourlyRate.toNumber()
+              ? (typeof courseData.appointmentHourlyRate === 'object' && courseData.appointmentHourlyRate !== null && 'toNumber' in courseData.appointmentHourlyRate
+                  ? (courseData.appointmentHourlyRate as { toNumber: () => number }).toNumber()
                   : Number(courseData.appointmentHourlyRate))
               : null,
           });

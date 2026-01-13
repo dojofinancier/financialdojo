@@ -743,9 +743,23 @@ export async function getPublishedCohortBySlugAction(slug: string) {
     }
 
     // Convert Decimal to number for serialization
+    // Parse JSON fields properly
+    const features = Array.isArray(cohort.features) 
+      ? cohort.features 
+      : (typeof cohort.features === 'string' ? JSON.parse(cohort.features) : []);
+    const testimonials = Array.isArray(cohort.testimonials) 
+      ? cohort.testimonials 
+      : (typeof cohort.testimonials === 'string' ? JSON.parse(cohort.testimonials) : []);
+    const heroImages = Array.isArray(cohort.heroImages) 
+      ? cohort.heroImages 
+      : (typeof cohort.heroImages === 'string' ? JSON.parse(cohort.heroImages) : []);
+
     return {
       ...cohort,
       price: cohort.price.toNumber(),
+      features: features as any[],
+      testimonials: testimonials as any[],
+      heroImages: heroImages as string[],
       isEnrollmentOpen,
       spotsRemaining: Math.max(0, spotsRemaining),
       totalQuestions,

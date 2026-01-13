@@ -72,7 +72,7 @@ export async function createSupportTicketAction(
     });
 
     // Invalidate cache for this user's tickets
-    revalidateTag(`support-tickets-${user.id}`);
+    revalidateTag(`support-tickets-${user.id}`, "max");
 
     // Send webhook to make.com for notifications (non-blocking)
     sendTicketCreatedWebhook({
@@ -429,10 +429,10 @@ export async function replyToTicketAction(
     });
 
     // Invalidate cache for both student and admin (if admin replied)
-    revalidateTag(`support-tickets-${ticket.student.id}`);
+    revalidateTag(`support-tickets-${ticket.student.id}`, "max");
     if (user.role === "ADMIN") {
       // Also invalidate admin's view cache
-      revalidateTag(`support-tickets-${user.id}`);
+      revalidateTag(`support-tickets-${user.id}`, "max");
     }
 
     // Send webhook to make.com for notifications (non-blocking)
@@ -525,8 +525,8 @@ export async function updateTicketStatusAction(
     });
 
     // Invalidate cache for student and admin
-    revalidateTag(`support-tickets-${ticket.student.id}`);
-    revalidateTag(`support-tickets-${admin.id}`);
+    revalidateTag(`support-tickets-${ticket.student.id}`, "max");
+    revalidateTag(`support-tickets-${admin.id}`, "max");
 
     // Send webhook to make.com for notifications (non-blocking)
     if (oldStatus !== status) {

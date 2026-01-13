@@ -159,7 +159,7 @@ async function checkUserPasswords(csvFilePath: string, resetPasswords: boolean =
     if (exists) {
       console.log(`  ✅ User exists in Supabase`);
       
-      if (resetPasswords && csvPassword) {
+      if (resetPasswords && csvPassword && existingUser) {
         // Reset password
         try {
           await supabase.auth.admin.updateUserById(existingUser.id, {

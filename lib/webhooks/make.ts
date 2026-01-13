@@ -433,6 +433,7 @@ export async function sendCohortEnrollmentWebhook(data: {
   cohortId: string
   cohortTitle: string
   paymentIntentId: string
+  amount: number | null
   expiresAt: string
   createdAt: string
 }) {
@@ -444,6 +445,7 @@ export async function sendCohortEnrollmentWebhook(data: {
     cohort_id: data.cohortId,
     cohort_title: data.cohortTitle,
     payment_intent_id: data.paymentIntentId,
+    amount: data.amount,
     expires_at: data.expiresAt,
     created_at: data.createdAt,
   })

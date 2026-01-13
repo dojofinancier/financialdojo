@@ -38,6 +38,22 @@ next-env.d.ts
 
 # prisma
 /prisma/migrations
-
-
 /app/generated/prisma
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Development artifacts
+.cursor/
+chats/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Netlify
+.netlify/

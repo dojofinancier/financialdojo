@@ -103,7 +103,9 @@ export async function resetPasswordAction(
     const supabase = await createClient();
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/reset-password/confirm`,
+      // IMPORTANT: use a route handler callback so PKCE cookies can be set.
+      // Supabase will redirect to /auth/callback?code=... then we redirect to /reset-password/confirm.
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback?next=/reset-password/confirm`,
     });
 
     if (error) {
@@ -126,7 +128,57 @@ export async function resetPasswordAction(
 }
 
 /**
+ * Verify password reset code/token
+ */
+export async function verifyPasswordResetCodeAction(
+  token: string
+): Promise<AuthActionResult> {
+  try {
+    const supabase = await createClient();
+
+    // Exchange the code for a session (this is what Supabase expects for password reset)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(token);
+
+    if (error) {
+      // If exchangeCodeForSession fails, try verifyOtp as fallback (for hash-based tokens)
+      const { error: otpError } = await supabase.auth.verifyOtp({
+        token_hash: token,
+        type: 'recovery',
+      });
+
+      if (otpError) {
+        return {
+          success: false,
+          error: error.message || otpError.message || "Code de réinitialisation invalide ou expiré",
+        };
+      }
+    }
+
+    // Verify that we have a valid session after exchange
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      return {
+        success: false,
+        error: "Impossible d'établir une session. Veuillez réessayer.",
+      };
+    }
+
+    // If we get here, the code was successfully verified and session is established
+    // The session cookies are now set and will be available for subsequent requests
+    return { success: true };
+  } catch (error) {
+    console.error("Verify password reset code error:", error);
+    return {
+      success: false,
+      error: "Une erreur est survenue lors de la vérification du code",
+    };
+  }
+}
+
+/**
  * Update password (after reset)
+ * Note: This requires an active recovery session from password reset
  */
 export async function updatePasswordAction(
   password: string
@@ -134,6 +186,17 @@ export async function updatePasswordAction(
   try {
     const supabase = await createClient();
 
+    // First check if we have a valid session
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      return {
+        success: false,
+        error: "Session manquante. Veuillez utiliser le lien de réinitialisation envoyé par email.",
+      };
+    }
+
+    // Update the password
     const { error } = await supabase.auth.updateUser({
       password,
     });

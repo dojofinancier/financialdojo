@@ -5,6 +5,7 @@ import { requireAdmin, requireAuth } from "@/lib/auth/require-auth";
 import { logServerError } from "@/lib/utils/error-logging";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 export type CaseStudyActionResult = {
   success: boolean;
@@ -27,7 +28,7 @@ const caseStudyQuestionSchema = z.object({
   questionId: z.string(),
   order: z.number().int().positive(),
   question: z.string().min(1),
-  options: z.record(z.string()),
+  options: z.record(z.string(), z.string()),
   correctAnswer: z.string(),
   explanation: z.string().optional().nullable(),
   questionType: z.string().optional().nullable(),
@@ -350,7 +351,9 @@ export async function updateCaseStudyQuestionAction(
         ...(data.explanation !== undefined && { explanation: data.explanation }),
         ...(data.questionType !== undefined && { questionType: data.questionType }),
         ...(data.difficulty !== undefined && { difficulty: data.difficulty }),
-        ...(data.chapterReference !== undefined && { chapterReference: data.chapterReference }),
+        ...(data.chapterReference !== undefined && { 
+          chapterReference: data.chapterReference === null ? Prisma.JsonNull : data.chapterReference 
+        }),
         ...(data.caseReference !== undefined && { caseReference: data.caseReference }),
         ...(data.calculationSteps !== undefined && { calculationSteps: data.calculationSteps }),
       },

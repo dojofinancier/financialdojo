@@ -80,8 +80,8 @@ export function LearningTools({ courseId, onToolSelect }: LearningToolsProps) {
   const loadCourse = async () => {
     try {
       const result = await getCourseAction(courseId);
-      if (result.success && result.data) {
-        setCourse(result.data);
+      if (result) {
+        setCourse(result);
       }
     } catch (error) {
       console.error("Error loading course:", error);

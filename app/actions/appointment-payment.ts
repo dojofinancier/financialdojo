@@ -32,6 +32,7 @@ export type AppointmentPaymentActionResult = {
     clientSecret: string;
     appointmentId: string;
     appointmentIds?: string[]; // For multiple appointments
+    amount?: number; // Total amount for display
   };
 };
 

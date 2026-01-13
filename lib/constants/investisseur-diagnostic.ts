@@ -1,4 +1,4 @@
-import diagnostic from "@/questionnaire_investor.json";
+import diagnostic from "@/docs/questionnaire_investor.json";
 
 export type InvestisseurAnswer = {
   id: string;

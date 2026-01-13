@@ -49,14 +49,14 @@ export function PaiementPageClient() {
               // Ensure all Decimal values are converted to numbers
               loaded.push({
                 ...courseData,
-                price: typeof courseData.price === 'object' && 'toNumber' in courseData.price 
-                  ? courseData.price.toNumber() 
-                  : Number(courseData.price),
-                appointmentHourlyRate: courseData.appointmentHourlyRate 
-                  ? (typeof courseData.appointmentHourlyRate === 'object' && 'toNumber' in courseData.appointmentHourlyRate
-                      ? courseData.appointmentHourlyRate.toNumber()
-                      : Number(courseData.appointmentHourlyRate))
-                  : null,
+                 price: typeof courseData.price === 'object' && courseData.price !== null && 'toNumber' in courseData.price 
+                   ? (courseData.price as { toNumber: () => number }).toNumber() 
+                   : Number(courseData.price),
+                 appointmentHourlyRate: courseData.appointmentHourlyRate 
+                   ? (typeof courseData.appointmentHourlyRate === 'object' && courseData.appointmentHourlyRate !== null && 'toNumber' in courseData.appointmentHourlyRate
+                       ? (courseData.appointmentHourlyRate as { toNumber: () => number }).toNumber()
+                       : Number(courseData.appointmentHourlyRate))
+                   : null,
                 cartItem: item,
               });
             }
@@ -66,9 +66,9 @@ export function PaiementPageClient() {
               // Ensure all Decimal values are converted to numbers
               loaded.push({
                 ...cohortData,
-                price: typeof cohortData.price === 'object' && 'toNumber' in cohortData.price 
-                  ? cohortData.price.toNumber() 
-                  : Number(cohortData.price),
+                 price: typeof cohortData.price === 'object' && cohortData.price !== null && 'toNumber' in cohortData.price 
+                   ? (cohortData.price as { toNumber: () => number }).toNumber() 
+                   : Number(cohortData.price),
                 cartItem: item,
               });
             }

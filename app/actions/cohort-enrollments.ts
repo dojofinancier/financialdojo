@@ -155,20 +155,44 @@ export async function createCohortEnrollmentAction(
     // Don't await - let them run in the background without blocking the response
     
     // Send cohort enrollment webhook
-    sendCohortEnrollmentWebhook({
-      enrollmentId: enrollment.id,
-      userId: enrollment.userId,
-      userEmail: enrollment.user.email,
-      userName: `${enrollment.user.firstName || ''} ${enrollment.user.lastName || ''}`.trim() || enrollment.user.email,
-      cohortId: enrollment.cohortId,
-      cohortTitle: enrollment.cohort.title,
-      paymentIntentId: enrollment.paymentIntentId || "",
-      expiresAt: enrollment.expiresAt.toISOString(),
-      createdAt: enrollment.purchaseDate.toISOString(),
-    }).catch((error) => {
-      // Silently fail - webhook is not critical for UX
-      console.error("Failed to send cohort enrollment webhook:", error);
-    });
+    // Fetch amount from payment intent if available, otherwise use cohort price
+    (async () => {
+      let amount: number | null = null;
+      
+      if (enrollment.paymentIntentId) {
+        try {
+          const paymentIntent = await stripe.paymentIntents.retrieve(enrollment.paymentIntentId);
+          const metadata = paymentIntent.metadata || {};
+          // Try to get finalAmount from metadata (in dollars), otherwise convert from cents
+          const finalAmount = parseFloat(metadata.finalAmount || "0");
+          amount = finalAmount || paymentIntent.amount / 100; // Convert cents to dollars if needed
+        } catch (error) {
+          // If payment intent retrieval fails, fall back to cohort price
+          console.warn("Failed to fetch payment intent for cohort enrollment webhook:", error);
+        }
+      }
+      
+      // Fallback to cohort price if no payment intent amount
+      if (amount === null || amount === 0) {
+        amount = Number(enrollment.cohort.price);
+      }
+
+      sendCohortEnrollmentWebhook({
+        enrollmentId: enrollment.id,
+        userId: enrollment.userId,
+        userEmail: enrollment.user.email,
+        userName: `${enrollment.user.firstName || ''} ${enrollment.user.lastName || ''}`.trim() || enrollment.user.email,
+        cohortId: enrollment.cohortId,
+        cohortTitle: enrollment.cohort.title,
+        paymentIntentId: enrollment.paymentIntentId || "",
+        amount: amount,
+        expiresAt: enrollment.expiresAt.toISOString(),
+        createdAt: enrollment.purchaseDate.toISOString(),
+      }).catch((error) => {
+        // Silently fail - webhook is not critical for UX
+        console.error("Failed to send cohort enrollment webhook:", error);
+      });
+    })();
 
     // Also send payment webhook if paymentIntentId exists (for payment tracking)
     if (enrollment.paymentIntentId) {
