@@ -39,6 +39,11 @@ const jetBrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Le Dojo Financier",
   description: "Plateforme d'apprentissage en finance",
+  icons: {
+    icon: "/Favicon.ico",
+    shortcut: "/Favicon.ico",
+    apple: "/Favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -49,6 +54,8 @@ export default function RootLayout({
   return (
     <html lang="fr-CA" className={`${plusJakartaSans.variable} ${sourceSerif4.variable} ${jetBrainsMono.variable}`} suppressHydrationWarning>
       <head>
+        {/* Favicon */}
+        <link rel="icon" href="/Favicon.ico" sizes="any" />
         {/* Resource hints for external domains - improves connection speed */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />

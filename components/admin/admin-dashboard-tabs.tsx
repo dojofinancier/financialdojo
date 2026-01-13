@@ -14,8 +14,9 @@ import { MessageList } from "./messages/message-list";
 import { SupportTicketList } from "./support-tickets/support-ticket-list";
 import { AppointmentList } from "./appointments/appointment-list";
 import { AvailabilityManagement } from "./appointments/availability-management";
-import { BookOpen, Users, ShoppingCart, Tag, MessageSquare, Ticket, Calendar, BarChart3, Menu, GraduationCap, AlertCircle, LineChart } from "lucide-react";
+import { BookOpen, Users, ShoppingCart, Tag, MessageSquare, Ticket, Calendar, BarChart3, Menu, GraduationCap, AlertCircle, LineChart, Settings } from "lucide-react";
 import { ErrorLogViewer } from "./error-logs/error-log-viewer";
+import { AccountManagement } from "./account/account-management";
 
 interface AdminDashboardTabsProps {
   defaultTab?: string;
@@ -132,6 +133,12 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
                       Analytics
                     </>
                   )}
+                  {activeTab === "account" && (
+                    <>
+                      <Settings className="h-4 w-4" />
+                      Compte
+                    </>
+                  )}
                 </span>
                 <Menu className="h-4 w-4" />
               </Button>
@@ -213,6 +220,13 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
               >
                 <LineChart className="h-4 w-4 mr-2" />
                 Analytics
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleTabChange("account")}
+                className={activeTab === "account" ? "bg-accent" : ""}
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Compte
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -308,6 +322,14 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             <LineChart className="h-4 w-4" />
             Analytics
           </Button>
+          <Button
+            variant={activeTab === "account" ? "default" : "outline"}
+            onClick={() => handleTabChange("account")}
+            className="flex items-center gap-2"
+          >
+            <Settings className="h-4 w-4" />
+            Compte
+          </Button>
         </div>
       </div>
 
@@ -336,6 +358,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
       {activeTab === "messages" && <MessageList />}
       {activeTab === "support" && <SupportTicketList />}
       {activeTab === "errors" && <ErrorLogViewer />}
+      {activeTab === "account" && <AccountManagement />}
       {/* Cohorts are handled via dedicated route /tableau-de-bord/admin/cohorts */}
       {activeTab === "cohorts" && children ? children : null}
     </div>

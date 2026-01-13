@@ -30,10 +30,13 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://m.stripe.network https://*.stripe.com",
+              // Google Analytics (gtag) + Stripe
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://js.stripe.com https://m.stripe.network https://*.stripe.com",
               "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.stripe.com",
-              "connect-src 'self' https://*.stripe.com https://*.stripe.network https://*.supabase.co wss://*.supabase.co",
-              "img-src 'self' data: blob: https://*.stripe.com",
+              // Allow GA beacons + Stripe + Supabase
+              "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://*.stripe.com https://*.stripe.network https://*.supabase.co wss://*.supabase.co",
+              // GA may load tracking pixels
+              "img-src 'self' data: blob: https://*.stripe.com https://www.google-analytics.com",
               "style-src 'self' 'unsafe-inline'",
               "font-src 'self' data:",
             ].join("; "),
