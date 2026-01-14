@@ -134,6 +134,7 @@ export async function getStudentDetailsAction(studentId: string) {
         orderBy: { createdAt: "desc" },
         select: {
           id: true,
+          stripeSubscriptionId: true,
           status: true,
           currentPeriodEnd: true,
           createdAt: true,
@@ -144,15 +145,10 @@ export async function getStudentDetailsAction(studentId: string) {
         where: { userId: studentId },
         orderBy: { lastAccessedAt: "desc" },
         take: 50,
-        select: {
-          id: true,
-          timeSpent: true,
-          completedAt: true,
-          lastAccessedAt: true,
+        include: {
           contentItem: {
             select: {
               id: true,
-              title: true,
               contentType: true,
               module: {
                 select: {

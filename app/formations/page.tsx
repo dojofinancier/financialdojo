@@ -4,10 +4,6 @@ import { CourseCatalog } from "@/components/courses/course-catalog";
 import { CohortCatalog } from "@/components/cohorts/cohort-catalog";
 import { Suspense } from "react";
 
-// Cache configuration for performance
-// Revalidate the page every hour - courses/cohorts don't change frequently
-export const revalidate = 3600; // 1 hour in seconds
-
 async function CoursesSection() {
   const courses = await getPublishedCoursesAction({});
   return (

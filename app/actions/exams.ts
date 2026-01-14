@@ -122,6 +122,8 @@ export async function upsertExamAction(
         data: {
           ...examData,
           contentItemId: validatedData.contentItemId,
+          // Direct course link is required for efficient queries
+          courseId: contentItem.module.courseId,
         },
         include: {
           contentItem: true,

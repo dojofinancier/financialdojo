@@ -31,33 +31,64 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar, Clock, BookOpen, TrendingUp, Ban, Trash2, Plus } from "lucide-react";
-import type { User, Enrollment, Subscription, ProgressTracking } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 
-type StudentWithDetails = User & {
-  enrollments: (Enrollment & {
-    course: {
+type EnrollmentWithCourse = {
+  id: string;
+  purchaseDate: Date;
+  expiresAt: Date;
+  orderNumber: number | null;
+  course: {
+    id: string;
+    title: string;
+    code: string | null;
+    category: {
+      id: string;
+      name: string;
+    };
+  };
+};
+
+type SubscriptionRow = {
+  id: string;
+  stripeSubscriptionId: string | null;
+  status: string;
+  currentPeriodEnd: Date;
+  createdAt: Date;
+};
+
+type ProgressRow = {
+  id: string;
+  timeSpent: number;
+  completedAt: Date | null;
+  lastAccessedAt: Date;
+  contentItem?: {
+    id: string;
+    contentType: string;
+    module: {
       id: string;
       title: string;
-      category: {
-        name: string;
-      };
-    };
-  })[];
-  subscriptions: Subscription[];
-  progressTracking: (ProgressTracking & {
-    contentItem: {
-      id: string;
-      contentType: string;
-      module: {
+      course: {
         id: string;
         title: string;
-        course: {
-          id: string;
-          title: string;
-        };
       };
     };
-  })[];
+  };
+};
+
+type StudentWithDetails = {
+  id: string;
+  email: string;
+  role: UserRole;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  suspendedAt: Date | null;
+  enrollments: EnrollmentWithCourse[];
+  subscriptions: SubscriptionRow[];
+  progressTracking: ProgressRow[];
 };
 
 interface StudentDetailsProps {
@@ -112,7 +143,7 @@ export function StudentDetails({ student }: StudentDetailsProps) {
     }
   };
 
-  const getEnrollmentStatus = (enrollment: Enrollment) => {
+  const getEnrollmentStatus = (enrollment: { expiresAt: Date }) => {
     const now = new Date();
     const expiresAt = new Date(enrollment.expiresAt);
     if (expiresAt < now) {
@@ -344,11 +375,11 @@ export function StudentDetails({ student }: StudentDetailsProps) {
                       return (
                         <TableRow key={progress.id}>
                           <TableCell className="font-medium">
-                            {progress.contentItem.module.course.title}
+                            {progress.contentItem?.module?.course?.title ?? "—"}
                           </TableCell>
-                          <TableCell>{progress.contentItem.module.title}</TableCell>
+                          <TableCell>{progress.contentItem?.module?.title ?? "—"}</TableCell>
                           <TableCell>
-                            <Badge variant="outline">{progress.contentItem.contentType}</Badge>
+                            <Badge variant="outline">{progress.contentItem?.contentType ?? "—"}</Badge>
                           </TableCell>
                           <TableCell>
                             {hours > 0 ? `${hours}h ` : ""}
