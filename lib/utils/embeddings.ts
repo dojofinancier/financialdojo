@@ -1,8 +1,20 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy initialization to avoid errors during build when OPENAI_API_KEY is not available
+let openai: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (!openai) {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error("Missing credentials. Please pass an `apiKey`, or set the `OPENAI_API_KEY` environment variable.");
+    }
+    openai = new OpenAI({
+      apiKey,
+    });
+  }
+  return openai;
+}
 
 /**
  * Generate embedding for text using OpenAI
@@ -17,7 +29,8 @@ export async function generateEmbedding(text: string): Promise<number[]> {
       throw new Error("Text cannot be empty");
     }
 
-    const response = await openai.embeddings.create({
+    const client = getOpenAIClient();
+    const response = await client.embeddings.create({
       model: "text-embedding-3-small",
       input: normalizedText,
     });
