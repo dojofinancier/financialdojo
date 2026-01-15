@@ -239,7 +239,7 @@ async function main() {
   }
   
   // Validate course if provided
-  let course: { code: string; title: string } | null = null;
+  let course: { code: string | null; title: string } | null = null;
   
   if (options.course) {
     // Verify course exists
@@ -254,7 +254,7 @@ async function main() {
       select: { code: true, title: true },
     });
     
-    if (!foundCourse) {
+    if (!foundCourse || !foundCourse.code) {
       console.error(`❌ Error: Course "${options.course}" not found`);
       console.error('\nAvailable courses:');
       const courses = await prisma.course.findMany({
@@ -268,7 +268,7 @@ async function main() {
     }
     
     course = foundCourse;
-    console.log(`📚 Using course: ${course.code} - ${course.title}`);
+    console.log(`📚 Using course: ${course.code || 'N/A'} - ${course.title}`);
   } else {
     console.log(`📚 No course specified (course field will be null)`);
   }
@@ -320,7 +320,7 @@ async function main() {
       
       const articleData = {
         slug: row.slug,
-        course: course?.code || null,
+        course: course?.code ?? null,
         title: row.title,
         h1: row.title, // Use title as H1 if not specified
         content: row.content,
