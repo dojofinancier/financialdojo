@@ -20,7 +20,7 @@ interface Article {
   category: string | null;
   tags: string[];
   publishedAt: Date | null;
-  createdAt: Date;
+  createdAt: Date | null;
 }
 
 interface ArticleListProps {

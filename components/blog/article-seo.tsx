@@ -15,7 +15,7 @@ export function ArticleSEO({ article }: ArticleSEOProps) {
     description: article.metaDescription || article.excerpt || "",
     image: undefined, // Add when featured images are available
     datePublished: article.publishedAt?.toISOString(),
-    dateModified: article.updatedAt.toISOString(),
+    dateModified: article.updatedAt?.toISOString() || article.publishedAt?.toISOString(),
     author: {
       "@type": "Organization",
       name: "Le Dojo Financier",

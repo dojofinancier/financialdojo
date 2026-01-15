@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description,
       type: "article",
       publishedTime: article.publishedAt?.toISOString(),
-      modifiedTime: article.updatedAt.toISOString(),
+      modifiedTime: article.updatedAt?.toISOString() || article.publishedAt?.toISOString(),
       url: articleUrl,
       siteName: "Le Dojo Financier",
       // Add image when available
