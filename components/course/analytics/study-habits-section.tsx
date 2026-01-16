@@ -92,7 +92,7 @@ export function StudyHabitsSection({ data }: StudyHabitsSectionProps) {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="dayName" />
               <YAxis />
-              <Tooltip formatter={(value: number) => formatTime(value)} />
+              <Tooltip formatter={(value) => formatTime(Number(value))} />
               <Legend />
               <Bar dataKey="timeSpent" fill="#8884d8" name="Temps d'étude" />
             </BarChart>
@@ -116,7 +116,7 @@ export function StudyHabitsSection({ data }: StudyHabitsSectionProps) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip formatter={(value: number) => formatTime(value)} />
+                <Tooltip formatter={(value) => formatTime(Number(value))} />
                 <Legend />
                 <Line type="monotone" dataKey="time" stroke="#8884d8" name="Temps d'étude" />
               </LineChart>
