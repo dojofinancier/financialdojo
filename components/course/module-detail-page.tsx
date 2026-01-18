@@ -5,11 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Play, FileText, CheckCircle2, ArrowLeft, Video as VideoIcon, Download } from "lucide-react";
+import { Loader2, Play, FileText, CheckCircle2, XCircle, ArrowLeft, Video as VideoIcon, Download } from "lucide-react";
 import { toast } from "sonner";
 import { getModuleContentAction } from "@/app/actions/module-content";
 import { markModuleAsLearnedAction } from "@/app/actions/study-plan";
-import { submitQuizAttemptAction } from "@/app/actions/quizzes";
+import { submitQuizAttemptAction, getQuizAttemptsAction } from "@/app/actions/quizzes";
 import { getStudentModuleNoteAction, saveStudentModuleNoteAction } from "@/app/actions/student-notes";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -97,6 +97,13 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
   const [studentNote, setStudentNote] = useState<string>("");
   const [savingNote, setSavingNote] = useState(false);
   const [noteSaved, setNoteSaved] = useState(false);
+  const [quizAttempts, setQuizAttempts] = useState<Record<string, Array<{
+    id: string;
+    score: number;
+    completedAt: Date;
+    passed?: boolean;
+  }>>>({});
+  const [loadingAttempts, setLoadingAttempts] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     loadModuleContent();
@@ -109,6 +116,13 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
       setActiveTab(tab);
     }
   }, [moduleId]);
+
+  // Load quiz attempts when quizzes are loaded
+  useEffect(() => {
+    if (quizzes.length > 0) {
+      loadQuizAttempts();
+    }
+  }, [quizzes]);
 
   // Update active tab if videos tab is selected but there are no videos
   useEffect(() => {
@@ -173,6 +187,65 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     } finally {
       setLoading(false);
     }
+  };
+
+
+  const loadQuizAttempts = async () => {
+    try {
+      const attemptsPromises = quizzes.map(async (quizItem) => {
+        setLoadingAttempts((prev) => ({ ...prev, [quizItem.quiz.id]: true }));
+        try {
+          const attempts = await getQuizAttemptsAction(quizItem.quiz.id);
+          return { quizId: quizItem.quiz.id, attempts };
+        } catch (error) {
+          console.error(`Error loading attempts for quiz ${quizItem.quiz.id}:`, error);
+          return { quizId: quizItem.quiz.id, attempts: [] };
+        } finally {
+          setLoadingAttempts((prev) => ({ ...prev, [quizItem.quiz.id]: false }));
+        }
+      });
+
+      const results = await Promise.all(attemptsPromises);
+      const attemptsMap: Record<string, Array<{
+        id: string;
+        score: number;
+        completedAt: Date;
+        passed?: boolean;
+      }>> = {};
+
+      results.forEach(({ quizId, attempts }) => {
+        if (attempts && Array.isArray(attempts)) {
+          const quizItem = quizzes.find(q => q.quiz.id === quizId);
+          const passingScore = quizItem?.quiz.passingScore || 0;
+          attemptsMap[quizId] = attempts.map((attempt: any) => ({
+            id: attempt.id,
+            score: attempt.score,
+            completedAt: new Date(attempt.completedAt),
+            passed: attempt.score >= passingScore,
+          }));
+        }
+      });
+
+      setQuizAttempts(attemptsMap);
+    } catch (error) {
+      console.error("Error loading quiz attempts:", error);
+    }
+  };
+
+  const handleRetakeQuiz = (quizId: string) => {
+    // Reset the quiz state to allow retaking
+    setQuizSubmitted((prev) => ({
+      ...prev,
+      [quizId]: false,
+    }));
+    setQuizAnswers((prev) => ({
+      ...prev,
+      [quizId]: {},
+    }));
+    setCurrentQuizIndex((prev) => ({
+      ...prev,
+      [quizId]: 0,
+    }));
   };
 
   const handleMarkAsComplete = async () => {
@@ -284,6 +357,8 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
         } else {
           toast.warning(`Score: ${result.data.score}%. Note de passage: ${quiz.quiz.passingScore}%`);
         }
+        // Reload attempts to show the new submission
+        await loadQuizAttempts();
       } else {
         toast.error(result.error || "Erreur lors de la soumission");
       }
@@ -527,93 +602,176 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                 const userAnswer = answers[currentQuestion.id];
 
                 return (
-                  <Card key={quizItem.id}>
-                    <CardHeader>
-                      <CardTitle>{quiz.title}</CardTitle>
-                      <CardDescription>
-                        Question {currentIndex + 1} / {totalQuestions} • Note de passage: {quiz.passingScore}%
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="space-y-3">
-                        <div className="font-semibold text-lg">
-                          {currentQuestion.question}
-                        </div>
-                        <RadioGroup
-                          value={userAnswer || ""}
-                          onValueChange={(value) =>
-                            handleQuizAnswerChange(quiz.id, currentQuestion.id, value)
-                          }
-                          disabled={isSubmitted}
-                        >
-                          {optionKeys.map((key, keyIndex) => {
-                            const optionValue = currentQuestion.options[key];
-                            const optionLetter = getOptionLetter(key, keyIndex);
-                            return (
-                              <div key={key} className="flex items-start space-x-3 py-2">
-                                <RadioGroupItem value={key} id={`${currentQuestion.id}-${key}`} className="self-center" />
-                                <Label
-                                  htmlFor={`${currentQuestion.id}-${key}`}
-                                  className="flex-1 cursor-pointer leading-relaxed text-base"
-                                >
-                                  <span className="font-medium">{optionLetter}:</span> {optionValue}
-                                </Label>
-                              </div>
-                            );
-                          })}
-                        </RadioGroup>
-                      </div>
-
-                      <div className="pt-4 border-t space-y-3">
-                        <div className="text-sm text-muted-foreground text-center">
-                          {Object.keys(answers).length} / {totalQuestions} répondues
-                        </div>
-                        <div className="flex items-center justify-between gap-2">
-                          <Button
-                            variant="outline"
-                            onClick={handlePrevious}
-                            disabled={currentIndex === 0 || isSubmitted}
-                            className="flex-1 sm:flex-initial"
+                  <div key={quizItem.id} className="space-y-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>{quiz.title}</CardTitle>
+                        <CardDescription>
+                          Question {currentIndex + 1} / {totalQuestions} • Note de passage: {quiz.passingScore}%
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <div className="space-y-3">
+                          <div className="font-semibold text-lg">
+                            {currentQuestion.question}
+                          </div>
+                          <RadioGroup
+                            value={userAnswer || ""}
+                            onValueChange={(value) =>
+                              handleQuizAnswerChange(quiz.id, currentQuestion.id, value)
+                            }
+                            disabled={isSubmitted}
                           >
-                            <ChevronLeft className="h-4 w-4 mr-2" />
-                            Précédent
-                          </Button>
-                          {currentIndex < totalQuestions - 1 ? (
+                            {optionKeys.map((key, keyIndex) => {
+                              const optionValue = currentQuestion.options[key];
+                              const optionLetter = getOptionLetter(key, keyIndex);
+                              return (
+                                <div key={key} className="flex items-start space-x-3 py-2">
+                                  <RadioGroupItem value={key} id={`${currentQuestion.id}-${key}`} className="self-center" />
+                                  <Label
+                                    htmlFor={`${currentQuestion.id}-${key}`}
+                                    className="flex-1 cursor-pointer leading-relaxed text-base"
+                                  >
+                                    <span className="font-medium">{optionLetter}:</span> {optionValue}
+                                  </Label>
+                                </div>
+                              );
+                            })}
+                          </RadioGroup>
+                        </div>
+
+                        <div className="pt-4 border-t space-y-3">
+                          <div className="text-sm text-muted-foreground text-center">
+                            {Object.keys(answers).length} / {totalQuestions} répondues
+                          </div>
+                          <div className="flex items-center justify-between gap-2">
                             <Button
                               variant="outline"
-                              onClick={handleNext}
-                              disabled={isSubmitted}
+                              onClick={handlePrevious}
+                              disabled={currentIndex === 0 || isSubmitted}
                               className="flex-1 sm:flex-initial"
                             >
-                              Suivant
-                              <ChevronRight className="h-4 w-4 ml-2" />
+                              <ChevronLeft className="h-4 w-4 mr-2" />
+                              Précédent
                             </Button>
-                          ) : (
-                            <Button
-                              onClick={() => handleSubmitQuiz(quizItem)}
-                              disabled={isSubmitting || Object.keys(answers).length < totalQuestions}
-                              className="flex-1 sm:flex-initial"
-                            >
-                              {isSubmitting ? (
-                                <>
-                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                  Soumission...
-                                </>
-                              ) : (
-                                "Soumettre le quiz"
-                              )}
-                            </Button>
-                          )}
+                            {currentIndex < totalQuestions - 1 ? (
+                              <Button
+                                variant="outline"
+                                onClick={handleNext}
+                                disabled={isSubmitted}
+                                className="flex-1 sm:flex-initial"
+                              >
+                                Suivant
+                                <ChevronRight className="h-4 w-4 ml-2" />
+                              </Button>
+                            ) : (
+                              <Button
+                                onClick={() => handleSubmitQuiz(quizItem)}
+                                disabled={isSubmitting || Object.keys(answers).length < totalQuestions}
+                                className="flex-1 sm:flex-initial"
+                              >
+                                {isSubmitting ? (
+                                  <>
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    Soumission...
+                                  </>
+                                ) : (
+                                  "Soumettre le quiz"
+                                )}
+                              </Button>
+                            )}
+                          </div>
                         </div>
-                      </div>
 
-                      {isSubmitted && (
-                        <div className="p-4 bg-muted rounded-lg text-center">
-                          <p className="text-sm text-muted-foreground">Quiz soumis</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                        {isSubmitted && (
+                          <div className="p-4 bg-muted rounded-lg space-y-3">
+                            <p className="text-sm text-muted-foreground text-center">Quiz soumis</p>
+                            <div className="flex justify-center">
+                              <Button
+                                variant="outline"
+                                onClick={() => handleRetakeQuiz(quiz.id)}
+                                size="sm"
+                              >
+                                Refaire le quiz
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    {/* Previous Attempts Section */}
+                    {quizAttempts[quiz.id] && quizAttempts[quiz.id].length > 0 && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-lg">Tentatives précédentes</CardTitle>
+                          <CardDescription>
+                            Historique de vos tentatives pour ce quiz
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          {loadingAttempts[quiz.id] ? (
+                            <div className="flex items-center justify-center py-4">
+                              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              {quizAttempts[quiz.id].map((attempt, index) => {
+                                const isPassed = attempt.passed ?? (attempt.score >= quiz.passingScore);
+                                const formattedDate = new Intl.DateTimeFormat('fr-CA', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                }).format(attempt.completedAt);
+
+                                return (
+                                  <div
+                                    key={attempt.id}
+                                    className={`flex items-center justify-between p-3 rounded-lg border ${
+                                      isPassed
+                                        ? 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800'
+                                        : 'bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800'
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      {isPassed ? (
+                                        <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+                                      ) : (
+                                        <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                                      )}
+                                      <div>
+                                        <div className="flex items-center gap-2">
+                                          <span className="font-semibold">
+                                            Tentative #{quizAttempts[quiz.id].length - index}
+                                          </span>
+                                          <Badge
+                                            variant={isPassed ? 'default' : 'destructive'}
+                                            className="text-xs"
+                                          >
+                                            {attempt.score}%
+                                          </Badge>
+                                          {isPassed && (
+                                            <Badge variant="outline" className="text-xs border-green-600 text-green-700 dark:text-green-400">
+                                              Réussi
+                                            </Badge>
+                                          )}
+                                        </div>
+                                        <p className="text-sm text-muted-foreground mt-1">
+                                          {formattedDate}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
                 );
               })}
             </div>
