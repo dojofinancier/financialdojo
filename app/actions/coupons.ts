@@ -10,7 +10,7 @@ import { getEasternNow, toEasternTime } from "@/lib/utils/timezone";
 const couponSchema = z.object({
   code: z.string().min(1, "Le code est requis"),
   discountType: z.enum(["PERCENTAGE", "FIXED"]),
-  discountValue: z.number().positive("La valeur de réduction doit être positive"),
+  discountValue: z.number().positive("The discount value must be positive"),
   applicableCourses: z.array(z.string()).optional().nullable(),
   usageLimit: z.number().int().positive().optional().nullable(),
   validFrom: z.date(),
@@ -43,7 +43,7 @@ export async function createCouponAction(
     if (existing) {
       return {
         success: false,
-        error: "Un coupon avec ce code existe déjà",
+        error: "A coupon with this code already exists",
       };
     }
 
@@ -68,7 +68,7 @@ export async function createCouponAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -81,7 +81,7 @@ export async function createCouponAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du coupon",
+      error: "Error while creating the coupon",
     };
   }
 }
@@ -122,14 +122,14 @@ export async function validateCouponAction(
     if (easternNow < easternValidFrom) {
       return {
         success: false,
-        error: "Ce coupon n'est pas encore valide",
+        error: "This coupon is not yet valid",
       };
     }
 
     if (easternNow > easternValidUntil) {
       return {
         success: false,
-        error: "Ce coupon a expiré",
+        error: "This coupon has expired",
       };
     }
 
@@ -147,7 +147,7 @@ export async function validateCouponAction(
       if (!applicableCourses.includes(courseId)) {
         return {
           success: false,
-          error: "Ce coupon n'est pas applicable à ce cours",
+          error: "This coupon is not applicable to this course",
         };
       }
     }
@@ -170,7 +170,7 @@ export async function validateCouponAction(
 
     return {
       success: false,
-      error: "Erreur lors de la validation du coupon",
+      error: "Error validating coupon",
     };
   }
 }
@@ -219,7 +219,7 @@ export async function applyCouponDiscountAction(
 
     return {
       success: false,
-      error: "Erreur lors de l'application du coupon",
+      error: "Error applying the coupon",
     };
   }
 }
@@ -241,7 +241,7 @@ export async function trackCouponUsageAction(
     if (existing) {
       return {
         success: false,
-        error: "Ce coupon a déjà été utilisé pour cette inscription",
+        error: "This coupon has already been used for this registration",
       };
     }
 
@@ -274,7 +274,7 @@ export async function trackCouponUsageAction(
 
     return {
       success: false,
-      error: "Erreur lors du suivi de l'utilisation du coupon",
+      error: "Error tracking coupon usage",
     };
   }
 }
@@ -375,7 +375,7 @@ export async function updateCouponAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -388,7 +388,7 @@ export async function updateCouponAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour du coupon",
+      error: "Error updating the coupon",
     };
   }
 }
@@ -417,7 +417,7 @@ export async function deleteCouponAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression du coupon",
+      error: "Error deleting the coupon",
     };
   }
 }
@@ -496,7 +496,7 @@ export async function getCouponUsageStatsAction(couponId: string) {
 
     return {
       success: false,
-      error: "Erreur lors de la récupération des statistiques",
+      error: "Error retrieving statistics",
     };
   }
 }

@@ -13,14 +13,14 @@ import { join } from "path";
 
 const routeMappings: Record<string, string> = {
   // Main routes
-  "/learn/": "/apprendre/",
-  "/checkout": "/paiement",
-  "/dashboard": "/tableau-de-bord",
-  "/dashboard/student": "/tableau-de-bord/etudiant",
-  "/dashboard/profile": "/tableau-de-bord/profil",
-  "/dashboard/payments": "/tableau-de-bord/paiements",
-  "/dashboard/admin": "/tableau-de-bord/admin",
-  "/cohorts/": "/cohorte/",
+  "/learn/": "/learn/",
+  "/payment": "/payment",
+  "/dashboard": "/dashboard",
+  "/dashboard/student": "/dashboard/student",
+  "/dashboard/profile": "/dashboard/profile",
+  "/dashboard/payments": "/dashboard/payments",
+  "/dashboard/admin": "/dashboard/admin",
+  "/cohorts/": "/cohorts/",
   
   // Query parameters (optional - can keep English)
   "?tab=appointments": "?tab=rendez-vous",

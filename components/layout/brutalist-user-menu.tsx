@@ -25,10 +25,10 @@ export function BrutalistUserMenu({ user }: BrutalistUserMenuProps) {
   const handleSignOut = async () => {
     try {
       await logoutAction()
-      toast.success("Déconnexion réussie")
+      toast.success("Logout successful")
       window.location.href = "/login"
     } catch (error) {
-      toast.error("Erreur lors de la déconnexion")
+      toast.error("Error logging out")
     }
   }
 
@@ -53,7 +53,7 @@ export function BrutalistUserMenu({ user }: BrutalistUserMenuProps) {
       case 'ADMIN':
         return 'Administrateur'
       case 'STUDENT':
-        return 'Étudiant'
+        return 'Student'
       case 'INSTRUCTOR':
         return 'Instructeur'
       default:

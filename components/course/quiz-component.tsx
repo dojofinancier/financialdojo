@@ -66,7 +66,7 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
 
   const handleSubmit = async (autoSubmit = false) => {
     if (!autoSubmit && Object.keys(answers).length < quiz.questions.length) {
-      toast.error("Veuillez répondre à toutes les questions");
+      toast.error("Please answer all questions");
       return;
     }
 
@@ -89,10 +89,10 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
             : `Score: ${result.data.score}%. Score de passage: ${result.data.passingScore}%`
         );
       } else {
-        toast.error(result.error || "Erreur lors de la soumission");
+        toast.error(result.error || "Error during submission");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setLoading(false);
     }
@@ -248,7 +248,7 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
                       value={userAnswer || ""}
                       onChange={(e) => handleAnswerChange(question.id, e.target.value)}
                       disabled={submitted}
-                      placeholder="Votre réponse..."
+                      placeholder="Your answer..."
                       className="mt-3"
                     />
                   )}

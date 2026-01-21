@@ -19,7 +19,7 @@ export default function PaiementError({
   useEffect(() => {
     // Log error to database via server action
     logClientErrorAction({
-      errorMessage: error.message || "Erreur lors du paiement",
+      errorMessage: error.message || "Error during payment",
       stackTrace: error.stack || undefined,
       url: typeof window !== "undefined" ? window.location.href : undefined,
       userAgent: typeof window !== "undefined" ? window.navigator.userAgent : undefined,
@@ -70,7 +70,7 @@ export default function PaiementError({
               <RefreshCw className="h-4 w-4 mr-2" />
               Réessayer
             </Button>
-            <Button onClick={() => router.push("/panier")} className="flex-1" variant="outline">
+            <Button onClick={() => router.push("/cart")} className="flex-1" variant="outline">
               <ShoppingCart className="h-4 w-4 mr-2" />
               Retour au panier
             </Button>

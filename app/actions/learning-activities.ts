@@ -24,7 +24,7 @@ const learningActivitySchema = z.object({
   content: z.any(), // JSON structure varies by activity type
   correctAnswers: z.any().optional().nullable(),
   tolerance: z.number().optional().nullable(),
-  contentItemId: z.string().min(1, "L'ID de l'élément de contenu est requis"),
+  contentItemId: z.string().min(1, "Content item ID is required"),
 });
 
 export type LearningActivityActionResult = {
@@ -140,7 +140,7 @@ export async function getStudentLearningActivitiesAction(
     if (!enrollment) {
       return {
         success: false,
-        error: "Vous n'êtes pas inscrit à ce cours ou votre accès a expiré",
+        error: "You are not enrolled in this course or your access has expired",
         data: [],
       };
     }
@@ -209,16 +209,16 @@ export async function createLearningActivityAction(
 
     // Use title if provided, otherwise generate from activity type
     const activityTypeLabels: Record<string, string> = {
-      SHORT_ANSWER: "Réponse courte",
-      FILL_IN_BLANK: "Texte à trous",
+      SHORT_ANSWER: "Short answer",
+      FILL_IN_BLANK: "Fill-in-the-blank",
       SORTING_RANKING: "Tri / Classement",
       CLASSIFICATION: "Classification",
-      NUMERIC_ENTRY: "Calcul numérique",
-      TABLE_COMPLETION: "Tableau à compléter",
-      ERROR_SPOTTING: "Détection d'erreur",
+      NUMERIC_ENTRY: "Numeric calculation",
+      TABLE_COMPLETION: "Table to complete",
+      ERROR_SPOTTING: "Error detection",
       DEEP_DIVE: "Approfondissement",
     };
-    const finalTitle = validatedData.title || activityTypeLabels[validatedData.activityType] || "Activité";
+    const finalTitle = validatedData.title || activityTypeLabels[validatedData.activityType] || "Activity";
 
     // Get courseId - prefer direct courseId if provided, otherwise derive from contentItem
     let finalCourseId = validatedData.courseId;
@@ -299,7 +299,7 @@ export async function createLearningActivityAction(
     if (errorMessage.includes("Unknown arg") || errorMessage.includes("does not exist") || errorMessage.includes("model")) {
       return {
         success: false,
-        error: "Erreur de base de données. Assurez-vous d'avoir exécuté la migration: npx prisma migrate dev",
+        error: "Database error. Make sure you have run the migration: npx prisma migrate dev",
       };
     }
 
@@ -348,13 +348,13 @@ export async function updateLearningActivityAction(
 
     // Generate title from activity type if not provided
     const activityTypeLabels: Record<string, string> = {
-      SHORT_ANSWER: "Réponse courte",
-      FILL_IN_BLANK: "Texte à trous",
+      SHORT_ANSWER: "Short answer",
+      FILL_IN_BLANK: "Fill-in-the-blank",
       SORTING_RANKING: "Tri / Classement",
       CLASSIFICATION: "Classification",
-      NUMERIC_ENTRY: "Calcul numérique",
-      TABLE_COMPLETION: "Tableau à compléter",
-      ERROR_SPOTTING: "Détection d'erreur",
+      NUMERIC_ENTRY: "Numeric calculation",
+      TABLE_COMPLETION: "Table to complete",
+      ERROR_SPOTTING: "Error detection",
       DEEP_DIVE: "Approfondissement",
     };
 
@@ -374,7 +374,7 @@ export async function updateLearningActivityAction(
     // Always auto-generate title from activity type
     const finalActivityType = validatedData.activityType || currentActivity?.activityType;
     if (finalActivityType) {
-      updateData.title = activityTypeLabels[finalActivityType] || "Activité";
+      updateData.title = activityTypeLabels[finalActivityType] || "Activity";
     }
     if (validatedData.instructions !== undefined) updateData.instructions = validatedData.instructions;
     if (validatedData.content !== undefined) updateData.content = validatedData.content;
@@ -411,7 +411,7 @@ export async function updateLearningActivityAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -423,7 +423,7 @@ export async function updateLearningActivityAction(
 
     return {
       success: false,
-      error: `Erreur lors de la mise à jour de l'activité: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de la mise à jour de l'activité: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -448,7 +448,7 @@ export async function deleteLearningActivityAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de l'activité",
+      error: "Error deleting activity",
     };
   }
 }
@@ -462,7 +462,7 @@ export async function bulkDeleteLearningActivitiesAction(
     if (!activityIds || activityIds.length === 0) {
       return {
         success: false,
-        error: "Aucune activité sélectionnée",
+        error: "No activity selected",
       };
     }
 
@@ -487,7 +487,7 @@ export async function bulkDeleteLearningActivitiesAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression des activités",
+      error: "Error deleting activities",
     };
   }
 }

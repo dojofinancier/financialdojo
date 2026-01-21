@@ -107,7 +107,7 @@ export async function createEnrollmentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -119,7 +119,7 @@ export async function createEnrollmentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création de l'inscription",
+      error: "Error while creating the registration",
     };
   }
 }
@@ -162,7 +162,7 @@ export async function updateEnrollmentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -175,7 +175,7 @@ export async function updateEnrollmentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de l'inscription",
+      error: "Error while updating the registration",
     };
   }
 }
@@ -204,7 +204,7 @@ export async function deleteEnrollmentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de l'inscription",
+      error: "Error while deleting the registration",
     };
   }
 }
@@ -226,7 +226,7 @@ export async function extendEnrollmentAccessAction(
     if (!enrollment) {
       return {
         success: false,
-        error: "Inscription introuvable",
+        error: "Registration not found",
       };
     }
 
@@ -265,7 +265,7 @@ export async function extendEnrollmentAccessAction(
 
     return {
       success: false,
-      error: "Erreur lors de la prolongation de l'accès",
+      error: "Error while extending access",
     };
   }
 }
@@ -312,7 +312,7 @@ export async function revokeEnrollmentAccessAction(
 
     return {
       success: false,
-      error: "Erreur lors de la révocation de l'accès",
+      error: "Error while revoking access",
     };
   }
 }

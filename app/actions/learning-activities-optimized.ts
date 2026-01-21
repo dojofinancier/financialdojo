@@ -51,7 +51,7 @@ export async function getStudentLearningActivitiesWithAttemptsAction(
     if (!enrollment) {
       return {
         success: false,
-        error: "Vous n'êtes pas inscrit à ce cours ou votre accès a expiré",
+        error: "You are not enrolled in this course or your access has expired",
         data: [],
         attempts: {},
       };
@@ -191,7 +191,7 @@ export async function getStudentLearningActivitiesWithAttemptsAction(
 
     return {
       success: false,
-      error: "Erreur lors du chargement des activités",
+      error: "Error loading activities",
       data: [],
       attempts: {},
     };

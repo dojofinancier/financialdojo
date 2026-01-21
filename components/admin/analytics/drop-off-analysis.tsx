@@ -35,10 +35,10 @@ export function DropOffAnalysis({ courseId }: DropOffAnalysisProps) {
       if (result.success) {
         setAnalysisData(result.data);
       } else {
-        toast.error(result.error || "Erreur lors du chargement");
+        toast.error(result.error || "Error loading");
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des données");
+      toast.error("Error loading data");
     } finally {
       setLoading(false);
     }

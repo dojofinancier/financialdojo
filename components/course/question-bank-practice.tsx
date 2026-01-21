@@ -114,7 +114,7 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
     const currentState = questionStates[currentQuestion.id];
 
     if (!currentState || !currentState.answer) {
-      toast.error("Veuillez sélectionner une réponse");
+      toast.error("Please select an answer");
       return;
     }
 
@@ -146,11 +146,11 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
         queryClient.invalidateQueries({ queryKey: ["question-bank-attempts", courseId] });
         setStartTime(null);
       } else {
-        toast.error(result.error || "Erreur lors de la soumission");
+        toast.error(result.error || "Error during submission");
       }
     } catch (error) {
       console.error("Error submitting answer:", error);
-      toast.error("Erreur lors de la soumission");
+      toast.error("Error during submission");
     } finally {
       setSubmitting(false);
     }
@@ -183,7 +183,7 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
   };
 
   const handleReset = () => {
-    if (confirm("Voulez-vous réinitialiser toutes les questions ?")) {
+    if (confirm("Do you want to reset all questions?")) {
       // Clear all question states
       const clearedStates: Record<string, QuestionState> = {};
       questions.forEach((question) => {

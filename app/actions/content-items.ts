@@ -35,7 +35,7 @@ const quizQuestionSchema = z.object({
   question: z.string().min(1, "La question est requise"),
   // JSON field: represent "no options" as undefined (not null) for Prisma compatibility
   options: z.record(z.string(), z.string()).optional(),
-  correctAnswer: z.string().min(1, "La réponse correcte est requise"),
+  correctAnswer: z.string().min(1, "The correct answer is required"),
   order: z.number().int().nonnegative(),
 });
 
@@ -404,7 +404,7 @@ export async function updateContentItemAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -416,7 +416,7 @@ export async function updateContentItemAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de l'élément de contenu",
+      error: "Error while updating the content item",
     };
   }
 }
@@ -437,7 +437,7 @@ export async function deleteContentItemAction(
     if (!item) {
       return {
         success: false,
-        error: "Élément de contenu introuvable",
+        error: "Content item not found",
       };
     }
 
@@ -474,7 +474,7 @@ export async function deleteContentItemAction(
 
     return {
       success: false,
-      error: `Erreur lors de la suppression: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de la suppression: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -529,7 +529,7 @@ export async function createQuizQuestionAction(
       const errorMessage = error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");
       return {
         success: false,
-        error: errorMessage || "Données invalides",
+        error: errorMessage || "Invalid data",
       };
     }
 
@@ -572,7 +572,7 @@ export async function updateQuizQuestionAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -584,7 +584,7 @@ export async function updateQuizQuestionAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de la question",
+      error: "Error while updating the question",
     };
   }
 }
@@ -628,7 +628,7 @@ export async function deleteQuizQuestionAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de la question",
+      error: "Error while deleting the question",
     };
   }
 }
@@ -662,7 +662,7 @@ export async function reorderQuizQuestionsAction(
 
     return {
       success: false,
-      error: "Erreur lors du réordonnancement des questions",
+      error: "Error while reordering the questions",
     };
   }
 }
@@ -696,7 +696,7 @@ export async function reorderContentItemsAction(
 
     return {
       success: false,
-      error: "Erreur lors du réordonnancement des éléments",
+      error: "Error while reordering the items",
     };
   }
 }

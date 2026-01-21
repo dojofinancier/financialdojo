@@ -97,7 +97,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
                           size="sm"
                           className="h-8 w-8 p-0"
                           onClick={() => {
-                            window.location.href = `/apprendre/${courseId}?module=${module.id}&tab=videos`;
+                            window.location.href = `/learn/${courseId}?module=${module.id}&tab=videos`;
                           }}
                           title={`${content.videos.length} vidéo${content.videos.length > 1 ? 's' : ''}`}
                         >
@@ -115,7 +115,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
                           size="sm"
                           className="h-8 w-8 p-0"
                           onClick={() => {
-                            window.location.href = `/apprendre/${courseId}?module=${module.id}&tab=notes`;
+                            window.location.href = `/learn/${courseId}?module=${module.id}&tab=notes`;
                           }}
                           title={`${content.notes.length} note${content.notes.length > 1 ? 's' : ''}`}
                         >
@@ -133,7 +133,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
                           size="sm"
                           className="h-8 w-8 p-0"
                           onClick={() => {
-                            window.location.href = `/apprendre/${courseId}?module=${module.id}&tab=quiz`;
+                            window.location.href = `/learn/${courseId}?module=${module.id}&tab=quiz`;
                           }}
                           title={`${content.quizzes.length} quiz${content.quizzes.length > 1 ? 's' : ''}`}
                         >
@@ -188,7 +188,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
                             size="sm"
                             className="h-8 w-8 p-0"
                             onClick={() => {
-                              window.location.href = `/apprendre/${courseId}?module=${module.id}&tab=videos`;
+                              window.location.href = `/learn/${courseId}?module=${module.id}&tab=videos`;
                             }}
                             title={`${content.videos.length} vidéo${content.videos.length > 1 ? 's' : ''}`}
                           >
@@ -205,7 +205,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
                             size="sm"
                             className="h-8 w-8 p-0"
                             onClick={() => {
-                              window.location.href = `/apprendre/${courseId}?module=${module.id}&tab=notes`;
+                              window.location.href = `/learn/${courseId}?module=${module.id}&tab=notes`;
                             }}
                             title={`${content.notes.length} note${content.notes.length > 1 ? 's' : ''}`}
                           >
@@ -222,7 +222,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
                             size="sm"
                             className="h-8 w-8 p-0"
                             onClick={() => {
-                              window.location.href = `/apprendre/${courseId}?module=${module.id}&tab=quiz`;
+                              window.location.href = `/learn/${courseId}?module=${module.id}&tab=quiz`;
                             }}
                             title={`${content.quizzes.length} quiz${content.quizzes.length > 1 ? 's' : ''}`}
                           >

@@ -46,16 +46,16 @@ export function StudentUsagePatterns({ courseId }: StudentUsagePatternsProps) {
       if (usageResult.success) {
         setUsageData(usageResult.data);
       } else {
-        toast.error(usageResult.error || "Erreur lors du chargement");
+        toast.error(usageResult.error || "Error loading");
       }
 
       if (featureResult.success) {
         setFeatureData(featureResult.data);
       } else {
-        toast.error(featureResult.error || "Erreur lors du chargement");
+        toast.error(featureResult.error || "Error loading");
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des données");
+      toast.error("Error loading data");
     } finally {
       setLoading(false);
     }

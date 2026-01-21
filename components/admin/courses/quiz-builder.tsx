@@ -136,7 +136,7 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
 
     const result = await reorderQuizQuestionsAction(quizId, payload);
     if (!result.success) {
-      toast.error(result.error || "Erreur lors du réordonnancement");
+      toast.error(result.error || "Error reordering");
       onChanged();
     } else {
       onChanged();
@@ -146,10 +146,10 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
   const handleDelete = async (questionId: string) => {
     const result = await deleteQuizQuestionAction(questionId);
     if (result.success) {
-      toast.success("Question supprimée");
+      toast.success("Question deleted");
       onChanged();
     } else {
-      toast.error(result.error || "Erreur lors de la suppression");
+      toast.error(result.error || "Error while deleting");
     }
   };
 
@@ -158,23 +158,23 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
 
     // Validation
     if (!editingQuestion.question.trim()) {
-      toast.error("L'énoncé de la question est requis");
+      toast.error("The question prompt is required");
       return;
     }
 
     if (!editingQuestion.correctAnswer.trim()) {
-      toast.error("La réponse correcte est requise");
+      toast.error("The correct answer is required");
       return;
     }
 
     if (editingQuestion.type === "MULTIPLE_CHOICE") {
       const filledOptions = editingQuestion.options.filter((opt) => opt.value.trim());
       if (filledOptions.length === 0) {
-        toast.error("Au moins une option de réponse est requise pour les questions à choix multiples");
+        toast.error("At least one answer option is required for multiple-choice questions");
         return;
       }
       if (!filledOptions.some((opt) => opt.label === editingQuestion.correctAnswer)) {
-        toast.error("La réponse correcte doit correspondre à l'une des options");
+        toast.error("The correct answer must match one of the options");
         return;
       }
     }
@@ -209,24 +209,24 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
       if (editingQuestion.id) {
         const result = await updateQuizQuestionAction(editingQuestion.id, payload);
         if (result.success) {
-          toast.success("Question mise à jour");
+          toast.success("Question updated");
           handleDialogClose(false);
           onChanged();
         } else {
-          toast.error(result.error || "Erreur lors de la mise à jour");
+          toast.error(result.error || "Error updating");
         }
       } else {
         const result = await createQuizQuestionAction(payload);
         if (result.success) {
-          toast.success("Question créée");
+          toast.success("Question created");
           handleDialogClose(false);
           onChanged();
         } else {
-          toast.error(result.error || "Erreur lors de la création");
+          toast.error(result.error || "Error creating");
         }
       }
     } catch (error) {
-      toast.error("Une erreur est survenue lors de l'enregistrement");
+      toast.error("An error occurred while saving");
       console.error("Error saving question:", error);
     } finally {
       setSaving(false);
@@ -306,7 +306,7 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
       <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editingQuestion?.id ? "Modifier la question" : "Nouvelle question"}</DialogTitle>
+            <DialogTitle>{editingQuestion?.id ? "Edit the question" : "Nouvelle question"}</DialogTitle>
             <DialogDescription>
               Configurez l'énoncé, le type de question et la réponse attendue.
             </DialogDescription>
@@ -372,7 +372,7 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Choisissez la bonne réponse" />
+                        <SelectValue placeholder="Choose the correct answer" />
                       </SelectTrigger>
                       <SelectContent>
                         {editingQuestion.options
@@ -416,7 +416,7 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
                     onChange={(event) =>
                       setEditingQuestion({ ...editingQuestion, correctAnswer: event.target.value })
                     }
-                    placeholder="Réponse attendue"
+                    placeholder="Expected answer"
                   />
                 </div>
               )}
@@ -426,7 +426,7 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
                   Annuler
                 </Button>
                 <Button onClick={handleSave} disabled={saving || !editingQuestion.question.trim()}>
-                  {editingQuestion.id ? "Enregistrer" : "Créer"}
+                  {editingQuestion.id ? "Enregistrer" : "Create"}
                 </Button>
               </div>
             </div>

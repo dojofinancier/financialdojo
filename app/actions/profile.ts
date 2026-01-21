@@ -55,13 +55,13 @@ export async function updateProfileAction(data: {
       },
     });
 
-    revalidatePath("/tableau-de-bord", "layout");
+    revalidatePath("/dashboard", "layout");
     return { success: true };
   } catch (error) {
     console.error("Update profile error:", error);
     return {
       success: false,
-      error: "Une erreur est survenue lors de la mise à jour du profil",
+      error: "An error occurred while updating the profile",
     };
   }
 }
@@ -86,7 +86,7 @@ export async function changePasswordAction(
     if (signInError) {
       return {
         success: false,
-        error: "Le mot de passe actuel est incorrect",
+        error: "The current password is incorrect",
       };
     }
 
@@ -107,7 +107,7 @@ export async function changePasswordAction(
     console.error("Change password error:", error);
     return {
       success: false,
-      error: "Une erreur est survenue lors du changement de mot de passe",
+      error: "An error occurred while changing the password",
     };
   }
 }
@@ -179,7 +179,7 @@ export async function getUserPurchaseHistoryAction(): Promise<{
     console.error("Get purchase history error:", error);
     return {
       success: false,
-      error: "Une erreur est survenue lors de la récupération de l'historique d'achat",
+      error: "An error occurred while retrieving the purchase history",
     };
   }
 }

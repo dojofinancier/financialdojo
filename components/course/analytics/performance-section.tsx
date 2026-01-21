@@ -132,7 +132,7 @@ export function PerformanceSection({ data }: PerformanceSectionProps) {
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="score" fill="#8884d8" name="Score moyen (%)" />
-                <Bar dataKey="completion" fill="#82ca9d" name="Complétion (%)" />
+                <Bar dataKey="completion" fill="#82ca9d" name="Completion (%)" />
               </BarChart>
             </ResponsiveContainer>
           ) : (

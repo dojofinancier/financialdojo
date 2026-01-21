@@ -36,7 +36,7 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
 
   const handleAdd = () => {
     if (!formData.name.trim() || !formData.text.trim()) {
-      toast.error("Veuillez remplir le nom et le témoignage");
+      toast.error("Please fill in the name and testimonial");
       return;
     }
 
@@ -53,7 +53,7 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
 
   const handleUpdate = () => {
     if (!editingId || !formData.name.trim() || !formData.text.trim()) {
-      toast.error("Veuillez remplir le nom et le témoignage");
+      toast.error("Please fill in the name and testimonial");
       return;
     }
 
@@ -89,12 +89,12 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
       setSaving(true);
       const result = await updateCourseTestimonialsAction(courseId, testimonials);
       if (result.success) {
-        toast.success("Témoignages mis à jour avec succès");
+        toast.success("Testimonials updated successfully");
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la sauvegarde");
+      toast.error("Error saving");
     } finally {
       setSaving(false);
     }
@@ -143,7 +143,7 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
             <Textarea
               value={formData.text}
               onChange={(e) => setFormData({ ...formData, text: e.target.value })}
-              placeholder="Ex: Cette formation m'a permis de réussir mon examen du premier coup..."
+              placeholder="Ex: This course helped me pass my exam on the first try..."
               rows={3}
             />
           </div>
@@ -230,7 +230,7 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
         <div className="flex justify-end pt-4 border-t">
           <Button onClick={handleSave} disabled={saving}>
             <Save className="h-4 w-4 mr-2" />
-            {saving ? "Enregistrement..." : "Enregistrer les témoignages"}
+            {saving ? "Enregistrement..." : "Save testimonials"}
           </Button>
         </div>
       </CardContent>

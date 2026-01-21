@@ -188,11 +188,11 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
 
   const handleAddToCart = useCallback(() => {
     if (!cohort.isEnrollmentOpen) {
-      toast.error("Les inscriptions sont fermées pour cette cohorte");
+      toast.error("Registrations are closed for this cohort");
       return;
     }
     if (cohort.spotsRemaining <= 0) {
-      toast.error("Cette cohorte est complète");
+      toast.error("This cohort is full");
       return;
     }
     
@@ -203,17 +203,17 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
       title: cohort.title,
       price: cohort.price,
     });
-    toast.success("Ajouté au panier");
+    toast.success("Added to cart");
     setInCart(true);
-    window.location.href = "/panier";
+    window.location.href = "/cart";
   }, [cohort.id, cohort.slug, cohort.title, cohort.price, cohort.isEnrollmentOpen, cohort.spotsRemaining]);
 
   const handleGoToCart = useCallback(() => {
-    window.location.href = "/panier";
+    window.location.href = "/cart";
   }, []);
 
   const handleContinue = useCallback(() => {
-    router.push(`/cohorte/${cohort.slug || cohort.id}/apprendre`);
+    router.push(`/cohorts/${cohort.slug || cohort.id}/learn`);
   }, [router, cohort.slug, cohort.id]);
 
   // Memoize arrays to prevent unnecessary re-renders
@@ -230,7 +230,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
   const instructorName = useMemo(() => 
     cohort.instructor
       ? `${cohort.instructor.firstName || ""} ${cohort.instructor.lastName || ""}`.trim() || cohort.instructor.email
-      : "Instructeur non assigné",
+      : "Instructor not assigned",
     [cohort.instructor]
   );
 

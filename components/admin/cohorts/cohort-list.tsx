@@ -88,7 +88,7 @@ export function CohortList() {
       setNextCursor(result.nextCursor);
       setHasMore(result.hasMore);
     } catch (error) {
-      toast.error("Erreur lors du chargement des cohortes");
+      toast.error("Error loading cohorts");
     } finally {
       setLoading(false);
     }
@@ -110,15 +110,15 @@ export function CohortList() {
     try {
       const result = await deleteCohortAction(cohortToDelete);
       if (result.success) {
-        toast.success("Cohorte supprimée avec succès");
+        toast.success("Cohort deleted successfully");
         setCohorts((prev) => prev.filter((c) => c.id !== cohortToDelete));
         setDeleteDialogOpen(false);
         setCohortToDelete(null);
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
-      toast.error("Erreur lors de la suppression de la cohorte");
+      toast.error("Error while deleting the cohort");
     }
   };
 
@@ -142,7 +142,7 @@ export function CohortList() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Rechercher une cohorte..."
+              placeholder="Search for a cohort..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8"
@@ -163,7 +163,7 @@ export function CohortList() {
           onClick={() => {
             const params = new URLSearchParams(window.location.search);
             params.set("tab", "create");
-            router.replace(`/tableau-de-bord/admin/cohorts?${params.toString()}`);
+            router.replace(`/dashboard/admin/cohorts?${params.toString()}`);
           }}
           className="flex items-center gap-2"
         >
@@ -206,7 +206,7 @@ export function CohortList() {
                     {cohort.instructor
                       ? `${cohort.instructor.firstName || ""} ${cohort.instructor.lastName || ""}`.trim() ||
                         cohort.instructor.email
-                      : "Non assigné"}
+                      : "Unassigned"}
                   </TableCell>
                   <TableCell>{Number(cohort.price).toFixed(2)} $</TableCell>
                   <TableCell>
@@ -223,7 +223,7 @@ export function CohortList() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={cohort.published ? "default" : "secondary"}>
-                      {cohort.published ? "Publiée" : "Non publiée"}
+                      {cohort.published ? "Published" : "Unpublished"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -235,7 +235,7 @@ export function CohortList() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                          onClick={() => router.push(`/tableau-de-bord/admin/cohorts/${cohort.id}`)}
+                          onClick={() => router.push(`/dashboard/admin/cohorts/${cohort.id}`)}
                         >
                           <Edit className="h-4 w-4 mr-2" />
                           Modifier

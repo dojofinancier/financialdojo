@@ -35,7 +35,7 @@ export function PaymentHistoryList({ initialPayments }: PaymentHistoryListProps)
       setCursor(result.nextCursor);
       setHasMore(result.hasMore);
     } catch (error) {
-      toast.error("Erreur lors du chargement des paiements");
+      toast.error("Error loading payments");
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +63,7 @@ Montant: ${receipt.amount.toFixed(2)} ${receipt.currency}
 Client: ${receipt.customer.name}
 Courriel: ${receipt.customer.email}
 
-Statut: ${receipt.status === "succeeded" ? "Payé" : receipt.status}
+Statut: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
         `.trim();
 
         // Create blob and download
@@ -77,12 +77,12 @@ Statut: ${receipt.status === "succeeded" ? "Payé" : receipt.status}
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        toast.success("Reçu téléchargé");
+        toast.success("Receipt downloaded");
       } else {
-        toast.error(result.error || "Erreur lors du téléchargement");
+        toast.error(result.error || "Error during download");
       }
     } catch (error) {
-      toast.error("Erreur lors du téléchargement du reçu");
+      toast.error("Error downloading the receipt");
     } finally {
       setDownloadingReceipts((prev) => {
         const newSet = new Set(prev);

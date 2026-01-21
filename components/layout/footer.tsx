@@ -17,7 +17,7 @@ export function Footer() {
   // The homepage has its own detailed footer (brutalist). Avoid rendering the standard one there.
   if (pathname === "/") return null;
   // The investor diagnostic pages are designed as standalone flows.
-  if (pathname.startsWith("/investisseur")) return null;
+  if (pathname.startsWith("/investor")) return null;
 
   return (
     <footer className="border-t bg-muted/40 py-6">
@@ -25,7 +25,7 @@ export function Footer() {
         <div className="flex flex-col items-center gap-4">
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
             <Link 
-              href="/a-propos" 
+              href="/about" 
               prefetch={true}
               className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
             >
@@ -41,7 +41,7 @@ export function Footer() {
             </Link>
             <span className="text-muted-foreground/50">•</span>
             <Link 
-              href="/politique-de-confidentialite" 
+              href="/privacy-policy" 
               prefetch={true}
               className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
             >
@@ -49,7 +49,7 @@ export function Footer() {
             </Link>
             <span className="text-muted-foreground/50">•</span>
             <Link 
-              href="/termes-et-conditions" 
+              href="/terms-and-conditions" 
               prefetch={true}
               className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
             >

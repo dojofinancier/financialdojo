@@ -26,14 +26,14 @@ export default function LoginPage() {
       const result = await loginAction(formData.email, formData.password);
 
       if (result.success) {
-        toast.success("Connexion réussie!");
+        toast.success("Login successful!");
         router.push("/dashboard");
         router.refresh();
       } else {
-        toast.error(result.error || "Erreur de connexion");
+        toast.error(result.error || "Connection error");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -55,7 +55,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="votre@courriel.com"
+                placeholder="your@email.com"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })

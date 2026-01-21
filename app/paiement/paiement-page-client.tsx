@@ -32,8 +32,8 @@ export function PaiementPageClient() {
         const couponData = sessionStorage.getItem("checkout_coupon");
 
         if (!cartData) {
-          toast.error("Aucun article dans le panier");
-          router.push("/panier");
+          toast.error("No items in the cart");
+          router.push("/cart");
           return;
         }
 
@@ -76,8 +76,8 @@ export function PaiementPageClient() {
         }
 
         if (loaded.length === 0) {
-          toast.error("Aucun article valide dans le panier");
-          router.push("/panier");
+          toast.error("No valid items in the cart");
+          router.push("/cart");
           return;
         }
 
@@ -99,8 +99,8 @@ export function PaiementPageClient() {
         setIsLoading(false);
       } catch (error) {
         console.error("Checkout error:", error);
-        toast.error("Une erreur est survenue");
-        router.push("/panier");
+        toast.error("An error occurred");
+        router.push("/cart");
       }
     }
 

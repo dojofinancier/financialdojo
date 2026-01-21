@@ -176,7 +176,7 @@ export function ProgressSection({ data }: ProgressSectionProps) {
           <CardContent>
             {data.lastActivity ? (
               <p className="text-sm">
-                {format(new Date(data.lastActivity), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
+                {format(new Date(data.lastActivity), "d MMMM yyyy 'at' HH:mm", { locale: fr })}
               </p>
             ) : (
               <p className="text-sm text-muted-foreground">Aucune activité récente</p>
@@ -200,7 +200,7 @@ export function ProgressSection({ data }: ProgressSectionProps) {
                 {data.upcomingTasks.slice(0, 3).map((task) => (
                   <div key={task.id} className="text-sm">
                     <p className="font-medium">
-                      {format(new Date(task.date), "d MMM", { locale: fr })} - {task.moduleTitle || "Tâche"}
+                      {format(new Date(task.date), "d MMM", { locale: fr })} - {task.moduleTitle || "Task"}
                     </p>
                     <p className="text-xs text-muted-foreground capitalize">
                       {task.taskType.toLowerCase()}

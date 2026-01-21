@@ -55,12 +55,12 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
         if (result.error) {
           toast.error(result.error);
         } else {
-          toast.error("Erreur lors du chargement des flashcards");
+          toast.error("Error loading flashcards");
         }
       }
     } catch (error) {
       console.error("Flashcard loading exception:", error);
-      const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       toast.error(`Erreur lors du chargement des flashcards: ${errorMessage}`);
       setFlashcards([]);
     } finally {
@@ -107,11 +107,11 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
         moduleId: formState.moduleId || null,
       });
       if (result.success) {
-        toast.success("Flashcard mise à jour");
+        toast.success("Flashcard updated");
         setDialogOpen(false);
         loadFlashcards();
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } else {
       const result = await createFlashcardAction({
@@ -121,11 +121,11 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
         moduleId: formState.moduleId || null,
       });
       if (result.success) {
-        toast.success("Flashcard créée");
+        toast.success("Flashcard created");
         setDialogOpen(false);
         loadFlashcards();
       } else {
-        toast.error(result.error || "Erreur lors de la création");
+        toast.error(result.error || "Error creating");
       }
     }
   };
@@ -133,10 +133,10 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
   const handleDelete = async (cardId: string) => {
     const result = await deleteFlashcardAction(cardId);
     if (result.success) {
-      toast.success("Flashcard supprimée");
+      toast.success("Flashcard deleted");
       loadFlashcards();
     } else {
-      toast.error(result.error || "Erreur lors de la suppression");
+      toast.error(result.error || "Error while deleting");
     }
   };
 
@@ -164,7 +164,7 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
             </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editingCard ? "Modifier la flashcard" : "Ajouter une flashcard"}</DialogTitle>
+              <DialogTitle>{editingCard ? "Edit flashcard" : "Add a flashcard"}</DialogTitle>
               <DialogDescription>
                 Définissez le recto (question) et le verso (réponse / explication).
               </DialogDescription>
@@ -177,7 +177,7 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
                   onValueChange={(value) => setFormState({ ...formState, moduleId: value === "none" ? null : value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un module" />
+                    <SelectValue placeholder="Select a module" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Aucun module</SelectItem>
@@ -202,7 +202,7 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
                 <Textarea
                   value={formState.back}
                   onChange={(event) => setFormState({ ...formState, back: event.target.value })}
-                  placeholder="Réponse, définition, explication..."
+                  placeholder="Answer, definition, explanation..."
                 />
               </div>
               <div className="flex justify-end gap-2">
@@ -210,7 +210,7 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
                   Annuler
                 </Button>
                 <Button onClick={handleSubmit}>
-                  {editingCard ? "Enregistrer" : "Créer"}
+                  {editingCard ? "Enregistrer" : "Create"}
                 </Button>
               </div>
             </div>

@@ -41,7 +41,7 @@ export function AppointmentsTab() {
       }));
       setAppointments(appointmentsWithDates);
     } catch (error) {
-      toast.error("Erreur lors du chargement des rendez-vous");
+      toast.error("Error loading appointments");
     } finally {
       setLoading(false);
     }

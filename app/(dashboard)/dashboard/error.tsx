@@ -19,7 +19,7 @@ export default function DashboardError({
   useEffect(() => {
     // Log error to database via server action
     logClientErrorAction({
-      errorMessage: error.message || "Erreur dans le tableau de bord",
+      errorMessage: error.message || "Dashboard error",
       stackTrace: error.stack || undefined,
       url: typeof window !== "undefined" ? window.location.href : undefined,
       userAgent: typeof window !== "undefined" ? window.navigator.userAgent : undefined,

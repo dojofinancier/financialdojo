@@ -88,7 +88,7 @@ export function Phase3Practice({ courseId, course, settings }: Phase3PracticePro
             )}
             <Button
               onClick={() => {
-                window.location.href = `/apprendre/${courseId}?tab=learn`;
+                window.location.href = `/learn/${courseId}?tab=learn`;
               }}
               className="mt-4"
             >

@@ -110,7 +110,7 @@ export function ClassificationActivity({
                               : ""
                           }
                         >
-                          <SelectValue placeholder="Sélectionner une catégorie" />
+                          <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                         <SelectContent>
                           {categories.map((category) => (

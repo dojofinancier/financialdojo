@@ -8,9 +8,9 @@ export function LogoutButton() {
   const handleLogout = async () => {
     try {
       await logoutAction();
-      toast.success("Déconnexion réussie");
+      toast.success("Logout successful");
     } catch (error) {
-      toast.error("Erreur lors de la déconnexion");
+      toast.error("Error logging out");
     }
   };
 

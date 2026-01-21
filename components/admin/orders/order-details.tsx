@@ -87,20 +87,20 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
 
   const getPaymentStatus = () => {
     if (refunds.length > 0 && totalRefunded >= finalPrice) {
-      return { label: "Remboursé", variant: "destructive" as const };
+      return { label: "Refunded", variant: "destructive" as const };
     }
     if (refunds.length > 0) {
-      return { label: "Partiellement remboursé", variant: "secondary" as const };
+      return { label: "Partially refunded", variant: "secondary" as const };
     }
     switch (paymentIntent?.status) {
       case "succeeded":
-        return { label: "Complété", variant: "default" as const };
+        return { label: "Completed", variant: "default" as const };
       case "requires_payment_method":
       case "requires_confirmation":
         return { label: "En attente", variant: "secondary" as const };
       case "canceled":
       case "payment_failed":
-        return { label: "Échoué", variant: "destructive" as const };
+        return { label: "Failed", variant: "destructive" as const };
       default:
         return { label: paymentIntent?.status || "Inconnu", variant: "outline" as const };
     }
@@ -118,16 +118,16 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
       const result = await processRefundAction(enrollment.id, amount);
       if (result.success) {
         toast.success(
-          refundType === "full" ? "Remboursement complet effectué" : "Remboursement partiel effectué"
+          refundType === "full" ? "Full refund issued" : "Partial refund issued"
         );
         setRefundDialogOpen(false);
         setRefundAmount("");
         window.location.reload();
       } else {
-        toast.error(result.error || "Erreur lors du remboursement");
+        toast.error(result.error || "Error during refund");
       }
     } catch (error) {
-      toast.error("Erreur lors du remboursement");
+      toast.error("Error during refund");
     } finally {
       setProcessing(false);
     }
@@ -165,7 +165,7 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
               </div>
             )}
             <div>
-              <Link href={`/tableau-de-bord/admin/students/${enrollment.user.id}`}>
+              <Link href={`/dashboard/admin/students/${enrollment.user.id}`}>
                 <Button variant="outline" size="sm">
                   Voir le profil étudiant
                 </Button>
@@ -203,7 +203,7 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
               </p>
             </div>
             <div>
-              <Link href={`/tableau-de-bord/admin/courses/${enrollment.course.id}`}>
+              <Link href={`/dashboard/admin/courses/${enrollment.course.id}`}>
                 <Button variant="outline" size="sm">
                   Voir le cours
                 </Button>
@@ -336,7 +336,7 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
             <DialogDescription>
               {refundType === "full"
                 ? `Rembourser ${remainingAmount.toFixed(2)} $ à l'étudiant`
-                : "Entrez le montant à rembourser"}
+                : "Enter the amount to refund"}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">

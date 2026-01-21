@@ -60,14 +60,14 @@ export async function createPaymentIntentAction(
     if (!course) {
       return {
         success: false,
-        error: "Cours introuvable",
+        error: "Course not found",
       };
     }
 
     if (!course.published) {
       return {
         success: false,
-        error: "Ce cours n'est pas encore disponible",
+        error: "This course is not yet available",
       };
     }
 
@@ -92,7 +92,7 @@ export async function createPaymentIntentAction(
     if (existingEnrollment) {
       return {
         success: false,
-        error: "Vous êtes déjà inscrit à ce cours",
+        error: "You are already enrolled in this course",
       };
     }
 
@@ -161,7 +161,7 @@ export async function createPaymentIntentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -174,7 +174,7 @@ export async function createPaymentIntentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du paiement",
+      error: "Error creating payment",
     };
   }
 }
@@ -220,14 +220,14 @@ export async function createCohortPaymentIntentAction(
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
     if (!cohort.published) {
       return {
         success: false,
-        error: "Cette cohorte n'est pas encore disponible",
+        error: "This cohort is not yet available",
       };
     }
 
@@ -235,7 +235,7 @@ export async function createCohortPaymentIntentAction(
     if (cohort._count.enrollments >= cohort.maxStudents) {
       return {
         success: false,
-        error: "La cohorte a atteint le nombre maximum d'étudiants",
+        error: "The cohort has reached the maximum number of students",
       };
     }
 
@@ -243,7 +243,7 @@ export async function createCohortPaymentIntentAction(
     if (new Date() > cohort.enrollmentClosingDate) {
       return {
         success: false,
-        error: "La date limite d'inscription est dépassée",
+        error: "The registration deadline has passed",
       };
     }
 
@@ -261,7 +261,7 @@ export async function createCohortPaymentIntentAction(
     if (existingEnrollment) {
       return {
         success: false,
-        error: "Vous êtes déjà inscrit à cette cohorte",
+        error: "You are already enrolled in this cohort",
       };
     }
 
@@ -315,7 +315,7 @@ export async function createCohortPaymentIntentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -328,7 +328,7 @@ export async function createCohortPaymentIntentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du paiement",
+      error: "Error creating payment",
     };
   }
 }
@@ -447,7 +447,7 @@ export async function downloadReceiptAction(paymentIntentId: string) {
     if (!enrollment) {
       return {
         success: false,
-        error: "Paiement introuvable",
+        error: "Payment not found",
       };
     }
 
@@ -484,7 +484,7 @@ export async function downloadReceiptAction(paymentIntentId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du téléchargement du reçu",
+      error: "Error downloading the receipt",
     };
   }
 }
@@ -504,7 +504,7 @@ export async function createEnrollmentFromPaymentIntentAction(
     if (paymentIntent.status !== "succeeded") {
       return {
         success: false,
-        error: "Le paiement n'a pas réussi",
+        error: "The payment did not succeed",
       };
     }
 
@@ -514,7 +514,7 @@ export async function createEnrollmentFromPaymentIntentAction(
     if (!userId) {
       return {
         success: false,
-        error: "Informations de paiement incomplètes",
+        error: "Incomplete payment information",
       };
     }
 
@@ -523,7 +523,7 @@ export async function createEnrollmentFromPaymentIntentAction(
       if (!cohortId) {
         return {
           success: false,
-          error: "Informations de paiement incomplètes",
+          error: "Incomplete payment information",
         };
       }
 
@@ -550,7 +550,7 @@ export async function createEnrollmentFromPaymentIntentAction(
       if (!cohort) {
         return {
           success: false,
-          error: "Cohorte introuvable",
+          error: "Cohort not found",
         };
       }
 
@@ -570,7 +570,7 @@ export async function createEnrollmentFromPaymentIntentAction(
       if (!enrollmentResult.success) {
         return {
           success: false,
-          error: enrollmentResult.error || "Erreur lors de la création de l'inscription",
+          error: enrollmentResult.error || "Error while creating the registration",
         };
       }
 
@@ -626,7 +626,7 @@ export async function createEnrollmentFromPaymentIntentAction(
       if (!courseId) {
         return {
           success: false,
-          error: "Informations de paiement incomplètes",
+          error: "Incomplete payment information",
         };
       }
 
@@ -653,7 +653,7 @@ export async function createEnrollmentFromPaymentIntentAction(
       if (!course) {
         return {
           success: false,
-          error: "Cours introuvable",
+          error: "Course not found",
         };
       }
 
@@ -672,7 +672,7 @@ export async function createEnrollmentFromPaymentIntentAction(
       if (!enrollmentResult.success) {
         return {
           success: false,
-          error: enrollmentResult.error || "Erreur lors de la création de l'inscription",
+          error: enrollmentResult.error || "Error while creating the registration",
         };
       }
 
@@ -733,7 +733,7 @@ export async function createEnrollmentFromPaymentIntentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création de l'inscription",
+      error: "Error while creating the registration",
     };
   }
 }

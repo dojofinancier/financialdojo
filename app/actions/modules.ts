@@ -8,7 +8,7 @@ import { logServerError } from "@/lib/utils/error-logging";
 import { NoteType } from "@prisma/client";
 
 const moduleSchema = z.object({
-  courseId: z.string().min(1, "L'ID du cours est requis"),
+  courseId: z.string().min(1, "Course ID is required"),
   title: z.string().min(1, "Le titre est requis"),
   shortTitle: z.string().optional().nullable(), // Short title for sidebar display
   description: z.string().optional(),
@@ -71,7 +71,7 @@ export async function createModuleAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -83,7 +83,7 @@ export async function createModuleAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du module",
+      error: "Error creating module",
     };
   }
 }
@@ -153,7 +153,7 @@ export async function updateModuleAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -165,7 +165,7 @@ export async function updateModuleAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour du module",
+      error: "Error updating module",
     };
   }
 }
@@ -210,7 +210,7 @@ export async function deleteModuleAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression du module",
+      error: "Error deleting module",
     };
   }
 }
@@ -245,7 +245,7 @@ export async function reorderModulesAction(
 
     return {
       success: false,
-      error: "Erreur lors du réordonnancement des modules",
+      error: "Error while reordering the modules",
     };
   }
 }

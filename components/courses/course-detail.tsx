@@ -76,18 +76,18 @@ export function CourseDetail({ course, isEnrolled, enrollment }: CourseDetailPro
       title: course.title,
       price: course.price,
     });
-    toast.success("Ajouté au panier");
+    toast.success("Added to cart");
     setInCart(true);
     // Redirect to cart page
-    router.push("/panier");
+    router.push("/cart");
   };
 
   const handleGoToCart = () => {
-    router.push("/panier");
+    router.push("/cart");
   };
 
   const handleContinue = () => {
-    router.push(`/apprendre/${course.slug || course.id}`);
+    router.push(`/learn/${course.slug || course.id}`);
   };
 
   return (
@@ -201,7 +201,7 @@ export function CourseDetail({ course, isEnrolled, enrollment }: CourseDetailPro
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Type de paiement</span>
                       <span>
-                        {course.paymentType === "SUBSCRIPTION" ? "Abonnement" : "Paiement unique"}
+                        {course.paymentType === "SUBSCRIPTION" ? "Abonnement" : "One-time payment"}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">

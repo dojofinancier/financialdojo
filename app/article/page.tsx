@@ -5,10 +5,10 @@ import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Articles | Le Dojo Financier",
-  description: "Découvrez nos articles sur la finance, l'investissement et la gestion financière.",
+  description: "Discover our articles on finance, investing, and financial management.",
   openGraph: {
     title: "Articles | Le Dojo Financier",
-    description: "Découvrez nos articles sur la finance, l'investissement et la gestion financière.",
+    description: "Discover our articles on finance, investing, and financial management.",
     type: "website",
   },
 };

@@ -19,7 +19,7 @@ export default function CohortError({
   useEffect(() => {
     // Log error to database via server action
     logClientErrorAction({
-      errorMessage: error.message || "Erreur lors du chargement de la cohorte",
+      errorMessage: error.message || "Error loading cohort",
       stackTrace: error.stack || undefined,
       url: typeof window !== "undefined" ? window.location.href : undefined,
       userAgent: typeof window !== "undefined" ? window.navigator.userAgent : undefined,
@@ -69,7 +69,7 @@ export default function CohortError({
               Réessayer
             </Button>
             <Button
-              onClick={() => router.push("/tableau-de-bord/etudiant?tab=cohorts")}
+              onClick={() => router.push("/dashboard/student?tab=cohorts")}
               className="flex-1"
               variant="outline"
             >

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Politique de confidentialité | Le Dojo Financier",
-  description: "Politique de confidentialité du Dojo Financier",
+  title: "Privacy Policy | Financial Dojo",
+  description: "Financial Dojo Privacy Policy",
 };
 
 export default function PrivacyPolicyPage() {

@@ -101,12 +101,12 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
           })),
         });
       } else {
-        toast.error(result.error || "Erreur lors du chargement de l'étude de cas");
+        toast.error(result.error || "Error loading the case study");
         onExit();
       }
     } catch (error) {
       console.error("Error loading case study:", error);
-      toast.error("Erreur lors du chargement de l'étude de cas");
+      toast.error("Error loading the case study");
       onExit();
     } finally {
       setLoading(false);
@@ -139,11 +139,11 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
         setSubmitted(true);
         setShowResults(true);
       } else {
-        toast.error(result.error || "Erreur lors de la soumission");
+        toast.error(result.error || "Error during submission");
       }
     } catch (error) {
       console.error("Error submitting case study:", error);
-      toast.error("Erreur lors de la soumission");
+      toast.error("Error during submission");
     } finally {
       setSubmitting(false);
     }

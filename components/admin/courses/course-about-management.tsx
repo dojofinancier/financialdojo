@@ -30,12 +30,12 @@ export function CourseAboutManagement({
       setSaving(true);
       const result = await updateCourseAboutAction(courseId, { shortDescription, aboutText });
       if (result.success) {
-        toast.success("Informations mises à jour avec succès");
+        toast.success("Information updated successfully");
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la sauvegarde");
+      toast.error("Error saving");
     } finally {
       setSaving(false);
     }
@@ -57,7 +57,7 @@ export function CourseAboutManagement({
               id="shortDescription"
               value={shortDescription}
               onChange={(e) => setShortDescription(e.target.value)}
-              placeholder="Ex: Préparez-vous efficacement à l'examen CCVM avec notre formation complète..."
+              placeholder="Eg: Prepare effectively for the CCVM exam with our comprehensive training..."
               className="w-full"
             />
           </div>
@@ -75,7 +75,7 @@ export function CourseAboutManagement({
           <RichTextEditor
             content={aboutText}
             onChange={setAboutText}
-            placeholder="Décrivez en détail votre formation, ses objectifs, sa méthodologie..."
+            placeholder="Describe in detail your training, its objectives, its methodology..."
           />
         </CardContent>
       </Card>

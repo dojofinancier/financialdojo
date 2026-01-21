@@ -78,7 +78,7 @@ export function ShortAnswerActivity({
               setAnswer(e.target.value);
             }}
             disabled={submitted}
-            placeholder="Tapez votre réponse..."
+            placeholder="Type your response..."
             className={cn(
               showImmediateFeedback || showAnswers
                 ? isCorrectImmediate || (showAnswers && isCorrect)

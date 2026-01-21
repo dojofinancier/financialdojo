@@ -103,7 +103,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
       const data = await getModulesAction(courseId);
       setModules(data as ModuleWithContent[]);
     } catch (error) {
-      toast.error("Erreur lors du chargement des modules");
+      toast.error("Error loading modules");
     } finally {
       setLoading(false);
     }
@@ -131,7 +131,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
 
       const result = await reorderModulesAction(courseId, moduleOrders);
       if (!result.success) {
-        toast.error("Erreur lors du réordonnancement");
+        toast.error("Error reordering");
         loadModules(); // Reload on error
       }
     }
@@ -149,15 +149,15 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
       });
 
       if (result.success) {
-        toast.success("Module créé avec succès");
+        toast.success("Module created successfully");
         setCreateDialogOpen(false);
         setFormData({ title: "", shortTitle: "", description: "", examWeight: "" });
         loadModules();
       } else {
-        toast.error(result.error || "Erreur lors de la création");
+        toast.error(result.error || "Error creating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la création du module");
+      toast.error("Error creating module");
     }
   };
 
@@ -173,16 +173,16 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
       });
 
       if (result.success) {
-        toast.success("Module mis à jour avec succès");
+        toast.success("Module updated successfully");
         setEditDialogOpen(false);
         setSelectedModule(null);
         setFormData({ title: "", shortTitle: "", description: "", examWeight: "" });
         loadModules();
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour du module");
+      toast.error("Error updating module");
     }
   };
 
@@ -192,15 +192,15 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
     try {
       const result = await deleteModuleAction(selectedModule.id);
       if (result.success) {
-        toast.success("Module supprimé avec succès");
+        toast.success("Module deleted successfully");
         setDeleteDialogOpen(false);
         setSelectedModule(null);
         loadModules();
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
-      toast.error("Erreur lors de la suppression du module");
+      toast.error("Error deleting module");
     }
   };
 
@@ -656,11 +656,11 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
 
         const result = await createContentItemAction(payload);
         if (result.success) {
-          toast.success("Contenu ajouté");
+          toast.success("Content added");
           handleContentDialogChange(false);
           onRefresh();
         } else {
-          toast.error(result.error || "Erreur lors de la création");
+          toast.error(result.error || "Error creating");
         }
       } else if (selectedItem) {
         const payload: any = {};
@@ -689,15 +689,15 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
 
         const result = await updateContentItemAction(selectedItem.id, payload);
         if (result.success) {
-          toast.success("Contenu mis à jour");
+          toast.success("Content updated");
           handleContentDialogChange(false);
           onRefresh();
         } else {
-          toast.error(result.error || "Erreur lors de la mise à jour");
+          toast.error(result.error || "Error updating");
         }
       }
     } catch (error) {
-      toast.error("Erreur lors de l'enregistrement");
+      toast.error("Error saving");
     }
   };
 
@@ -705,7 +705,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
     if (!selectedItem) return;
     const result = await deleteContentItemAction(selectedItem.id);
     if (result.success) {
-      toast.success("Contenu supprimé");
+      toast.success("Content deleted");
       setDeleteDialogOpen(false);
       setSelectedItem(null);
       // Remove the item from local state immediately
@@ -713,7 +713,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
       // Refresh from server
       onRefresh();
     } else {
-      toast.error(result.error || "Erreur lors de la suppression");
+      toast.error(result.error || "Error while deleting");
     }
   };
 
@@ -733,7 +733,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
 
     const result = await reorderContentItemsAction(module.id, payload);
     if (!result.success) {
-      toast.error(result.error || "Erreur lors du réordonnancement");
+      toast.error(result.error || "Error reordering");
       onRefresh();
     } else {
       onRefresh();
@@ -757,7 +757,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
 
     // Check if it's a markdown file
     if (!file.name.endsWith('.md') && !file.name.endsWith('.markdown')) {
-      toast.error("Veuillez sélectionner un fichier Markdown (.md ou .markdown)");
+      toast.error("Please select a Markdown file (.md or .markdown)");
       return;
     }
 
@@ -775,14 +775,14 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
         
         // Set the converted HTML to the editor
         setNoteContent(htmlContent);
-        toast.success("Document Markdown importé avec succès");
+        toast.success("Markdown document imported successfully");
       };
       reader.onerror = () => {
-        toast.error("Erreur lors de la lecture du fichier");
+        toast.error("Error reading the file");
       };
       reader.readAsText(file);
     } catch (error) {
-      toast.error("Erreur lors de l'importation du fichier Markdown");
+      toast.error("Error importing the Markdown file");
       console.error("Markdown upload error:", error);
     }
 
@@ -923,7 +923,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
       <Dialog open={contentDialogOpen} onOpenChange={handleContentDialogChange}>
         <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0">
           <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0">
-            <DialogTitle>{contentMode === "create" ? "Ajouter un contenu" : "Modifier le contenu"}</DialogTitle>
+            <DialogTitle>{contentMode === "create" ? "Add content" : "Edit content"}</DialogTitle>
             <DialogDescription>
               Configurez le type et les informations spécifiques au contenu.
             </DialogDescription>
@@ -976,7 +976,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
                       folder={`${courseId}/transcripts`}
                       onUploaded={attachTranscriptLink}
                       accept=".txt,.pdf,.doc,.docx"
-                      label="Téléverser une transcription"
+                      label="Upload a transcript"
                     />
                   </div>
                 </div>
@@ -1038,7 +1038,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
                   <FileUploadButton
                     folder={`${courseId}/notes`}
                     onUploaded={insertAttachmentInNote}
-                    label="Ajouter une pièce jointe"
+                    label="Add an attachment"
                   />
                 </div>
               </div>
@@ -1058,7 +1058,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
               Annuler
             </Button>
             <Button onClick={handleContentSave}>
-              {contentMode === "create" ? "Créer" : "Enregistrer"}
+              {contentMode === "create" ? "Create" : "Enregistrer"}
             </Button>
           </div>
         </DialogContent>

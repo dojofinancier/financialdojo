@@ -57,7 +57,7 @@ export function CohortFAQManagement({ cohortId }: CohortFAQManagementProps) {
       }
     } catch (error) {
       console.error("Error loading FAQs:", error);
-      toast.error("Erreur lors du chargement des FAQ");
+      toast.error("Error loading FAQs");
     } finally {
       setLoading(false);
     }
@@ -65,7 +65,7 @@ export function CohortFAQManagement({ cohortId }: CohortFAQManagementProps) {
 
   const handleCreate = async () => {
     if (!formData.question.trim() || !formData.answer.trim()) {
-      toast.error("Veuillez remplir tous les champs");
+      toast.error("Please fill in all fields");
       return;
     }
 
@@ -77,20 +77,20 @@ export function CohortFAQManagement({ cohortId }: CohortFAQManagementProps) {
       });
 
       if (result.success) {
-        toast.success("FAQ créée avec succès");
+        toast.success("FAQ created successfully");
         setFormData({ question: "", answer: "" });
         loadFAQs();
       } else {
-        toast.error(result.error || "Erreur lors de la création");
+        toast.error(result.error || "Error creating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la création de la FAQ");
+      toast.error("Error creating the FAQ");
     }
   };
 
   const handleUpdate = async (id: string) => {
     if (!formData.question.trim() || !formData.answer.trim()) {
-      toast.error("Veuillez remplir tous les champs");
+      toast.error("Please fill in all fields");
       return;
     }
 
@@ -101,15 +101,15 @@ export function CohortFAQManagement({ cohortId }: CohortFAQManagementProps) {
       });
 
       if (result.success) {
-        toast.success("FAQ mise à jour avec succès");
+        toast.success("FAQ updated successfully");
         setEditingId(null);
         setFormData({ question: "", answer: "" });
         loadFAQs();
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour de la FAQ");
+      toast.error("Error updating the FAQ");
     }
   };
 
@@ -117,13 +117,13 @@ export function CohortFAQManagement({ cohortId }: CohortFAQManagementProps) {
     try {
       const result = await deleteCohortFAQAction(id);
       if (result.success) {
-        toast.success("FAQ supprimée avec succès");
+        toast.success("FAQ deleted successfully");
         loadFAQs();
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
-      toast.error("Erreur lors de la suppression de la FAQ");
+      toast.error("Error deleting the FAQ");
     } finally {
       setDeleteId(null);
     }
@@ -174,7 +174,7 @@ export function CohortFAQManagement({ cohortId }: CohortFAQManagementProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, answer: e.target.value })
                 }
-                placeholder="Ex: Cette cohorte accepte un maximum de 20 participants..."
+                placeholder="Ex: This cohort accepts a maximum of 20 participants..."
                 rows={3}
               />
             </div>

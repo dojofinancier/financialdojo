@@ -41,20 +41,20 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
     setActiveTab(tabValue);
     // Navigate to dedicated routes for courses, cohorts, and analytics
     if (tabValue === "courses") {
-      router.push("/tableau-de-bord/admin/courses");
+      router.push("/dashboard/admin/courses");
       return;
     }
     if (tabValue === "cohorts") {
-      router.push("/tableau-de-bord/admin/cohorts");
+      router.push("/dashboard/admin/cohorts");
       return;
     }
     if (tabValue === "analytics") {
-      router.push("/tableau-de-bord/admin/analytics");
+      router.push("/dashboard/admin/analytics");
       return;
     }
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tabValue);
-    router.push(`/tableau-de-bord/admin?${params.toString()}`);
+    router.push(`/dashboard/admin?${params.toString()}`);
   };
 
   return (
@@ -359,7 +359,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
       {activeTab === "support" && <SupportTicketList />}
       {activeTab === "errors" && <ErrorLogViewer />}
       {activeTab === "account" && <AccountManagement />}
-      {/* Cohorts are handled via dedicated route /tableau-de-bord/admin/cohorts */}
+      {/* Cohorts are handled via dedicated route /dashboard/admin/cohorts */}
       {activeTab === "cohorts" && children ? children : null}
     </div>
   );

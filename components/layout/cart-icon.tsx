@@ -30,7 +30,7 @@ export function CartIcon() {
   }
 
   return (
-    <Link href="/panier">
+    <Link href="/cart">
       <Button variant="ghost" size="icon" className="relative">
         <ShoppingCart className="h-5 w-5" />
         <Badge

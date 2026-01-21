@@ -62,7 +62,7 @@ export async function uploadQuizCSVAction(
 
     // Parse settings: settings,"Title","",0,minutes,1,10,60,50
     // Index: 0=settings, 1=title, 7=timeLimitMinutes, 8=passingScore
-    const title = settingsFields[1]?.replace(/^"|"$/g, "") || (isMockExam ? "Examen simulé" : "Quiz");
+    const title = settingsFields[1]?.replace(/^"|"$/g, "") || (isMockExam ? "Mock exam" : "Quiz");
     const timeLimitMinutes = parseInt(settingsFields[7] || "60");
     const passingScore = parseInt(settingsFields[8] || "70");
     const timeLimitSeconds = timeLimitMinutes * 60;
@@ -80,7 +80,7 @@ export async function uploadQuizCSVAction(
       });
 
       if (!firstModule) {
-        return { success: false, error: "Aucun module trouvé pour ce cours" };
+        return { success: false, error: "No modules found for this course" };
       }
 
       targetModuleId = firstModule.id;
@@ -96,7 +96,7 @@ export async function uploadQuizCSVAction(
     if (!contentItemResult.success || !contentItemResult.data) {
       return {
         success: false,
-        error: contentItemResult.error || "Erreur lors de la création de l'élément de contenu",
+        error: contentItemResult.error || "Error creating the content item",
       };
     }
 
@@ -107,7 +107,7 @@ export async function uploadQuizCSVAction(
       data: {
         contentItemId: contentItem.id,
         courseId, // Direct course link for efficient queries
-        title: title || (isMockExam ? "Examen simulé" : "Quiz"),
+        title: title || (isMockExam ? "Mock exam" : "Quiz"),
         passingScore: passingScoreInt,
         timeLimit: timeLimitSeconds,
         isMockExam,
@@ -173,7 +173,7 @@ export async function uploadQuizCSVAction(
               },
             });
           } catch (err) {
-            errors.push(`Erreur lors de la création de la question ${currentQuestion.order}: ${err instanceof Error ? err.message : "Erreur inconnue"}`);
+            errors.push(`Erreur lors de la création de la question ${currentQuestion.order}: ${err instanceof Error ? err.message : "Unknown error"}`);
           }
         }
 
@@ -228,11 +228,11 @@ export async function uploadQuizCSVAction(
           },
         });
       } catch (err) {
-        errors.push(`Erreur lors de la création de la dernière question: ${err instanceof Error ? err.message : "Erreur inconnue"}`);
+        errors.push(`Erreur lors de la création de la dernière question: ${err instanceof Error ? err.message : "Unknown error"}`);
       }
     }
 
-    revalidatePath(`/tableau-de-bord/admin/courses/${courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
     return {
       success: true,
       data: {
@@ -249,7 +249,7 @@ export async function uploadQuizCSVAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -267,7 +267,7 @@ export async function uploadFlashcardCSVAction(
 
     const lines = csvContent.split("\n").filter((line) => line.trim());
     if (lines.length < 2) {
-      return { success: false, error: "Le fichier CSV doit contenir au moins un en-tête et une ligne de données" };
+      return { success: false, error: "The CSV file must contain at least one header and one row of data" };
     }
 
     // Parse header
@@ -290,6 +290,40 @@ export async function uploadFlashcardCSVAction(
 
     let flashcardsCreated = 0;
     const errors: string[] = [];
+
+    // First pass: Find minimum chapter number to determine offset
+    let minChapter: number | null = null;
+    if (chapterIndex !== -1) {
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        // Parse CSV line (handling quoted fields)
+        const fields: string[] = [];
+        let currentField = "";
+        let inQuotes = false;
+
+        for (let j = 0; j < line.length; j++) {
+          const char = line[j];
+          if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === "," && !inQuotes) {
+            fields.push(currentField.trim());
+            currentField = "";
+          } else {
+            currentField += char;
+          }
+        }
+        fields.push(currentField.trim());
+
+        const chapter = parseInt(fields[chapterIndex] || "0");
+        if (!isNaN(chapter) && chapter > 0) {
+          if (minChapter === null || chapter < minChapter) {
+            minChapter = chapter;
+          }
+        }
+      }
+    }
 
     // Parse data rows
     for (let i = 1; i < lines.length; i++) {
@@ -323,10 +357,13 @@ export async function uploadFlashcardCSVAction(
         continue;
       }
 
-      // Map chapter to module (if chapter is 1, use first module, etc.)
+      // Map chapter to module
+      // If minChapter is found, use it as offset (e.g., chapters 13-27 map to modules 0-14)
+      // Otherwise, assume chapters start at 1 (e.g., chapters 1-15 map to modules 0-14)
       let moduleId: string | null = null;
       if (chapter !== null && chapter > 0 && modules.length > 0) {
-        const moduleIndex = Math.min(chapter - 1, modules.length - 1);
+        const offset = minChapter !== null ? minChapter : 1;
+        const moduleIndex = Math.min(Math.max(0, chapter - offset), modules.length - 1);
         moduleId = modules[moduleIndex].id;
       }
 
@@ -341,11 +378,11 @@ export async function uploadFlashcardCSVAction(
         });
         flashcardsCreated++;
       } catch (err) {
-        errors.push(`Ligne ${i + 1}: ${err instanceof Error ? err.message : "Erreur inconnue"}`);
+        errors.push(`Ligne ${i + 1}: ${err instanceof Error ? err.message : "Unknown error"}`);
       }
     }
 
-    revalidatePath(`/tableau-de-bord/admin/courses/${courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
     return {
       success: true,
       data: {
@@ -362,7 +399,7 @@ export async function uploadFlashcardCSVAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }

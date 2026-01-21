@@ -79,7 +79,7 @@ export function OverviewDashboard() {
       if (periodResult.success) setPeriodRevenue(periodResult.data);
       if (subscriptionResult.success) setSubscriptionStats(subscriptionResult.data);
     } catch (error) {
-      toast.error("Erreur lors du chargement des données");
+      toast.error("Error loading data");
     } finally {
       setLoading(false);
     }
@@ -92,7 +92,7 @@ export function OverviewDashboard() {
       const trendsResult = await getRevenueTrendsAction();
       if (trendsResult.success) setRevenueTrends(trendsResult.data);
     } catch (error) {
-      toast.error("Erreur lors du chargement des tendances");
+      toast.error("Error loading trends");
     } finally {
       setTrendsLoading(false);
     }
@@ -113,10 +113,10 @@ export function OverviewDashboard() {
       const result = await getRevenueByPeriodAction(selectedYear, selectedMonth || undefined);
       if (result.success && result.data) {
         exportFinancialsToCSV(result.data, selectedYear, selectedMonth);
-        toast.success("Export CSV généré");
+        toast.success("CSV export generated");
       }
     } catch (error) {
-      toast.error("Erreur lors de l'export");
+      toast.error("Error exporting");
     }
   };
 
@@ -203,7 +203,7 @@ export function OverviewDashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>
-              Revenu {selectedMonth ? "du mois" : "de l'année"}
+              Revenu {selectedMonth ? "du mois" : "of the year"}
             </CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />

@@ -160,7 +160,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
     } catch (error) {
       console.error("Case study loading exception:", error);
       setCaseStudies([]);
-      toast.error("Erreur lors du chargement des études de cas");
+      toast.error("Error loading case studies");
     } finally {
       setLoading(false);
     }
@@ -271,11 +271,11 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
     });
 
     if (result.success) {
-      toast.success("Étude de cas mise à jour");
+      toast.success("Case study updated");
       setEditDialogOpen(false);
       await loadCaseStudies();
     } else {
-      toast.error(result.error || "Erreur lors de la mise à jour");
+      toast.error(result.error || "Error updating");
     }
   };
 
@@ -354,7 +354,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
     if (questionFormState.optionD.trim()) options["D"] = questionFormState.optionD.trim();
 
     if (!options[questionFormState.correctAnswer]) {
-      toast.error("La réponse correcte doit correspondre à une option valide");
+      toast.error("The correct answer must correspond to a valid option");
       return;
     }
 
@@ -366,7 +366,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
     });
 
     if (result.success) {
-      toast.success("Question mise à jour");
+      toast.success("Question updated");
       setQuestionEditDialogOpen(false);
       setEditingQuestion(null);
       await loadCaseStudies();
@@ -376,18 +376,18 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
         setEditingCaseStudy(fullCaseStudy);
       }
     } else {
-      toast.error(result.error || "Erreur lors de la mise à jour");
+      toast.error(result.error || "Error updating");
     }
   };
 
   const handleDeleteQuestion = async (questionId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette question ?")) {
+    if (!confirm("Are you sure you want to delete this question?")) {
       return;
     }
 
     const result = await deleteCaseStudyQuestionAction(questionId);
     if (result.success) {
-      toast.success("Question supprimée");
+      toast.success("Question deleted");
       await loadCaseStudies();
       if (editingCaseStudy) {
         const fullCaseStudy = await loadFullCaseStudy(editingCaseStudy.id);
@@ -396,21 +396,21 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
         }
       }
     } else {
-      toast.error(result.error || "Erreur lors de la suppression");
+      toast.error(result.error || "Error while deleting");
     }
   };
 
   const handleDelete = async (caseStudyId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette étude de cas ?")) {
+    if (!confirm("Are you sure you want to delete this case study?")) {
       return;
     }
 
     const result = await deleteCaseStudyAction(caseStudyId);
     if (result.success) {
-      toast.success("Étude de cas supprimée");
+      toast.success("Case study deleted");
       loadCaseStudies();
     } else {
-      toast.error(result.error || "Erreur lors de la suppression");
+      toast.error(result.error || "Error while deleting");
     }
   };
 
@@ -419,7 +419,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
     const mcqFile = document.getElementById("mcq-file") as HTMLInputElement;
 
     if (!narrativeFile?.files?.[0] || !mcqFile?.files?.[0]) {
-      toast.error("Veuillez sélectionner les deux fichiers JSON (narrative et MCQ)");
+      toast.error("Please select both JSON files (narrative and MCQ)");
       return;
     }
 
@@ -431,17 +431,17 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
       const result = await importCaseStudyAction(courseId, narrativeContent, mcqContent);
 
       if (result.success) {
-        toast.success("Étude de cas importée avec succès");
+        toast.success("Case study imported successfully");
         setImportDialogOpen(false);
         narrativeFile.value = "";
         mcqFile.value = "";
         loadCaseStudies();
       } else {
-        toast.error(result.error || "Erreur lors de l'importation");
+        toast.error(result.error || "Error during import");
       }
     } catch (error) {
       console.error("Error importing case study:", error);
-      toast.error("Erreur lors de l'importation des fichiers");
+      toast.error("Error importing files");
     } finally {
       setImporting(false);
     }
@@ -759,7 +759,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                                       onChange={(e) =>
                                         updateTable(sectionIndex, tableIndex, "title", e.target.value)
                                       }
-                                      placeholder="Titre du tableau..."
+                                      placeholder="Table title..."
                                     />
                                   </div>
                                   <div className="space-y-2">
@@ -771,7 +771,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                                       onChange={(e) =>
                                         updateTable(sectionIndex, tableIndex, "markdown", e.target.value)
                                       }
-                                      placeholder="Tableau en format Markdown..."
+                                      placeholder="Table in Markdown format..."
                                     />
                                     <p className="text-xs text-muted-foreground">
                                       Utilisez la syntaxe Markdown pour les tableaux

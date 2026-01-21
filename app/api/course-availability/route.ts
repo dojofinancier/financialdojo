@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     console.error("Error in course availability API:", error);
     return NextResponse.json(
       {
-        error: "Une erreur est survenue",
+        error: "An error occurred",
         details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error checking multiple dates availability:", error);
     return NextResponse.json(
-      { error: "Une erreur est survenue" },
+      { error: "An error occurred" },
       { status: 500 }
     );
   }

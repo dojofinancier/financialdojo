@@ -22,7 +22,7 @@ export function ContactPageClient() {
       const result = await submitContactFormAction(formData);
 
       if (result.success) {
-        toast.success("Merci pour votre message! Nous vous répondrons sous peu.");
+        toast.success("Thank you for your message! We will reply shortly.");
         setFormData({
           name: "",
           email: "",
@@ -30,10 +30,10 @@ export function ContactPageClient() {
           message: "",
         });
       } else {
-        toast.error(result.error || "Erreur lors de l'envoi du message");
+        toast.error(result.error || "Error sending message");
       }
     } catch (error) {
-      toast.error("Erreur lors de l'envoi du message. Veuillez réessayer.");
+      toast.error("Error sending the message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -163,7 +163,7 @@ export function ContactPageClient() {
                     disabled={isSubmitting}
                     className="w-full bg-white text-black font-black uppercase text-lg tracking-wider px-10 py-5 border-4 border-white hover:bg-primary hover:border-primary hover:text-black transition-colors shadow-[8px_8px_0_0_hsl(var(--primary))] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? "Envoi..." : "Envoyer →"}
+                    {isSubmitting ? "Envoi..." : "Send →"}
                   </button>
                 </form>
               </div>
@@ -201,7 +201,7 @@ export function ContactPageClient() {
                     Consultez notre FAQ pour des réponses rapides.
                   </p>
                   <Link 
-                    href="/formations"
+                    href="/courses"
                     className="inline-block bg-black text-white font-black uppercase text-sm tracking-wider px-6 py-3 border-4 border-black hover:bg-white hover:border-white hover:text-black transition-colors"
                   >
                     Voir les formations →

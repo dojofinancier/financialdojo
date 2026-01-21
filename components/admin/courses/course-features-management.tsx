@@ -48,7 +48,7 @@ export function CourseFeaturesManagement({ courseId, initialFeatures }: CourseFe
 
   const handleAddFeature = () => {
     if (!newFeature.text.trim()) {
-      toast.error("Veuillez entrer le texte de la fonctionnalité");
+      toast.error("Please enter the feature text");
       return;
     }
 
@@ -71,12 +71,12 @@ export function CourseFeaturesManagement({ courseId, initialFeatures }: CourseFe
       setSaving(true);
       const result = await updateCourseFeaturesAction(courseId, features);
       if (result.success) {
-        toast.success("Fonctionnalités mises à jour avec succès");
+        toast.success("Features updated successfully");
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la sauvegarde");
+      toast.error("Error saving");
     } finally {
       setSaving(false);
     }
@@ -172,7 +172,7 @@ export function CourseFeaturesManagement({ courseId, initialFeatures }: CourseFe
         <div className="flex justify-end pt-4 border-t">
           <Button onClick={handleSave} disabled={saving}>
             <Save className="h-4 w-4 mr-2" />
-            {saving ? "Enregistrement..." : "Enregistrer les fonctionnalités"}
+            {saving ? "Enregistrement..." : "Save features"}
           </Button>
         </div>
       </CardContent>

@@ -49,7 +49,7 @@ export function AppointmentDetails({ appointment: initialAppointment }: Appointm
   const handleStatusChange = async (status: string) => {
     const result = await updateAppointmentAction(appointment.id, { status: status as any });
     if (result.success) {
-      toast.success("Statut mis à jour");
+      toast.success("Status updated");
       setAppointment({ ...appointment, status });
     } else {
       toast.error(result.error || "Erreur");
@@ -101,7 +101,7 @@ export function AppointmentDetails({ appointment: initialAppointment }: Appointm
               </div>
             )}
             <div>
-              <Link href={`/tableau-de-bord/admin/students/${appointment.user.id}`}>
+              <Link href={`/dashboard/admin/students/${appointment.user.id}`}>
                 <Button variant="outline" size="sm">
                   Voir le profil étudiant
                 </Button>
@@ -128,7 +128,7 @@ export function AppointmentDetails({ appointment: initialAppointment }: Appointm
               <div>
                 <Label className="text-muted-foreground">Cours</Label>
                 <p className="font-medium">{appointment.course.title}</p>
-                <Link href={`/tableau-de-bord/admin/courses/${appointment.course.id}`}>
+                <Link href={`/dashboard/admin/courses/${appointment.course.id}`}>
                   <Button variant="link" size="sm" className="p-0 h-auto mt-1">
                     Voir le cours
                   </Button>

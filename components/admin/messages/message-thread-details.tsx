@@ -66,7 +66,7 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
 
   const handleReply = async () => {
     if (!replyMessage.trim()) {
-      toast.error("Le message est requis");
+      toast.error("Message is required");
       return;
     }
 
@@ -74,14 +74,14 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
     try {
       const result = await replyToMessageThreadAction(threadData.thread.id, replyMessage);
       if (result.success) {
-        toast.success("Réponse envoyée");
+        toast.success("Response sent");
         setReplyMessage("");
         window.location.reload();
       } else {
-        toast.error(result.error || "Erreur lors de l'envoi");
+        toast.error(result.error || "Error sending");
       }
     } catch (error) {
-      toast.error("Erreur lors de l'envoi");
+      toast.error("Error sending");
     } finally {
       setSendingReply(false);
     }
@@ -90,7 +90,7 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
   const handleStatusChange = async (status: string) => {
     const result = await updateThreadStatusAction(threadData.thread.id, status as any);
     if (result.success) {
-      toast.success("Statut mis à jour");
+      toast.success("Status updated");
       setThreadData({
         ...threadData,
         thread: { ...threadData.thread, status },
@@ -130,7 +130,7 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
                     </div>
                   </div>
                   <Badge variant={message.isFromStudent ? "outline" : "default"}>
-                    {message.isFromStudent ? "Étudiant" : "Admin"}
+                    {message.isFromStudent ? "Student" : "Admin"}
                   </Badge>
                 </div>
                 <div 
@@ -147,7 +147,7 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
                   id="reply"
                   value={replyMessage}
                   onChange={(e) => setReplyMessage(e.target.value)}
-                  placeholder="Tapez votre réponse..."
+                  placeholder="Type your response..."
                   rows={4}
                   className="mt-2"
                 />
@@ -199,7 +199,7 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
                 <div className="text-sm">
                   <span className="font-medium">Email:</span> {threadData.thread.user.email}
                 </div>
-                <Link href={`/tableau-de-bord/admin/students/${threadData.thread.user.id}`}>
+                <Link href={`/dashboard/admin/students/${threadData.thread.user.id}`}>
                   <Button variant="link" size="sm" className="p-0 h-auto">
                     Voir le profil
                   </Button>

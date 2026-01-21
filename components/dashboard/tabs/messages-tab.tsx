@@ -36,7 +36,7 @@ export function MessagesTab() {
       const result = await getMessageThreadsAction({ limit: 100 });
       setThreads(result.items);
     } catch (error) {
-      toast.error("Erreur lors du chargement des messages");
+      toast.error("Error loading messages");
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,7 @@ export function MessagesTab() {
             Communiquez avec vos instructeurs
           </p>
         </div>
-        <Link href="/tableau-de-bord/etudiant/messages/new">
+        <Link href="/dashboard/student/messages/new">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
             Poser une question
@@ -90,7 +90,7 @@ export function MessagesTab() {
             <p className="text-muted-foreground mb-4">
               Posez une question à vos instructeurs
             </p>
-            <Link href="/tableau-de-bord/etudiant/messages/new">
+            <Link href="/dashboard/student/messages/new">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Poser une question
@@ -123,7 +123,7 @@ export function MessagesTab() {
                         </span>
                       </div>
                     </div>
-                    <Link href={`/tableau-de-bord/etudiant/messages/${thread.id}`}>
+                    <Link href={`/dashboard/student/messages/${thread.id}`}>
                       <Button variant="outline" size="sm">
                         Voir
                       </Button>

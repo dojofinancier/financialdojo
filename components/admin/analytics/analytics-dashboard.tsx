@@ -48,7 +48,7 @@ export function AnalyticsDashboard() {
       if (engagementResult.success) setUserEngagement(engagementResult.data);
       if (metricsResult.success) setCourseMetrics(metricsResult.data);
     } catch (error) {
-      toast.error("Erreur lors du chargement des données");
+      toast.error("Error loading data");
     } finally {
       setLoading(false);
     }
@@ -92,7 +92,7 @@ export function AnalyticsDashboard() {
               <label className="text-sm font-medium">Cours:</label>
               <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
                 <SelectTrigger className="w-[300px]">
-                  <SelectValue placeholder="Sélectionner un cours" />
+                  <SelectValue placeholder="Select a course" />
                 </SelectTrigger>
                 <SelectContent>
                   {courses.map((course) => (

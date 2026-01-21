@@ -6,7 +6,7 @@ export function exportFinancialsToCSV(
   year: number,
   month: number | null
 ) {
-  const headers = ["Période", "Revenu brut", "Remboursements", "Revenu net"];
+  const headers = ["Period", "Revenu brut", "Remboursements", "Revenu net"];
 
   const period = month
     ? `${year}-${String(month).padStart(2, "0")}`
@@ -47,15 +47,15 @@ export function exportOrdersToCSV(orders: any[]) {
   const headers = [
     "ID Commande",
     "Date",
-    "Étudiant",
+    "Student",
     "Email",
     "Cours",
     "Prix original",
-    "Réduction",
+    "Discount",
     "Montant final",
     "Coupon",
     "Statut",
-    "ID Paiement",
+    "Payment ID",
   ];
 
   const rows = orders.map((order) => {
@@ -77,7 +77,7 @@ export function exportOrdersToCSV(orders: any[]) {
       discount.toFixed(2),
       finalPrice.toFixed(2),
       order.couponUsage?.coupon.code || "",
-      order.refunded ? "Remboursé" : order.paymentStatus,
+      order.refunded ? "Refunded" : order.paymentStatus,
       order.paymentIntentId || "",
     ];
   });

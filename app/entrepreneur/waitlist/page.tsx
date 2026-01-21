@@ -1,9 +1,9 @@
 import { Metadata } from "next";
-import { WaitlistPageClient } from "@/app/investisseur/waitlist/waitlist-page-client";
+import { WaitlistPageClient } from "@/app/investor/waitlist/waitlist-page-client";
 
 export const metadata: Metadata = {
   title: "Liste d'attente — Entrepreneurs | Le Dojo Financier",
-  description: "Rejoignez la liste d'attente pour être informé du lancement de nos formations pour entrepreneurs.",
+  description: "Join the waiting list to be informed of the launch of our training programs for entrepreneurs.",
 };
 
 export default function EntrepreneurWaitlistPage() {

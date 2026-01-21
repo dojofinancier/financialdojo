@@ -68,13 +68,13 @@ export async function saveAvailabilityRulesAction(
       }
     });
 
-    revalidatePath("/tableau-de-bord/admin");
+    revalidatePath("/dashboard/admin");
     return { success: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -86,7 +86,7 @@ export async function saveAvailabilityRulesAction(
 
     return {
       success: false,
-      error: "Erreur lors de la sauvegarde des règles de disponibilité",
+      error: "Error saving availability rules",
     };
   }
 }
@@ -167,13 +167,13 @@ export async function saveAvailabilityExceptionsAction(
       }
     });
 
-    revalidatePath("/tableau-de-bord/admin");
+    revalidatePath("/dashboard/admin");
     return { success: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -185,7 +185,7 @@ export async function saveAvailabilityExceptionsAction(
 
     return {
       success: false,
-      error: "Erreur lors de la sauvegarde des exceptions de disponibilité",
+      error: "Error saving availability exceptions",
     };
   }
 }
@@ -220,7 +220,7 @@ export async function getAvailabilityRulesAction() {
       severity: "MEDIUM",
     });
 
-    return { success: false, error: "Erreur lors du chargement des règles", data: [] };
+    return { success: false, error: "Error loading rules", data: [] };
   }
 }
 
@@ -253,7 +253,7 @@ export async function getAvailabilityExceptionsAction() {
 
     return {
       success: false,
-      error: "Erreur lors du chargement des exceptions",
+      error: "Error loading exceptions",
       data: [],
     };
   }

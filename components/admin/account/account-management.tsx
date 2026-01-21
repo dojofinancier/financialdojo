@@ -22,12 +22,12 @@ export function AccountManagement() {
     e.preventDefault();
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error("Les mots de passe ne correspondent pas");
+      toast.error("Passwords do not match");
       return;
     }
 
     if (passwordData.newPassword.length < 6) {
-      toast.error("Le mot de passe doit contenir au moins 6 caractères");
+      toast.error("Password must contain at least 6 characters");
       return;
     }
 
@@ -40,17 +40,17 @@ export function AccountManagement() {
       );
 
       if (result.success) {
-        toast.success("Mot de passe modifié avec succès!");
+        toast.success("Password changed successfully!");
         setPasswordData({
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
         });
       } else {
-        toast.error(result.error || "Erreur lors du changement de mot de passe");
+        toast.error(result.error || "Error while changing password");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -134,7 +134,7 @@ export function AccountManagement() {
             </div>
 
             <Button type="submit" disabled={isLoading} className="w-full md:w-auto">
-              {isLoading ? "Modification..." : "Modifier le mot de passe"}
+              {isLoading ? "Modification..." : "Change password"}
             </Button>
           </form>
         </CardContent>

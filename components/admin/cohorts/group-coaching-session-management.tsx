@@ -79,7 +79,7 @@ export function GroupCoachingSessionManagement({
         setSessions(result.data as GroupCoachingSession[]);
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des sessions");
+      toast.error("Error loading sessions");
     } finally {
       setLoading(false);
     }
@@ -147,15 +147,15 @@ export function GroupCoachingSessionManagement({
       });
 
       if (result.success) {
-        toast.success("Session créée avec succès");
+        toast.success("Session created successfully");
         setCreateDialogOpen(false);
         resetForm();
         loadSessions();
       } else {
-        toast.error(result.error || "Erreur lors de la création");
+        toast.error(result.error || "Error creating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la création de la session");
+      toast.error("Error creating the session");
     }
   };
 
@@ -178,33 +178,33 @@ export function GroupCoachingSessionManagement({
       });
 
       if (result.success) {
-        toast.success("Session mise à jour avec succès");
+        toast.success("Session updated successfully");
         setEditDialogOpen(false);
         resetForm();
         loadSessions();
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour de la session");
+      toast.error("Error updating the session");
     }
   };
 
   const handleDelete = async (sessionId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette session ?")) {
+    if (!confirm("Are you sure you want to delete this session?")) {
       return;
     }
 
     try {
       const result = await deleteGroupCoachingSessionAction(sessionId);
       if (result.success) {
-        toast.success("Session supprimée avec succès");
+        toast.success("Session deleted successfully");
         loadSessions();
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
-      toast.error("Erreur lors de la suppression de la session");
+      toast.error("Error deleting the session");
     }
   };
 
@@ -248,7 +248,7 @@ export function GroupCoachingSessionManagement({
                 <RichTextEditor
                   content={formData.description}
                   onChange={(value) => setFormData({ ...formData, description: value })}
-                  placeholder="Décrivez la session (optionnel)..."
+                  placeholder="Describe the session (optional)..."
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -345,7 +345,7 @@ export function GroupCoachingSessionManagement({
                         <div className="flex-1">
                           <CardTitle className="text-base">{session.title}</CardTitle>
                           <CardDescription className="mt-1">
-                            {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'à' HH:mm", {
+                            {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'at' HH:mm", {
                               locale: fr,
                             })}
                           </CardDescription>
@@ -412,7 +412,7 @@ export function GroupCoachingSessionManagement({
                         <div className="flex-1">
                           <CardTitle className="text-base">{session.title}</CardTitle>
                           <CardDescription className="mt-1">
-                            {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'à' HH:mm", {
+                            {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'at' HH:mm", {
                               locale: fr,
                             })}
                           </CardDescription>
@@ -487,7 +487,7 @@ export function GroupCoachingSessionManagement({
               <RichTextEditor
                 content={formData.description}
                 onChange={(value) => setFormData({ ...formData, description: value })}
-                placeholder="Décrivez la session (optionnel)..."
+                placeholder="Describe the session (optional)..."
               />
             </div>
             <div className="grid grid-cols-2 gap-4">

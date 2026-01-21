@@ -100,7 +100,7 @@ export function CourseSidebar({
               size="sm"
               className="ml-auto p-2"
               onClick={() => setIsCollapsed(!isCollapsed)}
-              title={isCollapsed ? "Développer la barre latérale" : "Réduire la barre latérale"}
+              title={isCollapsed ? "Expand the sidebar" : "Collapse the sidebar"}
             >
               {isCollapsed ? (
                 <ChevronRight className="h-4 w-4" />
@@ -200,7 +200,7 @@ export function CourseSidebar({
                 "hover:[&_svg]:scale-110"
               )}
               onClick={() => handleClick("learn")}
-              title="Phase 1 - Apprendre"
+              title="Phase 1 - Learn"
             >
               <BookOpen className="h-4 w-4 transition-transform duration-200" />
             </Button>
@@ -216,10 +216,10 @@ export function CourseSidebar({
               "hover:[&_svg]:scale-110"
             )}
             onClick={() => handleClick("review")}
-            title={!showExpanded ? "Phase 2 - Réviser" : undefined}
+            title={!showExpanded ? "Phase 2 - Review" : undefined}
           >
             <Brain className={cn("h-4 w-4 transition-transform duration-200", showExpanded && "mr-2")} />
-            {showExpanded && "Phase 2 - Réviser"}
+            {showExpanded && "Phase 2 - Review"}
           </Button>
 
           {/* Phase 3 - Pratiquer */}
@@ -283,10 +283,10 @@ export function CourseSidebar({
               "hover:[&_svg]:scale-110"
             )}
             onClick={() => handleClick("progress")}
-            title={!showExpanded ? "Progrès et statistiques" : undefined}
+            title={!showExpanded ? "Progress and statistics" : undefined}
           >
             <BarChart3 className={cn("h-4 w-4 transition-transform duration-200", showExpanded && "mr-2")} />
-            {showExpanded && "Progrès et statistiques"}
+            {showExpanded && "Progress and statistics"}
           </Button>
 
           {showExpanded && <Separator className="my-3 -mx-4" />}

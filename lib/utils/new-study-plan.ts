@@ -78,7 +78,7 @@ function validateAndSetup(
       valid: false,
       omitPhase1: false,
       warnings: [],
-      error: "La date d'examen doit être dans le futur. Veuillez sélectionner une autre date.",
+      error: "The exam date must be in the future. Please select another date.",
     };
   }
 
@@ -88,7 +88,7 @@ function validateAndSetup(
       valid: true,
       omitPhase1: true,
       warnings: [
-        "Moins de 4 semaines avant l'examen. Phase 1 omise. Le plan sera divisé équitablement entre Phase 2 et Phase 3.",
+        "Less than 4 weeks before the exam. Phase 1 omitted. The plan will be divided equally between Phase 2 and Phase 3.",
       ],
     };
   }
@@ -110,7 +110,7 @@ function validateAndSetup(
   // Check long exam date (>15 weeks)
   if (weeksUntilExam > 15) {
     warnings.push(
-      "Considérez 8 à 12 semaines pour de meilleurs résultats. Vous pouvez modifier votre date d'examen ou continuer avec la date actuelle."
+      "Consider 8 to 12 weeks for best results. You can change your exam date or continue with the current date."
     );
   }
 
@@ -149,7 +149,7 @@ function calculatePhase1Requirements(
       weeksForPhase1: 0,
       phase1BlocksPerWeek: 0,
       phase2BlocksPerWeek: 0,
-      warning: "Pas assez de temps pour compléter la Phase 1.",
+      warning: "Not enough time to complete Phase 1.",
     };
   }
 
@@ -622,7 +622,7 @@ export async function generateNewStudyPlan(
   if (modules.length === 0) {
     return {
       blocks: [],
-      warnings: ["Aucun module trouvé dans ce cours"],
+      warnings: ["No module found in this course"],
       minimumStudyTime: 0,
       blocksAvailable: 0,
       meetsMinimum: false,

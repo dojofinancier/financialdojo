@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(tree:*)",
+      "Bash(xargs ls:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}

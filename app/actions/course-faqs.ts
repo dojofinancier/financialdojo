@@ -7,7 +7,7 @@ import { logServerError } from "@/lib/utils/error-logging";
 
 const faqSchema = z.object({
   question: z.string().min(1, "La question est requise"),
-  answer: z.string().min(1, "La réponse est requise"),
+  answer: z.string().min(1, "Answer is required"),
   order: z.number().int().default(0),
 });
 
@@ -35,7 +35,7 @@ export async function getCourseFAQsAction(courseId: string) {
       severity: "MEDIUM",
     });
 
-    return { success: false, error: "Erreur lors de la récupération des FAQ" };
+    return { success: false, error: "Error while retrieving FAQs" };
   }
 }
 
@@ -63,7 +63,7 @@ export async function createCourseFAQAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -73,7 +73,7 @@ export async function createCourseFAQAction(
       severity: "MEDIUM",
     });
 
-    return { success: false, error: "Erreur lors de la création de la FAQ" };
+    return { success: false, error: "Error creating the FAQ" };
   }
 }
 
@@ -99,7 +99,7 @@ export async function updateCourseFAQAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -109,7 +109,7 @@ export async function updateCourseFAQAction(
       severity: "MEDIUM",
     });
 
-    return { success: false, error: "Erreur lors de la mise à jour de la FAQ" };
+    return { success: false, error: "Error updating the FAQ" };
   }
 }
 
@@ -132,7 +132,7 @@ export async function deleteCourseFAQAction(faqId: string): Promise<FAQActionRes
       severity: "MEDIUM",
     });
 
-    return { success: false, error: "Erreur lors de la suppression de la FAQ" };
+    return { success: false, error: "Error deleting the FAQ" };
   }
 }
 
@@ -163,7 +163,7 @@ export async function reorderCourseFAQsAction(
       severity: "MEDIUM",
     });
 
-    return { success: false, error: "Erreur lors du réordonnancement des FAQ" };
+    return { success: false, error: "Error reordering the FAQs" };
   }
 }
 

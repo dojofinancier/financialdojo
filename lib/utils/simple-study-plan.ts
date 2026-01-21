@@ -66,7 +66,7 @@ export async function generateSimpleStudyPlan(
   if (modules.length === 0) {
     return {
       blocks: [],
-      warnings: ["Aucun module trouvé dans ce cours"],
+      warnings: ["No module found in this course"],
       minimumStudyTime: 0,
       blocksAvailable: 0,
       meetsMinimum: false,

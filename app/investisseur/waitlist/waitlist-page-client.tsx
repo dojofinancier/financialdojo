@@ -25,8 +25,8 @@ export function WaitlistPageClient({ type }: WaitlistPageClientProps) {
   const subtitle = type === "investisseur" ? "PARTICULIERS" : "& DIRIGEANTS";
   const description =
     type === "investisseur"
-      ? "Gérez votre patrimoine. Comprenez les marchés. Prenez des décisions éclairées."
-      : "Finance d'entreprise, planification financière, croissance.";
+      ? "Manage your wealth. Understand the markets. Make informed decisions."
+      : "Corporate finance, financial planning, growth.";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,15 +42,15 @@ export function WaitlistPageClient({ type }: WaitlistPageClientProps) {
 
       if (result.success) {
         setIsSuccess(true);
-        toast.success(result.message || "Merci ! Vous avez été ajouté à la liste d'attente.");
+        toast.success(result.message || "Thank you! You have been added to the waiting list.");
         setEmail("");
         setFirstName("");
         setLastName("");
       } else {
-        toast.error(result.error || "Une erreur est survenue.");
+        toast.error(result.error || "An error occurred.");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue. Veuillez réessayer.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

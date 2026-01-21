@@ -48,7 +48,7 @@ async function CourseDetailContent({ params }: CourseDetailPageProps) {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <Link href="/tableau-de-bord/admin?tab=courses">
+        <Link href="/dashboard/admin?tab=courses">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Retour à la liste

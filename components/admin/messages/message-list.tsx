@@ -80,7 +80,7 @@ export function MessageList() {
       setNextCursor(result.nextCursor);
       setHasMore(result.hasMore);
     } catch (error) {
-      toast.error("Erreur lors du chargement des messages");
+      toast.error("Error loading messages");
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ export function MessageList() {
     <div className="space-y-4">
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
         <Input
-          placeholder="Rechercher par sujet ou étudiant..."
+          placeholder="Search by subject or student..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
@@ -176,7 +176,7 @@ export function MessageList() {
                           : format(new Date(thread.updatedAt), "d MMM yyyy", { locale: fr })}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Link href={`/tableau-de-bord/admin/messages/${thread.id}`}>
+                        <Link href={`/dashboard/admin/messages/${thread.id}`}>
                           <Button variant="ghost" size="icon">
                             <Eye className="h-4 w-4" />
                           </Button>

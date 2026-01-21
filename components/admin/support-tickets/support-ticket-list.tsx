@@ -91,7 +91,7 @@ export function SupportTicketList() {
       setNextCursor(result.nextCursor);
       setHasMore(result.hasMore);
     } catch (error) {
-      toast.error("Erreur lors du chargement des tickets");
+      toast.error("Error loading tickets");
     } finally {
       setLoading(false);
     }
@@ -149,7 +149,7 @@ export function SupportTicketList() {
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
         <div className="flex flex-col md:flex-row gap-4 flex-1">
           <Input
-            placeholder="Rechercher par numéro, sujet ou description..."
+            placeholder="Search by number, subject or description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-sm"
@@ -279,7 +279,7 @@ export function SupportTicketList() {
                       {format(new Date(ticket.createdAt), "d MMM yyyy", { locale: fr })}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Link href={`/tableau-de-bord/admin/support-tickets/${ticket.id}`}>
+                      <Link href={`/dashboard/admin/support-tickets/${ticket.id}`}>
                         <Button variant="ghost" size="icon">
                           <Eye className="h-4 w-4" />
                         </Button>

@@ -11,7 +11,7 @@ const messageSchema = z.object({
   threadId: z.string().optional(),
   contentItemId: z.string().optional().nullable(),
   courseId: z.string().optional().nullable(), // For general course questions
-  content: z.string().min(1, "Le message est requis"),
+  content: z.string().min(1, "Message is required"),
   attachments: z.array(z.string()).optional(), // Array of file URLs
 });
 
@@ -33,7 +33,7 @@ export async function sendMessageAction(
     if (user.role !== "STUDENT") {
       return {
         success: false,
-        error: "Seuls les étudiants peuvent envoyer des messages",
+        error: "Only students can send messages",
       };
     }
 
@@ -206,7 +206,7 @@ export async function sendMessageAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -218,7 +218,7 @@ export async function sendMessageAction(
 
     return {
       success: false,
-      error: "Erreur lors de l'envoi du message",
+      error: "Error sending message",
     };
   }
 }
@@ -351,7 +351,7 @@ export async function replyToMessageThreadAction(
     if (user.role !== "ADMIN") {
       return {
         success: false,
-        error: "Seuls les administrateurs peuvent répondre",
+        error: "Only administrators can respond",
       };
     }
 
@@ -499,7 +499,7 @@ export async function replyToMessageThreadAction(
 
     return {
       success: false,
-      error: "Erreur lors de l'envoi de la réponse",
+      error: "Error sending the response",
     };
   }
 }
@@ -811,7 +811,7 @@ export async function updateThreadStatusAction(
     if (user.role !== "ADMIN") {
       return {
         success: false,
-        error: "Accès non autorisé",
+        error: "Unauthorized access",
       };
     }
 
@@ -830,7 +830,7 @@ export async function updateThreadStatusAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour du statut",
+      error: "Error updating status",
     };
   }
 }

@@ -148,7 +148,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
       }
     } catch (error) {
       console.error("Exam loading exception:", error);
-      toast.error("Erreur lors du chargement des examens");
+      toast.error("Error loading exams");
       setExams([]);
     } finally {
       setLoading(false);
@@ -203,7 +203,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
     }
 
     if (!firstModuleId) {
-      toast.error("Aucun module trouvé. Veuillez créer un module d'abord.");
+      toast.error("No modules found. Please create a module first.");
       return;
     }
 
@@ -218,7 +218,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
       });
 
       if (!contentItemResult.success || !contentItemResult.data) {
-        toast.error(contentItemResult.error || "Erreur lors de la création de l'élément de contenu");
+        toast.error(contentItemResult.error || "Error creating the content item");
         return;
       }
 
@@ -234,7 +234,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
     });
 
     if (result.success) {
-      toast.success(editingExam ? "Examen mis à jour" : "Examen créé");
+      toast.success(editingExam ? "Exam updated" : "Exam created");
       setExamDialogOpen(false);
       await loadExams();
       
@@ -245,21 +245,21 @@ export function ExamManager({ courseId }: ExamManagerProps) {
         setQuestionsDialogOpen(true);
       }
     } else {
-      toast.error(result.error || "Erreur lors de la sauvegarde");
+      toast.error(result.error || "Error saving");
     }
   };
 
   const handleDelete = async (examId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cet examen?")) {
+    if (!confirm("Are you sure you want to delete this exam?")) {
       return;
     }
 
     const result = await deleteExamAction(examId);
     if (result.success) {
-      toast.success("Examen supprimé");
+      toast.success("Exam deleted");
       loadExams();
     } else {
-      toast.error(result.error || "Erreur lors de la suppression");
+      toast.error(result.error || "Error while deleting");
     }
   };
 
@@ -277,7 +277,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
       const result = await uploadQuestionsToExamAction(selectedExam.id, fileContent);
 
       if (result.success) {
-        toast.success(`Questions importées avec succès`);
+        toast.success(`Questions imported successfully`);
         setUploadDialogOpen(false);
         await loadExams();
         // Refresh selected exam
@@ -289,11 +289,11 @@ export function ExamManager({ courseId }: ExamManagerProps) {
           }
         }
       } else {
-        toast.error(result.error || "Erreur lors de l'importation");
+        toast.error(result.error || "Error during import");
       }
     } catch (error) {
       console.error("Error uploading CSV:", error);
-      toast.error("Erreur lors de l'importation du fichier");
+      toast.error("Error importing file");
     } finally {
       event.target.value = "";
     }
@@ -328,7 +328,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
     const correctAnswer = correctAnswerMap[questionFormState.correctAnswer] || "option1";
 
     if (!options[correctAnswer]) {
-      toast.error("La réponse correcte doit correspondre à une option valide");
+      toast.error("The correct answer must correspond to a valid option");
       return;
     }
 
@@ -348,7 +348,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
       });
 
       if (result.success) {
-        toast.success("Question ajoutée");
+        toast.success("Question added");
         setQuestionFormState({
           question: "",
           optionA: "",
@@ -367,11 +367,11 @@ export function ExamManager({ courseId }: ExamManagerProps) {
           }
         }
       } else {
-        toast.error(result.error || "Erreur lors de l'ajout");
+        toast.error(result.error || "Error adding");
       }
     } catch (error) {
       console.error("Error adding question:", error);
-      toast.error("Erreur lors de l'ajout de la question");
+      toast.error("Error adding the question");
     }
   };
 
@@ -433,7 +433,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
     const correctAnswer = correctAnswerMap[questionFormState.correctAnswer] || "option1";
 
     if (!options[correctAnswer]) {
-      toast.error("La réponse correcte doit correspondre à une option valide");
+      toast.error("The correct answer must correspond to a valid option");
       return;
     }
 
@@ -445,7 +445,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
       });
 
       if (result.success) {
-        toast.success("Question mise à jour");
+        toast.success("Question updated");
         setQuestionEditDialogOpen(false);
         setEditingQuestion(null);
         await loadExams();
@@ -458,23 +458,23 @@ export function ExamManager({ courseId }: ExamManagerProps) {
           }
         }
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
       console.error("Error updating question:", error);
-      toast.error("Erreur lors de la mise à jour");
+      toast.error("Error updating");
     }
   };
 
   const handleDeleteQuestion = async (questionId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette question ?")) {
+    if (!confirm("Are you sure you want to delete this question?")) {
       return;
     }
 
     try {
       const result = await deleteQuizQuestionAction(questionId);
       if (result.success) {
-        toast.success("Question supprimée");
+        toast.success("Question deleted");
         await loadExams();
         // Refresh selected exam
         if (selectedExam) {
@@ -487,11 +487,11 @@ export function ExamManager({ courseId }: ExamManagerProps) {
           }
         }
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
       console.error("Error deleting question:", error);
-      toast.error("Erreur lors de la suppression");
+      toast.error("Error while deleting");
     }
   };
 
@@ -516,11 +516,11 @@ export function ExamManager({ courseId }: ExamManagerProps) {
           }
         }
       } else {
-        toast.error(result.error || "Erreur lors du nettoyage");
+        toast.error(result.error || "Error during cleaning");
       }
     } catch (error) {
       console.error("Error cleaning up escaped quotes:", error);
-      toast.error("Erreur lors du nettoyage");
+      toast.error("Error during cleaning");
     }
   };
 
@@ -555,11 +555,11 @@ export function ExamManager({ courseId }: ExamManagerProps) {
           console.warn("Import errors:", data.errors);
         }
       } else {
-        toast.error(result.error || "Erreur lors de l'importation");
+        toast.error(result.error || "Error during import");
       }
     } catch (error) {
       console.error("Error importing practice exam:", error);
-      toast.error("Erreur lors de l'importation du fichier");
+      toast.error("Error importing file");
     } finally {
       setImporting(false);
       // Reset file input
@@ -621,7 +621,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                   <Input
                     value={importExamTitle}
                     onChange={(e) => setImportExamTitle(e.target.value)}
-                    placeholder="Laissez vide pour utiliser un titre par défaut"
+                    placeholder="Leave blank to use a default title"
                   />
                   <p className="text-xs text-muted-foreground">
                     Si vide, un titre par défaut sera généré avec la date.
@@ -634,7 +634,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                     onValueChange={(value) => setImportModuleId(value === "none" ? null : value)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un module" />
+                      <SelectValue placeholder="Select a module" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">Utiliser le premier module</SelectItem>
@@ -656,7 +656,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                     onValueChange={(value) => setImportExistingExamId(value === "none" ? null : value)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Créer un nouvel examen" />
+                      <SelectValue placeholder="Create a new exam" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">Créer un nouvel examen</SelectItem>
@@ -688,9 +688,9 @@ export function ExamManager({ courseId }: ExamManagerProps) {
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>{editingExam ? "Modifier l'examen" : "Créer un examen"}</DialogTitle>
+                <DialogTitle>{editingExam ? "Edit the exam" : "Create an exam"}</DialogTitle>
                 <DialogDescription>
-                  {editingExam ? "Modifiez les paramètres de l'examen." : "Étape 1/2 : Configurez les paramètres de l'examen. Vous pourrez ajouter les questions ensuite."}
+                  {editingExam ? "Edit the exam settings." : "Step 1/2: Configure the exam settings. You will be able to add the questions afterwards."}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 mt-4">
@@ -741,7 +741,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                     Annuler
                   </Button>
                   <Button onClick={handleExamSubmit}>
-                    {editingExam ? "Enregistrer" : "Créer et ajouter des questions"}
+                    {editingExam ? "Enregistrer" : "Create and add questions"}
                   </Button>
                 </div>
               </div>
@@ -813,7 +813,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                     variant="outline"
                     size="sm"
                     onClick={() => handleCleanupEscapedQuotes(exam.id)}
-                    title="Nettoyer les guillemets échappés (\\')"
+                    title="Clean escaped quotes (\\\\')"
                   >
                     Nettoyer
                   </Button>

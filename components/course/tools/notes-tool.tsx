@@ -224,7 +224,7 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
         <div className="flex items-center gap-3">
           <Select value={selectedModuleId || ""} onValueChange={setSelectedModuleId}>
             <SelectTrigger className="w-[250px]">
-              <SelectValue placeholder="Sélectionner un module" />
+              <SelectValue placeholder="Select a module" />
             </SelectTrigger>
             <SelectContent>
               {modules.map((module) => (

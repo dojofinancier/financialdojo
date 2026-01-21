@@ -83,7 +83,7 @@ export function CourseList() {
       setNextCursor(result.nextCursor);
       setHasMore(result.hasMore);
     } catch (error) {
-      toast.error("Erreur lors du chargement des cours");
+      toast.error("Error loading courses");
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,7 @@ export function CourseList() {
       const cats = await getCourseCategoriesAction();
       setCategories(cats);
     } catch (error) {
-      toast.error("Erreur lors du chargement des catégories");
+      toast.error("Error loading categories");
     }
   }, []);
 
@@ -118,15 +118,15 @@ export function CourseList() {
     try {
       const result = await deleteCourseAction(courseToDelete);
       if (result.success) {
-        toast.success("Cours supprimé avec succès");
+        toast.success("Course deleted successfully");
         setCourses((prev) => prev.filter((c) => c.id !== courseToDelete));
         setDeleteDialogOpen(false);
         setCourseToDelete(null);
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
-      toast.error("Erreur lors de la suppression du cours");
+      toast.error("Error deleting the course");
     }
   };
 
@@ -151,13 +151,13 @@ export function CourseList() {
     });
 
     const csv = [
-      ["Titre", "Catégorie", "Prix", "Type de paiement", "Publié", "Étudiants", "Modules", "Date de création"].join(","),
+      ["Titre", "Category", "Prix", "Payment type", "Published", "Students", "Modules", "Creation date"].join(","),
       ...sortedCourses.map((course) =>
         [
           `"${course.title}"`,
           `"${course.category.name}"`,
           Number(course.price).toFixed(2),
-          course.paymentType === "ONE_TIME" ? "Paiement unique" : "Abonnement",
+          course.paymentType === "ONE_TIME" ? "One-time payment" : "Abonnement",
           course.published ? "Oui" : "Non",
           course._count.enrollments,
           course._count.modules,
@@ -203,7 +203,7 @@ export function CourseList() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Rechercher un cours..."
+              placeholder="Search for a course..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8"
@@ -211,7 +211,7 @@ export function CourseList() {
           </div>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Catégorie" />
+              <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Toutes les catégories</SelectItem>
@@ -238,7 +238,7 @@ export function CourseList() {
             <Download className="h-4 w-4 mr-2" />
             Exporter CSV
           </Button>
-          <Button onClick={() => router.push("/tableau-de-bord/admin/courses?tab=create")} size="sm">
+          <Button onClick={() => router.push("/dashboard/admin/courses?tab=create")} size="sm">
             <Plus className="h-4 w-4 mr-2" />
             Nouveau cours
           </Button>
@@ -333,7 +333,7 @@ export function CourseList() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={course.published ? "default" : "secondary"}>
-                      {course.published ? "Publié" : "Brouillon"}
+                      {course.published ? "Published" : "Brouillon"}
                     </Badge>
                   </TableCell>
                   <TableCell>{course._count.enrollments}</TableCell>
@@ -350,13 +350,13 @@ export function CourseList() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                          onClick={() => router.push(`/tableau-de-bord/admin/courses/${course.id}/preview`)}
+                          onClick={() => router.push(`/dashboard/admin/courses/${course.id}/preview`)}
                         >
                           <Eye className="h-4 w-4 mr-2" />
                           Voir (aperçu étudiant)
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => router.push(`/tableau-de-bord/admin/courses/${course.id}`)}
+                          onClick={() => router.push(`/dashboard/admin/courses/${course.id}`)}
                         >
                           <Edit className="h-4 w-4 mr-2" />
                           Modifier

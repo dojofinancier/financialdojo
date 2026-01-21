@@ -19,7 +19,7 @@ export default function LearnError({
   useEffect(() => {
     // Log error to database via server action
     logClientErrorAction({
-      errorMessage: error.message || "Erreur lors du chargement du cours",
+      errorMessage: error.message || "Error loading course",
       stackTrace: error.stack || undefined,
       url: typeof window !== "undefined" ? window.location.href : undefined,
       userAgent: typeof window !== "undefined" ? window.navigator.userAgent : undefined,
@@ -69,7 +69,7 @@ export default function LearnError({
               Réessayer
             </Button>
             <Button
-              onClick={() => router.push("/tableau-de-bord/etudiant")}
+              onClick={() => router.push("/dashboard/student")}
               className="flex-1"
               variant="outline"
             >

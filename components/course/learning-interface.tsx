@@ -137,7 +137,7 @@ export function CourseLearningInterface({
     setSelectedContentItemId(contentItemId);
     setSidebarOpen(false);
     if (!previewMode) {
-      router.push(`/apprendre/${course.slug || course.id}?contentItemId=${contentItemId}`, { scroll: false });
+      router.push(`/learn/${course.slug || course.id}?contentItemId=${contentItemId}`, { scroll: false });
     }
   };
 
@@ -222,7 +222,7 @@ export function CourseLearningInterface({
                   variant="outline"
                   className="w-full justify-start border-primary/20 hover:bg-primary/10"
                   onClick={() => {
-                    router.push(`/apprendre/${course.slug || course.id}/poser-question`);
+                    router.push(`/learn/${course.slug || course.id}/ask-question`);
                   }}
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -299,7 +299,7 @@ export function CourseLearningInterface({
                     className="w-full justify-start border-primary/20 hover:bg-primary/10"
                     onClick={() => {
                       setSidebarOpen(false);
-                      router.push(`/apprendre/${course.slug || course.id}/poser-question`);
+                      router.push(`/learn/${course.slug || course.id}/ask-question`);
                     }}
                   >
                     <MessageCircle className="mr-2 h-4 w-4" />

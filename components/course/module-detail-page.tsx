@@ -154,15 +154,15 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
       const result = await saveStudentModuleNoteAction(moduleId, studentNote);
       if (result.success) {
         setNoteSaved(true);
-        toast.success("Note sauvegardée");
+        toast.success("Note saved");
         // Reset the saved indicator after 2 seconds
         setTimeout(() => setNoteSaved(false), 2000);
       } else {
-        toast.error(result.error || "Erreur lors de la sauvegarde");
+        toast.error(result.error || "Error saving");
       }
     } catch (error) {
       console.error("Error saving note:", error);
-      toast.error("Erreur lors de la sauvegarde");
+      toast.error("Error saving");
     } finally {
       setSavingNote(false);
     }
@@ -179,11 +179,11 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
         setQuizzes(result.data.quizzes);
         setProgress(result.data.progress);
       } else {
-        toast.error(result.error || "Erreur lors du chargement du module");
+        toast.error(result.error || "Error loading the module");
       }
     } catch (error) {
       console.error("Error loading module content:", error);
-      toast.error("Erreur lors du chargement du module");
+      toast.error("Error loading the module");
     } finally {
       setLoading(false);
     }
@@ -249,7 +249,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
   };
 
   const handleMarkAsComplete = async () => {
-    if (!confirm("Voulez-vous marquer ce module comme complété ?")) {
+    if (!confirm("Do you want to mark this module as completed?")) {
       return;
     }
 
@@ -257,14 +257,14 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     try {
       const result = await markModuleAsLearnedAction(courseId, moduleId);
       if (result.success) {
-        toast.success("Module marqué comme complété !");
+        toast.success("Module marked as completed!");
         await loadModuleContent(); // Reload to update progress
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
       console.error("Error marking module as complete:", error);
-      toast.error("Erreur lors de la mise à jour");
+      toast.error("Error updating");
     } finally {
       setMarkingComplete(false);
     }
@@ -329,7 +329,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
 
   const handleSubmitQuiz = async (quiz: Quiz) => {
     if (!quizAnswers[quiz.quiz.id] || Object.keys(quizAnswers[quiz.quiz.id]).length === 0) {
-      toast.error("Veuillez répondre à toutes les questions");
+      toast.error("Please answer all questions");
       return;
     }
 
@@ -338,7 +338,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
       (q) => quizAnswers[quiz.quiz.id]?.[q.id]
     );
     if (!allAnswered) {
-      toast.error("Veuillez répondre à toutes les questions");
+      toast.error("Please answer all questions");
       return;
     }
 
@@ -360,11 +360,11 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
         // Reload attempts to show the new submission
         await loadQuizAttempts();
       } else {
-        toast.error(result.error || "Erreur lors de la soumission");
+        toast.error(result.error || "Error during submission");
       }
     } catch (error) {
       console.error("Error submitting quiz:", error);
-      toast.error("Erreur lors de la soumission");
+      toast.error("Error during submission");
     } finally {
       setSubmittingQuiz(null);
     }
@@ -816,7 +816,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
           <Textarea
             value={studentNote}
             onChange={(e) => setStudentNote(e.target.value)}
-            placeholder="Prenez vos notes ici pendant que vous étudiez ce module..."
+            placeholder="Take your notes here while you study this module..."
             className="min-h-[120px] resize-y"
             rows={5}
           />

@@ -26,11 +26,11 @@ export function UserMenu({ user }: UserMenuProps) {
   const handleSignOut = async () => {
     try {
       await logoutAction()
-      toast.success("Déconnexion réussie")
+      toast.success("Logout successful")
       // Use hard redirect to ensure immediate navigation
       window.location.href = "/login"
     } catch (error) {
-      toast.error("Erreur lors de la déconnexion")
+      toast.error("Error logging out")
     }
   }
 
@@ -55,7 +55,7 @@ export function UserMenu({ user }: UserMenuProps) {
       case 'ADMIN':
         return 'Administrateur'
       case 'STUDENT':
-        return 'Étudiant'
+        return 'Student'
       case 'INSTRUCTOR':
         return 'Instructeur'
       default:

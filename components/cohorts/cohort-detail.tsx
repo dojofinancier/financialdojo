@@ -79,11 +79,11 @@ export function CohortDetail({ cohort, isEnrolled, enrollment }: CohortDetailPro
 
   const handleAddToCart = () => {
     if (!cohort.isEnrollmentOpen) {
-      toast.error("Les inscriptions sont fermées pour cette cohorte");
+      toast.error("Registrations are closed for this cohort");
       return;
     }
     if (cohort.spotsRemaining <= 0) {
-      toast.error("Cette cohorte est complète");
+      toast.error("This cohort is full");
       return;
     }
     
@@ -94,23 +94,23 @@ export function CohortDetail({ cohort, isEnrolled, enrollment }: CohortDetailPro
       title: cohort.title,
       price: cohort.price,
     });
-    toast.success("Ajouté au panier");
+    toast.success("Added to cart");
     setInCart(true);
     // Redirect to cart page
-    router.push("/panier");
+    router.push("/cart");
   };
 
   const handleGoToCart = () => {
-    router.push("/panier");
+    router.push("/cart");
   };
 
   const handleContinue = () => {
-    router.push(`/cohorte/${cohort.slug || cohort.id}/apprendre`);
+    router.push(`/cohorts/${cohort.slug || cohort.id}/learn`);
   };
 
   const instructorName = cohort.instructor
     ? `${cohort.instructor.firstName || ""} ${cohort.instructor.lastName || ""}`.trim() || cohort.instructor.email
-    : "Instructeur non assigné";
+    : "Instructor not assigned";
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">

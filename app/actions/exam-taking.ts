@@ -113,7 +113,7 @@ export async function getAvailableExamsAction(courseId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du chargement des examens",
+      error: "Error loading exams",
     };
   }
 }
@@ -186,7 +186,7 @@ export async function getExamForTakingAction(examId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du chargement de l'examen",
+      error: "Error loading the exam",
     };
   }
 }
@@ -245,7 +245,7 @@ export async function saveExamAnswersAction(
 
     return {
       success: false,
-      error: "Erreur lors de la sauvegarde",
+      error: "Error saving",
     };
   }
 }
@@ -368,7 +368,7 @@ export async function submitExamAction(
 
     return {
       success: false,
-      error: "Erreur lors de la soumission de l'examen",
+      error: "Error submitting the exam",
     };
   }
 }
@@ -413,7 +413,7 @@ export async function getExamAttemptAction(attemptId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du chargement de la tentative",
+      error: "Error loading the attempt",
     };
   }
 }

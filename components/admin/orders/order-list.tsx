@@ -84,7 +84,7 @@ export function OrderList() {
       setNextCursor(result.nextCursor);
       setHasMore(result.hasMore);
     } catch (error) {
-      toast.error("Erreur lors du chargement des commandes");
+      toast.error("Error loading orders");
     } finally {
       setLoading(false);
     }
@@ -105,9 +105,9 @@ export function OrderList() {
       });
       
       exportOrdersToCSV(result.items);
-      toast.success("Export CSV généré");
+      toast.success("CSV export generated");
     } catch (error) {
-      toast.error("Erreur lors de l'export");
+      toast.error("Error exporting");
     }
   };
 
@@ -151,7 +151,7 @@ export function OrderList() {
     <div className="space-y-4">
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
         <Input
-          placeholder="Rechercher par étudiant, cours ou ID de paiement..."
+          placeholder="Search by student, course or payment ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
@@ -248,7 +248,7 @@ export function OrderList() {
                       </TableCell>
                       <TableCell>{getStatusBadge(order)}</TableCell>
                       <TableCell className="text-right">
-                        <Link href={`/tableau-de-bord/admin/orders/${order.id}`}>
+                        <Link href={`/dashboard/admin/orders/${order.id}`}>
                           <Button variant="ghost" size="icon">
                             <Eye className="h-4 w-4" />
                           </Button>

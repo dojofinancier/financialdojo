@@ -42,12 +42,12 @@ export function ConfirmResetPasswordClient() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Les mots de passe ne correspondent pas");
+      toast.error("Passwords do not match");
       return;
     }
 
     if (password.length < 6) {
-      toast.error("Le mot de passe doit contenir au moins 6 caractères");
+      toast.error("Password must contain at least 6 characters");
       return;
     }
 
@@ -57,17 +57,17 @@ export function ConfirmResetPasswordClient() {
       const result = await updatePasswordAction(password);
 
       if (result.success) {
-        toast.success("Mot de passe mis à jour avec succès!");
+        toast.success("Password updated successfully!");
         router.push("/login");
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour du mot de passe");
+        toast.error(result.error || "Error updating password");
         // If server says session missing, send user back to request a fresh link.
         if ((result.error || "").toLowerCase().includes("session")) {
           router.push("/reset-password");
         }
       }
     } catch {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -143,7 +143,7 @@ export function ConfirmResetPasswordClient() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Mise à jour..." : "Mettre à jour le mot de passe"}
+              {isLoading ? "Updating..." : "Update password"}
             </Button>
           </form>
         </CardContent>

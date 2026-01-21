@@ -42,7 +42,7 @@ export async function createGroupCoachingSessionAction(
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -50,7 +50,7 @@ export async function createGroupCoachingSessionAction(
     if (user.role === "INSTRUCTOR" && cohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de créer une session pour cette cohorte",
+        error: "You do not have permission to create a session for this cohort",
       };
     }
 
@@ -71,7 +71,7 @@ export async function createGroupCoachingSessionAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -83,7 +83,7 @@ export async function createGroupCoachingSessionAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création de la session",
+      error: "Error creating the session",
     };
   }
 }
@@ -117,7 +117,7 @@ export async function updateGroupCoachingSessionAction(
     if (user.role === "INSTRUCTOR" && existingSession.cohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de modifier cette session",
+        error: "You do not have permission to edit this session",
       };
     }
 
@@ -141,7 +141,7 @@ export async function updateGroupCoachingSessionAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -153,7 +153,7 @@ export async function updateGroupCoachingSessionAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de la session",
+      error: "Error updating the session",
     };
   }
 }
@@ -186,7 +186,7 @@ export async function deleteGroupCoachingSessionAction(
     if (user.role === "INSTRUCTOR" && existingSession.cohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de supprimer cette session",
+        error: "You do not have permission to delete this session",
       };
     }
 
@@ -204,7 +204,7 @@ export async function deleteGroupCoachingSessionAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de la session",
+      error: "Error deleting the session",
     };
   }
 }
@@ -241,7 +241,7 @@ export async function getGroupCoachingSessionsAction(
 
     return {
       success: false,
-      error: "Erreur lors de la récupération des sessions",
+      error: "Error retrieving sessions",
     };
   }
 }
@@ -284,7 +284,7 @@ export async function getGroupCoachingSessionAction(
 
     return {
       success: false,
-      error: "Erreur lors de la récupération de la session",
+      error: "Error retrieving the session",
     };
   }
 }

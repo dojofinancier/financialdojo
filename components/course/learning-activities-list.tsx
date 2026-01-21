@@ -16,13 +16,13 @@ interface LearningActivitiesListProps {
 }
 
 const ACTIVITY_TYPE_LABELS: Record<string, string> = {
-  SHORT_ANSWER: "Réponse courte",
-  FILL_IN_BLANK: "Texte à trous",
+  SHORT_ANSWER: "Short answer",
+  FILL_IN_BLANK: "Fill-in-the-blank",
   SORTING_RANKING: "Tri / Classement",
   CLASSIFICATION: "Classification",
-  NUMERIC_ENTRY: "Calcul numérique",
-  TABLE_COMPLETION: "Tableau à compléter",
-  ERROR_SPOTTING: "Détection d'erreur",
+  NUMERIC_ENTRY: "Numeric calculation",
+  TABLE_COMPLETION: "Table to complete",
+  ERROR_SPOTTING: "Error detection",
   DEEP_DIVE: "Approfondissement",
 };
 
@@ -98,7 +98,7 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
         setActivityStates(newActivityStates);
       }
     } else if (activitiesResult && !activitiesResult.success) {
-      toast.error(activitiesResult.error || "Erreur lors du chargement des activités");
+      toast.error(activitiesResult.error || "Error loading activities");
       setAllActivities([]);
     }
   }, [activitiesResult]);
@@ -160,7 +160,7 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
     if (currentIndex < activities.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      toast.success("Toutes les activités ont été complétées!");
+      toast.success("All activities have been completed!");
       // Optionally reshuffle and restart
       if (randomMode) {
         filterActivities();
@@ -379,18 +379,18 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
             </SelectContent>
           </Select>
         </div>
-        <Button variant="outline" onClick={handleShuffle} size="icon" title="Mélanger">
+        <Button variant="outline" onClick={handleShuffle} size="icon" title="Shuffle">
           <Shuffle className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
           onClick={() => {
-            if (confirm("Êtes-vous sûr de vouloir réinitialiser toutes les réponses ? Cette action ne peut pas être annulée.")) {
+            if (confirm("Are you sure you want to reset all answers? This action cannot be undone.")) {
               setActivityStates({});
-              toast.success("Toutes les réponses ont été réinitialisées");
+              toast.success("All answers have been reset");
             }
           }}
-          title="Réinitialiser toutes les réponses"
+          title="Reset all answers"
         >
           Réinitialiser tout
         </Button>

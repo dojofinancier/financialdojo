@@ -45,7 +45,7 @@ export async function resolveErrorAction(errorId: string) {
   } catch (error) {
     return {
       success: false,
-      error: "Erreur lors de la résolution de l'erreur",
+      error: "Error resolving the error",
     };
   }
 }

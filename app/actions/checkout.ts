@@ -72,7 +72,7 @@ export async function createCheckoutUserAction(
         if (signInError) {
           return {
             success: false,
-            error: "Cet email existe déjà. Veuillez vous connecter ou utiliser un autre email.",
+            error: "This email already exists. Please log in or use another email.",
           };
         }
         
@@ -95,7 +95,7 @@ export async function createCheckoutUserAction(
     if (!data.user) {
       return {
         success: false,
-        error: "Erreur lors de la création du compte",
+        error: "Error while creating the account",
       };
     }
 
@@ -115,7 +115,7 @@ export async function createCheckoutUserAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du compte",
+      error: "Error while creating the account",
     };
   }
 }
@@ -139,14 +139,14 @@ export async function createCheckoutPaymentIntentAction(
     if (!courseId && !cohortId) {
       return {
         success: false,
-        error: "Un cours ou une cohorte doit être spécifié",
+        error: "A course or a cohort must be specified",
       };
     }
     
     if (courseId && cohortId) {
       return {
         success: false,
-        error: "Un seul cours ou une seule cohorte peut être acheté à la fois",
+        error: "Only one course or one cohort can be purchased at a time",
       };
     }
 
@@ -177,7 +177,7 @@ export async function createCheckoutPaymentIntentAction(
       if (!password) {
         return {
           success: false,
-          error: "Un mot de passe est requis pour créer un compte",
+          error: "A password is required to create an account",
         };
       }
       
@@ -212,7 +212,7 @@ export async function createCheckoutPaymentIntentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la préparation du paiement",
+      error: "Error while preparing the payment",
     };
   } catch (error) {
     await logServerError({
@@ -223,7 +223,7 @@ export async function createCheckoutPaymentIntentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la préparation du paiement",
+      error: "Error while preparing the payment",
     };
   }
 }

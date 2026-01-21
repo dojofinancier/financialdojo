@@ -31,7 +31,7 @@ async function CoursePreviewContent({
       <div className="border-b bg-background sticky top-0 z-10">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/tableau-de-bord/admin?tab=courses">
+            <Link href="/dashboard/admin?tab=courses">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Retour à la liste
@@ -42,7 +42,7 @@ async function CoursePreviewContent({
               <p className="text-sm text-muted-foreground">{result.data.title}</p>
             </div>
           </div>
-          <Link href={`/tableau-de-bord/admin/courses/${courseId}`}>
+          <Link href={`/dashboard/admin/courses/${courseId}`}>
             <Button variant="outline" size="sm">
               Mode édition
             </Button>

@@ -62,21 +62,21 @@ export async function validateCourseAccess(
     if (user?.suspendedAt) {
       return {
         hasAccess: false,
-        reason: "Votre compte a été suspendu",
+        reason: "Your account has been suspended",
       };
     }
 
     if (!course) {
       return {
         hasAccess: false,
-        reason: "Cours introuvable",
+        reason: "Course not found",
       };
     }
 
     if (!course.published) {
       return {
         hasAccess: false,
-        reason: "Ce cours n'est pas encore publié",
+        reason: "This course is not yet published",
       };
     }
 
@@ -122,7 +122,7 @@ export async function validateCourseAccess(
       if (!enrollment) {
         return {
           hasAccess: false,
-          reason: "Vous n'êtes pas inscrit à ce cours ou votre accès a expiré",
+          reason: "You are not enrolled in this course or your access has expired",
         };
       }
 
@@ -149,7 +149,7 @@ export async function validateCourseAccess(
       if (!subscription) {
         return {
           hasAccess: false,
-          reason: "Votre abonnement n'est pas actif ou a expiré",
+          reason: "Your subscription is not active or has expired",
         };
       }
 
@@ -162,13 +162,13 @@ export async function validateCourseAccess(
 
     return {
       hasAccess: false,
-      reason: "Type de paiement non supporté",
+      reason: "Payment type not supported",
     };
   } catch (error) {
     console.error("Error validating course access:", error);
     return {
       hasAccess: false,
-      reason: "Erreur lors de la vérification de l'accès",
+      reason: "Error verifying access",
     };
   }
 }
@@ -199,7 +199,7 @@ export async function validateContentAccess(
     console.error("Error validating content access:", error);
     return {
       hasAccess: false,
-      reason: "Erreur lors de la vérification de l'accès",
+      reason: "Error verifying access",
     };
   }
 }

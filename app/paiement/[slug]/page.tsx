@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { PaiementSlugClient } from "./paiement-slug-client";
+import { PaiementSlugClient } from "./payment-slug-client";
 
 export default function PaiementSlugPage() {
   return (

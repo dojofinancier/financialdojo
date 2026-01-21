@@ -210,7 +210,7 @@ export async function suspendStudentAction(studentId: string) {
 
     return {
       success: false,
-      error: "Erreur lors de la suspension du compte",
+      error: "Error suspending the account",
     };
   }
 }
@@ -238,7 +238,7 @@ export async function activateStudentAction(studentId: string) {
 
     return {
       success: false,
-      error: "Erreur lors de l'activation du compte",
+      error: "Error activating the account",
     };
   }
 }

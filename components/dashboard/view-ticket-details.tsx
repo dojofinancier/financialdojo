@@ -101,14 +101,14 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
       });
 
       if (result.success) {
-        toast.success("Réponse envoyée avec succès!");
+        toast.success("Response sent successfully!");
         setReplyMessage("");
         router.refresh();
       } else {
-        toast.error(result.error || "Erreur lors de l'envoi de la réponse");
+        toast.error(result.error || "Error sending the response");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -123,7 +123,7 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
             <div>
               <CardTitle>{ticket.subject}</CardTitle>
               <CardDescription className="mt-2">
-                Créé le {format(new Date(ticket.createdAt), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
+                Créé le {format(new Date(ticket.createdAt), "d MMMM yyyy 'at' HH:mm", { locale: fr })}
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -162,7 +162,7 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
         <CardHeader>
           <CardTitle>Conversation</CardTitle>
           <CardDescription>
-            {ticket.replies.length} {ticket.replies.length === 1 ? "réponse" : "réponses"}
+            {ticket.replies.length} {ticket.replies.length === 1 ? "response" : "responses"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -176,7 +176,7 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
                 <Badge variant="outline">Étudiant</Badge>
               </div>
               <span className="text-xs text-muted-foreground">
-                {format(new Date(ticket.createdAt), "d MMM yyyy 'à' HH:mm", { locale: fr })}
+                {format(new Date(ticket.createdAt), "d MMM yyyy 'at' HH:mm", { locale: fr })}
               </span>
             </div>
             <p className="text-muted-foreground whitespace-pre-wrap">{ticket.description}</p>
@@ -196,11 +196,11 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
                     {reply.author.firstName} {reply.author.lastName}
                   </span>
                   <Badge variant={reply.authorRole === "ADMIN" ? "default" : "outline"}>
-                    {reply.authorRole === "ADMIN" ? "Administrateur" : "Étudiant"}
+                    {reply.authorRole === "ADMIN" ? "Administrateur" : "Student"}
                   </Badge>
                 </div>
                 <span className="text-xs text-muted-foreground">
-                  {format(new Date(reply.createdAt), "d MMM yyyy 'à' HH:mm", { locale: fr })}
+                  {format(new Date(reply.createdAt), "d MMM yyyy 'at' HH:mm", { locale: fr })}
                 </span>
               </div>
               <p className="text-muted-foreground whitespace-pre-wrap">{reply.message}</p>
@@ -216,7 +216,7 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
                   id="reply"
                   value={replyMessage}
                   onChange={(e) => setReplyMessage(e.target.value)}
-                  placeholder="Tapez votre réponse..."
+                  placeholder="Type your response..."
                   rows={4}
                   disabled={isSubmitting}
                 />

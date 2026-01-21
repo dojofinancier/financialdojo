@@ -24,7 +24,7 @@ export default async function AskQuestionRoute({ params }: AskQuestionPageProps)
 
     if (!courseResult.success || !courseResult.data) {
       // Redirect back to course if access denied
-      redirect(`/apprendre/${slug}`);
+      redirect(`/learn/${slug}`);
     }
 
     return (
@@ -35,7 +35,7 @@ export default async function AskQuestionRoute({ params }: AskQuestionPageProps)
     );
   } catch (error) {
     console.error("Error in AskQuestionRoute:", error);
-    redirect(`/apprendre/${slug}`);
+    redirect(`/learn/${slug}`);
   }
 }
 

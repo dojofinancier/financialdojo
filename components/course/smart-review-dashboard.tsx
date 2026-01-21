@@ -50,7 +50,7 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
       const result = await getNextReviewItemAction(courseId);
       
       if (!result.success || !result.data) {
-        toast.error(result.error || "Aucun item disponible pour la révision");
+        toast.error(result.error || "No items available for review");
         return;
       }
 
@@ -58,7 +58,7 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
       setIsReviewing(true);
     } catch (error) {
       console.error("Error starting review:", error);
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsStarting(false);
     }
@@ -69,7 +69,7 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
       const result = await getNextReviewItemAction(courseId);
       
       if (!result.success || !result.data) {
-        toast.info("Vous avez révisé tous les items disponibles !");
+        toast.info("You have reviewed all available items!");
         setIsReviewing(false);
         setCurrentItem(null);
         loadStats(); // Refresh stats
@@ -79,7 +79,7 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
       setCurrentItem(result.data);
     } catch (error) {
       console.error("Error getting next item:", error);
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     }
   };
 
@@ -164,7 +164,7 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
             disabled={isStarting || isLoading || !hasCompletedChapters}
           >
             <Play className="h-4 w-4 mr-2" />
-            {isStarting ? "Chargement..." : "Commencer la révision"}
+            {isStarting ? "Chargement..." : "Start review"}
           </Button>
 
           {!hasCompletedChapters && !isLoading && (

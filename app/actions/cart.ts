@@ -29,14 +29,14 @@ export async function addCourseToCartAction(courseId: string): Promise<CartActio
     if (!course) {
       return {
         success: false,
-        error: "Cours introuvable",
+        error: "Course not found",
       };
     }
 
     if (!course.published) {
       return {
         success: false,
-        error: "Ce cours n'est pas encore disponible",
+        error: "This course is not yet available",
       };
     }
 
@@ -61,7 +61,7 @@ export async function addCourseToCartAction(courseId: string): Promise<CartActio
     if (existingEnrollment) {
       return {
         success: false,
-        error: "Vous êtes déjà inscrit à ce cours",
+        error: "You are already enrolled in this course",
       };
     }
 
@@ -84,7 +84,7 @@ export async function addCourseToCartAction(courseId: string): Promise<CartActio
 
     return {
       success: false,
-      error: "Erreur lors de l'ajout au panier",
+      error: "Error adding to cart",
     };
   }
 }
@@ -112,14 +112,14 @@ export async function addCohortToCartAction(cohortId: string): Promise<CartActio
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
     if (!cohort.published) {
       return {
         success: false,
-        error: "Cette cohorte n'est pas encore disponible",
+        error: "This cohort is not yet available",
       };
     }
 
@@ -128,7 +128,7 @@ export async function addCohortToCartAction(cohortId: string): Promise<CartActio
     if (cohort.enrollmentClosingDate < easternNow) {
       return {
         success: false,
-        error: "Les inscriptions pour cette cohorte sont fermées",
+        error: "Registrations for this cohort are closed",
       };
     }
 
@@ -146,7 +146,7 @@ export async function addCohortToCartAction(cohortId: string): Promise<CartActio
     if (existingEnrollment) {
       return {
         success: false,
-        error: "Vous êtes déjà inscrit à cette cohorte",
+        error: "You are already enrolled in this cohort",
       };
     }
 
@@ -169,7 +169,7 @@ export async function addCohortToCartAction(cohortId: string): Promise<CartActio
 
     return {
       success: false,
-      error: "Erreur lors de l'ajout au panier",
+      error: "Error adding to cart",
     };
   }
 }
@@ -198,7 +198,7 @@ export async function validateCartCouponAction(
     if (!course) {
       return {
         success: false,
-        error: "Cours introuvable",
+        error: "Course not found",
       };
     }
 
@@ -218,7 +218,7 @@ export async function validateCartCouponAction(
 
     return {
       success: false,
-      error: "Erreur lors de la validation du coupon",
+      error: "Error validating coupon",
     };
   }
 }

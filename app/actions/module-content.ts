@@ -190,7 +190,7 @@ export async function getModuleContentAction(moduleId: string): Promise<ModuleCo
 
     return {
       success: false,
-      error: "Erreur lors du chargement du contenu du module",
+      error: "Error loading module content",
     };
   }
 }
@@ -320,7 +320,7 @@ export async function getBatchModuleContentAction(
 
     return {
       success: false,
-      error: "Erreur lors du chargement du contenu des modules",
+      error: "Error loading modules content",
     };
   }
 }

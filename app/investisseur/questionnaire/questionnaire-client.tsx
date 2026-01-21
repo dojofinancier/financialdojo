@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { INVESTISSEUR_QUESTIONS, computeInvestisseurResult } from "@/lib/constants/investisseur-diagnostic";
-import { submitInvestisseurDiagnosticAction } from "@/app/actions/investisseur-diagnostic";
+import { INVESTISSEUR_QUESTIONS, computeInvestisseurResult } from "@/lib/constants/investor-diagnostic";
+import { submitInvestisseurDiagnosticAction } from "@/app/actions/investor-diagnostic";
 import { toast } from "sonner";
 
 function clamp(n: number, min: number, max: number) {
@@ -63,7 +63,7 @@ export function QuestionnaireClient() {
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12">
         {/* Standalone nav row */}
         <div className="mb-6 flex items-center justify-between">
-          <Link href="/investisseur" className="text-sm font-semibold text-neutral-700 hover:underline underline-offset-4">
+          <Link href="/investor" className="text-sm font-semibold text-neutral-700 hover:underline underline-offset-4">
             ← Retour à la page
           </Link>
           <Link href="/" className="text-sm font-black tracking-tight">
@@ -138,7 +138,7 @@ export function QuestionnaireClient() {
                   <p className="mt-4 text-xs text-neutral-600">
                     Confiance:{" "}
                     <span className="font-semibold">
-                      {result.confidence === "high" ? "élevée" : result.confidence === "medium" ? "moyenne" : "faible"}
+                      {result.confidence === "high" ? "high" : result.confidence === "medium" ? "moyenne" : "faible"}
                     </span>
                   </p>
                 </div>
@@ -205,12 +205,12 @@ export function QuestionnaireClient() {
 
                     if (submit.success) {
                       setHasSubmitted(true);
-                      toast.success("Merci! Vérifie ton email pour recevoir ton rapport.");
+                      toast.success("Thank you! Check your email to receive your report.");
                     } else {
-                      toast.error(submit.error || "Erreur lors de l’envoi.");
+                      toast.error(submit.error || "Error sending.");
                     }
                   } catch (e) {
-                    toast.error(e instanceof Error ? e.message : "Erreur lors de l’envoi.");
+                    toast.error(e instanceof Error ? e.message : "Error sending.");
                   } finally {
                     setIsSubmitting(false);
                   }

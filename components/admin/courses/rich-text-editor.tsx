@@ -30,7 +30,7 @@ interface RichTextEditorProps {
 export function RichTextEditor({
   content,
   onChange,
-  placeholder = "Commencez à écrire...",
+  placeholder = "Start typing...",
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -229,7 +229,7 @@ export function RichTextEditor({
           variant={editor.isActive("table") ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
-          title="Insérer un tableau"
+          title="Insert a table"
         >
           <TableIcon className="h-4 w-4" />
         </Button>
@@ -240,7 +240,7 @@ export function RichTextEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().addColumnBefore().run()}
-              title="Ajouter une colonne avant"
+              title="Add a column before"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -249,7 +249,7 @@ export function RichTextEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().addColumnAfter().run()}
-              title="Ajouter une colonne après"
+              title="Add a column after"
             >
               <Plus className="h-4 w-4 rotate-90" />
             </Button>
@@ -258,7 +258,7 @@ export function RichTextEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().deleteColumn().run()}
-              title="Supprimer la colonne"
+              title="Delete the column"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -267,7 +267,7 @@ export function RichTextEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().addRowBefore().run()}
-              title="Ajouter une ligne avant"
+              title="Add a row before"
             >
               <Plus className="h-4 w-4 rotate-90" />
             </Button>
@@ -276,7 +276,7 @@ export function RichTextEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().addRowAfter().run()}
-              title="Ajouter une ligne après"
+              title="Add a row after"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -285,7 +285,7 @@ export function RichTextEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().deleteRow().run()}
-              title="Supprimer la ligne"
+              title="Delete the row"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -294,7 +294,7 @@ export function RichTextEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().deleteTable().run()}
-              title="Supprimer le tableau"
+              title="Delete the table"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

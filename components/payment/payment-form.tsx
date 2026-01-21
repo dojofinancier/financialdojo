@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import type { StripeCardElementChangeEvent } from "@stripe/stripe-js";
-import { createCheckoutPaymentIntentAction } from "@/app/actions/checkout";
+import { createCheckoutPaymentIntentAction } from "@/app/actions/payment";
 import { createEnrollmentFromPaymentIntentAction } from "@/app/actions/payments";
 import { getCurrentUserInfoAction } from "@/app/actions/auth";
 import { clearCart } from "@/lib/utils/cart";
@@ -97,7 +97,7 @@ export function PaymentForm({
     const value = e.target.value;
     setEmail(value);
     if (value && !validateEmail(value)) {
-      setEmailError("Veuillez entrer une adresse courriel valide");
+      setEmailError("Please enter a valid email address");
     } else {
       setEmailError(null);
     }
@@ -107,13 +107,13 @@ export function PaymentForm({
     const value = e.target.value;
     setPassword(value);
     if (value && value.length < 6) {
-      setPasswordError("Le mot de passe doit contenir au moins 6 caractères");
+      setPasswordError("Password must contain at least 6 characters");
     } else {
       setPasswordError(null);
     }
     // Re-validate confirm password when password changes
     if (confirmPassword && value !== confirmPassword) {
-      setConfirmPasswordError("Les mots de passe ne correspondent pas");
+      setConfirmPasswordError("Passwords do not match");
     } else {
       setConfirmPasswordError(null);
     }
@@ -123,7 +123,7 @@ export function PaymentForm({
     const value = e.target.value;
     setConfirmPassword(value);
     if (value && value !== password) {
-      setConfirmPasswordError("Les mots de passe ne correspondent pas");
+      setConfirmPasswordError("Passwords do not match");
     } else {
       setConfirmPasswordError(null);
     }
@@ -133,26 +133,26 @@ export function PaymentForm({
     e.preventDefault();
 
     if (!stripe || !elements) {
-      toast.error("Stripe n'est pas encore chargé");
+      toast.error("Stripe is not yet loaded");
       return;
     }
 
     // Validate all fields
     if (!firstName || !lastName) {
-      toast.error("Veuillez remplir votre prénom et votre nom");
+      toast.error("Please enter your first and last name");
       setIsProcessing(false);
       return;
     }
 
     if (!email) {
-      toast.error("Veuillez entrer votre adresse courriel");
+      toast.error("Please enter your email address");
       setIsProcessing(false);
       return;
     }
 
     if (!validateEmail(email)) {
-      setEmailError("Veuillez entrer une adresse courriel valide");
-      toast.error("Veuillez entrer une adresse courriel valide");
+      setEmailError("Please enter a valid email address");
+      toast.error("Please enter a valid email address");
       setIsProcessing(false);
       return;
     }
@@ -160,27 +160,27 @@ export function PaymentForm({
     // Only validate password if user is not logged in
     if (!isLoggedIn) {
       if (!password) {
-        toast.error("Veuillez entrer un mot de passe");
+        toast.error("Please enter a password");
         setIsProcessing(false);
         return;
       }
 
       if (password.length < 6) {
-        setPasswordError("Le mot de passe doit contenir au moins 6 caractères");
-        toast.error("Le mot de passe doit contenir au moins 6 caractères");
+        setPasswordError("Password must contain at least 6 characters");
+        toast.error("Password must contain at least 6 characters");
         setIsProcessing(false);
         return;
       }
 
       if (!confirmPassword) {
-        toast.error("Veuillez confirmer votre mot de passe");
+        toast.error("Please confirm your password");
         setIsProcessing(false);
         return;
       }
 
       if (password !== confirmPassword) {
-        setConfirmPasswordError("Les mots de passe ne correspondent pas");
-        toast.error("Les mots de passe ne correspondent pas");
+        setConfirmPasswordError("Passwords do not match");
+        toast.error("Passwords do not match");
         setIsProcessing(false);
         return;
       }
@@ -206,7 +206,7 @@ export function PaymentForm({
 
         if (!paymentResult.success || !paymentResult.data) {
           console.error("Payment intent creation failed:", paymentResult);
-          const errorMessage = paymentResult.error || "Erreur lors de la préparation du paiement";
+          const errorMessage = paymentResult.error || "Error while preparing the payment";
           toast.error(errorMessage);
           setIsProcessing(false);
           return;
@@ -220,7 +220,7 @@ export function PaymentForm({
         }
       } catch (error) {
         console.error("Payment intent creation error:", error);
-        const errorMessage = error instanceof Error ? error.message : "Erreur lors de la création du compte";
+        const errorMessage = error instanceof Error ? error.message : "Error while creating the account";
         toast.error(errorMessage);
         setIsProcessing(false);
         return;
@@ -230,14 +230,14 @@ export function PaymentForm({
     try {
       const cardElement = elements.getElement(CardElement);
       if (!cardElement) {
-        toast.error("Erreur de chargement du formulaire de paiement");
+        toast.error("Error loading the payment form");
         setIsProcessing(false);
         return;
       }
 
       // Confirm payment with Stripe
       if (!paymentClientSecret) {
-        toast.error("Erreur: secret de paiement manquant");
+        toast.error("Error: missing payment secret");
         setIsProcessing(false);
         return;
       }
@@ -258,35 +258,35 @@ export function PaymentForm({
 
       if (confirmError) {
         // Handle specific Stripe errors in French
-        let errorMessage = "Erreur de paiement";
+        let errorMessage = "Payment error";
         
         switch (confirmError.type) {
           case "card_error":
             switch (confirmError.code) {
               case "card_declined":
-                errorMessage = "Votre carte a été refusée. Veuillez essayer une autre carte.";
+                errorMessage = "Your card was declined. Please try another card.";
                 break;
               case "insufficient_funds":
-                errorMessage = "Fonds insuffisants. Veuillez utiliser une autre carte.";
+                errorMessage = "Insufficient funds. Please use another card.";
                 break;
               case "expired_card":
-                errorMessage = "Votre carte a expiré. Veuillez utiliser une autre carte.";
+                errorMessage = "Your card has expired. Please use another card.";
                 break;
               case "incorrect_cvc":
-                errorMessage = "Le code de sécurité de votre carte est incorrect.";
+                errorMessage = "Your card's security code is incorrect.";
                 break;
               case "processing_error":
-                errorMessage = "Une erreur s'est produite lors du traitement de votre carte. Veuillez réessayer.";
+                errorMessage = "An error occurred while processing your card. Please try again.";
                 break;
               default:
-                errorMessage = confirmError.message || "Erreur de paiement. Veuillez réessayer.";
+                errorMessage = confirmError.message || "Payment error. Please try again.";
             }
             break;
           case "validation_error":
-            errorMessage = "Les informations de paiement sont invalides. Veuillez vérifier et réessayer.";
+            errorMessage = "Payment information is invalid. Please check and try again.";
             break;
           default:
-            errorMessage = confirmError.message || "Une erreur est survenue. Veuillez réessayer.";
+            errorMessage = confirmError.message || "An error occurred. Please try again.";
         }
 
         toast.error(errorMessage);
@@ -321,7 +321,7 @@ export function PaymentForm({
           trackCohortEnrollment(cohortId, cohortTitle || `Cohort ${cohortId}`, amount);
         }
         
-        toast.success("Paiement réussi! Redirection vers votre tableau de bord...");
+        toast.success("Payment successful! Redirecting to your dashboard...");
         
         if (onSuccess) {
           onSuccess();
@@ -330,16 +330,16 @@ export function PaymentForm({
         // Wait a moment for session to be established, then redirect to student dashboard
         // Users created during checkout are always students, so redirect directly to student dashboard
         setTimeout(() => {
-          router.push("/tableau-de-bord/etudiant");
+          router.push("/dashboard/student");
           router.refresh();
         }, 500);
       } else {
-        toast.error("Le paiement n'a pas été complété");
+        toast.error("Payment was not completed");
         setIsProcessing(false);
       }
     } catch (error) {
       console.error("Payment error:", error);
-      toast.error("Une erreur inattendue s'est produite. Veuillez réessayer.");
+      toast.error("An unexpected error occurred. Please try again.");
       setIsProcessing(false);
     }
   };
@@ -412,7 +412,7 @@ export function PaymentForm({
           <Input
             id="email"
             type="email"
-            placeholder="votre@courriel.com"
+            placeholder="your@email.com"
             value={email}
             onChange={handleEmailChange}
             required

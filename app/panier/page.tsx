@@ -41,21 +41,21 @@ export default function CartPage() {
   const handleRemoveItem = (itemId: string, type: "course" | "cohort") => {
     removeFromCart(itemId, type);
     setCartItems(getCartItems());
-    toast.success("Article retiré du panier");
+    toast.success("Item removed from cart");
   };
 
   const handleApplyCoupon = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!couponCode.trim()) {
-      toast.error("Veuillez entrer un code de coupon");
+      toast.error("Please enter a coupon code");
       return;
     }
 
     // Apply coupon to first course item (for now, single item checkout)
     const courseItem = cartItems.find((item) => item.type === "course");
     if (!courseItem) {
-      toast.error("Aucun cours dans le panier");
+      toast.error("No courses in the cart");
       return;
     }
 
@@ -73,12 +73,12 @@ export default function CartPage() {
           discountAmount,
           finalAmount,
         });
-        toast.success("Coupon appliqué avec succès!");
+        toast.success("Coupon applied successfully!");
       } else {
         toast.error(result.error || "Code de coupon invalide");
       }
     } catch (error) {
-      toast.error("Erreur lors de la validation du coupon");
+      toast.error("Error validating coupon");
     } finally {
       setIsValidating(false);
     }
@@ -91,7 +91,7 @@ export default function CartPage() {
 
   const handleCheckout = () => {
     if (cartItems.length === 0) {
-      toast.error("Votre panier est vide");
+      toast.error("Your cart is empty");
       return;
     }
 
@@ -102,7 +102,7 @@ export default function CartPage() {
     }
     
     // Redirect to checkout without slug - checkout will handle all items
-    router.push("/checkout");
+    router.push("/payment");
     router.refresh();
   };
 
@@ -120,7 +120,7 @@ export default function CartPage() {
             <p className="text-muted-foreground mb-4">
               Parcourez nos formations pour ajouter des cours à votre panier
             </p>
-            <Link href="/formations">
+            <Link href="/courses">
               <Button>Voir le catalogue</Button>
             </Link>
           </CardContent>
@@ -249,7 +249,7 @@ export default function CartPage() {
                 Passer à la caisse
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
-              <Link href="/formations" className="w-full">
+              <Link href="/courses" className="w-full">
                 <Button variant="outline" className="w-full">
                   Continuer les achats
                 </Button>

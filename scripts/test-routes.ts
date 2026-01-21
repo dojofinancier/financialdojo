@@ -22,40 +22,32 @@ const routesToTest: RouteTest[] = [
     description: "Homepage should load",
   },
   {
-    name: "Formations listing",
-    path: "/formations",
+    name: "Courses listing",
+    path: "/courses",
     expectedStatus: 200,
-    description: "Formations page should load",
+    description: "Courses page should load",
   },
   {
     name: "Panier",
-    path: "/panier",
+    path: "/cart",
     expectedStatus: 200,
     description: "Cart page should load",
   },
   
   // Backward compatibility redirects
   {
-    name: "Dashboard redirect",
-    path: "/dashboard",
-    expectedStatus: 307,
-    // Note: May redirect to /login first (through middleware), then to /tableau-de-bord
-    // Both are acceptable - the important thing is it doesn't stay at /dashboard
-    description: "/dashboard should redirect (to /tableau-de-bord or /login)",
-  },
-  {
     name: "Checkout redirect",
     path: "/checkout",
     expectedStatus: 307,
-    shouldRedirect: "/paiement",
-    description: "/checkout should redirect to /paiement",
+    shouldRedirect: "/payment",
+    description: "/checkout should redirect to /payment",
   },
   {
-    name: "Courses redirect",
-    path: "/courses",
+    name: "Formations redirect",
+    path: "/formations",
     expectedStatus: 307,
-    shouldRedirect: "/formations",
-    description: "/courses should redirect to /formations",
+    shouldRedirect: "/courses",
+    description: "/formations should redirect to /courses",
   },
   
   // New French routes (protected - may redirect to login when not authenticated)
@@ -63,38 +55,38 @@ const routesToTest: RouteTest[] = [
   // This is CORRECT behavior, not a failure
   {
     name: "Tableau de bord",
-    path: "/tableau-de-bord",
+    path: "/dashboard",
     expectedStatus: 307, // Redirects to login or role-specific dashboard
     description: "Dashboard should redirect (to login if not auth, or role-specific if auth)",
   },
   {
     name: "Student dashboard",
-    path: "/tableau-de-bord/etudiant",
+    path: "/dashboard/student",
     expectedStatus: 307, // Redirects to login if not authenticated
     description: "Student dashboard should redirect to login if not authenticated",
   },
   {
     name: "Admin dashboard",
-    path: "/tableau-de-bord/admin",
+    path: "/dashboard/admin",
     expectedStatus: 307, // Redirects to login if not authenticated
     description: "Admin dashboard should redirect to login if not authenticated",
   },
   {
     name: "Profile",
-    path: "/tableau-de-bord/profil",
+    path: "/dashboard/profile",
     expectedStatus: 307, // Redirects to login if not authenticated
     description: "Profile page should redirect to login if not authenticated",
   },
   {
     name: "Payments",
-    path: "/tableau-de-bord/paiements",
+    path: "/dashboard/payments",
     expectedStatus: 307, // Redirects to login if not authenticated
     description: "Payments page should redirect to login if not authenticated",
   },
   {
     name: "Paiement",
-    path: "/paiement",
-    expectedStatus: 307, // May redirect to /panier if cart is empty
+    path: "/payment",
+    expectedStatus: 307, // May redirect to /cart if cart is empty
     description: "Payment checkout may redirect (to cart if empty, or login if not auth)",
   },
 ];

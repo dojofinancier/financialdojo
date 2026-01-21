@@ -15,7 +15,7 @@ interface FileUploadButtonProps {
   label?: string;
 }
 
-export function FileUploadButton({ folder, onUploaded, accept, label = "Téléverser un fichier" }: FileUploadButtonProps) {
+export function FileUploadButton({ folder, onUploaded, accept, label = "Upload a file" }: FileUploadButtonProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -36,15 +36,15 @@ export function FileUploadButton({ folder, onUploaded, accept, label = "Téléve
       });
 
       if (error) {
-        toast.error("Échec du téléversement");
+        toast.error("Upload failed");
         return;
       }
 
       const { data } = supabase.storage.from(COURSE_ASSETS_BUCKET).getPublicUrl(filePath);
       onUploaded(data.publicUrl, file.name);
-      toast.success("Fichier téléversé");
+      toast.success("File uploaded");
     } catch (error) {
-      toast.error("Erreur lors du téléversement");
+      toast.error("Error during upload");
     } finally {
       setUploading(false);
       if (inputRef.current) {
@@ -64,7 +64,7 @@ export function FileUploadButton({ folder, onUploaded, accept, label = "Téléve
       />
       <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} disabled={uploading}>
         <Upload className="h-4 w-4 mr-2" />
-        {uploading ? "Téléversement..." : label}
+        {uploading ? "Uploading..." : label}
       </Button>
     </>
   );

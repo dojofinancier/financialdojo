@@ -40,7 +40,7 @@ export async function getCurrentUserInfoAction() {
     console.error("Get current user info error:", error);
     return {
       success: false,
-      error: "Erreur lors de la récupération des informations utilisateur",
+      error: "Error retrieving user information",
     };
   }
 }
@@ -78,7 +78,7 @@ export async function loginAction(
     console.error("Login error:", error);
     return {
       success: false,
-      error: "Une erreur est survenue lors de la connexion",
+      error: "An error occurred while signing in",
     };
   }
 }
@@ -122,7 +122,7 @@ export async function resetPasswordAction(
     console.error("Password reset error:", error);
     return {
       success: false,
-      error: "Une erreur est survenue lors de la demande de réinitialisation",
+      error: "An error occurred while requesting the reset",
     };
   }
 }
@@ -149,7 +149,7 @@ export async function verifyPasswordResetCodeAction(
       if (otpError) {
         return {
           success: false,
-          error: error.message || otpError.message || "Code de réinitialisation invalide ou expiré",
+          error: error.message || otpError.message || "Invalid or expired reset code",
         };
       }
     }
@@ -160,7 +160,7 @@ export async function verifyPasswordResetCodeAction(
     if (userError || !user) {
       return {
         success: false,
-        error: "Impossible d'établir une session. Veuillez réessayer.",
+        error: "Unable to establish a session. Please try again.",
       };
     }
 
@@ -171,7 +171,7 @@ export async function verifyPasswordResetCodeAction(
     console.error("Verify password reset code error:", error);
     return {
       success: false,
-      error: "Une erreur est survenue lors de la vérification du code",
+      error: "An error occurred while verifying the code",
     };
   }
 }
@@ -192,7 +192,7 @@ export async function updatePasswordAction(
     if (userError || !user) {
       return {
         success: false,
-        error: "Session manquante. Veuillez utiliser le lien de réinitialisation envoyé par email.",
+        error: "Missing session. Please use the reset link sent by email.",
       };
     }
 
@@ -213,7 +213,7 @@ export async function updatePasswordAction(
     console.error("Update password error:", error);
     return {
       success: false,
-      error: "Une erreur est survenue lors de la mise à jour du mot de passe",
+      error: "An error occurred while updating the password",
     };
   }
 }

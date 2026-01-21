@@ -15,14 +15,14 @@ import {
 } from "@/lib/webhooks/make";
 
 const ticketSchema = z.object({
-  subject: z.string().min(1, "Le sujet est requis"),
+  subject: z.string().min(1, "Subject is required"),
   description: z.string().min(1, "La description est requise"),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).default("MEDIUM"),
   category: z.string().optional().nullable(),
 });
 
 const ticketReplySchema = z.object({
-  message: z.string().min(1, "Le message est requis"),
+  message: z.string().min(1, "Message is required"),
   attachments: z.array(z.string()).optional().nullable(),
 });
 
@@ -44,7 +44,7 @@ export async function createSupportTicketAction(
     if (user.role !== "STUDENT") {
       return {
         success: false,
-        error: "Seuls les étudiants peuvent créer des tickets",
+        error: "Only students can create tickets",
       };
     }
 
@@ -98,7 +98,7 @@ export async function createSupportTicketAction(
       const firstError = error.issues[0];
       return {
         success: false,
-        error: firstError?.message || "Données invalides",
+        error: firstError?.message || "Invalid data",
       };
     }
 
@@ -110,7 +110,7 @@ export async function createSupportTicketAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du ticket",
+      error: "Error creating the ticket",
     };
   }
 }
@@ -406,7 +406,7 @@ export async function replyToTicketAction(
     if (user.role === "STUDENT" && ticket.studentId !== user.id) {
       return {
         success: false,
-        error: "Accès non autorisé",
+        error: "Unauthorized access",
       };
     }
 
@@ -458,7 +458,7 @@ export async function replyToTicketAction(
       const firstError = error.issues[0];
       return {
         success: false,
-        error: firstError?.message || "Données invalides",
+        error: firstError?.message || "Invalid data",
       };
     }
 
@@ -470,7 +470,7 @@ export async function replyToTicketAction(
 
     return {
       success: false,
-      error: "Erreur lors de l'envoi de la réponse",
+      error: "Error sending the response",
     };
   }
 }
@@ -558,7 +558,7 @@ export async function updateTicketStatusAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour du statut",
+      error: "Error updating status",
     };
   }
 }
@@ -601,7 +601,7 @@ export async function assignTicketAction(
 
     return {
       success: false,
-      error: "Erreur lors de l'assignation du ticket",
+      error: "Error assigning the ticket",
     };
   }
 }
@@ -632,7 +632,7 @@ export async function updateTicketPriorityAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de la priorité",
+      error: "Error updating priority",
     };
   }
 }
@@ -663,7 +663,7 @@ export async function updateTicketCategoryAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de la catégorie",
+      error: "Error updating category",
     };
   }
 }
@@ -728,7 +728,7 @@ export async function getTicketStatisticsAction() {
 
     return {
       success: false,
-      error: "Erreur lors de la récupération des statistiques",
+      error: "Error retrieving statistics",
     };
   }
 }
@@ -761,7 +761,7 @@ export async function getAdminUsersAction() {
 
     return {
       success: false,
-      error: "Erreur lors de la récupération des administrateurs",
+      error: "Error retrieving administrators",
     };
   }
 }

@@ -30,12 +30,12 @@ export function CohortAboutManagement({
       setSaving(true);
       const result = await updateCohortAboutAction(cohortId, { shortDescription, aboutText });
       if (result.success) {
-        toast.success("Informations mises à jour avec succès");
+        toast.success("Information updated successfully");
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la sauvegarde");
+      toast.error("Error saving");
     } finally {
       setSaving(false);
     }
@@ -57,7 +57,7 @@ export function CohortAboutManagement({
               id="shortDescription"
               value={shortDescription}
               onChange={(e) => setShortDescription(e.target.value)}
-              placeholder="Ex: Formation intensive avec accompagnement personnalisé et sessions de coaching en groupe"
+              placeholder="Ex: Intensive training with personalized support and group coaching sessions"
             />
           </div>
         </CardContent>
@@ -76,7 +76,7 @@ export function CohortAboutManagement({
             <RichTextEditor
               content={aboutText}
               onChange={setAboutText}
-              placeholder="Décrivez votre cohorte en détail..."
+              placeholder="Describe your cohort in detail..."
             />
           </div>
         </CardContent>

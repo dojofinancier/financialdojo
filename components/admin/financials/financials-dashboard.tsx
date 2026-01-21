@@ -46,7 +46,7 @@ export function FinancialsDashboard() {
       if (subscriptionResult.success) setSubscriptionStats(subscriptionResult.data);
       if (trendsResult.success) setRevenueTrends(trendsResult.data);
     } catch (error) {
-      toast.error("Erreur lors du chargement des données");
+      toast.error("Error loading data");
     } finally {
       setLoading(false);
     }
@@ -62,10 +62,10 @@ export function FinancialsDashboard() {
       const result = await getRevenueByPeriodAction(selectedYear, selectedMonth || undefined);
       if (result.success && result.data) {
         exportFinancialsToCSV(result.data, selectedYear, selectedMonth);
-        toast.success("Export CSV généré");
+        toast.success("CSV export generated");
       }
     } catch (error) {
-      toast.error("Erreur lors de l'export");
+      toast.error("Error exporting");
     }
   };
 
@@ -150,7 +150,7 @@ export function FinancialsDashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>
-              Revenu {selectedMonth ? "du mois" : "de l'année"}
+              Revenu {selectedMonth ? "du mois" : "of the year"}
             </CardDescription>
             <CardTitle className="text-2xl">
               ${periodRevenue?.netRevenue?.toFixed(2) || "0.00"}

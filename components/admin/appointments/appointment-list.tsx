@@ -87,7 +87,7 @@ export function AppointmentList() {
       setNextCursor(result.nextCursor);
       setHasMore(result.hasMore);
     } catch (error) {
-      toast.error("Erreur lors du chargement des rendez-vous");
+      toast.error("Error loading appointments");
     } finally {
       setLoading(false);
     }
@@ -215,7 +215,7 @@ export function AppointmentList() {
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Link href={`/tableau-de-bord/admin/appointments/${appointment.id}`}>
+                      <Link href={`/dashboard/admin/appointments/${appointment.id}`}>
                         <Button variant="ghost" size="icon">
                           <Eye className="h-4 w-4" />
                         </Button>

@@ -86,7 +86,7 @@ export async function getEnrollmentStatisticsAction(): Promise<AnalyticsActionRe
 
     return {
       success: false,
-      error: "Erreur lors du calcul des statistiques d'inscription",
+      error: "Error calculating enrollment statistics",
     };
   }
 }
@@ -159,7 +159,7 @@ export async function getCompletionRatesAction(): Promise<AnalyticsActionResult>
 
     return {
       success: false,
-      error: "Erreur lors du calcul des taux de complétion",
+      error: "Error calculating completion rates",
     };
   }
 }
@@ -245,7 +245,7 @@ export async function getDetailedCompletionRatesAction(): Promise<AnalyticsActio
 
     return {
       success: false,
-      error: "Erreur lors du calcul des taux de complétion détaillés",
+      error: "Error calculating detailed completion rates",
     };
   }
 }
@@ -327,7 +327,7 @@ export async function getUserEngagementAction(): Promise<AnalyticsActionResult> 
 
     return {
       success: false,
-      error: "Erreur lors du calcul de l'engagement des utilisateurs",
+      error: "Error calculating user engagement",
     };
   }
 }
@@ -434,7 +434,7 @@ export async function getCourseMetricsAction(): Promise<AnalyticsActionResult> {
 
     return {
       success: false,
-      error: "Erreur lors du calcul des métriques de cours",
+      error: "Error calculating course metrics",
     };
   }
 }

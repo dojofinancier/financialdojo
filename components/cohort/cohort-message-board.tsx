@@ -97,7 +97,7 @@ export function CohortMessageBoard({
       });
       setMessages(sortedMessages);
     } catch (error) {
-      toast.error("Erreur lors du chargement des messages");
+      toast.error("Error loading messages");
     } finally {
       setLoading(false);
     }
@@ -163,7 +163,7 @@ export function CohortMessageBoard({
           });
         });
         
-        toast.success("Message publié avec succès");
+        toast.success("Message published successfully");
         setCreateDialogOpen(false);
         setContent("");
         setAttachments([]);
@@ -178,12 +178,12 @@ export function CohortMessageBoard({
           }
         }, 200);
       } else {
-        toast.error(result.error || "Erreur lors de la publication");
+        toast.error(result.error || "Error publishing");
         // Reload messages on error to ensure consistency
         loadMessages();
       }
     } catch (error) {
-      toast.error("Erreur lors de la publication du message");
+      toast.error("Error publishing message");
       // Reload messages on error
       loadMessages();
     }
@@ -201,7 +201,7 @@ export function CohortMessageBoard({
       });
 
       if (result.success) {
-        toast.success("Message modifié avec succès");
+        toast.success("Message edited successfully");
         setEditDialogOpen(false);
         setSelectedMessage(null);
         setContent("");
@@ -209,28 +209,28 @@ export function CohortMessageBoard({
         setAttachmentNames([]);
         loadMessages();
       } else {
-        toast.error(result.error || "Erreur lors de la modification");
+        toast.error(result.error || "Error editing");
       }
     } catch (error) {
-      toast.error("Erreur lors de la modification du message");
+      toast.error("Error modifying the message");
     }
   };
 
   const handleDeleteMessage = async (messageId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer ce message ?")) {
+    if (!confirm("Are you sure you want to delete this message?")) {
       return;
     }
 
     try {
       const result = await deleteCohortMessageAction(messageId);
       if (result.success) {
-        toast.success("Message supprimé avec succès");
+        toast.success("Message deleted successfully");
         loadMessages();
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
-      toast.error("Erreur lors de la suppression du message");
+      toast.error("Error deleting the message");
     }
   };
 
@@ -250,7 +250,7 @@ export function CohortMessageBoard({
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
           });
         });
-        toast.success(pinned ? "Message épinglé" : "Message désépinglé");
+        toast.success(pinned ? "Message pinned" : "Message unpinned");
       } else {
         toast.error(result.error || "Erreur");
         // Reload on error to ensure consistency
@@ -280,7 +280,7 @@ export function CohortMessageBoard({
     const oversizedFiles = Array.from(files).filter((file) => file.size > maxSize);
 
     if (oversizedFiles.length > 0) {
-      toast.error("Certains fichiers dépassent la limite de 32MB");
+      toast.error("Some files exceed the 32MB limit");
       return;
     }
 
@@ -308,11 +308,11 @@ export function CohortMessageBoard({
 
       if (failedUploads.length > 0) {
         toast.error(
-          `${failedUploads.length} fichier(s) n'ont pas pu être téléversés: ${failedUploads[0]?.error || "Erreur inconnue"}`
+          `${failedUploads.length} fichier(s) n'ont pas pu être téléversés: ${failedUploads[0]?.error || "Unknown error"}`
         );
       }
     } catch (error) {
-      toast.error("Erreur lors du téléversement des fichiers");
+      toast.error("Error uploading files");
     } finally {
       setUploading(false);
       if (fileInputRef.current) {
@@ -400,7 +400,7 @@ export function CohortMessageBoard({
                   <RichTextEditor
                     content={content}
                     onChange={setContent}
-                    placeholder="Écrivez votre message..."
+                    placeholder="Write your message..."
                   />
                 </Suspense>
               </div>
@@ -422,7 +422,7 @@ export function CohortMessageBoard({
                     disabled={uploading}
                   >
                     <Upload className="h-4 w-4 mr-2" />
-                    {uploading ? "Téléversement..." : "Ajouter des fichiers"}
+                    {uploading ? "Uploading..." : "Add files"}
                   </Button>
                 </div>
                 {attachments.length > 0 && (
@@ -482,7 +482,7 @@ export function CohortMessageBoard({
             <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
             <h3 className="text-lg font-semibold mb-2">Aucun message</h3>
             <p className="text-muted-foreground">
-              {searchQuery ? "Aucun résultat pour votre recherche" : "Soyez le premier à publier un message"}
+              {searchQuery ? "No results for your search" : "Be the first to post a message"}
             </p>
           </CardContent>
         </Card>
@@ -528,8 +528,8 @@ export function CohortMessageBoard({
                                 )}
                               </div>
                               <CardDescription>
-                                {format(new Date(message.createdAt), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
-                                {message.updatedAt.getTime() !== message.createdAt.getTime() && " (modifié)"}
+                                {format(new Date(message.createdAt), "d MMMM yyyy 'at' HH:mm", { locale: fr })}
+                                {message.updatedAt.getTime() !== message.createdAt.getTime() && " (modified)"}
                               </CardDescription>
                             </div>
                             <div className="flex items-center gap-1">
@@ -540,7 +540,7 @@ export function CohortMessageBoard({
                                       variant="ghost"
                                       size="icon"
                                       onClick={() => handlePinMessage(message.id, !message.pinned)}
-                                      title={message.pinned ? "Désépingler" : "Épingler"}
+                                      title={message.pinned ? "Unpin" : "Pin"}
                                     >
                                       <Pin className={`h-4 w-4 ${message.pinned ? "fill-current" : ""}`} />
                                     </Button>
@@ -628,8 +628,8 @@ export function CohortMessageBoard({
                           )}
                         </div>
                         <CardDescription>
-                          {format(new Date(message.createdAt), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
-                          {message.updatedAt.getTime() !== message.createdAt.getTime() && " (modifié)"}
+                          {format(new Date(message.createdAt), "d MMMM yyyy 'at' HH:mm", { locale: fr })}
+                          {message.updatedAt.getTime() !== message.createdAt.getTime() && " (modified)"}
                         </CardDescription>
                       </div>
                       <div className="flex items-center gap-1">
@@ -713,7 +713,7 @@ export function CohortMessageBoard({
                 <RichTextEditor
                   content={content}
                   onChange={setContent}
-                  placeholder="Modifiez votre message..."
+                  placeholder="Edit your message..."
                 />
               </Suspense>
             </div>

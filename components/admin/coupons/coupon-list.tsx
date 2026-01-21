@@ -69,7 +69,7 @@ export function CouponList({ onEdit }: CouponListProps) {
       setNextCursor(result.nextCursor);
       setHasMore(result.hasMore);
     } catch (error) {
-      toast.error("Erreur lors du chargement des coupons");
+      toast.error("Error loading coupons");
     } finally {
       setLoading(false);
     }
@@ -84,12 +84,12 @@ export function CouponList({ onEdit }: CouponListProps) {
 
     const result = await deleteCouponAction(selectedCoupon.id);
     if (result.success) {
-      toast.success("Coupon supprimé");
+      toast.success("Coupon deleted");
       setDeleteDialogOpen(false);
       setSelectedCoupon(null);
       loadCoupons();
     } else {
-      toast.error(result.error || "Erreur lors de la suppression");
+      toast.error(result.error || "Error while deleting");
     }
   };
 
@@ -98,16 +98,16 @@ export function CouponList({ onEdit }: CouponListProps) {
       active: !coupon.active,
     });
     if (result.success) {
-      toast.success(`Coupon ${!coupon.active ? "activé" : "désactivé"}`);
+      toast.success(`Coupon ${!coupon.active ? "enabled" : "disabled"}`);
       loadCoupons();
     } else {
-      toast.error(result.error || "Erreur lors de la mise à jour");
+      toast.error(result.error || "Error updating");
     }
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success("Code copié dans le presse-papiers");
+    toast.success("Code copied to clipboard");
   };
 
   const filteredCoupons = coupons.filter((coupon) =>
@@ -324,7 +324,7 @@ function CouponStatsDialog({ couponId, open, onOpenChange }: CouponStatsDialogPr
         if (result.success) {
           setStats(result.data);
         } else {
-          toast.error(result.error || "Erreur lors du chargement des statistiques");
+          toast.error(result.error || "Error loading statistics");
         }
         setLoading(false);
       };

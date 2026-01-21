@@ -68,7 +68,7 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
             <p className="text-muted-foreground mb-4">
               Parcourez notre catalogue pour découvrir nos formations
             </p>
-            <Link href="/formations" prefetch={true}>
+            <Link href="/courses" prefetch={true}>
               <Button>Voir le catalogue</Button>
             </Link>
           </CardContent>
@@ -116,7 +116,7 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                         </div>
                       </div>
                       {/* This route is heavy (loads full course content). Avoid auto-prefetch from dashboard. */}
-                      <Link href={`/apprendre/${enrollment.course.slug || enrollment.course.id}`} prefetch={false}>
+                      <Link href={`/learn/${enrollment.course.slug || enrollment.course.id}`} prefetch={false}>
                         <Button className="w-full">
                           Continuer l'apprentissage
                           <ArrowRight className="h-4 w-4 ml-2" />
@@ -171,7 +171,7 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                         )}
                       </div>
                       {/* Cohort learning route can also be heavy; avoid auto-prefetch from dashboard. */}
-                      <Link href={`/cohorte/${enrollment.cohort.slug || enrollment.cohort.id}/apprendre`} prefetch={false}>
+                      <Link href={`/cohorts/${enrollment.cohort.slug || enrollment.cohort.id}/learn`} prefetch={false}>
                         <Button className="w-full">
                           Accéder à la cohorte
                           <ArrowRight className="h-4 w-4 ml-2" />
@@ -205,7 +205,7 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href={`/formations/${enrollment.course.slug || enrollment.course.id}`} prefetch={true}>
+                      <Link href={`/courses/${enrollment.course.slug || enrollment.course.id}`} prefetch={true}>
                         <Button variant="outline" className="w-full">
                           Réinscrire
                         </Button>
@@ -229,7 +229,7 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href={`/cohorte/${enrollment.cohort.slug || enrollment.cohort.id}/apprendre`} prefetch={true}>
+                      <Link href={`/cohorts/${enrollment.cohort.slug || enrollment.cohort.id}/learn`} prefetch={true}>
                         <Button variant="outline" className="w-full">
                           Voir les détails
                         </Button>

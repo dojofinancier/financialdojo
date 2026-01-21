@@ -63,7 +63,7 @@ export function NotFoundClient() {
               Retour à l'accueil →
             </Link>
             <Link 
-              href="/formations"
+              href="/courses"
               className="inline-block bg-transparent text-white font-black uppercase text-lg tracking-wider px-10 py-5 border-4 border-white hover:bg-white hover:text-black transition-colors"
             >
               Voir les formations

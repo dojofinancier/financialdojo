@@ -212,7 +212,7 @@ export async function getSmartReviewStatsAction(
     };
   } catch (error) {
     console.error("Error fetching smart review stats:", error);
-    return { success: false, error: "Erreur lors de la récupération des statistiques" };
+    return { success: false, error: "Error retrieving statistics" };
   }
 }
 
@@ -230,7 +230,7 @@ export async function getNextReviewItemAction(
     const completedModuleIds = await getCompletedModuleIds(user.id, courseId);
 
     if (completedModuleIds.length === 0) {
-      return { success: false, error: "Aucun chapitre disponible pour la révision" };
+      return { success: false, error: "No chapters available for review" };
     }
 
     // Get all flashcards from completed modules
@@ -348,14 +348,14 @@ export async function getNextReviewItemAction(
     });
 
     if (seenItems.length === 0) {
-      return { success: false, error: "Aucun item disponible pour la révision" };
+      return { success: false, error: "No items available for review" };
     }
 
     // Weighted random selection
     const selected = weightedRandomSelect(seenItems);
 
     if (!selected) {
-      return { success: false, error: "Erreur lors de la sélection de l'item" };
+      return { success: false, error: "Error selecting the item" };
     }
 
     // Update the selected item
@@ -386,7 +386,7 @@ export async function getNextReviewItemAction(
     return { success: true, data: updatedItem as SmartReviewItemWithRelations };
   } catch (error) {
     console.error("Error getting next review item:", error);
-    return { success: false, error: "Erreur lors de la récupération de l'item" };
+    return { success: false, error: "Error retrieving the item" };
   }
 }
 
@@ -432,11 +432,11 @@ export async function rateReviewItemAction(
       },
     });
 
-    revalidatePath(`/apprendre/${item.courseId}`);
+    revalidatePath(`/learn/${item.courseId}`);
     return { success: true };
   } catch (error) {
     console.error("Error rating review item:", error);
-    return { success: false, error: "Erreur lors de l'enregistrement" };
+    return { success: false, error: "Error saving" };
   }
 }
 
@@ -495,6 +495,6 @@ export async function getReviewProgressAction(
     };
   } catch (error) {
     console.error("Error getting review progress:", error);
-    return { success: false, error: "Erreur lors de la récupération de la progression" };
+    return { success: false, error: "Error retrieving progress" };
   }
 }

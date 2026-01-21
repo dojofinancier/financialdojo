@@ -95,7 +95,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
     if (isTomorrow(scheduledAt)) {
       return `Demain à ${format(scheduledAt, "HH:mm", { locale: fr })}`;
     }
-    return format(scheduledAt, "d MMMM yyyy à HH:mm", { locale: fr });
+    return format(scheduledAt, "d MMMM yyyy at HH:mm", { locale: fr });
   };
 
   const getSessionUrgency = (scheduledAt: Date) => {
@@ -125,7 +125,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
           <p className="text-muted-foreground mb-4">
             Découvrez nos cohortes pour un apprentissage en groupe
           </p>
-          <Link href="/cohorte">
+          <Link href="/cohorts">
             <Button>Voir les cohortes</Button>
           </Link>
         </CardContent>
@@ -275,7 +275,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                       )}
                       {unreadCount > 0 && (
                         <Link
-                          href={`/cohorte/${enrollment.cohort.slug || enrollment.cohort.id}/apprendre?tab=messages`}
+                          href={`/cohorts/${enrollment.cohort.slug || enrollment.cohort.id}/learn?tab=messages`}
                           prefetch={false}
                           className="block"
                         >
@@ -286,7 +286,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                         </Link>
                       )}
                       <Link 
-                        href={`/cohorte/${enrollment.cohort.slug || enrollment.cohort.id}/apprendre`}
+                        href={`/cohorts/${enrollment.cohort.slug || enrollment.cohort.id}/learn`}
                         prefetch={false}
                         className="block"
                       >
@@ -326,7 +326,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Link href={`/cohorte/${enrollment.cohort.slug || enrollment.cohort.id}`}>
+                  <Link href={`/cohorts/${enrollment.cohort.slug || enrollment.cohort.id}`}>
                     <Button variant="outline" className="w-full">
                       Voir les détails
                     </Button>

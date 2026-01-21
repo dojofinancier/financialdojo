@@ -49,7 +49,7 @@ export function CSVUploadDialog({ courseId, type, onSuccess }: CSVUploadDialogPr
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       if (!selectedFile.name.endsWith(".csv")) {
-        toast.error("Veuillez sélectionner un fichier CSV");
+        toast.error("Please select a CSV file");
         return;
       }
       setFile(selectedFile);
@@ -58,12 +58,12 @@ export function CSVUploadDialog({ courseId, type, onSuccess }: CSVUploadDialogPr
 
   const handleUpload = async () => {
     if (!file) {
-      toast.error("Veuillez sélectionner un fichier");
+      toast.error("Please select a file");
       return;
     }
 
     if (type !== "flashcard" && !moduleId) {
-      toast.error("Veuillez sélectionner un module");
+      toast.error("Please select a module");
       return;
     }
 
@@ -96,11 +96,11 @@ export function CSVUploadDialog({ courseId, type, onSuccess }: CSVUploadDialogPr
         setFile(null);
         onSuccess?.();
       } else {
-        toast.error(result.error || "Erreur lors de l'upload");
+        toast.error(result.error || "Error during upload");
       }
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("Erreur lors de la lecture du fichier");
+      toast.error("Error reading the file");
     } finally {
       setUploading(false);
     }
@@ -140,7 +140,7 @@ export function CSVUploadDialog({ courseId, type, onSuccess }: CSVUploadDialogPr
               <Label>Module *</Label>
               <Select value={moduleId || ""} onValueChange={setModuleId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un module" />
+                  <SelectValue placeholder="Select a module" />
                 </SelectTrigger>
                 <SelectContent>
                   {modules.map((module) => (

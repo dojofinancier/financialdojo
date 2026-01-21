@@ -25,13 +25,13 @@ export function ArticleCTA({ courses, targetMarket }: ArticleCTAProps) {
     const market = targetMarket?.toLowerCase();
     switch (market) {
       case "professionals":
-        return "Formations professionnelles recommandées";
+        return "Recommended professional courses";
       case "investors":
         return "Formations pour investisseurs";
       case "entrepreneurs":
         return "Formations pour entrepreneurs";
       default:
-        return "Formations recommandées";
+        return "Recommended courses";
     }
   };
 
@@ -39,13 +39,13 @@ export function ArticleCTA({ courses, targetMarket }: ArticleCTAProps) {
     const market = targetMarket?.toLowerCase();
     switch (market) {
       case "professionals":
-        return "Découvrez nos formations professionnelles conçues pour développer vos compétences en finance.";
+        return "Discover our professional courses designed to develop your financial skills.";
       case "investors":
-        return "Explorez nos formations spécialement conçues pour les investisseurs.";
+        return "Explore our courses specifically designed for investors.";
       case "entrepreneurs":
-        return "Développez vos compétences financières avec nos formations pour entrepreneurs.";
+        return "Develop your financial skills with our courses for entrepreneurs.";
       default:
-        return "Découvrez nos formations pour approfondir vos connaissances.";
+        return "Discover our courses to deepen your knowledge.";
     }
   };
 
@@ -74,7 +74,7 @@ export function ArticleCTA({ courses, targetMarket }: ArticleCTAProps) {
             </CardContent>
             <CardFooter>
               <Button asChild className="w-full" variant="default">
-                <Link href={course.slug ? `/formations/${course.slug}` : `/courses/${course.id}`}>
+                <Link href={course.slug ? `/courses/${course.slug}` : `/courses/${course.id}`}>
                   En savoir plus
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
@@ -86,7 +86,7 @@ export function ArticleCTA({ courses, targetMarket }: ArticleCTAProps) {
 
       <div className="text-center">
         <Button asChild variant="outline" size="lg">
-          <Link href="/formations">
+          <Link href="/courses">
             Voir toutes les formations
             <ArrowRight className="w-4 h-4 ml-2" />
           </Link>

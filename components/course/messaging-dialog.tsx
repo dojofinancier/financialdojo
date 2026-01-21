@@ -53,7 +53,7 @@ export function MessagingDialog({
         setMessages(result.messages || []);
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des messages");
+      toast.error("Error loading messages");
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ export function MessagingDialog({
 
   const handleSend = async () => {
     if (!message.trim()) {
-      toast.error("Veuillez saisir un message");
+      toast.error("Please enter a message");
       return;
     }
 
@@ -82,12 +82,12 @@ export function MessagingDialog({
         setMessage("");
         setAttachments([]);
         await loadMessages();
-        toast.success("Message envoyé");
+        toast.success("Message sent");
       } else {
-        toast.error(result.error || "Erreur lors de l'envoi");
+        toast.error(result.error || "Error sending");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setSending(false);
     }

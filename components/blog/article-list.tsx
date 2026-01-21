@@ -314,7 +314,7 @@ export function ArticleList({
           onValueChange={handleCategoryChange}
         >
           <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue placeholder="Toutes les catégories" />
+            <SelectValue placeholder="All categories" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Toutes les catégories</SelectItem>

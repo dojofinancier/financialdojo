@@ -122,7 +122,7 @@ export function BrutalistNavbarClient({ user, variant = "transparent", dashboard
             {user ? (
               <>
                 <Link 
-                  href={dashboardUrl || "/tableau-de-bord"}
+                  href={dashboardUrl || "/dashboard"}
                   className="bg-white text-black font-black uppercase text-sm tracking-wider px-4 py-2 border-4 border-white hover:bg-black hover:text-white transition-colors flex items-center gap-2"
                 >
                   <LayoutDashboard className="h-4 w-4" />

@@ -80,7 +80,7 @@ export function CaseStudyList({ courseId, onStartCaseStudy }: CaseStudyListProps
     } catch (error) {
       console.error("Error loading case studies:", error);
       setCaseStudies([]);
-      toast.error("Erreur lors du chargement des études de cas");
+      toast.error("Error loading case studies");
     } finally {
       setLoading(false);
     }

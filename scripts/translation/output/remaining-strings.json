@@ -1,0 +1,617 @@
+{
+  "generatedAt": "2026-01-21T19:40:23.267Z",
+  "sourceLanguage": "fr",
+  "targetLanguage": "en",
+  "entryCount": 87,
+  "entries": [
+    {
+      "id": "app/actions/cohort-messages.ts:106:21",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 106,
+      "column": 21,
+      "text": "Failed to send cohort message webhook:"
+    },
+    {
+      "id": "app/actions/cohort-messages.ts:126:14",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 126,
+      "column": 14,
+      "text": "Error creating the message"
+    },
+    {
+      "id": "app/actions/cohort-messages.ts:152:16",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 152,
+      "column": 16,
+      "text": "Message not found"
+    },
+    {
+      "id": "app/actions/cohort-messages.ts:164:16",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 164,
+      "column": 16,
+      "text": "You do not have permission to modify this message"
+    },
+    {
+      "id": "app/actions/cohort-messages.ts:209:14",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 209,
+      "column": 14,
+      "text": "Error updating the message"
+    },
+    {
+      "id": "app/actions/cohort-messages.ts:234:16",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 234,
+      "column": 16,
+      "text": "Message not found"
+    },
+    {
+      "id": "app/actions/cohort-messages.ts:246:16",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 246,
+      "column": 16,
+      "text": "You do not have permission to delete this message"
+    },
+    {
+      "id": "app/actions/cohort-messages.ts:264:14",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 264,
+      "column": 14,
+      "text": "Error deleting the message"
+    },
+    {
+      "id": "app/actions/cohort-messages.ts:290:16",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 290,
+      "column": 16,
+      "text": "Message not found"
+    },
+    {
+      "id": "app/actions/cohort-messages.ts:298:16",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 298,
+      "column": 16,
+      "text": "You do not have permission to modify this message"
+    },
+    {
+      "id": "app/actions/cohort-messages.ts:334:14",
+      "path": "app/actions/cohort-messages.ts",
+      "line": 334,
+      "column": 14,
+      "text": "Error modifying the message"
+    },
+    {
+      "id": "app/actions/contact.ts:11:30",
+      "path": "app/actions/contact.ts",
+      "line": 11,
+      "column": 30,
+      "text": "Message is required"
+    },
+    {
+      "id": "app/actions/contact.ts:54:14",
+      "path": "app/actions/contact.ts",
+      "line": 54,
+      "column": 14,
+      "text": "Error sending the message. Please try again."
+    },
+    {
+      "id": "app/actions/messages.ts:14:30",
+      "path": "app/actions/messages.ts",
+      "line": 14,
+      "column": 30,
+      "text": "Message is required"
+    },
+    {
+      "id": "app/actions/messages.ts:201:21",
+      "path": "app/actions/messages.ts",
+      "line": 201,
+      "column": 21,
+      "text": "Failed to send message webhook:"
+    },
+    {
+      "id": "app/actions/messages.ts:221:14",
+      "path": "app/actions/messages.ts",
+      "line": 221,
+      "column": 14,
+      "text": "Error sending message"
+    },
+    {
+      "id": "app/actions/student-notes.ts:125:16",
+      "path": "app/actions/student-notes.ts",
+      "line": 125,
+      "column": 16,
+      "text": "No content found in this module. Please contact the administrator."
+    },
+    {
+      "id": "app/actions/support-tickets.ts:25:30",
+      "path": "app/actions/support-tickets.ts",
+      "line": 25,
+      "column": 30,
+      "text": "Message is required"
+    },
+    {
+      "id": "app/actions/waitlist.ts:33:16",
+      "path": "app/actions/waitlist.ts",
+      "line": 33,
+      "column": 16,
+      "text": "Configuration error. Please contact support."
+    },
+    {
+      "id": "app/contact/contact-page-client.tsx:25:23",
+      "path": "app/contact/contact-page-client.tsx",
+      "line": 25,
+      "column": 23,
+      "text": "Thank you for your message! We will reply shortly."
+    },
+    {
+      "id": "app/contact/contact-page-client.tsx:33:37",
+      "path": "app/contact/contact-page-client.tsx",
+      "line": 33,
+      "column": 37,
+      "text": "Error sending message"
+    },
+    {
+      "id": "app/contact/contact-page-client.tsx:36:19",
+      "path": "app/contact/contact-page-client.tsx",
+      "line": 36,
+      "column": 19,
+      "text": "Error sending the message. Please try again."
+    },
+    {
+      "id": "app/home-page-client.tsx:1:1",
+      "path": "app/home-page-client.tsx",
+      "line": 1,
+      "column": 1,
+      "text": "use client"
+    },
+    {
+      "id": "app/home-page-client.tsx:19:29",
+      "path": "app/home-page-client.tsx",
+      "line": 19,
+      "column": 29,
+      "text": "(prefers-reduced-motion: reduce)"
+    },
+    {
+      "id": "app/home-page-client.tsx:57:28",
+      "path": "app/home-page-client.tsx",
+      "line": 57,
+      "column": 28,
+      "text": "\n            linear-gradient(white 2px, transparent 2px),\n            linear-gradient(90deg, white 2px, transparent 2px)\n          "
+    },
+    {
+      "id": "app/home-page-client.tsx:61:27",
+      "path": "app/home-page-client.tsx",
+      "line": 61,
+      "column": 27,
+      "text": "80px 80px"
+    },
+    {
+      "id": "app/home-page-client.tsx:62:22",
+      "path": "app/home-page-client.tsx",
+      "line": 62,
+      "column": 22,
+      "text": "translate3d(0, var(--parallax-y, 0px), 0)"
+    },
+    {
+      "id": "app/home-page-client.tsx:72:22",
+      "path": "app/home-page-client.tsx",
+      "line": 72,
+      "column": 22,
+      "text": "translate3d(0, var(--parallax-y, 0px), 0) skewX(-12deg) translateX(25%)"
+    },
+    {
+      "id": "app/home-page-client.tsx:150:17",
+      "path": "app/home-page-client.tsx",
+      "line": 150,
+      "column": 17,
+      "text": "FINANCIAL INDUSTRY"
+    },
+    {
+      "id": "app/home-page-client.tsx:151:20",
+      "path": "app/home-page-client.tsx",
+      "line": 151,
+      "column": 20,
+      "text": "Advisors, representatives, managers, assistants. Get your OCRI, AMF and CSI certifications."
+    },
+    {
+      "id": "app/home-page-client.tsx:152:18",
+      "path": "app/home-page-client.tsx",
+      "line": 152,
+      "column": 18,
+      "text": "CCVM / CSC"
+    },
+    {
+      "id": "app/home-page-client.tsx:152:32",
+      "path": "app/home-page-client.tsx",
+      "line": 152,
+      "column": 32,
+      "text": "ERCI / CIRE"
+    },
+    {
+      "id": "app/home-page-client.tsx:152:47",
+      "path": "app/home-page-client.tsx",
+      "line": 152,
+      "column": 47,
+      "text": "Securities examination"
+    },
+    {
+      "id": "app/home-page-client.tsx:155:13",
+      "path": "app/home-page-client.tsx",
+      "line": 155,
+      "column": 13,
+      "text": "/courses?category=professionnels"
+    },
+    {
+      "id": "app/home-page-client.tsx:162:20",
+      "path": "app/home-page-client.tsx",
+      "line": 162,
+      "column": 20,
+      "text": "Manage your wealth. Understand the markets. Make informed decisions."
+    },
+    {
+      "id": "app/home-page-client.tsx:163:18",
+      "path": "app/home-page-client.tsx",
+      "line": 163,
+      "column": 18,
+      "text": "Portfolio management"
+    },
+    {
+      "id": "app/home-page-client.tsx:163:42",
+      "path": "app/home-page-client.tsx",
+      "line": 163,
+      "column": 42,
+      "text": "Fundamental analysis"
+    },
+    {
+      "id": "app/home-page-client.tsx:172:17",
+      "path": "app/home-page-client.tsx",
+      "line": 172,
+      "column": 17,
+      "text": "& EXECUTIVES"
+    },
+    {
+      "id": "app/home-page-client.tsx:173:20",
+      "path": "app/home-page-client.tsx",
+      "line": 173,
+      "column": 20,
+      "text": "Corporate finance, financial planning, growth."
+    },
+    {
+      "id": "app/home-page-client.tsx:174:18",
+      "path": "app/home-page-client.tsx",
+      "line": 174,
+      "column": 18,
+      "text": "Corporate finance"
+    },
+    {
+      "id": "app/home-page-client.tsx:201:102",
+      "path": "app/home-page-client.tsx",
+      "line": 201,
+      "column": 102,
+      "text": "md:border-r-4 border-black"
+    },
+    {
+      "id": "app/home-page-client.tsx:203:56",
+      "path": "app/home-page-client.tsx",
+      "line": 203,
+      "column": 56,
+      "text": "12px 12px 0 0 black"
+    },
+    {
+      "id": "app/home-page-client.tsx:330:23",
+      "path": "app/home-page-client.tsx",
+      "line": 330,
+      "column": 23,
+      "text": "Financial Dojo"
+    },
+    {
+      "id": "app/investisseur/questionnaire/page.tsx:5:10",
+      "path": "app/investisseur/questionnaire/page.tsx",
+      "line": 5,
+      "column": 10,
+      "text": "Investor Diagnostic — Questionnaire | Financial Dojo"
+    },
+    {
+      "id": "app/politique-de-confidentialite/page.tsx:4:10",
+      "path": "app/politique-de-confidentialite/page.tsx",
+      "line": 4,
+      "column": 10,
+      "text": "Privacy Policy | Financial Dojo"
+    },
+    {
+      "id": "app/politique-de-confidentialite/page.tsx:5:16",
+      "path": "app/politique-de-confidentialite/page.tsx",
+      "line": 5,
+      "column": 16,
+      "text": "Financial Dojo Privacy Policy"
+    },
+    {
+      "id": "app/termes-et-conditions/page.tsx:4:10",
+      "path": "app/termes-et-conditions/page.tsx",
+      "line": 4,
+      "column": 10,
+      "text": "Terms and Conditions | Financial Dojo"
+    },
+    {
+      "id": "app/termes-et-conditions/page.tsx:5:16",
+      "path": "app/termes-et-conditions/page.tsx",
+      "line": 5,
+      "column": 16,
+      "text": "Terms of Use of the Financial Dojo"
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:134:23",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 134,
+      "column": 23,
+      "text": "Message published successfully"
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:153:19",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 153,
+      "column": 19,
+      "text": "Error publishing message"
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:171:23",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 171,
+      "column": 23,
+      "text": "Message edited successfully"
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:182:19",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 182,
+      "column": 19,
+      "text": "Error modifying the message"
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:187:18",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 187,
+      "column": 18,
+      "text": "Are you sure you want to delete this message?"
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:194:23",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 194,
+      "column": 23,
+      "text": "Message deleted successfully"
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:200:19",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 200,
+      "column": 19,
+      "text": "Error deleting the message"
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:220:32",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 220,
+      "column": 32,
+      "text": "Message pinned"
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:220:51",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 220,
+      "column": 51,
+      "text": "Message unpinned"
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:356:31",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 356,
+      "column": 31,
+      "text": "Write your message..."
+    },
+    {
+      "id": "components/admin/cohorts/cohort-message-board-moderation.tsx:640:29",
+      "path": "components/admin/cohorts/cohort-message-board-moderation.tsx",
+      "line": 640,
+      "column": 29,
+      "text": "Edit your message..."
+    },
+    {
+      "id": "components/admin/courses/exam-manager.tsx:499:18",
+      "path": "components/admin/courses/exam-manager.tsx",
+      "line": 499,
+      "column": 18,
+      "text": "Voulez-vous nettoyer les guillemets échappés (\\') dans toutes les questions de cet examen ?"
+    },
+    {
+      "id": "components/admin/courses/learning-activity-manager.tsx:355:29",
+      "path": "components/admin/courses/learning-activity-manager.tsx",
+      "line": 355,
+      "column": 29,
+      "text": "FV = PMT × [(1 + r)^n - 1] / r"
+    },
+    {
+      "id": "components/admin/error-logs/error-log-viewer.tsx:215:31",
+      "path": "components/admin/error-logs/error-log-viewer.tsx",
+      "line": 215,
+      "column": 31,
+      "text": "Search by message, ID, email, URL..."
+    },
+    {
+      "id": "components/admin/messages/message-thread-details.tsx:69:19",
+      "path": "components/admin/messages/message-thread-details.tsx",
+      "line": 69,
+      "column": 19,
+      "text": "Message is required"
+    },
+    {
+      "id": "components/admin/support-tickets/support-ticket-details.tsx:104:19",
+      "path": "components/admin/support-tickets/support-ticket-details.tsx",
+      "line": 104,
+      "column": 19,
+      "text": "Message is required"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:166:23",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 166,
+      "column": 23,
+      "text": "Message published successfully"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:186:19",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 186,
+      "column": 19,
+      "text": "Error publishing message"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:204:23",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 204,
+      "column": 23,
+      "text": "Message edited successfully"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:215:19",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 215,
+      "column": 19,
+      "text": "Error modifying the message"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:220:18",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 220,
+      "column": 18,
+      "text": "Are you sure you want to delete this message?"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:227:23",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 227,
+      "column": 23,
+      "text": "Message deleted successfully"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:233:19",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 233,
+      "column": 19,
+      "text": "Error deleting the message"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:253:32",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 253,
+      "column": 32,
+      "text": "Message pinned"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:253:51",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 253,
+      "column": 51,
+      "text": "Message unpinned"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:403:33",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 403,
+      "column": 33,
+      "text": "Write your message..."
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:485:61",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 485,
+      "column": 61,
+      "text": "Be the first to post a message"
+    },
+    {
+      "id": "components/cohort/cohort-message-board.tsx:716:31",
+      "path": "components/cohort/cohort-message-board.tsx",
+      "line": 716,
+      "column": 31,
+      "text": "Edit your message..."
+    },
+    {
+      "id": "components/cohort/cohort-sidebar.tsx:140:36",
+      "path": "components/cohort/cohort-sidebar.tsx",
+      "line": 140,
+      "column": 36,
+      "text": "Message board"
+    },
+    {
+      "id": "components/cohort/cohort-sidebar.tsx:143:32",
+      "path": "components/cohort/cohort-sidebar.tsx",
+      "line": 143,
+      "column": 32,
+      "text": "Message board"
+    },
+    {
+      "id": "components/course/messaging-dialog.tsx:64:19",
+      "path": "components/course/messaging-dialog.tsx",
+      "line": 64,
+      "column": 19,
+      "text": "Please enter a message"
+    },
+    {
+      "id": "components/course/messaging-dialog.tsx:85:23",
+      "path": "components/course/messaging-dialog.tsx",
+      "line": 85,
+      "column": 23,
+      "text": "Message sent"
+    },
+    {
+      "id": "lib/constants/investisseur-diagnostic.ts:39:12",
+      "path": "lib/constants/investisseur-diagnostic.ts",
+      "line": 39,
+      "column": 12,
+      "text": "What is your main goal as an investor today?"
+    },
+    {
+      "id": "lib/constants/investisseur-diagnostic.ts:40:15",
+      "path": "lib/constants/investisseur-diagnostic.ts",
+      "line": 40,
+      "column": 15,
+      "text": "Over what time horizon do you make the majority of your investment decisions?"
+    },
+    {
+      "id": "lib/constants/investisseur-diagnostic.ts:42:5",
+      "path": "lib/constants/investisseur-diagnostic.ts",
+      "line": 42,
+      "column": 5,
+      "text": "When your investments fall sharply for a few months, your most likely reaction is:"
+    },
+    {
+      "id": "lib/constants/investisseur-diagnostic.ts:43:17",
+      "path": "lib/constants/investisseur-diagnostic.ts",
+      "line": 43,
+      "column": 17,
+      "text": "Which of these statements best describes your current situation?"
+    },
+    {
+      "id": "lib/constants/investisseur-diagnostic.ts:44:19",
+      "path": "lib/constants/investisseur-diagnostic.ts",
+      "line": 44,
+      "column": 19,
+      "text": "Where does the majority of the information that influences your decisions come from?"
+    },
+    {
+      "id": "lib/constants/investisseur-diagnostic.ts:46:5",
+      "path": "lib/constants/investisseur-diagnostic.ts",
+      "line": 46,
+      "column": 5,
+      "text": "Compared to the time and energy you devote to investing, you would say that:"
+    },
+    {
+      "id": "lib/reports/investor/generate-investor-report.ts:327:16",
+      "path": "lib/reports/investor/generate-investor-report.ts",
+      "line": 327,
+      "column": 16,
+      "text": "- [ ] Écris ton objectif et ton horizon.\n- [ ] Choisis une allocation simple.\n- [ ] Automatise tes apports."
+    }
+  ]
+}

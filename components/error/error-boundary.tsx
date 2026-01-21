@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error to database via server action
     logClientErrorAction({
-      errorMessage: error.message || "Une erreur inattendue est survenue",
+      errorMessage: error.message || "An unexpected error occurred",
       stackTrace: error.stack || errorInfo.componentStack || undefined,
       url: typeof window !== "undefined" ? window.location.href : undefined,
       userAgent: typeof window !== "undefined" ? window.navigator.userAgent : undefined,

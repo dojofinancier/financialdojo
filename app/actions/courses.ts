@@ -22,11 +22,11 @@ const courseSchema = z.object({
   code: z.string().optional().nullable(),
   title: z.string().min(1, "Le titre est requis"),
   description: z.string().optional(),
-  price: z.number().min(0, "Le prix doit être positif"),
+  price: z.number().min(0, "The price must be positive"),
   accessDuration: z.number().int().positive().default(365),
   paymentType: z.enum(["ONE_TIME", "SUBSCRIPTION"]),
   subscriptionId: z.string().optional().nullable(),
-  categoryId: z.string().min(1, "La catégorie est requise"),
+  categoryId: z.string().min(1, "Category is required"),
   published: z.boolean().default(false),
   componentVisibility: componentVisibilitySchema.optional(),
   appointmentHourlyRate: z.number().min(0).optional().nullable(),
@@ -35,7 +35,7 @@ const courseSchema = z.object({
   displayOrder: z.number().int().min(0).optional().nullable(),
   orientationVideoUrl: z.string().optional().nullable().refine(
     (val) => !val || val === "" || z.string().url().safeParse(val).success,
-    { message: "L'URL doit être une URL valide" }
+    { message: "The URL must be a valid URL" }
   ).transform((val) => val === "" ? null : val),
   orientationText: z.string().optional().nullable(),
   heroImages: z.array(z.string()).optional().default([]),
@@ -103,7 +103,7 @@ export async function createCourseAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -116,7 +116,7 @@ export async function createCourseAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du cours",
+      error: "Error creating the course",
     };
   }
 }
@@ -196,9 +196,9 @@ export async function updateCourseAction(
     });
 
     // Revalidate relevant paths
-    revalidatePath(`/tableau-de-bord/admin/courses/${courseId}`);
-    revalidatePath("/tableau-de-bord/admin");
-    revalidatePath(`/apprendre/${courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
+    revalidatePath("/dashboard/admin");
+    revalidatePath(`/learn/${courseId}`);
 
     // Convert Decimal fields to numbers for client components
     const serializedCourse = {
@@ -216,7 +216,7 @@ export async function updateCourseAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -260,7 +260,7 @@ export async function deleteCourseAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression du cours",
+      error: "Error deleting the course",
     };
   }
 }
@@ -767,7 +767,7 @@ export async function getCourseContentAction(courseId: string) {
     if (!accessResult.hasAccess) {
       return {
         success: false,
-        error: accessResult.reason || "Accès refusé",
+        error: accessResult.reason || "Access denied",
       };
     }
 
@@ -842,7 +842,7 @@ export async function getCourseContentAction(courseId: string) {
     if (!course) {
       return {
         success: false,
-        error: "Cours introuvable",
+        error: "Course not found",
       };
     }
 
@@ -892,7 +892,7 @@ export async function getCourseContentAction(courseId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du chargement du contenu",
+      error: "Error while loading the content",
     };
   }
 }
@@ -936,7 +936,7 @@ export async function getCourseContentForAdminPreviewAction(courseId: string) {
     if (!course) {
       return {
         success: false,
-        error: "Cours introuvable",
+        error: "Course not found",
       };
     }
 
@@ -974,7 +974,7 @@ export async function getCourseContentForAdminPreviewAction(courseId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du chargement du contenu",
+      error: "Error while loading the content",
     };
   }
 }
@@ -1015,8 +1015,8 @@ export async function updateCourseFeaturesAction(
       data: { features },
     });
 
-    revalidatePath(`/formations/${courseId}`);
-    revalidatePath(`/tableau-de-bord/admin/courses/${courseId}`);
+    revalidatePath(`/courses/${courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
 
     return { success: true };
   } catch (error) {
@@ -1028,7 +1028,7 @@ export async function updateCourseFeaturesAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour des fonctionnalités",
+      error: "Error while updating features",
     };
   }
 }
@@ -1048,8 +1048,8 @@ export async function updateCourseTestimonialsAction(
       data: { testimonials },
     });
 
-    revalidatePath(`/formations/${courseId}`);
-    revalidatePath(`/tableau-de-bord/admin/courses/${courseId}`);
+    revalidatePath(`/courses/${courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
 
     return { success: true };
   } catch (error) {
@@ -1061,7 +1061,7 @@ export async function updateCourseTestimonialsAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour des témoignages",
+      error: "Error while updating testimonials",
     };
   }
 }
@@ -1084,8 +1084,8 @@ export async function updateCourseAboutAction(
       },
     });
 
-    revalidatePath(`/formations/${courseId}`);
-    revalidatePath(`/tableau-de-bord/admin/courses/${courseId}`);
+    revalidatePath(`/courses/${courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
 
     return { success: true };
   } catch (error) {
@@ -1097,7 +1097,7 @@ export async function updateCourseAboutAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de la section À propos",
+      error: "Error while updating the About section",
     };
   }
 }

@@ -41,7 +41,7 @@ export function SmartReviewSession({
       const result = await rateReviewItemAction(currentItem.id, difficulty);
 
       if (!result.success) {
-        toast.error(result.error || "Erreur lors de l'enregistrement");
+        toast.error(result.error || "Error saving");
         setIsSubmitting(false);
         return;
       }
@@ -52,7 +52,7 @@ export function SmartReviewSession({
       await onNext();
     } catch (error) {
       console.error("Error submitting rating:", error);
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsSubmitting(false);
     }

@@ -38,7 +38,7 @@ async function CohortDetailContent({ params }: CohortDetailPageProps) {
       <AdminDashboardTabs defaultTab="cohorts">
         <div className="mt-6">
           <div className="mb-6">
-            <Link href="/tableau-de-bord/admin/cohorts">
+            <Link href="/dashboard/admin/cohorts">
               <Button variant="ghost" size="sm" className="mb-4">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Retour à la liste

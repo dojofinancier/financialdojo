@@ -2,17 +2,17 @@
 
 import { z } from "zod";
 import { sendInvestorDiagnosticCompletedWebhook } from "@/lib/webhooks/make";
-import { computeInvestisseurResult, INVESTISSEUR_DIAGNOSTIC_META } from "@/lib/constants/investisseur-diagnostic";
+import { computeInvestisseurResult, INVESTISSEUR_DIAGNOSTIC_META } from "@/lib/constants/investor-diagnostic";
 import { prisma } from "@/lib/prisma";
 import { generateInvestorReport } from "@/lib/reports/investor/generate-investor-report";
 import crypto from "crypto";
 
 const submitInvestisseurDiagnosticSchema = z.object({
-  firstName: z.string().trim().min(1, "Prénom requis").max(100, "Prénom trop long"),
+  firstName: z.string().trim().min(1, "First name required").max(100, "First name too long"),
   email: z.string().trim().email("Email invalide").max(200, "Email trop long"),
   responses: z
     .record(z.string(), z.string().min(1))
-    .refine((r) => Object.keys(r).length > 0, "Réponses requises"),
+    .refine((r) => Object.keys(r).length > 0, "Answers required"),
 });
 
 export type SubmitInvestisseurDiagnosticResult =
@@ -27,7 +27,7 @@ export async function submitInvestisseurDiagnosticAction(
 
     const result = computeInvestisseurResult(parsed.responses);
     if (!result) {
-      return { success: false, error: "Impossible de calculer le résultat du questionnaire." };
+      return { success: false, error: "Unable to calculate the quiz result." };
     }
 
     const baseUrl =
@@ -114,9 +114,9 @@ export async function submitInvestisseurDiagnosticAction(
     return { success: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.issues[0]?.message || "Données invalides" };
+      return { success: false, error: error.issues[0]?.message || "Invalid data" };
     }
-    return { success: false, error: error instanceof Error ? error.message : "Erreur inconnue" };
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
   }
 }
 

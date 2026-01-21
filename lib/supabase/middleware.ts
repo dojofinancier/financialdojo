@@ -40,8 +40,12 @@ export async function updateSession(request: NextRequest) {
   // Redirecting for "everything that's not public" breaks true public pages
   // (e.g. /contact) and prevents real 404 pages from rendering (unknown paths
   // would get redirected to /login instead).
-  const protectedPrefixes = ["/tableau-de-bord", "/dashboard", "/apprendre", "/learn"];
-  const isProtectedRoute = protectedPrefixes.some((p) => request.nextUrl.pathname === p || request.nextUrl.pathname.startsWith(`${p}/`));
+  const protectedPrefixes = ["/dashboard", "/learn"];
+  const isProtectedPrefix = protectedPrefixes.some(
+    (p) => request.nextUrl.pathname === p || request.nextUrl.pathname.startsWith(`${p}/`),
+  );
+  const isCohortLearningRoute = /^\/cohorts\/[^/]+\/learn/.test(request.nextUrl.pathname);
+  const isProtectedRoute = isProtectedPrefix || isCohortLearningRoute;
 
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
@@ -63,4 +67,3 @@ export async function updateSession(request: NextRequest) {
 
   return supabaseResponse;
 }
-

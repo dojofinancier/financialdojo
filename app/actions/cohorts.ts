@@ -39,8 +39,8 @@ const cohortSchema = z.object({
     avatar: z.string().optional(),
   })).optional().default([]),
   heroImages: z.array(z.string()).optional().default([]),
-  price: z.number().min(0, "Le prix doit être positif"),
-  maxStudents: z.number().int().positive("Le nombre maximum d'étudiants doit être positif"),
+  price: z.number().min(0, "The price must be positive"),
+  maxStudents: z.number().int().positive("The maximum number of students must be positive"),
   enrollmentClosingDate: z.date(),
   accessDuration: z.number().int().positive().default(365),
   published: z.boolean().default(false),
@@ -209,7 +209,7 @@ export async function createCohortAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -254,7 +254,7 @@ export async function updateCohortAction(
     if (!existingCohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -262,7 +262,7 @@ export async function updateCohortAction(
     if (user.role === "INSTRUCTOR" && existingCohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de modifier cette cohorte",
+        error: "You do not have permission to modify this cohort",
       };
     }
 
@@ -371,7 +371,7 @@ export async function updateCohortAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -416,7 +416,7 @@ export async function deleteCohortAction(
     if (!existingCohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -424,7 +424,7 @@ export async function deleteCohortAction(
     if (user.role === "INSTRUCTOR" && existingCohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de supprimer cette cohorte",
+        error: "You do not have permission to delete this cohort",
       };
     }
 
@@ -442,7 +442,7 @@ export async function deleteCohortAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de la cohorte",
+      error: "Error while deleting the cohort",
     };
   }
 }
@@ -512,7 +512,7 @@ export async function getCohortBySlugAction(slug: string) {
     });
 
     if (!cohort) {
-      return { success: false, error: "Cohorte introuvable" };
+      return { success: false, error: "Cohort not found" };
     }
 
     // Convert Decimal to number for serialization
@@ -538,7 +538,7 @@ export async function getCohortBySlugAction(slug: string) {
       severity: "MEDIUM",
     });
 
-    return { success: false, error: "Erreur lors de la récupération de la cohorte" };
+    return { success: false, error: "Error while retrieving the cohort" };
   }
 }
 
@@ -593,7 +593,7 @@ export async function getCohortAction(cohortId: string) {
     });
 
     if (!cohort) {
-      return { success: false, error: "Cohorte introuvable" };
+      return { success: false, error: "Cohort not found" };
     }
 
     // Convert Decimal to number for serialization
@@ -622,7 +622,7 @@ export async function getCohortAction(cohortId: string) {
 
     return {
       success: false,
-      error: "Erreur lors de la récupération de la cohorte",
+      error: "Error while retrieving the cohort",
     };
   }
 }
@@ -812,7 +812,7 @@ export async function getCohortContentBySlugAction(slug: string) {
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -827,7 +827,7 @@ export async function getCohortContentBySlugAction(slug: string) {
 
     return {
       success: false,
-      error: "Erreur lors de la récupération du contenu de la cohorte",
+      error: "Error while retrieving the cohort content",
     };
   }
 }
@@ -846,7 +846,7 @@ export async function getCohortContentAction(cohortId: string) {
     if (!accessResult.hasAccess) {
       return {
         success: false,
-        error: "Vous n'avez pas accès à cette cohorte",
+        error: "You do not have access to this cohort",
       };
     }
 
@@ -899,7 +899,7 @@ export async function getCohortContentAction(cohortId: string) {
     if (!cohortData) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -943,7 +943,7 @@ export async function getCohortContentAction(cohortId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du chargement du contenu",
+      error: "Error while loading the content",
     };
   }
 }
@@ -980,7 +980,7 @@ export async function getInstructorsAction() {
 
     return {
       success: false,
-      error: "Erreur lors de la récupération des instructeurs",
+      error: "Error while retrieving the instructors",
       data: [],
     };
   }
@@ -1156,7 +1156,7 @@ export async function addModuleToCohortAction(
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -1164,7 +1164,7 @@ export async function addModuleToCohortAction(
     if (user.role === "INSTRUCTOR" && cohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de modifier cette cohorte",
+        error: "You do not have permission to modify this cohort",
       };
     }
 
@@ -1202,7 +1202,7 @@ export async function addModuleToCohortAction(
     if (existing) {
       return {
         success: false,
-        error: "Ce module est déjà dans la cohorte",
+        error: "This module is already in the cohort",
       };
     }
 
@@ -1236,7 +1236,7 @@ export async function addModuleToCohortAction(
 
     return {
       success: false,
-      error: "Erreur lors de l'ajout du module à la cohorte",
+      error: "Error while adding the module to the cohort",
     };
   }
 }
@@ -1259,7 +1259,7 @@ export async function removeModuleFromCohortAction(
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -1267,7 +1267,7 @@ export async function removeModuleFromCohortAction(
     if (user.role === "INSTRUCTOR" && cohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de modifier cette cohorte",
+        error: "You do not have permission to modify this cohort",
       };
     }
 
@@ -1288,7 +1288,7 @@ export async function removeModuleFromCohortAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression du module de la cohorte",
+      error: "Error while removing the module from the cohort",
     };
   }
 }
@@ -1311,7 +1311,7 @@ export async function reorderCohortModulesAction(
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -1319,7 +1319,7 @@ export async function reorderCohortModulesAction(
     if (user.role === "INSTRUCTOR" && cohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de modifier cette cohorte",
+        error: "You do not have permission to modify this cohort",
       };
     }
 
@@ -1348,7 +1348,7 @@ export async function reorderCohortModulesAction(
 
     return {
       success: false,
-      error: "Erreur lors du réordonnancement des modules",
+      error: "Error while reordering the modules",
     };
   }
 }
@@ -1371,7 +1371,7 @@ export async function updateCohortAboutAction(
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -1379,7 +1379,7 @@ export async function updateCohortAboutAction(
     if (user.role === "INSTRUCTOR" && cohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de modifier cette cohorte",
+        error: "You do not have permission to modify this cohort",
       };
     }
 
@@ -1401,7 +1401,7 @@ export async function updateCohortAboutAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de la section À propos",
+      error: "Error while updating the About section",
     };
   }
 }
@@ -1424,7 +1424,7 @@ export async function updateCohortFeaturesAction(
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -1432,7 +1432,7 @@ export async function updateCohortFeaturesAction(
     if (user.role === "INSTRUCTOR" && cohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de modifier cette cohorte",
+        error: "You do not have permission to modify this cohort",
       };
     }
 
@@ -1451,7 +1451,7 @@ export async function updateCohortFeaturesAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour des fonctionnalités",
+      error: "Error while updating features",
     };
   }
 }
@@ -1474,7 +1474,7 @@ export async function updateCohortTestimonialsAction(
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -1482,7 +1482,7 @@ export async function updateCohortTestimonialsAction(
     if (user.role === "INSTRUCTOR" && cohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de modifier cette cohorte",
+        error: "You do not have permission to modify this cohort",
       };
     }
 
@@ -1501,7 +1501,7 @@ export async function updateCohortTestimonialsAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour des témoignages",
+      error: "Error while updating testimonials",
     };
   }
 }

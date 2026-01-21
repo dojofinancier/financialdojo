@@ -52,7 +52,7 @@ export function ThemeToggle() {
       return "Basculer vers le mode sombre";
     }
     if (theme === "light") return "Basculer vers le mode sombre";
-    if (theme === "dark") return "Basculer vers le mode système";
+    if (theme === "dark") return "Switch to system mode";
     return "Basculer vers le mode clair";
   };
 

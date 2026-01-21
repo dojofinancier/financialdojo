@@ -33,12 +33,12 @@ function ResetPasswordForm() {
 
       if (result.success) {
         setEmailSent(true);
-        toast.success("Email de réinitialisation envoyé!");
+        toast.success("Password reset email sent!");
       } else {
-        toast.error(result.error || "Erreur lors de l'envoi de l'email");
+        toast.error(result.error || "Error sending email");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +86,7 @@ function ResetPasswordForm() {
               <Input
                 id="email"
                 type="email"
-                placeholder="votre@courriel.com"
+                placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -94,7 +94,7 @@ function ResetPasswordForm() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Envoi..." : "Envoyer le lien de réinitialisation"}
+              {isLoading ? "Envoi..." : "Send reset link"}
             </Button>
             <div className="text-center">
               <Link

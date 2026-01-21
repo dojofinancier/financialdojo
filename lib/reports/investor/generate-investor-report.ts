@@ -2,7 +2,7 @@ import {
   INVESTISSEUR_ARCHETYPES,
   INVESTISSEUR_QUESTIONS,
   type InvestisseurResult,
-} from "@/lib/constants/investisseur-diagnostic";
+} from "@/lib/constants/investor-diagnostic";
 
 export type GenerateInvestorReportInput = {
   firstName: string;
@@ -39,159 +39,159 @@ const PROFILE_CONTENT: Record<
 > = {
   architecte: {
     whatItMeans:
-      "Tu investis avec une logique de système : règles, discipline, horizon long terme. Ton avantage, c’est la constance. Ton risque, c’est de devenir trop rigide (ou trop confiant dans “le plan” sans re-questionner les hypothèses).",
+      "You invest with a systems mindset: rules, discipline, long-term horizon. Your advantage is consistency. Your risk is becoming too rigid (or too confident in \"the plan\" without re-examining the assumptions).",
     strengths: [
-      "Capacité à tenir le cap quand ça bouge",
+      "Ability to stay the course when things move",
       "Vision long terme et patience",
-      "Structure (écrit, règles, process)",
+      "Structure (written, rules, process)",
     ],
     blindSpot:
-      "Rigidité : refuser d’ajuster une stratégie même quand le contexte ou tes objectifs ont changé.",
+      "Rigidity: refusing to adjust a strategy even when the context or your objectives have changed.",
     topMistakes: [
       {
-        title: "Optimiser des détails avant d’optimiser les fondamentaux",
-        fix: "Reviens aux 3 piliers : allocation, coûts, comportement. Tout le reste vient après.",
+        title: "Optimizing details before optimizing the fundamentals",
+        fix: "Return to the 3 pillars: allocation, costs, behavior. Everything else comes after.",
       },
       {
         title: "Sous-estimer le risque de concentration",
-        fix: "Vérifie tes 5 plus grosses positions et ton exposition sectorielle/pays. Fixe une limite simple.",
+        fix: "Check your 5 largest positions and your sector/country exposure. Set a simple limit.",
       },
       {
-        title: "Confondre discipline et entêtement",
-        fix: "Planifie une revue trimestrielle : objectifs, horizon, risques, et ajustements autorisés (à l’avance).",
+        title: "Confusing discipline with stubbornness",
+        fix: "Plan a quarterly review: objectives, horizon, risks, and allowed adjustments (in advance).",
       },
     ],
     next7Days: [
-      "Écris ton “Investor Policy Statement” en 10 lignes (objectifs, horizon, tolérance aux baisses, règles).",
-      "Établis une allocation cible (ex: actions/obligations/cash) + une marge de rééquilibrage.",
-      "Supprime 1 complexité inutile (produit opaque, doublon, stratégie non comprise).",
+      "Write your \"Investor Policy Statement\" in 10 lines (objectives, horizon, tolerance for declines, rules).",
+      "Set a target allocation (e.g., equities/bonds/cash) + a rebalancing band.",
+      "Remove 1 unnecessary complexity (opaque product, duplicate, strategy not understood).",
       "Active une routine de revue (15 min/semaine) et une revue trimestrielle (45 min).",
     ],
   },
   stratege: {
     whatItMeans:
-      "Tu as une bonne direction et tu réfléchis bien, mais ton cadre n’est pas encore assez explicite. Ton levier principal : transformer une “bonne intuition” en règles simples, pour éviter les décisions au feeling.",
-    strengths: ["Bon jugement global", "Réévalue sans paniquer", "Capacité à apprendre vite"],
+      "You have a good direction and you think well, but your framework is not yet explicit enough. Your main lever: transform a “good intuition” into simple rules, to avoid decisions based on feeling.",
+    strengths: ["Bon jugement global", "Re-evaluate without panicking", "Ability to learn quickly"],
     blindSpot:
-      "Manque de formalisation : tu sais où tu veux aller, mais tu n’as pas encore un système qui te protège de toi-même quand l’émotion monte.",
+      "Lack of formalization: you know where you want to go, but you don't yet have a system that protects you from yourself when emotions rise.",
     topMistakes: [
       {
-        title: "Changer de stratégie sans t’en rendre compte",
-        fix: "Définis 3 règles immuables (ex: allocation cible, fréquence de rééquilibrage, budget “expérimentation”).",
+        title: "Changing strategy without realizing it",
+        fix: "Define 3 immutable rules (e.g.: target allocation, rebalancing frequency, “experiment” budget).",
       },
       {
-        title: "Trop d’information, pas assez de décisions",
-        fix: "Réduis tes sources à 2-3 maximum et transforme-les en checklists (pas en impulsions).",
+        title: "Too much information, not enough decisions",
+        fix: "Reduce your sources to 2-3 maximum and turn them into checklists (not impulses).",
       },
       {
-        title: "Sous-estimer le rôle du comportement",
-        fix: "Écris ton plan “quand ça baisse de 20%” (quoi faire / quoi ne pas faire).",
+        title: "Underestimating the role of behavior",
+        fix: "Write your plan “when it drops 20%” (what to do / what not to do).",
       },
     ],
     next7Days: [
-      "Écris ta stratégie sur 1 page (objectif, horizon, allocation, règles de contribution).",
-      "Crée une checklist de décision (avant d’acheter : pourquoi, horizon, risque, alternative).",
-      "Fixe un budget “opportunités” (petit %) pour éviter de contaminer le cœur du portefeuille.",
-      "Choisis 1 métrique simple de suivi (ex: % actions, coût total, taux d’épargne).",
+      "Write your strategy on 1 page (objective, horizon, allocation, contribution rules).",
+      "Create a decision checklist (before buying: why, horizon, risk, alternative).",
+      "Set an “opportunities” budget (small %) to avoid contaminating the core of the portfolio.",
+      "Choose 1 simple tracking metric (e.g.: % equities, total cost, savings rate).",
     ],
   },
   delegateur: {
     whatItMeans:
-      "Tu délègues beaucoup — parfois par confiance, parfois pour éviter la complexité. Le vrai risque ici n’est pas “le conseiller” : c’est l’asymétrie d’information. Ton levier : comprendre assez pour piloter.",
-    strengths: ["Simplicité", "Moins d’impulsivité", "Peut gagner du temps si bien encadré"],
+      "You delegate a lot — sometimes out of trust, sometimes to avoid complexity. The real risk here is not “the advisor”: it's information asymmetry. Your lever: understand enough to steer.",
+    strengths: ["Simplicity", "Less impulsivity", "Can save time if well structured"],
     blindSpot:
-      "Tu peux être investi dans un portefeuille que tu ne comprends pas vraiment (produits, frais, risques).",
+      "You may be invested in a portfolio you don't really understand (products, fees, risks).",
     topMistakes: [
       {
-        title: "Ne pas connaître tes frais totaux",
+        title: "Not knowing your total fees",
         fix: "Demande noir sur blanc : frais de gestion + frais des produits + frais de transaction, en $/an et en %.",
       },
       {
-        title: "Confondre “déléguer” et “abandonner”",
-        fix: "Définis ton cadre (objectif, horizon, limites) et exige des explications simples et régulières.",
+        title: "Confusing “delegate” and “abandon”",
+        fix: "Define your framework (objective, horizon, limits) and demand simple, regular explanations.",
       },
       {
-        title: "Ne pas vérifier l’alignement d’intérêts",
-        fix: "Clarifie comment ton conseiller est rémunéré et compare 1 alternative (FNB/portefeuille modèle).",
+        title: "Not checking alignment of interests",
+        fix: "Clarify how your advisor is compensated and compare 1 alternative (ETF/model portfolio).",
       },
     ],
     next7Days: [
       "Obtiens un “snapshot” de ton portefeuille (allocation, produits, frais, rendement).",
-      "Pose 5 questions essentielles (frais, risques, scénario -20%, plan de rééquilibrage, justification).",
-      "Écris tes objectifs en 5 lignes et partage-les à ton conseiller.",
-      "Décide d’une cadence de revue (trimestrielle) et d’un format de rapport standard.",
+      "Ask 5 essential questions (fees, risks, -20% scenario, rebalancing plan, justification).",
+      "Write your goals in 5 lines and share them with your advisor.",
+      "Decide on a review cadence (quarterly) and a standard report format.",
     ],
   },
   navigateur: {
     whatItMeans:
-      "Tu avances au fil de l’information. Le danger : l’actualité pilote ton portefeuille. Ton levier : une boussole simple (objectifs + règles) pour filtrer l’info.",
-    strengths: ["Curiosité", "Réactivité", "Capacité à repérer des idées"],
+      "You progress with the flow of information. The danger: the news drives your portfolio. Your lever: a simple compass (goals + rules) to filter the info.",
+    strengths: ["Curiosity", "Responsiveness", "Ability to spot ideas"],
     blindSpot:
-      "Volatilité de stratégie : tu peux avoir raison sur des idées, mais perdre sur l’exécution (timing, incohérence, rotation).",
+      "Strategy volatility: you can be right about ideas, but lose on execution (timing, inconsistency, rotation).",
     topMistakes: [
-      { title: "Surconsommer l’info", fix: "Passe d’un flux quotidien à une revue hebdo + une checklist d’action." },
-      { title: "Acheter des récits", fix: "Exige une thèse simple : pourquoi ça marche, quand ça échoue, horizon." },
-      { title: "Manquer de cœur de portefeuille", fix: "Construis un noyau (80-90%) stable, et garde l’exploration à part." },
+      { title: "Surconsommer l’info", fix: "Switch from a daily stream to a weekly review + an action checklist." },
+      { title: "Buying narratives", fix: "Demand a simple thesis: why it works, when it fails, time horizon." },
+      { title: "Lacking a portfolio core", fix: "Build a stable core (80-90%), and keep exploration separate." },
     ],
     next7Days: [
-      "Crée ton noyau (ex: 2-4 FNB diversifiés) + une règle de contribution automatique.",
-      "Réduis tes sources à 2 (1 long format + 1 synthèse), le reste = “bonus”.",
-      "Sépare “cœur” et “satellites” (petit budget idées).",
-      "Écris 3 règles anti-impulsivité (délai 48h, taille max position, validation checklist).",
+      "Create your core (e.g., 2-4 diversified ETFs) + an automatic contribution rule.",
+      "Reduce your sources to 2 (1 long format + 1 summary), the rest = 'bonus'.",
+      "Separate 'core' and 'satellites' (small ideas budget).",
+      "Write 3 anti-impulsivity rules (48h delay, max position size, validation checklist).",
     ],
   },
   optimiseur: {
     whatItMeans:
-      "Tu es très impliqué et tu cherches à faire mieux… mais tu optimises parfois au mauvais endroit (trop tôt). Ton levier : simplifier et mesurer ce qui compte.",
-    strengths: ["Énergie", "Apprentissage", "Volonté d’améliorer les résultats"],
+      "You are very involved and you try to do better… but you sometimes optimize in the wrong place (too early). Your lever: simplify and measure what matters.",
+    strengths: ["Energy", "Apprentissage", "Willingness to improve results"],
     blindSpot:
-      "Tu peux confondre activité et progrès. Plus d’actions ≠ meilleurs résultats (et ça augmente les erreurs).",
+      "You can confuse activity with progress. More actions ≠ better results (and it increases errors).",
     topMistakes: [
-      { title: "Trop de transactions", fix: "Réduis la fréquence. Mets l’effort sur l’allocation et les contributions." },
+      { title: "Trop de transactions", fix: "Reduce the frequency. Put effort into allocation and contributions." },
       { title: "Optimiser pour le court terme", fix: "Choisis 1 horizon principal, et aligne le portefeuille sur cet horizon." },
-      { title: "Complexifier (produits/stratégies)", fix: "Si tu ne peux pas l’expliquer en 30 secondes, ce n’est pas un “core holding”." },
+      { title: "Overcomplicating (products/strategies)", fix: "Si tu ne peux pas l’expliquer en 30 secondes, ce n’est pas un “core holding”." },
     ],
     next7Days: [
-      "Mesure tes coûts (frais + turnover). Choisis 1 amélioration à fort impact.",
-      "Définis ton noyau simple + ton budget d’expérimentation (petit %).",
-      "Crée une règle de “moins mais mieux” : 1 décision/sem max, si checklist validée.",
-      "Planifie une revue mensuelle : allocation, contributions, erreurs, leçons.",
+      "Measure your costs (fees + turnover). Choose 1 high-impact improvement.",
+      "Define your simple core + your experimentation budget (small %).",
+      "Create a “less but better” rule: 1 decision/week max, if checklist validated.",
+      "Schedule a monthly review: allocation, contributions, errors, lessons.",
     ],
   },
   prudent: {
     whatItMeans:
-      "La sécurité et la protection du capital sont centrales. Ton risque : laisser l’émotion dicter les décisions, surtout en baisse. Ton levier : un plan de risque clair (à l’avance).",
-    strengths: ["Prudence", "Sens du risque", "Recherche de stabilité"],
+      "Safety and capital protection are central. Your risk: letting emotion dictate decisions, especially during downturns. Your leverage: a clear risk plan (in advance).",
+    strengths: ["Prudence", "Sens du risque", "Seeking stability"],
     blindSpot:
-      "Risque de vendre au mauvais moment (ou de rester trop en retrait) et de manquer la croissance nécessaire à tes objectifs.",
+      "Risk of selling at the wrong time (or staying too sidelined) and missing the growth needed for your goals.",
     topMistakes: [
-      { title: "Vendre en panique", fix: "Écris une règle : aucune vente sous stress sans 72h + checklist." },
-      { title: "Trop de cash par défaut", fix: "Décide d’un cash cible (ex: 3-6 mois) et investis le surplus systématiquement." },
-      { title: "Confondre volatilité et risque", fix: "Relie ton horizon et ton besoin de liquidité au niveau de risque acceptable." },
+      { title: "Vendre en panique", fix: "Write a rule: no selling under stress without 72h + checklist." },
+      { title: "Too much cash by default", fix: "Decide on a target cash buffer (e.g.: 3-6 months) and invest the surplus systematically." },
+      { title: "Confusing volatility and risk", fix: "Link your horizon and your liquidity needs to the acceptable level of risk." },
     ],
     next7Days: [
-      "Écris ton plan “marché -20%” (quoi faire / quoi ne pas faire).",
-      "Définis un cash buffer et automatise tes contributions (petit montant).",
+      "Write your “market -20%” plan (what to do / what not to do).",
+      "Define a cash buffer and automate your contributions (small amount).",
       "Choisis 1 portefeuille simple qui respecte ton risque (ex: mix actions/obligations).",
-      "Réduis les sources anxiogènes (news) et remplace par 1 revue hebdo structurée.",
+      "Reduce anxiety-inducing sources (news) and replace them with 1 structured weekly review.",
     ],
   },
   explorateur: {
     whatItMeans:
-      "Tu es curieux et opportuniste. Ton risque : l’incohérence dans le temps. Ton levier : cadrer l’exploration pour qu’elle serve tes objectifs (au lieu de les remplacer).",
-    strengths: ["Ouverture", "Flexibilité", "Capacité à saisir des opportunités"],
+      "You are curious and opportunistic. Your risk: inconsistency over time. Your leverage: frame exploration so that it serves your goals (instead of replacing them).",
+    strengths: ["Ouverture", "Flexibility", "Ability to seize opportunities"],
     blindSpot:
-      "Tu peux passer d’une idée à l’autre sans capitaliser (pas de répétition, pas de système, pas de mesure).",
+      "You can jump from one idea to another without capitalizing (no repetition, no system, no measurement).",
     topMistakes: [
       { title: "Changer trop souvent", fix: "Impose un horizon minimum par position (sauf invalidation claire)." },
-      { title: "Absence de noyau", fix: "Construis un cœur stable, puis explore avec un budget limité." },
-      { title: "Décisions guidées par le narratif", fix: "Utilise une thèse écrite : pourquoi / quand / combien / sortie." },
+      { title: "Absence de noyau", fix: "Build a stable core, then explore with a limited budget." },
+      { title: "Decisions guided by narrative", fix: "Use a written thesis: why / when / how much / exit." },
     ],
     next7Days: [
-      "Définis ton “terrain de jeu” (budget explorateur) et protège le reste.",
-      "Crée un journal d’investissement (décision, thèse, horizon, critères de sortie).",
-      "Établis une allocation simple pour le noyau et automatise les apports.",
-      "Choisis 1 thème d’apprentissage structuré (pas 5 en parallèle).",
+      "Define your “playing field” (explorer budget) and protect the rest.",
+      "Create an investment journal (decision, thesis, horizon, exit criteria).",
+      "Establish a simple allocation for the core and automate contributions.",
+      "Choose 1 structured learning theme (not 5 in parallel).",
     ],
   },
 };
@@ -215,7 +215,7 @@ function getAnswerText(questionId: string, answerId: string | undefined): string
 function confidenceLabel(confidence: InvestisseurResult["confidence"]): string {
   switch (confidence) {
     case "high":
-      return "Élevée";
+      return "High";
     case "medium":
       return "Moyenne";
     default:
@@ -235,10 +235,10 @@ export function generateInvestorReport(input: GenerateInvestorReportInput): Gene
   const answersSummary = [
     ["Objectif", getAnswerText("q1_goal", input.responses["q1_goal"])],
     ["Horizon", getAnswerText("q2_horizon", input.responses["q2_horizon"])],
-    ["Réaction aux baisses", getAnswerText("q3_drawdown_reaction", input.responses["q3_drawdown_reaction"])],
+    ["Reaction to downturns", getAnswerText("q3_drawdown_reaction", input.responses["q3_drawdown_reaction"])],
     ["Structure", getAnswerText("q4_structure", input.responses["q4_structure"])],
     ["Source d’info", getAnswerText("q5_info_source", input.responses["q5_info_source"])],
-    ["Temps/énergie", getAnswerText("q6_time_energy", input.responses["q6_time_energy"])],
+    ["Time/energy", getAnswerText("q6_time_energy", input.responses["q6_time_energy"])],
   ]
     .filter(([, v]) => Boolean(v))
     .map(([k, v]) => `- **${k}**: ${v}`);
@@ -249,36 +249,36 @@ export function generateInvestorReport(input: GenerateInvestorReportInput): Gene
   lines.push(`Bonjour **${mdEscape(input.firstName)}**,`);
   lines.push("");
   lines.push(
-    "Ce rapport est conçu pour te donner une lecture claire de ta manière d’investir, tes points forts, tes pièges typiques, et un plan simple pour progresser rapidement."
+    "This report is designed to give you a clear reading of your investing approach, your strengths, your typical pitfalls, and a simple plan to progress quickly."
   );
   lines.push("");
-  lines.push("> Éducation seulement. Ceci n’est pas un conseil d’investissement personnalisé.");
+  lines.push("> Education only. This is not personalized investment advice.");
   lines.push("");
 
-  lines.push("## 1) Ton résultat");
+  lines.push("## 1) Your result");
   lines.push("");
   lines.push(`- **Profil principal**: ${getArchetypeName(primaryId)} (${input.result.primary.score} pts)`);
   if (secondaryId) {
     lines.push(`- **Profil secondaire**: ${getArchetypeName(secondaryId)} (${input.result.secondary?.score ?? 0} pts)`);
   } else {
-    lines.push(`- **Profil secondaire**: Aucun (selon les règles d’éligibilité du diagnostic)`);
+    lines.push(`- **Secondary profile**: None (according to the assessment eligibility rules)`);
   }
   lines.push(`- **Confiance**: ${confidenceLabel(input.result.confidence)}`);
   lines.push("");
 
   if (answersSummary.length) {
-    lines.push("### Tes réponses (résumé)");
+    lines.push("### Your answers (summary)");
     lines.push("");
     lines.push(...answersSummary);
     lines.push("");
   }
 
-  lines.push("## 2) Lecture rapide (ce que ça veut dire)");
+  lines.push("## 2) Quick read (what it means)");
   lines.push("");
   if (primaryContent) {
     lines.push(primaryContent.whatItMeans);
   } else {
-    lines.push("Ton profil indique une manière d’investir spécifique. Le rapport complet sera enrichi au fil des versions.");
+    lines.push("Your profile indicates a specific way of investing. The full report will be enhanced over future versions.");
   }
   lines.push("");
 
@@ -291,18 +291,18 @@ export function generateInvestorReport(input: GenerateInvestorReportInput): Gene
     lines.push("");
   }
 
-  lines.push("## 3) Tes forces (à conserver)");
+  lines.push("## 3) Your strengths (to keep)");
   lines.push("");
   if (primaryContent) {
     for (const s of primaryContent.strengths) lines.push(`- ${s}`);
   } else {
-    lines.push("- Capacité à apprendre et à ajuster.");
+    lines.push("- Ability to learn and adapt.");
   }
   lines.push("");
 
-  lines.push("## 4) Ton angle mort (à surveiller)");
+  lines.push("## 4) Your blind spot (to watch)");
   lines.push("");
-  lines.push(primaryContent?.blindSpot ?? "Un risque comportemental peut nuire à tes résultats si tu n’as pas de cadre.");
+  lines.push(primaryContent?.blindSpot ?? "A behavioral risk can harm your results if you don't have a framework.");
   lines.push("");
 
   lines.push("## 5) Tes 3 erreurs les plus probables (et comment les corriger)");
@@ -328,10 +328,10 @@ export function generateInvestorReport(input: GenerateInvestorReportInput): Gene
   }
   lines.push("");
 
-  lines.push("## 7) Une règle d’or (à imprimer)");
+  lines.push("## 7) A golden rule (to print)");
   lines.push("");
   lines.push(
-    "Ton rendement dépend moins de “la meilleure idée” que de ta capacité à répéter une stratégie simple, sur un horizon long, sans te saboter quand le marché bouge."
+    "Your return depends less on \"the best idea\" than on your ability to repeat a simple strategy, over a long horizon, without sabotaging yourself when the market moves."
   );
   lines.push("");
 

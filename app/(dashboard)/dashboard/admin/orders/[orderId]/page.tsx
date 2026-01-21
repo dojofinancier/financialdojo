@@ -23,7 +23,7 @@ async function OrderDetailContent({ params }: OrderDetailPageProps) {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <Link href="/tableau-de-bord/admin/orders">
+        <Link href="/dashboard/admin/orders">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Retour à la liste

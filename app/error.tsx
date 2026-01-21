@@ -19,7 +19,7 @@ export default function Error({
   useEffect(() => {
     // Log error to database via server action
     logClientErrorAction({
-      errorMessage: error.message || "Une erreur inattendue est survenue",
+      errorMessage: error.message || "An unexpected error occurred",
       stackTrace: error.stack || undefined,
       url: typeof window !== "undefined" ? window.location.href : undefined,
       userAgent: typeof window !== "undefined" ? window.navigator.userAgent : undefined,

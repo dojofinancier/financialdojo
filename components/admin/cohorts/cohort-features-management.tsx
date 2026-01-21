@@ -48,7 +48,7 @@ export function CohortFeaturesManagement({ cohortId, initialFeatures }: CohortFe
 
   const handleAddFeature = () => {
     if (!newFeature.text.trim()) {
-      toast.error("Veuillez entrer un texte pour la fonctionnalité");
+      toast.error("Please enter text for the feature");
       return;
     }
 
@@ -71,12 +71,12 @@ export function CohortFeaturesManagement({ cohortId, initialFeatures }: CohortFe
       setSaving(true);
       const result = await updateCohortFeaturesAction(cohortId, features);
       if (result.success) {
-        toast.success("Fonctionnalités mises à jour avec succès");
+        toast.success("Features updated successfully");
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la sauvegarde");
+      toast.error("Error saving");
     } finally {
       setSaving(false);
     }

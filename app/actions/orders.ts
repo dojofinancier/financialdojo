@@ -287,7 +287,7 @@ export async function processRefundAction(
     if (!enrollment || !enrollment.paymentIntentId) {
       return {
         success: false,
-        error: "Inscription ou paiement introuvable",
+        error: "Registration or payment not found",
       };
     }
 
@@ -304,7 +304,7 @@ export async function processRefundAction(
     if (!chargeId) {
       return {
         success: false,
-        error: "Aucun paiement trouvé pour cette inscription",
+        error: "No payment found for this registration",
       };
     }
 
@@ -331,7 +331,7 @@ export async function processRefundAction(
 
     return {
       success: false,
-      error: "Erreur lors du traitement du remboursement",
+      error: "Error processing the refund",
     };
   }
 }

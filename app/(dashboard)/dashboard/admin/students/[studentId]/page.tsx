@@ -23,7 +23,7 @@ async function StudentDetailContent({ params }: StudentDetailPageProps) {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <Link href="/tableau-de-bord/admin/students">
+        <Link href="/dashboard/admin/students">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Retour à la liste
@@ -32,7 +32,7 @@ async function StudentDetailContent({ params }: StudentDetailPageProps) {
         <h1 className="text-3xl font-bold">
           {student.firstName || student.lastName
             ? `${student.firstName || ""} ${student.lastName || ""}`.trim()
-            : "Étudiant"}
+            : "Student"}
         </h1>
         <p className="text-muted-foreground mt-2">{student.email}</p>
       </div>

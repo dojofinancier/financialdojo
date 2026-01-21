@@ -167,7 +167,7 @@ export async function getRevenueByPeriodAction(
 
     return {
       success: false,
-      error: "Erreur lors du calcul des revenus",
+      error: "Error calculating revenues",
     };
   }
 }
@@ -294,7 +294,7 @@ export async function getRefundStatisticsAction(
 
     return {
       success: false,
-      error: "Erreur lors du calcul des statistiques de remboursement",
+      error: "Error calculating refund statistics",
     };
   }
 }
@@ -393,7 +393,7 @@ export async function getTotalRevenueAction(): Promise<FinancialActionResult> {
 
     return {
       success: false,
-      error: "Erreur lors du calcul du revenu total",
+      error: "Error calculating total revenue",
     };
   }
 }
@@ -460,7 +460,7 @@ export async function getSubscriptionStatisticsAction(): Promise<FinancialAction
 
     return {
       success: false,
-      error: "Erreur lors du calcul des statistiques d'abonnement",
+      error: "Error calculating subscription statistics",
     };
   }
 }
@@ -599,7 +599,7 @@ export async function getRevenueTrendsAction(): Promise<FinancialActionResult> {
 
     return {
       success: false,
-      error: "Erreur lors du calcul des tendances de revenus",
+      error: "Error calculating revenue trends",
     };
   }
 }

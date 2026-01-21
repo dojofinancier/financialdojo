@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Termes et conditions | Le Dojo Financier",
-  description: "Termes et conditions d'utilisation du Dojo Financier",
+  title: "Terms and Conditions | Financial Dojo",
+  description: "Terms of Use of the Financial Dojo",
 };
 
 export default function TermsAndConditionsPage() {

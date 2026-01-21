@@ -42,11 +42,11 @@ export async function initializeCourseSettingsAction(
     });
 
     if (!course) {
-      return { success: false, error: "Cours introuvable" };
+      return { success: false, error: "Course not found" };
     }
 
     if (course.category.name !== "Professionnels") {
-      return { success: false, error: "Ce système n'est disponible que pour les cours professionnels" };
+      return { success: false, error: "This system is only available for professional courses" };
     }
 
     // Check enrollment
@@ -59,7 +59,7 @@ export async function initializeCourseSettingsAction(
     });
 
     if (!enrollment) {
-      return { success: false, error: "Vous n'êtes pas inscrit à ce cours" };
+      return { success: false, error: "You are not enrolled in this course" };
     }
 
     // Check if settings already exist (to detect first creation vs update)
@@ -109,7 +109,7 @@ export async function initializeCourseSettingsAction(
     // Generate study plan and capture warnings
     const planResult = await generateStudyPlanAction(courseId);
 
-    revalidatePath(`/apprendre/${courseId}`);
+    revalidatePath(`/learn/${courseId}`);
     return { 
       success: true, 
       data: settings,
@@ -121,7 +121,7 @@ export async function initializeCourseSettingsAction(
     };
   } catch (error) {
     console.error("Error initializing course settings:", error);
-    return { success: false, error: "Erreur lors de l'initialisation des paramètres" };
+    return { success: false, error: "Error initializing settings" };
   }
 }
 
@@ -142,11 +142,11 @@ export async function completeOrientationAction(courseId: string) {
       },
     });
 
-    revalidatePath(`/apprendre/${courseId}`);
+    revalidatePath(`/learn/${courseId}`);
     return { success: true };
   } catch (error) {
     console.error("Error completing orientation:", error);
-    return { success: false, error: "Erreur lors de la mise à jour" };
+    return { success: false, error: "Error updating" };
   }
 }
 
@@ -167,7 +167,7 @@ export async function generateStudyPlanAction(courseId: string) {
     });
 
     if (!settings || !settings.examDate) {
-      return { success: false, error: "Paramètres de plan d'étude non configurés" };
+      return { success: false, error: "Study plan settings not configured" };
     }
 
     // Generate study blocks using enhanced algorithm
@@ -337,7 +337,7 @@ export async function generateStudyPlanAction(courseId: string) {
       });
     }
 
-    revalidatePath(`/apprendre/${courseId}`);
+    revalidatePath(`/learn/${courseId}`);
     
     // Return warnings and additional info
     const response: any = {
@@ -364,7 +364,7 @@ export async function generateStudyPlanAction(courseId: string) {
     return response;
   } catch (error) {
     console.error("Error generating study plan:", error);
-    return { success: false, error: "Erreur lors de la génération du plan d'étude" };
+    return { success: false, error: "Error generating the study plan" };
   }
 }
 
@@ -402,7 +402,7 @@ const getCachedTodaysPlan = unstable_cache(
     });
 
     if (!settings || !settings.planCreatedAt) {
-      return { success: false, error: "Plan d'étude non configuré" };
+      return { success: false, error: "Study plan not configured" };
     }
 
     const { calculateWeek1StartDate } = await import("@/lib/utils/study-plan");
@@ -504,7 +504,7 @@ export async function getUserCourseSettingsAction(courseId: string) {
     return { success: true, data: settings };
   } catch (error) {
     console.error("Error getting course settings:", error);
-    return { success: false, error: "Erreur lors de la récupération des paramètres" };
+    return { success: false, error: "Error retrieving settings" };
   }
 }
 
@@ -524,7 +524,7 @@ export async function getTodaysPlanAction(courseId: string) {
     return await getCachedTodaysPlan(user.id, courseId, dayKey);
   } catch (error) {
     console.error("Error getting today's plan:", error);
-    return { success: false, error: "Erreur lors de la récupération du plan du jour" };
+    return { success: false, error: "Error retrieving today's plan" };
   }
 }
 
@@ -665,7 +665,7 @@ function formatTodaysPlanSections(
   
   // Ensure session courte supplémentaire always has a task (even if it's not Phase 2 as fallback)
   if (sections.sessionCourteSupplementaire.length === 0 && phase2Tasks && phase2Tasks.length > 0) {
-    console.warn(`[formatTodaysPlanSections] No Phase 2 task found for session courte supplémentaire, using first available Phase 2 task`);
+    console.warn(`[formatTodaysPlanSections] No Phase 2 task found for additional short session, using first available Phase 2 task`);
     const fallbackTask = phase2Tasks.find(t => !usedTaskIds.has(t.id)) || phase2Tasks[0];
     if (fallbackTask) {
       sections.sessionCourteSupplementaire.push(fallbackTask);
@@ -694,7 +694,7 @@ export async function getWeeklyStudyPlanAction(courseId: string) {
     });
 
     if (!settings || !settings.examDate || !settings.planCreatedAt) {
-      return { success: false, error: "Plan d'étude non configuré" };
+      return { success: false, error: "Study plan not configured" };
     }
 
     // Calculate Week 1 start date (Monday of week containing planCreatedAt)
@@ -794,7 +794,7 @@ export async function getWeeklyStudyPlanAction(courseId: string) {
     };
   } catch (error) {
     console.error("Error getting weekly study plan:", error);
-    return { success: false, error: "Erreur lors de la récupération du plan d'étude" };
+    return { success: false, error: "Error retrieving the study plan" };
   }
 }
 
@@ -857,7 +857,7 @@ export async function getStudyPlanAction(courseId: string, startDate?: Date, end
     return { success: true, data: planEntries };
   } catch (error) {
     console.error("Error getting study plan:", error);
-    return { success: false, error: "Erreur lors de la récupération du plan d'étude" };
+    return { success: false, error: "Error retrieving the study plan" };
   }
 }
 
@@ -877,7 +877,7 @@ export async function updatePlanEntryStatusAction(
     });
 
     if (!entry || entry.userId !== user.id) {
-      return { success: false, error: "Entrée de plan introuvable" };
+      return { success: false, error: "Plan entry not found" };
     }
 
     await prisma.dailyPlanEntry.update({
@@ -889,11 +889,11 @@ export async function updatePlanEntryStatusAction(
       },
     });
 
-    revalidatePath(`/apprendre/${entry.courseId}`);
+    revalidatePath(`/learn/${entry.courseId}`);
     return { success: true };
   } catch (error) {
     console.error("Error updating plan entry:", error);
-    return { success: false, error: "Erreur lors de la mise à jour" };
+    return { success: false, error: "Error updating" };
   }
 }
 
@@ -930,11 +930,11 @@ export async function markModuleAsLearnedAction(courseId: string, moduleId: stri
     // Items from completed chapters are automatically available in Smart Review
     // No need to manually add to review queue
 
-    revalidatePath(`/apprendre/${courseId}`);
+    revalidatePath(`/learn/${courseId}`);
     return { success: true };
   } catch (error) {
     console.error("Error marking module as learned:", error);
-    return { success: false, error: "Erreur lors de la mise à jour" };
+    return { success: false, error: "Error updating" };
   }
 }
 
@@ -948,7 +948,7 @@ export async function checkPhase3AccessAction(courseId: string) {
     return { success: true, data: result };
   } catch (error) {
     console.error("Error checking Phase 3 access:", error);
-    return { success: false, error: "Erreur lors de la vérification de l'accès à la Phase 3" };
+    return { success: false, error: "Error checking access to Phase 3" };
   }
 }
 
@@ -1015,7 +1015,7 @@ export async function checkBehindScheduleAction(courseId: string) {
         warning: `Temps d'étude insuffisant. Minimum requis: ${minimumStudyTime} blocs, disponible: ${blocksAvailable} blocs.`,
         suggestions: [
           `Augmentez vos heures d'étude de ${additionalHours} heures par semaine`,
-          "Modifiez la date d'examen prévue pour avoir plus de temps",
+          "Change the scheduled exam date to allow more time",
         ],
       };
     }
@@ -1042,8 +1042,8 @@ export async function checkBehindScheduleAction(courseId: string) {
         );
       }
       
-      suggestions.push("Augmentez vos heures d'étude par semaine");
-      suggestions.push("Modifiez la date d'examen prévue si nécessaire");
+      suggestions.push("Increase your study hours per week");
+      suggestions.push("Change the scheduled exam date if necessary");
       
       return {
         success: true,
@@ -1057,7 +1057,7 @@ export async function checkBehindScheduleAction(courseId: string) {
     return { success: true, isBehind: false };
   } catch (error) {
     console.error("Error checking behind schedule:", error);
-    return { success: false, error: "Erreur lors de la vérification du plan" };
+    return { success: false, error: "Error checking the plan" };
   }
 }
 
@@ -1092,7 +1092,7 @@ export async function getModuleProgressAction(courseId: string) {
     return { success: true, data: progress };
   } catch (error) {
     console.error("Error getting module progress:", error);
-    return { success: false, error: "Erreur lors de la récupération de la progression" };
+    return { success: false, error: "Error retrieving progress" };
   }
 }
 

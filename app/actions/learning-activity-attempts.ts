@@ -49,7 +49,7 @@ export async function submitLearningActivityAttempt(
     if (!activity) {
       return {
         success: false,
-        error: "Activité introuvable",
+        error: "Activity not found",
       };
     }
 
@@ -92,7 +92,7 @@ export async function submitLearningActivityAttempt(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -104,7 +104,7 @@ export async function submitLearningActivityAttempt(
 
     return {
       success: false,
-      error: "Erreur lors de la soumission de l'activité",
+      error: "Error submitting activity",
     };
   }
 }
@@ -143,7 +143,7 @@ export async function getLearningActivityAttempts(
 
     return {
       success: false,
-      error: "Erreur lors du chargement des tentatives",
+      error: "Error while loading attempts",
       data: [],
     };
   }
@@ -239,7 +239,7 @@ export async function getBatchLearningActivityAttempts(
 
     return {
       success: false,
-      error: "Erreur lors du chargement des tentatives",
+      error: "Error while loading attempts",
       data: {},
     };
   }

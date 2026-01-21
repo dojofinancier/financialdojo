@@ -20,7 +20,7 @@ export function CourseTabs({ defaultTab = "list" }: CourseTabsProps) {
     } else {
       params.delete("tab");
     }
-    router.push(`/tableau-de-bord/admin/courses?${params.toString()}`);
+    router.push(`/dashboard/admin/courses?${params.toString()}`);
   };
 
   return (

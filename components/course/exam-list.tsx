@@ -38,7 +38,7 @@ export function ExamList({ courseId, onStartExam }: ExamListProps) {
   const exams = result?.success && result.data ? result.data : [];
   
   if (error) {
-    toast.error("Erreur lors du chargement des examens");
+    toast.error("Error loading exams");
   }
 
   if (loading) {

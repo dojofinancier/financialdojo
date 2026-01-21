@@ -36,8 +36,8 @@ export function PaiementSlugClient() {
           // Load course by slug or ID
           const courseData = await getCourseBySlugOrIdAction(firstItem.slug || firstItem.id);
           if (!courseData) {
-            toast.error("Cours introuvable");
-            router.push("/panier");
+            toast.error("Course not found");
+            router.push("/cart");
             return;
           }
 
@@ -67,8 +67,8 @@ export function PaiementSlugClient() {
           // Direct checkout (no cart) - load course by slug
           const courseData = await getCourseBySlugOrIdAction(slug);
           if (!courseData) {
-            toast.error("Cours introuvable");
-            router.push("/formations");
+            toast.error("Course not found");
+            router.push("/courses");
             return;
           }
 
@@ -91,8 +91,8 @@ export function PaiementSlugClient() {
         setIsLoading(false);
       } catch (error) {
         console.error("Checkout error:", error);
-        toast.error("Une erreur est survenue");
-        router.push("/panier");
+        toast.error("An error occurred");
+        router.push("/cart");
       }
     }
 

@@ -74,7 +74,7 @@ export function DeepDiveActivity({
               value={answers[index] || ""}
               onChange={(e) => handleAnswerChange(index, e.target.value)}
               disabled={submitted}
-              placeholder="Votre réponse..."
+              placeholder="Your answer..."
               rows={5}
               className="min-h-[120px]"
             />

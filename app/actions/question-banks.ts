@@ -75,7 +75,7 @@ export async function getQuestionBanksAction(
 
     return {
       success: false,
-      error: "Erreur lors du chargement des banques de questions",
+      error: "Error loading question banks",
       data: [],
     };
   }
@@ -119,7 +119,7 @@ export async function createQuestionBankAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -131,7 +131,7 @@ export async function createQuestionBankAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création de la banque de questions",
+      error: "Error creating the question bank",
     };
   }
 }
@@ -176,7 +176,7 @@ export async function updateQuestionBankAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -188,7 +188,7 @@ export async function updateQuestionBankAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de la banque de questions",
+      error: "Error updating the question bank",
     };
   }
 }
@@ -216,7 +216,7 @@ export async function deleteQuestionBankAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de la banque de questions",
+      error: "Error deleting the question bank",
     };
   }
 }
@@ -257,7 +257,7 @@ export async function addQuestionToBankAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -269,7 +269,7 @@ export async function addQuestionToBankAction(
 
     return {
       success: false,
-      error: "Erreur lors de l'ajout de la question",
+      error: "Error adding the question",
     };
   }
 }
@@ -298,7 +298,7 @@ export async function updateQuestionInBankAction(
     if (validatedData.options !== undefined && Object.keys(validatedData.options).length === 0) {
       return {
         success: false,
-        error: "Les options ne peuvent pas être vides",
+        error: "Options cannot be empty",
       };
     }
 
@@ -307,7 +307,7 @@ export async function updateQuestionInBankAction(
       if (!validatedData.options[validatedData.correctAnswer]) {
         return {
           success: false,
-          error: "La réponse correcte doit correspondre à une option valide",
+          error: "The correct answer must correspond to a valid option",
         };
       }
     }
@@ -374,7 +374,7 @@ export async function deleteQuestionFromBankAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de la question",
+      error: "Error while deleting the question",
     };
   }
 }
@@ -477,7 +477,7 @@ export async function uploadQuestionsFromCSVAction(
     if (questions.length === 0) {
       return {
         success: false,
-        error: "Aucune question valide trouvée dans le fichier CSV",
+        error: "No valid question found in the CSV file",
       };
     }
 
@@ -522,7 +522,7 @@ export async function uploadQuestionsFromCSVAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'importation des questions: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de l'importation des questions: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -655,7 +655,7 @@ export async function uploadQuizCSVToModulesAction(
     if (questionsByChapter.size === 0) {
       return {
         success: false,
-        error: "Aucune question valide trouvée dans le fichier CSV",
+        error: "No valid question found in the CSV file",
       };
     }
 
@@ -673,7 +673,7 @@ export async function uploadQuizCSVToModulesAction(
     if (modules.length === 0) {
       return {
         success: false,
-        error: "Aucun module trouvé pour ce cours",
+        error: "No modules found for this course",
       };
     }
 
@@ -913,7 +913,7 @@ export async function uploadQuizCSVToModulesAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'importation des questions: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de l'importation des questions: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -941,7 +941,7 @@ export async function addQuestionBankToPhase1QuizAction(
     if (!questionBank) {
       return {
         success: false,
-        error: "Banque de questions non trouvée",
+        error: "Question bank not found",
       };
     }
 
@@ -953,7 +953,7 @@ export async function addQuestionBankToPhase1QuizAction(
     if (!quiz) {
       return {
         success: false,
-        error: "Quiz non trouvé",
+        error: "Quiz not found",
       };
     }
 
@@ -1022,7 +1022,7 @@ export async function addQuestionBankToPhase1QuizAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'ajout des questions: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de l'ajout des questions: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -1040,7 +1040,7 @@ export async function addSelectedQuestionsToPhase1QuizAction(
     if (questionIds.length === 0) {
       return {
         success: false,
-        error: "Aucune question sélectionnée",
+        error: "No question selected",
       };
     }
 
@@ -1054,7 +1054,7 @@ export async function addSelectedQuestionsToPhase1QuizAction(
     if (questions.length === 0) {
       return {
         success: false,
-        error: "Aucune question trouvée",
+        error: "No questions found",
       };
     }
 
@@ -1066,7 +1066,7 @@ export async function addSelectedQuestionsToPhase1QuizAction(
     if (!quiz) {
       return {
         success: false,
-        error: "Quiz non trouvé",
+        error: "Quiz not found",
       };
     }
 
@@ -1135,7 +1135,7 @@ export async function addSelectedQuestionsToPhase1QuizAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'ajout des questions: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de l'ajout des questions: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -1209,7 +1209,7 @@ export async function getPhase1QuizzesAction(
 
     return {
       success: false,
-      error: "Erreur lors du chargement des quiz Phase 1",
+      error: "Error loading Phase 1 quizzes",
       data: [],
     };
   }

@@ -30,7 +30,7 @@ export function CartSummary({ course, onCouponApplied }: CartSummaryProps) {
     e.preventDefault();
     
     if (!couponCode.trim()) {
-      toast.error("Veuillez entrer un code de coupon");
+      toast.error("Please enter a coupon code");
       return;
     }
 
@@ -50,12 +50,12 @@ export function CartSummary({ course, onCouponApplied }: CartSummaryProps) {
         });
 
         onCouponApplied(couponCode.trim(), discountAmount, finalAmount);
-        toast.success("Coupon appliqué avec succès!");
+        toast.success("Coupon applied successfully!");
       } else {
         toast.error(result.error || "Code de coupon invalide");
       }
     } catch (error) {
-      toast.error("Erreur lors de la validation du coupon");
+      toast.error("Error validating coupon");
     } finally {
       setIsValidating(false);
     }

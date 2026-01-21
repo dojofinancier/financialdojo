@@ -30,13 +30,13 @@ export async function Navbar() {
   const getDashboardUrl = (role: string) => {
     switch (role) {
       case 'ADMIN':
-        return '/tableau-de-bord/admin'
+        return '/dashboard/admin'
       case 'STUDENT':
-        return '/tableau-de-bord/etudiant'
+        return '/dashboard/student'
       case 'INSTRUCTOR':
-        return '/tableau-de-bord/instructeur' // Instructor dashboard not implemented yet
+        return '/dashboard/instructeur' // Instructor dashboard not implemented yet
       default:
-        return '/tableau-de-bord'
+        return '/dashboard'
     }
   }
 

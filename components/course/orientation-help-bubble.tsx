@@ -61,7 +61,7 @@ export function OrientationHelpBubble({
           onClick={() => setIsOpen(true)}
           size="lg"
           className="rounded-full h-12 w-12 sm:h-14 sm:w-14 shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90"
-          aria-label="Voir la vidéo d'orientation"
+          aria-label="Watch the orientation video"
         >
           <HelpCircle className="h-7 w-7 sm:h-8 sm:w-8" />
         </Button>
@@ -86,7 +86,7 @@ export function OrientationHelpBubble({
                   allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                   referrerPolicy="strict-origin-when-cross-origin"
                   style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                  title="Vidéo d'orientation"
+                  title="Orientation video"
                 />
               </div>
             </div>

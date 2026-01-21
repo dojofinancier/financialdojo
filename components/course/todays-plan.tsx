@@ -69,10 +69,10 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
   const [sanitizedText, setSanitizedText] = useState<string>("");
   const hasOrientationText = Boolean(orientationText && sanitizedText);
   const orientationButtonTitle = orientationEmbedUrl
-    ? "Voir la vidéo d’orientation"
+    ? "View the orientation video"
     : orientationText
       ? "Voir le texte d’orientation"
-      : "Aucune orientation configurée pour ce cours";
+      : "No orientation configured for this course";
 
   useEffect(() => {
     if (typeof window !== "undefined" && orientationText) {
@@ -133,7 +133,7 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
                 allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
                 style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
-                title="Vidéo d’orientation"
+                title="Orientation video"
               />
             </div>
           </div>
@@ -167,11 +167,11 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
 
     // Navigate immediately (non-blocking)
     if (taskType === TaskType.LEARN) {
-      router.push(`/apprendre/${courseId}?phase=learn`);
+      router.push(`/learn/${courseId}?phase=learn`);
     } else if (taskType === TaskType.REVIEW) {
-      router.push(`/apprendre/${courseId}?phase=review`);
+      router.push(`/learn/${courseId}?phase=review`);
     } else if (taskType === TaskType.PRACTICE) {
-      router.push(`/apprendre/${courseId}?phase=practice`);
+      router.push(`/learn/${courseId}?phase=practice`);
     }
 
     // Update status in background (non-blocking)
@@ -186,7 +186,7 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
 
   const handleCompleteTask = (entryId: string) => {
     // Show toast immediately
-    toast.success("Tâche complétée!");
+    toast.success("Task completed!");
 
     // Update in background (non-blocking)
     startTransition(async () => {
@@ -216,13 +216,13 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
     switch (taskType) {
       case TaskType.LEARN:
         // Show module title for Phase 1
-        return phase1Module ? `Phase 1 - Étude ${phase1Module.title}` : "Phase 1 - Étude";
+        return phase1Module ? `Phase 1 - Étude ${phase1Module.title}` : "Phase 1 - Study";
       case TaskType.REVIEW:
-        return "Phase 2 - Révision intelligente";
+        return "Phase 2 - Smart review";
       case TaskType.PRACTICE:
         return "Phase 3 - Pratique";
       default:
-        return "Tâche";
+        return "Task";
     }
   };
 
@@ -440,12 +440,12 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
               sections.sessionLongue.reduce((sum, t) => sum + t.estimatedBlocks, 0)
             )}
             {renderSection(
-              "Session courte supplémentaire",
+              "Additional short session",
               sections.sessionCourteSupplementaire,
               sections.sessionCourteSupplementaire.reduce((sum, t) => sum + t.estimatedBlocks, 0)
             )}
             {renderSection(
-              "Session longue supplémentaire",
+              "Additional long session",
               sections.sessionLongueSupplementaire,
               sections.sessionLongueSupplementaire.reduce((sum, t) => sum + t.estimatedBlocks, 0)
             )}

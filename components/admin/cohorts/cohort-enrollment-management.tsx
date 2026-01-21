@@ -74,7 +74,7 @@ export function CohortEnrollmentManagement({
         });
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des données");
+      toast.error("Error loading data");
     } finally {
       setLoading(false);
     }
@@ -92,7 +92,7 @@ export function CohortEnrollmentManagement({
     try {
       const days = parseInt(extensionDays, 10);
       if (isNaN(days) || days <= 0) {
-        toast.error("Le nombre de jours doit être un nombre positif");
+        toast.error("The number of days must be a positive number");
         return;
       }
 
@@ -104,28 +104,28 @@ export function CohortEnrollmentManagement({
         setExtensionDays("30");
         loadData();
       } else {
-        toast.error(result.error || "Erreur lors de l'extension");
+        toast.error(result.error || "Error extending");
       }
     } catch (error) {
-      toast.error("Erreur lors de l'extension de l'accès");
+      toast.error("Error extending access");
     }
   };
 
   const handleRevokeAccess = async (enrollmentId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir révoquer l'accès de cet étudiant ?")) {
+    if (!confirm("Are you sure you want to revoke this student's access?")) {
       return;
     }
 
     try {
       const result = await revokeCohortEnrollmentAccessAction(enrollmentId);
       if (result.success) {
-        toast.success("Accès révoqué avec succès");
+        toast.success("Access revoked successfully");
         loadData();
       } else {
-        toast.error(result.error || "Erreur lors de la révocation");
+        toast.error(result.error || "Error revoking");
       }
     } catch (error) {
-      toast.error("Erreur lors de la révocation de l'accès");
+      toast.error("Error while revoking access");
     }
   };
 
@@ -241,7 +241,7 @@ export function CohortEnrollmentManagement({
                             variant="ghost"
                             size="icon"
                             onClick={() => openExtendDialog(enrollment)}
-                            title="Étendre l'accès"
+                            title="Extend access"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -249,7 +249,7 @@ export function CohortEnrollmentManagement({
                             variant="ghost"
                             size="icon"
                             onClick={() => handleRevokeAccess(enrollment.id)}
-                            title="Révoquer l'accès"
+                            title="Revoke access"
                           >
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>

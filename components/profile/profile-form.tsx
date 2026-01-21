@@ -62,12 +62,12 @@ export function ProfileForm({ user }: ProfileFormProps) {
       });
 
       if (result.success) {
-        toast.success("Profil mis à jour avec succès!");
+        toast.success("Profile updated successfully!");
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour du profil");
+        toast.error(result.error || "Error updating profile");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsLoadingProfile(false);
     }
@@ -77,12 +77,12 @@ export function ProfileForm({ user }: ProfileFormProps) {
     e.preventDefault();
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error("Les mots de passe ne correspondent pas");
+      toast.error("Passwords do not match");
       return;
     }
 
     if (passwordData.newPassword.length < 6) {
-      toast.error("Le mot de passe doit contenir au moins 6 caractères");
+      toast.error("Password must contain at least 6 characters");
       return;
     }
 
@@ -95,17 +95,17 @@ export function ProfileForm({ user }: ProfileFormProps) {
       );
 
       if (result.success) {
-        toast.success("Mot de passe modifié avec succès!");
+        toast.success("Password changed successfully!");
         setPasswordData({
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
         });
       } else {
-        toast.error(result.error || "Erreur lors du changement de mot de passe");
+        toast.error(result.error || "Error while changing password");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsLoadingPassword(false);
     }
@@ -176,7 +176,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 </p>
               </div>
               <Button type="submit" disabled={isLoadingProfile}>
-                {isLoadingProfile ? "Mise à jour..." : "Mettre à jour le profil"}
+                {isLoadingProfile ? "Updating..." : "Update profile"}
               </Button>
             </form>
           </CardContent>
@@ -243,7 +243,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 />
               </div>
               <Button type="submit" disabled={isLoadingPassword}>
-                {isLoadingPassword ? "Mise à jour..." : "Changer le mot de passe"}
+                {isLoadingPassword ? "Updating..." : "Change password"}
               </Button>
             </form>
           </CardContent>

@@ -50,7 +50,7 @@ function PaymentForm({
       // Wait a bit for Stripe to load
       const timer = setTimeout(() => {
         if (!stripe) {
-          setStripeError("Stripe n'a pas pu se charger. Veuillez rafraîchir la page.");
+          setStripeError("Stripe could not load. Please refresh the page.");
         }
       }, 5000);
       return () => clearTimeout(timer);
@@ -94,12 +94,12 @@ function PaymentForm({
     e.preventDefault();
 
     if (!stripe || !elements) {
-      toast.error("Stripe n'est pas encore chargé");
+      toast.error("Stripe is not yet loaded");
       return;
     }
 
     if (!cardholderName.trim()) {
-      toast.error("Veuillez entrer le nom du titulaire de la carte");
+      toast.error("Please enter the cardholder's name");
       return;
     }
 
@@ -108,7 +108,7 @@ function PaymentForm({
     try {
       const cardElement = elements.getElement(CardElement);
       if (!cardElement) {
-        toast.error("Erreur de chargement du formulaire de paiement");
+        toast.error("Error loading the payment form");
         setIsProcessing(false);
         return;
       }
@@ -126,26 +126,26 @@ function PaymentForm({
       );
 
       if (error) {
-        let errorMessage = "Erreur de paiement";
+        let errorMessage = "Payment error";
         if (error.type === "card_error") {
           switch (error.code) {
             case "card_declined":
-              errorMessage = "Votre carte a été refusée.";
+              errorMessage = "Your card was declined.";
               break;
             case "insufficient_funds":
               errorMessage = "Fonds insuffisants.";
               break;
             case "expired_card":
-              errorMessage = "Votre carte a expiré.";
+              errorMessage = "Your card has expired.";
               break;
             case "incorrect_cvc":
-              errorMessage = "Code de sécurité incorrect.";
+              errorMessage = "Incorrect security code.";
               break;
             default:
-              errorMessage = error.message || "Erreur de paiement.";
+              errorMessage = error.message || "Payment error.";
           }
         } else {
-          errorMessage = error.message || "Une erreur est survenue.";
+          errorMessage = error.message || "An error occurred.";
         }
         toast.error(errorMessage);
         setIsProcessing(false);
@@ -155,20 +155,20 @@ function PaymentForm({
       if (paymentIntent?.status === "succeeded") {
         const result = await confirmAppointmentPaymentAction(appointmentId, paymentIntent.id);
         if (result.success) {
-          toast.success("Rendez-vous confirmé!");
+          toast.success("Appointment confirmed!");
           setIsProcessing(false);
           setTimeout(() => onSuccess(), 1000);
         } else {
-          toast.error(result.error || "Erreur lors de la confirmation");
+          toast.error(result.error || "Error confirming");
           setIsProcessing(false);
         }
       } else {
-        toast.error("Le paiement n'a pas été complété");
+        toast.error("Payment was not completed");
         setIsProcessing(false);
       }
     } catch (error) {
       console.error("Payment error:", error);
-      toast.error("Une erreur inattendue s'est produite");
+      toast.error("An unexpected error occurred");
       setIsProcessing(false);
     }
   };
@@ -273,7 +273,7 @@ export function AppointmentPaymentDialog({
   
   const handleSuccess = () => {
     onOpenChange(false);
-    window.location.href = "/tableau-de-bord/etudiant?tab=appointments";
+    window.location.href = "/dashboard/student?tab=appointments";
   };
 
   return (

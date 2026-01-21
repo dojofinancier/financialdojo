@@ -184,12 +184,12 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
         // Start auto-save
         startAutoSave(normalizedExam.id, restoredAnswers);
       } else {
-        toast.error(result.error || "Erreur lors du chargement de l'examen");
+        toast.error(result.error || "Error loading the exam");
         onExit();
       }
     } catch (error) {
       console.error("Error loading exam:", error);
-      toast.error("Erreur lors du chargement de l'examen");
+      toast.error("Error loading the exam");
       onExit();
     } finally {
       setLoading(false);
@@ -256,7 +256,7 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
   const handleTimeUp = async () => {
     if (submitted || submitting) return;
 
-    toast.warning("Le temps est écoulé. L'examen est en cours de soumission...");
+    toast.warning("Time is up. The exam is being submitted...");
     await handleSubmit(true);
   };
 
@@ -304,14 +304,14 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
         }
 
         if (!isTimeUp) {
-          toast.success("Examen soumis avec succès!");
+          toast.success("Exam submitted successfully!");
         }
       } else {
-        toast.error(result.error || "Erreur lors de la soumission");
+        toast.error(result.error || "Error during submission");
       }
     } catch (error) {
       console.error("Error submitting exam:", error);
-      toast.error("Erreur lors de la soumission");
+      toast.error("Error during submission");
     } finally {
       setSubmitting(false);
     }

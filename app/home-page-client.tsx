@@ -108,7 +108,7 @@ function HeroSection() {
               Commencer →
             </Link>
             <Link 
-              href="/formations"
+              href="/courses"
               className="inline-block bg-transparent text-white font-black uppercase text-lg tracking-wider px-10 py-5 border-4 border-white hover:bg-white hover:text-black transition-colors"
             >
               Voir les formations
@@ -147,31 +147,31 @@ function ClientPathsSection() {
       id: "pro",
       number: "01",
       title: "PROFESSIONNELS",
-      subtitle: "INDUSTRIE FINANCIÈRE",
-      description: "Conseillers, représentants, gestionnaires, adjoints. Obtenez vos certifications OCRI, AMF et CSI.",
-      features: ["CCVM / CSC", "ERCI / CIRE", "Examen sur les valeurs mobilières"],
+      subtitle: "FINANCIAL INDUSTRY",
+      description: "Advisors, representatives, managers, assistants. Get your OCRI, AMF and CSI certifications.",
+      features: ["CCVM / CSC", "ERCI / CIRE", "Securities examination"],
       color: "bg-primary",
       textColor: "text-black",
-      link: "/formations?category=professionnels",
+      link: "/courses?category=professionnels",
     },
     {
       id: "inv",
       number: "02",
       title: "INVESTISSEURS",
       subtitle: "PARTICULIERS",
-      description: "Gérez votre patrimoine. Comprenez les marchés. Prenez des décisions éclairées.",
-      features: ["Gestion de portefeuille", "Analyse fondamentale", "Stratégies"],
+      description: "Manage your wealth. Understand the markets. Make informed decisions.",
+      features: ["Portfolio management", "Fundamental analysis", "Strategies"],
       color: "bg-white",
       textColor: "text-black",
-      link: "/investisseur/waitlist",
+      link: "/investor/waitlist",
     },
     {
       id: "ent",
       number: "03",
       title: "ENTREPRENEURS",
-      subtitle: "& DIRIGEANTS",
-      description: "Finance d'entreprise, planification financière, croissance.",
-      features: ["Finance corporative", "Planification", "Levée de fonds"],
+      subtitle: "& EXECUTIVES",
+      description: "Corporate finance, financial planning, growth.",
+      features: ["Corporate finance", "Planification", "Fundraising"],
       color: "bg-black",
       textColor: "text-white",
       link: "/entrepreneur/waitlist",
@@ -236,7 +236,7 @@ function ClientPathsSection() {
       <div className="px-4 sm:px-8 mt-12">
         <div className="max-w-[1400px] mx-auto">
           <p className="font-mono text-sm text-black/50 uppercase tracking-wider">
-            Pas sûr ? <Link href="/formations" className="underline hover:text-primary">Voir toutes les formations</Link>
+            Pas sûr ? <Link href="/courses" className="underline hover:text-primary">Voir toutes les formations</Link>
           </p>
         </div>
       </div>
@@ -275,7 +275,7 @@ function AboutSection() {
               </div>
 
               <Link 
-                href="/a-propos"
+                href="/about"
                 className="inline-block mt-10 bg-white text-black font-black uppercase text-sm tracking-wider px-8 py-4 border-4 border-white hover:bg-primary hover:border-primary transition-colors shadow-[6px_6px_0_0_hsl(var(--primary))]"
               >
                 En savoir plus →
@@ -327,7 +327,7 @@ function HomeFooter() {
               <Link href="/" className="inline-block mb-6">
                 <Image
                   src="/logo_dark.png"
-                  alt="Le Dojo Financier"
+                  alt="Financial Dojo"
                   width={200}
                   height={50}
                   className="h-auto w-auto max-h-12"
@@ -345,9 +345,9 @@ function HomeFooter() {
                 Formations
               </h3>
               <ul className="space-y-3">
-                <li><Link href="/formations/ccvm-pcvm" className="text-sm font-mono hover:text-primary transition-colors">CCVM / CSC</Link></li>
-                <li><Link href="/formations/pdg-ciro" className="text-sm font-mono hover:text-primary transition-colors">ERCI / CIRE</Link></li>
-                <li><Link href="/formations" className="text-sm font-mono hover:text-primary transition-colors">Toutes les formations →</Link></li>
+                <li><Link href="/courses/ccvm-pcvm" className="text-sm font-mono hover:text-primary transition-colors">CCVM / CSC</Link></li>
+                <li><Link href="/courses/pdg-ciro" className="text-sm font-mono hover:text-primary transition-colors">ERCI / CIRE</Link></li>
+                <li><Link href="/courses" className="text-sm font-mono hover:text-primary transition-colors">Toutes les formations →</Link></li>
               </ul>
             </div>
 
@@ -356,7 +356,7 @@ function HomeFooter() {
                 Entreprise
               </h3>
               <ul className="space-y-3">
-                <li><Link href="/a-propos" className="text-sm font-mono hover:text-primary transition-colors">À propos</Link></li>
+                <li><Link href="/about" className="text-sm font-mono hover:text-primary transition-colors">À propos</Link></li>
                 <li><Link href="/article" className="text-sm font-mono hover:text-primary transition-colors">Publications</Link></li>
                 <li><Link href="/contact" className="text-sm font-mono hover:text-primary transition-colors">Contact</Link></li>
               </ul>
@@ -367,8 +367,8 @@ function HomeFooter() {
                 Légal
               </h3>
               <ul className="space-y-3">
-                <li><Link href="/politique-de-confidentialite" className="text-sm font-mono hover:text-primary transition-colors">Confidentialité</Link></li>
-                <li><Link href="/termes-et-conditions" className="text-sm font-mono hover:text-primary transition-colors">Termes</Link></li>
+                <li><Link href="/privacy-policy" className="text-sm font-mono hover:text-primary transition-colors">Confidentialité</Link></li>
+                <li><Link href="/terms-and-conditions" className="text-sm font-mono hover:text-primary transition-colors">Termes</Link></li>
               </ul>
             </div>
           </div>

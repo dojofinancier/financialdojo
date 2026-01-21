@@ -101,7 +101,7 @@ export function AvailabilityManagement() {
       const result = await getCoursesAction({});
       setCourses(result.items);
     } catch (error) {
-      toast.error("Erreur lors du chargement des cours");
+      toast.error("Error loading courses");
     }
   };
 
@@ -137,7 +137,7 @@ export function AvailabilityManagement() {
         );
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des disponibilités");
+      toast.error("Error loading availabilities");
     } finally {
       setLoading(false);
     }
@@ -217,7 +217,7 @@ export function AvailabilityManagement() {
     );
 
     if (activeDays.length === 0) {
-      return "Aucune disponibilité définie";
+      return "No availability defined";
     }
 
     const dayNames = activeDays.map((day) => day.short.toLowerCase()).join(", ");
@@ -281,19 +281,19 @@ export function AvailabilityManagement() {
       ]);
 
       if (!rulesResult.success) {
-        setError(rulesResult.error || "Erreur lors de la sauvegarde des règles");
+        setError(rulesResult.error || "Error saving rules");
         return;
       }
 
       if (!exceptionsResult.success) {
-        setError(exceptionsResult.error || "Erreur lors de la sauvegarde des exceptions");
+        setError(exceptionsResult.error || "Error saving exceptions");
         return;
       }
 
-      toast.success("Disponibilités sauvegardées avec succès");
+      toast.success("Availabilities saved successfully");
       await loadAvailabilityData();
     } catch (err) {
-      setError("Erreur lors de la sauvegarde des disponibilités");
+      setError("Error saving availabilities");
       console.error("Error saving availability:", err);
     } finally {
       setSaving(false);
@@ -344,13 +344,13 @@ export function AvailabilityManagement() {
         <CardHeader>
           <CardTitle className="text-lg sm:text-xl">Cours (optionnel)</CardTitle>
           <CardDescription className="text-xs sm:text-sm">
-            Sélectionnez un cours spécifique ou laissez "Tous les cours" pour une disponibilité générale
+            Sélectionnez un cours spécifique ou laissez "All courses" pour une disponibilité générale
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Select value={selectedCourse} onValueChange={(value) => setSelectedCourse(value === "none" ? "none" : value)}>
             <SelectTrigger className="w-full sm:w-[400px]">
-              <SelectValue placeholder="Tous les cours" />
+              <SelectValue placeholder="All courses" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">Tous les cours</SelectItem>

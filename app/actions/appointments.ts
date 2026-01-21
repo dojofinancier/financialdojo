@@ -18,7 +18,7 @@ const appointmentSchema = z.object({
   contentItemId: z.string().optional().nullable(),
   scheduledAt: z.date(),
   durationMinutes: z.number().int().refine((val) => [60, 90, 120].includes(val), {
-    message: "La durée doit être de 60, 90 ou 120 minutes",
+    message: "Duration must be 60, 90, or 120 minutes",
   }).optional(),
   notes: z.string().optional().nullable(),
   paymentIntentId: z.string().optional(),
@@ -43,7 +43,7 @@ export async function createAppointmentAction(
     if (user.role !== "STUDENT") {
       return {
         success: false,
-        error: "Seuls les étudiants peuvent créer des rendez-vous",
+        error: "Only students can create appointments",
       };
     }
 
@@ -53,7 +53,7 @@ export async function createAppointmentAction(
     if (isPastInEastern(validatedData.scheduledAt) || validatedData.scheduledAt <= getEasternNow()) {
       return {
         success: false,
-        error: "La date du rendez-vous doit être dans le futur",
+        error: "The appointment date must be in the future",
       };
     }
 
@@ -109,7 +109,7 @@ export async function createAppointmentAction(
       studentEmail: user.email,
       studentName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
       courseId: appointment.courseId || null,
-      courseTitle: appointment.course?.title || 'Non spécifié',
+      courseTitle: appointment.course?.title || 'Not specified',
       contentItemId: appointment.contentItemId || null,
       contentItemTitle: null, // ContentItem has no stored title; computed elsewhere.
       scheduledAt: appointment.scheduledAt.toISOString(),
@@ -127,7 +127,7 @@ export async function createAppointmentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -139,7 +139,7 @@ export async function createAppointmentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du rendez-vous",
+      error: "Error creating appointment",
     };
   }
 }
@@ -280,7 +280,7 @@ export async function updateAppointmentAction(
     if (user.role === "STUDENT" && appointment.userId !== user.id) {
       return {
         success: false,
-        error: "Accès non autorisé",
+        error: "Unauthorized access",
       };
     }
 
@@ -353,7 +353,7 @@ export async function updateAppointmentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -365,7 +365,7 @@ export async function updateAppointmentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour du rendez-vous",
+      error: "Error updating appointment",
     };
   }
 }
@@ -395,7 +395,7 @@ export async function rescheduleAppointmentAction(
     if (user.role !== "STUDENT") {
       return {
         success: false,
-        error: "Seuls les étudiants peuvent reprogrammer des rendez-vous",
+        error: "Only students can reschedule appointments",
       };
     }
 
@@ -414,7 +414,7 @@ export async function rescheduleAppointmentAction(
     if (appointment.userId !== user.id) {
       return {
         success: false,
-        error: "Accès non autorisé",
+        error: "Unauthorized access",
       };
     }
 
@@ -424,7 +424,7 @@ export async function rescheduleAppointmentAction(
     if (appointmentDate <= now) {
       return {
         success: false,
-        error: "Impossible de reprogrammer un rendez-vous passé",
+        error: "Cannot reschedule a past appointment",
       };
     }
 
@@ -441,7 +441,7 @@ export async function rescheduleAppointmentAction(
     if (appointment.status === "CANCELLED" || appointment.status === "COMPLETED") {
       return {
         success: false,
-        error: "Ce rendez-vous ne peut pas être reprogrammé",
+        error: "This appointment cannot be rescheduled",
       };
     }
 
@@ -449,7 +449,7 @@ export async function rescheduleAppointmentAction(
     if (isPastInEastern(newScheduledAt) || newScheduledAt <= getEasternNow()) {
       return {
         success: false,
-        error: "La nouvelle date doit être dans le futur",
+        error: "The new date must be in the future",
       };
     }
 
@@ -483,7 +483,7 @@ export async function rescheduleAppointmentAction(
       if (hasConflict) {
         return {
           success: false,
-          error: "Ce créneau n'est pas disponible",
+          error: "This time slot is not available",
         };
       }
     }
@@ -533,7 +533,7 @@ export async function rescheduleAppointmentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -545,7 +545,7 @@ export async function rescheduleAppointmentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la reprogrammation du rendez-vous",
+      error: "Error rescheduling appointment",
     };
   }
 }

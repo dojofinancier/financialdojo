@@ -87,7 +87,7 @@ export function ErrorLogViewer() {
         setErrorLogs(result.items);
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des logs d'erreur");
+      toast.error("Error loading error logs");
       console.error(error);
     } finally {
       setLoading(false);
@@ -102,13 +102,13 @@ export function ErrorLogViewer() {
     try {
       const result = await resolveErrorAction(errorId);
       if (result.success) {
-        toast.success("Erreur marquée comme résolue");
+        toast.success("Error marked as resolved");
         loadErrorLogs();
       } else {
-        toast.error(result.error || "Erreur lors de la résolution");
+        toast.error(result.error || "Error while resolving");
       }
     } catch (error) {
-      toast.error("Erreur lors de la résolution");
+      toast.error("Error while resolving");
     }
   };
 
@@ -132,7 +132,7 @@ export function ErrorLogViewer() {
       case "CRITICAL":
         return "Critique";
       case "HIGH":
-        return "Élevée";
+        return "High";
       case "MEDIUM":
         return "Moyenne";
       case "LOW":
@@ -212,7 +212,7 @@ export function ErrorLogViewer() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Rechercher par message, ID, email, URL..."
+                  placeholder="Search by message, ID, email, URL..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9"
@@ -248,7 +248,7 @@ export function ErrorLogViewer() {
               }}
             >
               <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Sévérité" />
+                <SelectValue placeholder="Severity" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les sévérités</SelectItem>

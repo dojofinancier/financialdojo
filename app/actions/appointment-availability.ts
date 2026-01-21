@@ -36,7 +36,7 @@ export async function createAvailabilityAction(
     if (![60, 90, 120].includes(validatedData.durationMinutes)) {
       return {
         success: false,
-        error: "La durée doit être de 60, 90 ou 120 minutes",
+        error: "Duration must be 60, 90, or 120 minutes",
       };
     }
 
@@ -44,7 +44,7 @@ export async function createAvailabilityAction(
     if (validatedData.endTime <= validatedData.startTime) {
       return {
         success: false,
-        error: "L'heure de fin doit être après l'heure de début",
+        error: "End time must be after start time",
       };
     }
 
@@ -64,7 +64,7 @@ export async function createAvailabilityAction(
       const firstError = error.issues && error.issues.length > 0 ? error.issues[0] : null;
       return {
         success: false,
-        error: firstError?.message || "Données invalides",
+        error: firstError?.message || "Invalid data",
       };
     }
 
@@ -76,7 +76,7 @@ export async function createAvailabilityAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création de la disponibilité",
+      error: "Error creating availability",
     };
   }
 }
@@ -146,7 +146,7 @@ export async function deleteAvailabilityAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de la disponibilité",
+      error: "Error deleting availability",
     };
   }
 }
@@ -192,7 +192,7 @@ export async function checkSlotAvailabilityAction(
     if (!conflictingAvailability) {
       return {
         available: false,
-        reason: "Aucune disponibilité trouvée pour ce créneau",
+        reason: "No availability found for this time slot",
       };
     }
 
@@ -212,7 +212,7 @@ export async function checkSlotAvailabilityAction(
     if (existingAppointments.length > 0) {
       return {
         available: false,
-        reason: "Ce créneau est déjà réservé",
+        reason: "This time slot is already booked",
       };
     }
 
@@ -226,7 +226,7 @@ export async function checkSlotAvailabilityAction(
 
     return {
       available: false,
-      reason: "Erreur lors de la vérification de la disponibilité",
+      reason: "Error checking availability",
     };
   }
 }

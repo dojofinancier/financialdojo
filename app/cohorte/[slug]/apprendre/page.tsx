@@ -24,9 +24,9 @@ async function CohortLearningContent({
   if (!("data" in result) || !result.success || !result.data) {
     const errorMessage = "error" in result ? result.error : "Unknown error";
     console.error(`[CohortLearningPage] Failed to load cohort content for slug ${slug}. Error: ${errorMessage}`);
-    if (errorMessage?.includes("accès") || errorMessage?.includes("inscrit")) {
-      console.log(`[CohortLearningPage] Access denied or not enrolled, redirecting to /tableau-de-bord/etudiant`);
-      redirect(`/tableau-de-bord/etudiant`);
+    if (errorMessage?.includes("access") || errorMessage?.includes("inscrit")) {
+      console.log(`[CohortLearningPage] Access denied or not enrolled, redirecting to /dashboard/student`);
+      redirect(`/dashboard/student`);
     }
     console.log(`[CohortLearningPage] Cohort not found or other error, calling notFound()`);
     notFound();

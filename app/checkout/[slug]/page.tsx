@@ -7,11 +7,11 @@ interface CheckoutSlugPageProps {
 }
 
 /**
- * Redirect /checkout/[slug] to /paiement/[slug] for backward compatibility
+ * Redirect /checkout/[slug] to /payment/[slug] for backward compatibility
  */
 async function CheckoutSlugRedirect({ params }: CheckoutSlugPageProps): Promise<ReactElement> {
   const { slug } = await params;
-  redirect(`/paiement/${slug}`);
+  redirect(`/payment/${slug}`);
 
   // `redirect()` throws and never returns, but this keeps TS happy.
   return <></>;

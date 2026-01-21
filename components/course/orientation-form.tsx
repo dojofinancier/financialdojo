@@ -106,22 +106,22 @@ export function OrientationForm({
     setError(null);
 
     if (!examDate) {
-      setError("Veuillez sélectionner une date d'examen");
+      setError("Please select an exam date");
       return;
     }
 
     if (examDate <= new Date()) {
-      setError("La date d'examen doit être dans le futur");
+      setError("The exam date must be in the future");
       return;
     }
 
     if (studyHoursPerWeek < 1 || studyHoursPerWeek > 40) {
-      setError("Le nombre d'heures par semaine doit être entre 1 et 40");
+      setError("The number of hours per week must be between 1 and 40");
       return;
     }
 
     if (preferredStudyDays.length === 0) {
-      setError("Veuillez sélectionner au moins un jour d'étude");
+      setError("Please select at least one study day");
       return;
     }
 
@@ -142,9 +142,9 @@ export function OrientationForm({
         if (result.warnings && result.warnings.length > 0) {
           setWarnings(result.warnings);
           // Still show success toast, but warnings will be displayed below
-          toast.success("Plan d'étude créé avec succès!");
+          toast.success("Study plan created successfully!");
         } else {
-          toast.success("Plan d'étude créé avec succès!");
+          toast.success("Study plan created successfully!");
           setWarnings([]);
         }
         
@@ -158,12 +158,12 @@ export function OrientationForm({
           onComplete?.(isFirstCreation);
         }
       } else {
-        setError(result.error || "Erreur lors de la création du plan d'étude");
+        setError(result.error || "Error creating the study plan");
         setWarnings([]);
       }
     } catch (err) {
       console.error("Error submitting orientation form:", err);
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -375,7 +375,7 @@ export function OrientationForm({
             </div>
 
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
-              {loading ? "Création du plan..." : "Créer mon plan d'étude"}
+              {loading ? "Creating plan..." : "Create my study plan"}
             </Button>
           </form>
         </CardContent>

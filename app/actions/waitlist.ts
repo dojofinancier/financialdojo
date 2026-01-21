@@ -5,7 +5,7 @@ import { logServerError } from "@/lib/utils/error-logging";
 
 const waitlistSchema = z.object({
   email: z.string().email("Email invalide"),
-  firstName: z.string().min(1, "Le prénom est requis").optional(),
+  firstName: z.string().min(1, "First name is required").optional(),
   lastName: z.string().min(1, "Le nom est requis").optional(),
   type: z.enum(["investisseur", "entrepreneur"]),
 });
@@ -58,13 +58,13 @@ export async function submitWaitlistAction(data: WaitlistSubmission) {
       });
       return {
         success: false,
-        error: "Erreur lors de l'envoi. Veuillez réessayer.",
+        error: "Error sending. Please try again.",
       };
     }
 
     return {
       success: true,
-      message: "Merci ! Vous avez été ajouté à la liste d'attente.",
+      message: "Thank you! You have been added to the waiting list.",
     };
   } catch (error) {
     console.error("Waitlist submission error:", error);
@@ -77,13 +77,13 @@ export async function submitWaitlistAction(data: WaitlistSubmission) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
     return {
       success: false,
-      error: "Une erreur est survenue. Veuillez réessayer.",
+      error: "An error occurred. Please try again.",
     };
   }
 }

@@ -37,10 +37,10 @@ export function ContentEngagement({ courseId }: ContentEngagementProps) {
       if (result.success) {
         setEngagementData(result.data);
       } else {
-        toast.error(result.error || "Erreur lors du chargement");
+        toast.error(result.error || "Error loading");
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des données");
+      toast.error("Error loading data");
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ export function ContentEngagement({ courseId }: ContentEngagementProps) {
                 <Tooltip />
                 <Legend />
                 <Bar yAxisId="left" dataKey="views" fill="#8884d8" name="Vues" />
-                <Bar yAxisId="right" dataKey="completion" fill="#82ca9d" name="Complétion (%)" />
+                <Bar yAxisId="right" dataKey="completion" fill="#82ca9d" name="Completion (%)" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

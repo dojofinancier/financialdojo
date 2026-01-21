@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "À propos | Le Dojo Financier",
-  description: "Découvrez l'histoire et la mission du Dojo Financier",
+  title: "About | Financial Dojo",
+  description: "Discover the history and mission of the Financial Dojo",
 };
 
 export default function AboutPage() {

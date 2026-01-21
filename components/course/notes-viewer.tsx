@@ -33,7 +33,7 @@ export function NotesViewer({ contentItemId }: NotesViewerProps) {
       setAdminNotes("");
       setStudentNotes("");
     } catch (error) {
-      toast.error("Erreur lors du chargement des notes");
+      toast.error("Error loading notes");
     } finally {
       setLoading(false);
     }
@@ -43,9 +43,9 @@ export function NotesViewer({ contentItemId }: NotesViewerProps) {
     try {
       setSaving(true);
       // TODO: Create saveStudentNotesAction
-      toast.success("Notes sauvegardées");
+      toast.success("Notes saved");
     } catch (error) {
-      toast.error("Erreur lors de la sauvegarde");
+      toast.error("Error saving");
     } finally {
       setSaving(false);
     }

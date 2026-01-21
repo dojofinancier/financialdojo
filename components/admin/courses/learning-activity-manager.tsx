@@ -62,13 +62,13 @@ type LearningActivity = {
 };
 
 const ACTIVITY_TYPE_LABELS: Record<LearningActivityType, string> = {
-  SHORT_ANSWER: "Réponse courte",
-  FILL_IN_BLANK: "Texte à trous",
+  SHORT_ANSWER: "Short answer",
+  FILL_IN_BLANK: "Fill-in-the-blank",
   SORTING_RANKING: "Tri / Classement",
   CLASSIFICATION: "Classification",
-  NUMERIC_ENTRY: "Calcul numérique",
-  TABLE_COMPLETION: "Tableau à compléter",
-  ERROR_SPOTTING: "Détection d'erreur",
+  NUMERIC_ENTRY: "Numeric calculation",
+  TABLE_COMPLETION: "Table to complete",
+  ERROR_SPOTTING: "Error detection",
   DEEP_DIVE: "Approfondissement",
 };
 
@@ -111,7 +111,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
     } catch (error) {
       if (!isMountedRef.current) return;
       console.error("Learning activity loading exception:", error);
-      toast.error("Erreur lors du chargement des activités");
+      toast.error("Error loading activities");
       setActivities([]);
     } finally {
       if (isMountedRef.current) {
@@ -175,11 +175,11 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
       // Validate activity-specific content
       if (formState.activityType === "SHORT_ANSWER") {
         if (!formState.content.question || !formState.content.question.trim()) {
-          toast.error("La question est requise pour une réponse courte");
+          toast.error("The question is required for a short answer");
           return;
         }
         if (!formState.correctAnswers || (Array.isArray(formState.correctAnswers) && formState.correctAnswers.length === 0)) {
-          toast.error("Au moins une réponse acceptable est requise");
+          toast.error("At least one acceptable answer is required");
           return;
         }
       }
@@ -199,7 +199,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
       if (!contentItemResult.success || !contentItemResult.data) {
         console.error("ContentItem creation error:", contentItemResult.error);
         console.error("Full result:", contentItemResult);
-        toast.error(contentItemResult.error || "Erreur lors de la création de l'élément de contenu");
+        toast.error(contentItemResult.error || "Error creating the content item");
         return;
       }
 
@@ -209,7 +209,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
       }
 
       if (!contentItemId) {
-        toast.error("Impossible de créer ou trouver l'élément de contenu");
+        toast.error("Unable to create or find the content item");
         return;
       }
 
@@ -222,7 +222,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
       }
 
       // Generate a default title from activity type if needed
-      const defaultTitle = ACTIVITY_TYPE_LABELS[formState.activityType] || "Activité";
+      const defaultTitle = ACTIVITY_TYPE_LABELS[formState.activityType] || "Activity";
 
       const result = editingActivity
         ? await updateLearningActivityAction(editingActivity.id, {
@@ -246,37 +246,37 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
           });
 
       if (result.success) {
-        toast.success(editingActivity ? "Activité mise à jour" : "Activité créée");
+        toast.success(editingActivity ? "Activity updated" : "Activity created");
         setDialogOpen(false);
         loadActivities();
       } else {
         console.error("Learning activity action error:", result.error);
-        toast.error(result.error || "Erreur lors de la sauvegarde");
+        toast.error(result.error || "Error saving");
       }
     } catch (error) {
       console.error("Error in handleSubmit:", error);
-      const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       toast.error(`Erreur: ${errorMessage}`);
     }
   };
 
   const handleDelete = async (activityId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette activité?")) {
+    if (!confirm("Are you sure you want to delete this activity?")) {
       return;
     }
 
     const result = await deleteLearningActivityAction(activityId);
     if (result.success) {
-      toast.success("Activité supprimée");
+      toast.success("Activity deleted");
       loadActivities();
     } else {
-      toast.error(result.error || "Erreur lors de la suppression");
+      toast.error(result.error || "Error while deleting");
     }
   };
 
   const handleBulkDelete = async () => {
     if (selectedActivities.size === 0) {
-      toast.error("Aucune activité sélectionnée");
+      toast.error("No activity selected");
       return;
     }
 
@@ -293,10 +293,10 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
         setSelectedActivities(new Set());
         loadActivities();
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
-      toast.error("Erreur lors de la suppression");
+      toast.error("Error while deleting");
     } finally {
       setBulkDeleting(false);
     }
@@ -857,11 +857,11 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                             });
                           }
                         } else {
-                          toast.error(result.error || "Erreur lors de l'import");
+                          toast.error(result.error || "Error during import");
                         }
                       } catch (error) {
                         console.error("Error uploading CSV:", error);
-                        toast.error("Erreur lors de la lecture du fichier");
+                        toast.error("Error reading the file");
                       } finally {
                         if (isMountedRef.current) {
                           setUploading(false);
@@ -903,7 +903,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingActivity ? "Modifier l'activité" : "Créer une activité d'apprentissage"}
+                {editingActivity ? "Edit activity" : "Create a learning activity"}
               </DialogTitle>
               <DialogDescription>
                 Choisissez le type d'activité et configurez-la selon vos besoins.
@@ -953,7 +953,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                   onValueChange={(value) => setFormState({ ...formState, moduleId: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un module" />
+                    <SelectValue placeholder="Select a module" />
                   </SelectTrigger>
                   <SelectContent>
                     {modules.map((module) => (
@@ -970,7 +970,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                 <Textarea
                   value={formState.instructions}
                   onChange={(e) => setFormState({ ...formState, instructions: e.target.value })}
-                  placeholder="Instructions générales pour l'étudiant..."
+                  placeholder="General instructions for the student..."
                   rows={2}
                 />
               </div>
@@ -989,7 +989,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                   Annuler
                 </Button>
                 <Button onClick={handleSubmit}>
-                  {editingActivity ? "Enregistrer" : "Créer"}
+                  {editingActivity ? "Enregistrer" : "Create"}
                 </Button>
               </div>
             </div>
@@ -1049,7 +1049,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                       onCheckedChange={toggleSelectAll}
                     />
                     <span className="text-sm font-medium">
-                      {selectedActivities.size === activities.length ? "Désélectionner tout" : "Sélectionner tout"}
+                      {selectedActivities.size === activities.length ? "Deselect all" : "Select all"}
                     </span>
                   </div>
                 </CardContent>

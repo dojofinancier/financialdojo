@@ -61,8 +61,8 @@ export function OfflineIndicator() {
             )}
           >
             {isOnline
-              ? "Connexion rétablie"
-              : "Vous êtes hors ligne. Certaines fonctionnalités peuvent ne pas être disponibles."}
+              ? "Connection restored"
+              : "You are offline. Some features may not be available."}
           </AlertDescription>
         </div>
       </Alert>

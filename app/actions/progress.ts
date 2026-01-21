@@ -27,7 +27,7 @@ export async function trackContentCompletionAction(
     if (!access.hasAccess) {
       return {
         success: false,
-        error: access.reason || "Accès non autorisé",
+        error: access.reason || "Unauthorized access",
       };
     }
 
@@ -61,7 +61,7 @@ export async function trackContentCompletionAction(
 
     return {
       success: false,
-      error: "Erreur lors du suivi de la progression",
+      error: "Error tracking progress",
     };
   }
 }
@@ -81,7 +81,7 @@ export async function updateTimeSpentAction(
     if (!access.hasAccess) {
       return {
         success: false,
-        error: access.reason || "Accès non autorisé",
+        error: access.reason || "Unauthorized access",
       };
     }
 
@@ -116,7 +116,7 @@ export async function updateTimeSpentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour du temps passé",
+      error: "Error updating time spent",
     };
   }
 }

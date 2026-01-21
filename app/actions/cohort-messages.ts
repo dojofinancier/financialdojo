@@ -47,7 +47,7 @@ export async function createCohortMessageAction(
     if (!enrollment && !isAdminOrInstructor) {
       return {
         success: false,
-        error: "Vous n'avez pas accès à cette cohorte",
+        error: "You do not have access to this cohort",
       };
     }
 
@@ -60,7 +60,7 @@ export async function createCohortMessageAction(
       if (cohort && cohort.instructorId !== user.id) {
         return {
           success: false,
-          error: "Vous n'avez pas accès à cette cohorte",
+          error: "You do not have access to this cohort",
         };
       }
     }
@@ -111,7 +111,7 @@ export async function createCohortMessageAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -123,7 +123,7 @@ export async function createCohortMessageAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du message",
+      error: "Error creating the message",
     };
   }
 }
@@ -149,7 +149,7 @@ export async function updateCohortMessageAction(
     if (!existingMessage) {
       return {
         success: false,
-        error: "Message introuvable",
+        error: "Message not found",
       };
     }
 
@@ -161,7 +161,7 @@ export async function updateCohortMessageAction(
     if (!isAdmin && !isInstructor && !isAuthor) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de modifier ce message",
+        error: "You do not have permission to modify this message",
       };
     }
 
@@ -194,7 +194,7 @@ export async function updateCohortMessageAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -206,7 +206,7 @@ export async function updateCohortMessageAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour du message",
+      error: "Error updating the message",
     };
   }
 }
@@ -231,7 +231,7 @@ export async function deleteCohortMessageAction(
     if (!existingMessage) {
       return {
         success: false,
-        error: "Message introuvable",
+        error: "Message not found",
       };
     }
 
@@ -243,7 +243,7 @@ export async function deleteCohortMessageAction(
     if (!isAdmin && !isInstructor && !isAuthor) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de supprimer ce message",
+        error: "You do not have permission to delete this message",
       };
     }
 
@@ -261,7 +261,7 @@ export async function deleteCohortMessageAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression du message",
+      error: "Error deleting the message",
     };
   }
 }
@@ -287,7 +287,7 @@ export async function pinCohortMessageAction(
     if (!existingMessage) {
       return {
         success: false,
-        error: "Message introuvable",
+        error: "Message not found",
       };
     }
 
@@ -295,7 +295,7 @@ export async function pinCohortMessageAction(
     if (user.role === "INSTRUCTOR" && existingMessage.cohort.instructorId !== user.id) {
       return {
         success: false,
-        error: "Vous n'avez pas la permission de modifier ce message",
+        error: "You do not have permission to modify this message",
       };
     }
 
@@ -331,7 +331,7 @@ export async function pinCohortMessageAction(
 
     return {
       success: false,
-      error: "Erreur lors de la modification du message",
+      error: "Error modifying the message",
     };
   }
 }
@@ -433,7 +433,7 @@ export async function markCohortMessagesAsReadAction(
     if (!enrollment && !isAdminOrInstructor) {
       return {
         success: false,
-        error: "Vous n'avez pas accès à cette cohorte",
+        error: "You do not have access to this cohort",
       };
     }
 
@@ -470,7 +470,7 @@ export async function markCohortMessagesAsReadAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour des messages",
+      error: "Error updating the messages",
     };
   }
 }
@@ -500,7 +500,7 @@ export async function getCohortUnreadMessageCountAction(
     if (!enrollment && !isAdminOrInstructor) {
       return {
         success: false,
-        error: "Vous n'avez pas accès à cette cohorte",
+        error: "You do not have access to this cohort",
       };
     }
 
@@ -542,7 +542,7 @@ export async function getCohortUnreadMessageCountAction(
 
     return {
       success: false,
-      error: "Erreur lors de la récupération du nombre de messages non lus",
+      error: "Error retrieving the number of unread messages",
     };
   }
 }

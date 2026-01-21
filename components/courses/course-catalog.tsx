@@ -101,7 +101,7 @@ export function CourseCatalog({ initialCourses }: CourseCatalogProps) {
       ) : (
         <div className="grid gap-0 border-4 border-black md:grid-cols-2 lg:grid-cols-3">
           {filteredCourses.map((course, idx) => {
-            const courseHref = `/formations/${course.slug || course.id}`;
+            const courseHref = `/courses/${course.slug || course.id}`;
             const isRightEdgeLg = (idx + 1) % 3 === 0;
             const isRightEdgeMd = (idx + 1) % 2 === 0;
 
@@ -153,7 +153,7 @@ export function CourseCatalog({ initialCourses }: CourseCatalogProps) {
                       {formatCurrency(Number(course.price))}
                     </div>
                     <div className="font-mono text-xs uppercase tracking-[0.25em] text-black/60 mt-2">
-                      {course.paymentType === "SUBSCRIPTION" ? "Abonnement" : "Paiement unique"} ·{" "}
+                      {course.paymentType === "SUBSCRIPTION" ? "Abonnement" : "One-time payment"} ·{" "}
                       {course._count.modules} module{course._count.modules !== 1 ? "s" : ""}
                     </div>
                   </div>

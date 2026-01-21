@@ -46,9 +46,9 @@ const cohortFormSchema = z.object({
   slug: z.string().optional().nullable(),
   description: z.string().optional(),
   price: z.string().min(1, "Le prix est requis"),
-  maxStudents: z.string().min(1, "Le nombre maximum d'étudiants est requis"),
-  enrollmentClosingDate: z.string().min(1, "La date de fin d'inscription est requise"),
-  accessDuration: z.string().min(1, "La durée d'accès est requise"),
+  maxStudents: z.string().min(1, "The maximum number of students is required"),
+  enrollmentClosingDate: z.string().min(1, "The registration end date is required"),
+  accessDuration: z.string().min(1, "The access duration is required"),
   published: z.boolean().default(false),
   instructorId: z.string().optional().nullable(),
   courseId: z.string().optional().nullable(), // Link to base course
@@ -157,7 +157,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
         } catch (courseError) {
           console.error("Error loading courses:", courseError);
           // Show error to user
-          toast.error("Erreur lors du chargement des formations");
+          toast.error("Error loading courses");
         }
       } catch (error) {
         console.error("Error loading data:", error);
@@ -192,22 +192,22 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
 
       if (result.success) {
         toast.success(
-          cohortId ? "Cohorte mise à jour avec succès" : "Cohorte créée avec succès"
+          cohortId ? "Cohort updated successfully" : "Cohort created successfully"
         );
         if (cohortId) {
           // Stay on the edit page when updating - refresh to show updated data
           window.location.reload();
         } else {
           // Go to cohorts list when creating new
-          router.push("/tableau-de-bord/admin/cohorts");
+          router.push("/dashboard/admin/cohorts");
         }
       } else {
         console.error("Cohort update/create error:", result.error);
-        toast.error(result.error || "Une erreur est survenue");
+        toast.error(result.error || "An error occurred");
       }
     } catch (error) {
       console.error("Cohort form submission error:", error);
-      const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       toast.error(`Une erreur est survenue: ${errorMessage}`);
     } finally {
       setLoading(false);
@@ -221,7 +221,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
         <Input
           id="title"
           {...register("title")}
-          placeholder="Ex: Cohorte Finance Avancée - Janvier 2025"
+          placeholder="Ex: Advanced Finance Cohort - January 2025"
         />
         {errors.title && (
           <p className="text-sm text-destructive">{errors.title.message}</p>
@@ -236,7 +236,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
           placeholder="cohorte-finance-avancee-janvier-2025"
         />
         <p className="text-xs text-muted-foreground">
-          Laissez vide pour générer automatiquement à partir du titre. Utilisé dans l'URL: /cohorte/[slug]
+          Laissez vide pour générer automatiquement à partir du titre. Utilisé dans l'URL: /cohorts/[slug]
         </p>
         {errors.slug && (
           <p className="text-sm text-destructive">{errors.slug.message}</p>
@@ -248,7 +248,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
         <RichTextEditor
           content={description}
           onChange={setDescription}
-          placeholder="Décrivez votre cohorte..."
+          placeholder="Describe your cohort..."
         />
       </div>
 
@@ -336,7 +336,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             onValueChange={(value) => setValue("instructorId", value === "none" ? null : value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionner un instructeur (optionnel)" />
+              <SelectValue placeholder="Select an instructor (optional)" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">Aucun instructeur</SelectItem>
@@ -358,7 +358,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             onValueChange={(value) => setValue("courseId", value === "none" ? null : value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionner une formation (optionnel)" />
+              <SelectValue placeholder="Select a course (optional)" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">Aucune formation</SelectItem>
@@ -522,8 +522,8 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
           {loading
             ? "Enregistrement..."
             : cohortId
-            ? "Mettre à jour"
-            : "Créer la cohorte"}
+            ? "Update"
+            : "Create cohort"}
         </Button>
         <Button
           type="button"
@@ -532,7 +532,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             if (cohortId) {
               router.back();
             } else {
-              router.push("/tableau-de-bord/admin/cohorts");
+              router.push("/dashboard/admin/cohorts");
             }
           }}
         >

@@ -36,14 +36,14 @@ export const INVESTISSEUR_DIAGNOSTIC_META = {
 } as const;
 
 const PROMPTS_BY_ID: Record<string, string> = {
-  q1_goal: "Quel est ton objectif principal en tant qu’investisseur aujourd’hui ?",
-  q2_horizon: "Sur quel horizon prends-tu la majorité de tes décisions d’investissement ?",
+  q1_goal: "What is your main goal as an investor today?",
+  q2_horizon: "Over what time horizon do you make the majority of your investment decisions?",
   q3_drawdown_reaction:
-    "Quand tes placements baissent fortement pendant quelques mois, ta réaction la plus probable est :",
-  q4_structure: "Laquelle de ces phrases décrit le mieux ta situation actuelle ?",
-  q5_info_source: "D’où provient la majorité de l’information qui influence tes décisions ?",
+    "When your investments fall sharply for a few months, your most likely reaction is:",
+  q4_structure: "Which of these statements best describes your current situation?",
+  q5_info_source: "Where does the majority of the information that influences your decisions come from?",
   q6_time_energy:
-    "Par rapport au temps et à l’énergie que tu consacres à l’investissement, tu dirais que :",
+    "Compared to the time and energy you devote to investing, you would say that:",
 };
 
 export const INVESTISSEUR_QUESTIONS: InvestisseurQuestion[] = (

@@ -10,7 +10,7 @@ export default async function CreateTicketPage() {
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-6">
-        <Link href="/tableau-de-bord/etudiant">
+        <Link href="/dashboard/student">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Retour au tableau de bord

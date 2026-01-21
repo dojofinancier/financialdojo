@@ -70,7 +70,7 @@ export function StudentList() {
       setNextCursor(result.nextCursor);
       setHasMore(result.hasMore);
     } catch (error) {
-      toast.error("Erreur lors du chargement des étudiants");
+      toast.error("Error loading students");
     } finally {
       setLoading(false);
     }
@@ -84,10 +84,10 @@ export function StudentList() {
     const action = student.suspendedAt ? activateStudentAction : suspendStudentAction;
     const result = await action(student.id);
     if (result.success) {
-      toast.success(`Compte ${student.suspendedAt ? "activé" : "suspendu"}`);
+      toast.success(`Compte ${student.suspendedAt ? "enabled" : "suspendu"}`);
       loadStudents();
     } else {
-      toast.error(result.error || "Erreur lors de la mise à jour");
+      toast.error(result.error || "Error updating");
     }
   };
 
@@ -95,7 +95,7 @@ export function StudentList() {
     <div className="space-y-4">
       <div className="flex gap-4 items-center">
         <Input
-          placeholder="Rechercher par nom, prénom ou email..."
+          placeholder="Search by last name, first name or email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => {

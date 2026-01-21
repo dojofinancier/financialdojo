@@ -101,7 +101,7 @@ export function AppointmentBooking() {
         }));
       setCourses(coursesWithRates);
     } catch (error) {
-      toast.error("Erreur lors du chargement des cours");
+      toast.error("Error loading courses");
     }
   };
 
@@ -167,7 +167,7 @@ export function AppointmentBooking() {
         setAvailabilities([]);
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des disponibilités");
+      toast.error("Error loading availabilities");
       setAvailabilities([]);
     } finally {
       setLoading(false);
@@ -185,13 +185,13 @@ export function AppointmentBooking() {
 
   const handleSlotSelect = (slot: AvailabilitySlot) => {
     if (!selectedCourse) {
-      toast.error("Veuillez sélectionner un cours");
+      toast.error("Please select a course");
       return;
     }
 
     const course = courses.find((c) => c.id === selectedCourse);
     if (!course || !course.appointmentHourlyRate) {
-      toast.error("Ce cours n'a pas de tarif configuré");
+      toast.error("This course has no price configured");
       return;
     }
 
@@ -217,7 +217,7 @@ export function AppointmentBooking() {
     const hasOverlap = selectedSlots.some((selected) => slotsOverlap(newSlot, selected));
 
     if (hasOverlap) {
-      toast.error("Vous ne pouvez pas sélectionner des créneaux qui se chevauchent");
+      toast.error("You cannot select overlapping time slots");
       return;
     }
 
@@ -235,7 +235,7 @@ export function AppointmentBooking() {
 
   const handleProceedToPayment = async () => {
     if (selectedSlots.length === 0) {
-      toast.error("Veuillez sélectionner au moins un créneau");
+      toast.error("Please select at least one time slot");
       return;
     }
 
@@ -255,10 +255,10 @@ export function AppointmentBooking() {
         setPaymentData(result.data);
         setShowPaymentDialog(true);
       } else {
-        toast.error(result.error || "Erreur lors de la création du paiement");
+        toast.error(result.error || "Error creating payment");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsProcessingPayment(false);
     }
@@ -316,7 +316,7 @@ export function AppointmentBooking() {
               <Label htmlFor="course">Cours</Label>
               <Select value={selectedCourse} onValueChange={setSelectedCourse}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un cours" />
+                  <SelectValue placeholder="Select a course" />
                 </SelectTrigger>
                 <SelectContent>
                   {courses.map((course) => (
@@ -451,7 +451,7 @@ export function AppointmentBooking() {
                 <Clock className="h-5 w-5" />
                 {selectedDate
                   ? format(selectedDate, "EEEE d MMMM yyyy", { locale: fr })
-                  : "Sélectionnez une date"}
+                  : "Select a date"}
               </CardTitle>
             </CardHeader>
             <CardContent>

@@ -58,7 +58,7 @@ export async function importCaseStudyAction(
     } catch (error) {
       return {
         success: false,
-        error: "Erreur lors du parsing des fichiers JSON",
+        error: "Error parsing JSON files",
       };
     }
 
@@ -140,7 +140,7 @@ export async function importCaseStudyAction(
 
     await Promise.all(questionPromises);
 
-    revalidatePath(`/tableau-de-bord/admin/courses/${courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
     revalidatePath(`/dashboard/admin/courses/${courseId}`);
 
     return {
@@ -159,7 +159,7 @@ export async function importCaseStudyAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'importation: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de l'importation: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -209,7 +209,7 @@ export async function getCaseStudiesAction(courseId: string): Promise<CaseStudyA
       
       return {
         success: false,
-        error: "Le client Prisma doit être régénéré. Veuillez arrêter le serveur de développement, exécuter 'npx prisma generate', puis redémarrer le serveur.",
+        error: "The Prisma client must be regenerated. Please stop the development server, run 'npx prisma generate', then restart the server.",
       };
     }
     
@@ -245,7 +245,7 @@ export async function getCaseStudyAction(caseStudyId: string): Promise<CaseStudy
     });
 
     if (!caseStudy) {
-      return { success: false, error: "Étude de cas introuvable" };
+      return { success: false, error: "Case study not found" };
     }
 
     return { success: true, data: caseStudy };
@@ -258,7 +258,7 @@ export async function getCaseStudyAction(caseStudyId: string): Promise<CaseStudy
 
     return {
       success: false,
-      error: "Erreur lors du chargement de l'étude de cas",
+      error: "Error loading the case study",
     };
   }
 }
@@ -283,7 +283,7 @@ export async function updateCaseStudyAction(
     });
 
     if (!caseStudy) {
-      return { success: false, error: "Étude de cas introuvable" };
+      return { success: false, error: "Case study not found" };
     }
 
     const updated = await prisma.caseStudy.update({
@@ -296,7 +296,7 @@ export async function updateCaseStudyAction(
       },
     });
 
-    revalidatePath(`/tableau-de-bord/admin/courses/${caseStudy.courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${caseStudy.courseId}`);
     revalidatePath(`/dashboard/admin/courses/${caseStudy.courseId}`);
 
     return { success: true, data: updated };
@@ -309,7 +309,7 @@ export async function updateCaseStudyAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour",
+      error: "Error updating",
     };
   }
 }
@@ -365,7 +365,7 @@ export async function updateCaseStudyQuestionAction(
     });
 
     if (caseStudy) {
-      revalidatePath(`/tableau-de-bord/admin/courses/${caseStudy.courseId}`);
+      revalidatePath(`/dashboard/admin/courses/${caseStudy.courseId}`);
       revalidatePath(`/dashboard/admin/courses/${caseStudy.courseId}`);
     }
 
@@ -379,7 +379,7 @@ export async function updateCaseStudyQuestionAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de la question",
+      error: "Error while updating the question",
     };
   }
 }
@@ -408,7 +408,7 @@ export async function deleteCaseStudyQuestionAction(questionId: string): Promise
       where: { id: questionId },
     });
 
-    revalidatePath(`/tableau-de-bord/admin/courses/${question.caseStudy.courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${question.caseStudy.courseId}`);
     revalidatePath(`/dashboard/admin/courses/${question.caseStudy.courseId}`);
 
     return { success: true };
@@ -421,7 +421,7 @@ export async function deleteCaseStudyQuestionAction(questionId: string): Promise
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de la question",
+      error: "Error while deleting the question",
     };
   }
 }
@@ -439,14 +439,14 @@ export async function deleteCaseStudyAction(caseStudyId: string): Promise<CaseSt
     });
 
     if (!caseStudy) {
-      return { success: false, error: "Étude de cas introuvable" };
+      return { success: false, error: "Case study not found" };
     }
 
     await prisma.caseStudy.delete({
       where: { id: caseStudyId },
     });
 
-    revalidatePath(`/tableau-de-bord/admin/courses/${caseStudy.courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${caseStudy.courseId}`);
     revalidatePath(`/dashboard/admin/courses/${caseStudy.courseId}`);
 
     return { success: true };
@@ -459,7 +459,7 @@ export async function deleteCaseStudyAction(caseStudyId: string): Promise<CaseSt
 
     return {
       success: false,
-      error: "Erreur lors de la suppression",
+      error: "Error while deleting",
     };
   }
 }
@@ -484,7 +484,7 @@ export async function submitCaseStudyAction(
     });
 
     if (!caseStudy) {
-      return { success: false, error: "Étude de cas introuvable" };
+      return { success: false, error: "Case study not found" };
     }
 
     // Calculate score
@@ -542,7 +542,7 @@ export async function submitCaseStudyAction(
 
     return {
       success: false,
-      error: `Erreur lors de la soumission: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de la soumission: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -572,7 +572,7 @@ export async function revealCaseStudyAnswersAction(attemptId: string): Promise<C
     }
 
     if (attempt.userId !== user.id) {
-      return { success: false, error: "Non autorisé" };
+      return { success: false, error: "Unauthorized" };
     }
 
     // Update attempt to mark answers as revealed
@@ -604,7 +604,7 @@ export async function revealCaseStudyAnswersAction(attemptId: string): Promise<C
 
     return {
       success: false,
-      error: "Erreur lors de la révélation des réponses",
+      error: "Error while revealing answers",
     };
   }
 }
@@ -636,7 +636,7 @@ export async function getCaseStudyAttemptsAction(
 
     return {
       success: false,
-      error: "Erreur lors du chargement des tentatives",
+      error: "Error while loading attempts",
     };
   }
 }

@@ -6,7 +6,7 @@ import { logServerError } from "@/lib/utils/error-logging";
 import { z } from "zod";
 
 const flashcardSchema = z.object({
-  courseId: z.string().min(1, "L'ID du cours est requis"),
+  courseId: z.string().min(1, "Course ID is required"),
   moduleId: z.string().optional().nullable(),
   front: z.string().min(1, "Le recto est requis"),
   back: z.string().min(1, "Le verso est requis"),
@@ -91,7 +91,7 @@ export async function createFlashcardStudySessionAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -103,7 +103,7 @@ export async function createFlashcardStudySessionAction(
 
     return {
       success: false,
-      error: "Erreur lors de l'enregistrement de la session",
+      error: "Error saving the session",
     };
   }
 }
@@ -123,7 +123,7 @@ export async function createFlashcardAction(data: z.infer<typeof flashcardSchema
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -135,7 +135,7 @@ export async function createFlashcardAction(data: z.infer<typeof flashcardSchema
 
     return {
       success: false,
-      error: "Erreur lors de la création de la flashcard",
+      error: "Error creating the flashcard",
     };
   }
 }
@@ -176,7 +176,7 @@ export async function updateFlashcardAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -188,7 +188,7 @@ export async function updateFlashcardAction(
 
     return {
       success: false,
-      error: `Erreur lors de la mise à jour de la flashcard: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de la mise à jour de la flashcard: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -211,7 +211,7 @@ export async function deleteFlashcardAction(flashcardId: string): Promise<Flashc
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de la flashcard",
+      error: "Error deleting the flashcard",
     };
   }
 }

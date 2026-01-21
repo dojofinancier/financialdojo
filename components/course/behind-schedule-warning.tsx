@@ -79,7 +79,7 @@ export function BehindScheduleWarning({ courseId }: BehindScheduleWarningProps) 
             className="border-orange-600 text-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
             onClick={() => {
               // Navigate to module progress to mark as learned
-              window.location.href = `/apprendre/${courseId}?tab=learn`;
+              window.location.href = `/learn/${courseId}?tab=learn`;
             }}
           >
             <BookOpen className="h-3 w-3 mr-1" />
@@ -91,7 +91,7 @@ export function BehindScheduleWarning({ courseId }: BehindScheduleWarningProps) 
             className="border-orange-600 text-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
             onClick={() => {
               // Open settings dialog - this would need to be handled by parent
-              toast.info("Ouvrez les paramètres du plan pour modifier vos heures d'étude ou la date d'examen");
+              toast.info("Open the plan settings to change your study hours or exam date");
             }}
           >
             <Settings className="h-3 w-3 mr-1" />

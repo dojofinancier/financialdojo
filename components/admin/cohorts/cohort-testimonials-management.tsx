@@ -37,7 +37,7 @@ export function CohortTestimonialsManagement({ cohortId, initialTestimonials }: 
 
   const handleAdd = () => {
     if (!formData.name.trim() || !formData.text.trim()) {
-      toast.error("Veuillez remplir le nom et le témoignage");
+      toast.error("Please fill in the name and testimonial");
       return;
     }
 
@@ -65,7 +65,7 @@ export function CohortTestimonialsManagement({ cohortId, initialTestimonials }: 
 
   const handleUpdate = () => {
     if (!formData.name.trim() || !formData.text.trim()) {
-      toast.error("Veuillez remplir le nom et le témoignage");
+      toast.error("Please fill in the name and testimonial");
       return;
     }
 
@@ -100,12 +100,12 @@ export function CohortTestimonialsManagement({ cohortId, initialTestimonials }: 
       setSaving(true);
       const result = await updateCohortTestimonialsAction(cohortId, testimonials);
       if (result.success) {
-        toast.success("Témoignages mis à jour avec succès");
+        toast.success("Testimonials updated successfully");
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la sauvegarde");
+      toast.error("Error saving");
     } finally {
       setSaving(false);
     }
@@ -204,7 +204,7 @@ export function CohortTestimonialsManagement({ cohortId, initialTestimonials }: 
                   id="testimonialText"
                   value={formData.text}
                   onChange={(e) => setFormData({ ...formData, text: e.target.value })}
-                  placeholder="Ex: Cette cohorte m'a permis d'atteindre mes objectifs..."
+                  placeholder="Ex: This cohort helped me reach my goals..."
                   rows={4}
                 />
               </div>

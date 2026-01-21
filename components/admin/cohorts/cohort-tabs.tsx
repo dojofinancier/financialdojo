@@ -34,7 +34,7 @@ export function CohortTabs({ defaultTab = "list" }: CohortTabsProps) {
       params.set("tab", "create");
     }
     // Use replace to avoid adding to history stack
-    router.replace(`/tableau-de-bord/admin/cohorts?${params.toString()}`);
+    router.replace(`/dashboard/admin/cohorts?${params.toString()}`);
   };
 
   return (

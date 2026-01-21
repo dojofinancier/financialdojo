@@ -57,7 +57,7 @@ export function ErrorSpottingActivity({
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             disabled={submitted}
-            placeholder="Décrivez l'erreur que vous avez identifiée..."
+            placeholder="Describe the error you identified..."
             rows={4}
             className={
               submitted && score !== null

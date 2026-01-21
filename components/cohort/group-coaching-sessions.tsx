@@ -40,7 +40,7 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
         setSessions(result.data as GroupCoachingSession[]);
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des sessions");
+      toast.error("Error loading sessions");
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,7 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
                       <CardDescription className="mt-2">
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
-                          {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'à' HH:mm", {
+                          {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'at' HH:mm", {
                             locale: fr,
                           })}
                         </div>
@@ -151,7 +151,7 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
                       <CardDescription className="mt-2">
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
-                          {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'à' HH:mm", {
+                          {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'at' HH:mm", {
                             locale: fr,
                           })}
                         </div>

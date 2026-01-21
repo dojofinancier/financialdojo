@@ -67,7 +67,7 @@ export async function getExamsAction(courseId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du chargement des examens",
+      error: "Error loading exams",
     };
   }
 }
@@ -105,7 +105,7 @@ export async function upsertExamAction(
           questions: true,
         },
       });
-      revalidatePath(`/tableau-de-bord/admin/courses/${exam.contentItem.module.courseId}`);
+      revalidatePath(`/dashboard/admin/courses/${exam.contentItem.module.courseId}`);
       return { success: true, data: exam };
     } else {
       // Create new exam - need to create content item first
@@ -131,14 +131,14 @@ export async function upsertExamAction(
         },
       });
 
-      revalidatePath(`/tableau-de-bord/admin/courses/${contentItem.module.courseId}`);
+      revalidatePath(`/dashboard/admin/courses/${contentItem.module.courseId}`);
       return { success: true, data: exam };
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -150,7 +150,7 @@ export async function upsertExamAction(
 
     return {
       success: false,
-      error: "Erreur lors de la sauvegarde de l'examen",
+      error: "Error saving the exam",
     };
   }
 }
@@ -192,7 +192,7 @@ export async function deleteExamAction(examId: string): Promise<ExamActionResult
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de l'examen",
+      error: "Error deleting the exam",
     };
   }
 }
@@ -292,7 +292,7 @@ export async function uploadQuestionsToExamAction(
               },
             });
           } catch (err) {
-            errors.push(`Erreur lors de la création de la question ${currentQuestion.order}: ${err instanceof Error ? err.message : "Erreur inconnue"}`);
+            errors.push(`Erreur lors de la création de la question ${currentQuestion.order}: ${err instanceof Error ? err.message : "Unknown error"}`);
           }
         }
 
@@ -345,7 +345,7 @@ export async function uploadQuestionsToExamAction(
           },
         });
       } catch (err) {
-        errors.push(`Erreur lors de la création de la dernière question: ${err instanceof Error ? err.message : "Erreur inconnue"}`);
+        errors.push(`Erreur lors de la création de la dernière question: ${err instanceof Error ? err.message : "Unknown error"}`);
       }
     }
 
@@ -366,7 +366,7 @@ export async function uploadQuestionsToExamAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -448,7 +448,7 @@ export async function cleanupEscapedQuotesAction(examId: string): Promise<ExamAc
 
     // Only revalidate if we have the courseId
     if (exam.contentItem?.module?.courseId) {
-      revalidatePath(`/tableau-de-bord/admin/courses/${exam.contentItem.module.courseId}`);
+      revalidatePath(`/dashboard/admin/courses/${exam.contentItem.module.courseId}`);
     }
     
     return {
@@ -464,7 +464,7 @@ export async function cleanupEscapedQuotesAction(examId: string): Promise<ExamAc
 
     return {
       success: false,
-      error: `Erreur lors du nettoyage: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors du nettoyage: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -484,7 +484,7 @@ export async function importPracticeExamFromCSVAction(
 
     const lines = csvContent.split("\n").filter((line) => line.trim());
     if (lines.length < 2) {
-      return { success: false, error: "Le fichier CSV doit contenir au moins un en-tête et une question" };
+      return { success: false, error: "The CSV file must contain at least one header and one question" };
     }
 
     // Parse CSV line helper
@@ -612,7 +612,7 @@ export async function importPracticeExamFromCSVAction(
     }
 
     if (questions.length === 0) {
-      return { success: false, error: "Aucune question valide trouvée dans le fichier CSV" };
+      return { success: false, error: "No valid question found in the CSV file" };
     }
 
     let exam;
@@ -641,7 +641,7 @@ export async function importPracticeExamFromCSVAction(
         });
 
         if (!firstModule) {
-          return { success: false, error: "Aucun module trouvé pour ce cours" };
+          return { success: false, error: "No modules found for this course" };
         }
 
         targetModuleId = firstModule.id;
@@ -657,7 +657,7 @@ export async function importPracticeExamFromCSVAction(
       if (!contentItemResult.success || !contentItemResult.data) {
         return {
           success: false,
-          error: contentItemResult.error || "Erreur lors de la création de l'élément de contenu",
+          error: contentItemResult.error || "Error creating the content item",
         };
       }
 
@@ -707,11 +707,11 @@ export async function importPracticeExamFromCSVAction(
         });
         successCount++;
       } catch (err) {
-        errors.push(`Erreur lors de la création de la question: ${err instanceof Error ? err.message : "Erreur inconnue"}`);
+        errors.push(`Erreur lors de la création de la question: ${err instanceof Error ? err.message : "Unknown error"}`);
       }
     }
 
-    revalidatePath(`/tableau-de-bord/admin/courses/${courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
     revalidatePath(`/dashboard/admin/courses/${courseId}`);
 
     return {
@@ -731,7 +731,7 @@ export async function importPracticeExamFromCSVAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'importation: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de l'importation: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }

@@ -113,11 +113,11 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
         setQuizSubmitted((prev) => ({ ...prev, [quizId]: true }));
         toast.success(`Quiz soumis! Score: ${result.data?.score || 0}%`);
       } else {
-        toast.error(result.error || "Erreur lors de la soumission");
+        toast.error(result.error || "Error during submission");
       }
     } catch (error) {
       console.error("Error submitting quiz:", error);
-      toast.error("Erreur lors de la soumission");
+      toast.error("Error during submission");
     } finally {
       setSubmittingQuiz(null);
     }

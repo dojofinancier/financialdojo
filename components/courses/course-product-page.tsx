@@ -187,19 +187,19 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
       title: course.title,
       price: course.price,
     });
-    toast.success("Ajouté au panier");
+    toast.success("Added to cart");
     setInCart(true);
     // Use window.location for full page reload to ensure navbar renders
-    window.location.href = "/panier";
+    window.location.href = "/cart";
   }, [course.id, course.slug, course.title, course.price]);
 
   const handleGoToCart = useCallback(() => {
     // Use window.location for full page reload to ensure navbar renders
-    window.location.href = "/panier";
+    window.location.href = "/cart";
   }, []);
 
   const handleContinue = useCallback(() => {
-    router.push(`/apprendre/${course.slug || course.id}`);
+    router.push(`/learn/${course.slug || course.id}`);
   }, [router, course.slug, course.id]);
 
   // Memoize arrays to prevent unnecessary re-renders

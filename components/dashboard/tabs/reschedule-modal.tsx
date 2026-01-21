@@ -61,12 +61,12 @@ export function RescheduleModal({ appointment, onRescheduled }: RescheduleModalP
 
   const onSubmit = async () => {
     if (!selectedSlot) {
-      toast.error("Veuillez sélectionner un créneau disponible");
+      toast.error("Please select an available time slot");
       return;
     }
 
     if (!reason.trim() || reason.trim().length < 10) {
-      toast.error("Veuillez expliquer la raison du changement (minimum 10 caractères)");
+      toast.error("Please explain the reason for the change (minimum 10 characters)");
       return;
     }
 
@@ -81,7 +81,7 @@ export function RescheduleModal({ appointment, onRescheduled }: RescheduleModalP
       );
 
       if (result.success) {
-        toast.success("Rendez-vous reprogrammé avec succès");
+        toast.success("Appointment rescheduled successfully");
         setIsOpen(false);
         setSelectedSlot(null);
         setReason("");
@@ -91,11 +91,11 @@ export function RescheduleModal({ appointment, onRescheduled }: RescheduleModalP
           router.refresh();
         }
       } else {
-        toast.error(result.error || "Erreur lors de la reprogrammation");
+        toast.error(result.error || "Error during rescheduling");
       }
     } catch (error) {
       console.error("Error rescheduling appointment:", error);
-      toast.error("Une erreur inattendue est survenue");
+      toast.error("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }

@@ -12,11 +12,11 @@ export default async function TableauDeBordPage() {
   // Redirect based on role
   console.log(`[TableauDeBordPage] User role: ${user.role}, redirecting to appropriate dashboard`);
   if (user.role === "ADMIN") {
-    redirect("/tableau-de-bord/admin");
+    redirect("/dashboard/admin");
   } else if (user.role === "STUDENT") {
-    redirect("/tableau-de-bord/etudiant");
+    redirect("/dashboard/student");
   } else if (user.role === "INSTRUCTOR") {
-    redirect("/tableau-de-bord/instructeur");
+    redirect("/dashboard/instructeur");
   } else {
     // Unknown role, redirect to login
     console.error(`[TableauDeBordPage] Unknown user role: ${user.role}`);

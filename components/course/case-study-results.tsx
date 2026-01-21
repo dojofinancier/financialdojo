@@ -61,11 +61,11 @@ export function CaseStudyResults({ result, caseStudy, onRetake, onExit }: CaseSt
       if (revealResult.success) {
         setShowAnswers(true);
       } else {
-        toast.error(revealResult.error || "Erreur lors de la révélation des réponses");
+        toast.error(revealResult.error || "Error while revealing answers");
       }
     } catch (error) {
       console.error("Error revealing answers:", error);
-      toast.error("Erreur lors de la révélation des réponses");
+      toast.error("Error while revealing answers");
     } finally {
       setLoadingAnswers(false);
     }

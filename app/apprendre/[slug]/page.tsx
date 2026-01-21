@@ -46,7 +46,7 @@ export default async function CourseLearningPage({
       const errorMessage = result.error?.toLowerCase() || "";
       
       // If it's a generic error, try to get more details by checking enrollment directly
-      if (errorMessage.includes("erreur lors du chargement") || !result.error) {
+      if (errorMessage.includes("error loading") || !result.error) {
         // Generic error - check if course exists and user is enrolled
         try {
           const { requireAuth } = await import("@/lib/auth/require-auth");
@@ -62,7 +62,7 @@ export default async function CourseLearningPage({
           if (enrollment) {
             // User is enrolled, but there's an error loading content
             // This might be a data issue - redirect to formations page
-            const redirectPath = `/formations/${slug}`;
+            const redirectPath = `/courses/${slug}`;
             console.log(`User enrolled but content error, redirecting to: ${redirectPath}`);
             redirect(redirectPath);
           }
@@ -73,15 +73,15 @@ export default async function CourseLearningPage({
       
       if (result.error && (
         errorMessage.includes("inscrit") || 
-        errorMessage.includes("accès") || 
-        errorMessage.includes("expiré") ||
+        errorMessage.includes("access") || 
+        errorMessage.includes("expired") ||
         errorMessage.includes("enrolled") ||
         errorMessage.includes("enrollment") ||
-        errorMessage.includes("cours introuvable") ||
-        errorMessage.includes("publié")
+        errorMessage.includes("course not found") ||
+        errorMessage.includes("published")
       )) {
         // Redirect to formations page
-        const redirectPath = `/formations/${slug}`;
+        const redirectPath = `/courses/${slug}`;
         console.log(`Redirecting to: ${redirectPath}`);
         redirect(redirectPath);
       }

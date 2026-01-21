@@ -260,7 +260,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
                                         );
 
                                         // Show toast immediately for instant feedback
-                                        toast.success(checked ? "Tâche complétée" : "Tâche réinitialisée");
+                                        toast.success(checked ? "Task completed" : "Task reset");
 
                                         // Update server in background (non-blocking)
                                         startTransition(async () => {
@@ -303,7 +303,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
                                                 };
                                               }
                                             );
-                                            toast.error("Erreur lors de la mise à jour");
+                                            toast.error("Error updating");
                                           } finally {
                                             setUpdatingTasks(prev => {
                                               const next = new Set(prev);
@@ -382,7 +382,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
                                         );
 
                                         // Show toast immediately
-                                        toast.success(checked ? "Tâche complétée" : "Tâche réinitialisée");
+                                        toast.success(checked ? "Task completed" : "Task reset");
 
                                         // Update server in background (non-blocking)
                                         startTransition(async () => {
@@ -425,7 +425,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
                                                 };
                                               }
                                             );
-                                            toast.error("Erreur lors de la mise à jour");
+                                            toast.error("Error updating");
                                           } finally {
                                             setUpdatingTasks(prev => {
                                               const next = new Set(prev);
@@ -504,7 +504,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
                                         );
 
                                         // Show toast immediately
-                                        toast.success(checked ? "Tâche complétée" : "Tâche réinitialisée");
+                                        toast.success(checked ? "Task completed" : "Task reset");
 
                                         // Update server in background (non-blocking)
                                         startTransition(async () => {
@@ -547,7 +547,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
                                                 };
                                               }
                                             );
-                                            toast.error("Erreur lors de la mise à jour");
+                                            toast.error("Error updating");
                                           } finally {
                                             setUpdatingTasks(prev => {
                                               const next = new Set(prev);

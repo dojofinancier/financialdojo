@@ -124,8 +124,8 @@ export function Phase1Learn({ courseId, course, settings, onModuleSelect }: Phas
                       {progress.learnStatus === LearnStatus.LEARNED
                         ? "Appris"
                         : progress.learnStatus === LearnStatus.IN_PROGRESS
-                        ? "En cours"
-                        : "Non commencé"}
+                        ? "In progress"
+                        : "Not started"}
                     </div>
                   </div>
                 </div>
@@ -136,7 +136,7 @@ export function Phase1Learn({ courseId, course, settings, onModuleSelect }: Phas
                     onClick={() => handleStartModule(progress.moduleId)}
                   >
                     <Play className="h-4 w-4 mr-1" />
-                    {progress.learnStatus === LearnStatus.LEARNED ? "Réviser" : "Commencer"}
+                    {progress.learnStatus === LearnStatus.LEARNED ? "Review" : "Commencer"}
                   </Button>
                 </div>
               </div>

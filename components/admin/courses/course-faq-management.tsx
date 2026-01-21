@@ -57,7 +57,7 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
       }
     } catch (error) {
       console.error("Error loading FAQs:", error);
-      toast.error("Erreur lors du chargement des FAQ");
+      toast.error("Error loading FAQs");
     } finally {
       setLoading(false);
     }
@@ -65,7 +65,7 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
 
   const handleCreate = async () => {
     if (!formData.question.trim() || !formData.answer.trim()) {
-      toast.error("Veuillez remplir tous les champs");
+      toast.error("Please fill in all fields");
       return;
     }
 
@@ -77,20 +77,20 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
       });
 
       if (result.success) {
-        toast.success("FAQ créée avec succès");
+        toast.success("FAQ created successfully");
         setFormData({ question: "", answer: "" });
         loadFAQs();
       } else {
-        toast.error(result.error || "Erreur lors de la création");
+        toast.error(result.error || "Error creating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la création de la FAQ");
+      toast.error("Error creating the FAQ");
     }
   };
 
   const handleUpdate = async (id: string) => {
     if (!formData.question.trim() || !formData.answer.trim()) {
-      toast.error("Veuillez remplir tous les champs");
+      toast.error("Please fill in all fields");
       return;
     }
 
@@ -101,15 +101,15 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
       });
 
       if (result.success) {
-        toast.success("FAQ mise à jour avec succès");
+        toast.success("FAQ updated successfully");
         setEditingId(null);
         setFormData({ question: "", answer: "" });
         loadFAQs();
       } else {
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour de la FAQ");
+      toast.error("Error updating the FAQ");
     }
   };
 
@@ -117,13 +117,13 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
     try {
       const result = await deleteCourseFAQAction(id);
       if (result.success) {
-        toast.success("FAQ supprimée avec succès");
+        toast.success("FAQ deleted successfully");
         loadFAQs();
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
-      toast.error("Erreur lors de la suppression de la FAQ");
+      toast.error("Error deleting the FAQ");
     } finally {
       setDeleteId(null);
     }
@@ -163,7 +163,7 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, question: e.target.value })
                 }
-                placeholder="Ex: Combien de temps dure la formation ?"
+                placeholder="Eg: How long does the training last?"
               />
             </div>
             <div className="space-y-2">
@@ -174,7 +174,7 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, answer: e.target.value })
                 }
-                placeholder="Ex: La formation dure 12 semaines avec accès pendant 1 an..."
+                placeholder="Eg: The training lasts 12 weeks with access for 1 year..."
                 rows={3}
               />
             </div>

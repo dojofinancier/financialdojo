@@ -188,7 +188,7 @@ export function VideosTool({ courseId, onBack }: VideosToolProps) {
         <div className="flex items-center gap-4">
           <Select value={selectedModuleId || ""} onValueChange={setSelectedModuleId}>
             <SelectTrigger className="w-[250px]">
-              <SelectValue placeholder="Sélectionner un module" />
+              <SelectValue placeholder="Select a module" />
             </SelectTrigger>
             <SelectContent>
               {modules.map((module) => (

@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!article) {
     return {
-      title: "Article non trouvé | Le Dojo Financier",
+      title: "Article not found | Financial Dojo",
     };
   }
 

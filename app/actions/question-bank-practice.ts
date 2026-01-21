@@ -54,7 +54,7 @@ export async function getQuestionBankQuestionsAction(courseId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du chargement des questions",
+      error: "Error loading questions",
     };
   }
 }
@@ -117,7 +117,7 @@ export async function submitQuestionBankAnswerAction(
 
     return {
       success: false,
-      error: "Erreur lors de la soumission de la réponse",
+      error: "Error submitting the answer",
     };
   }
 }
@@ -201,7 +201,7 @@ export async function getQuestionBankAttemptsAction(courseId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du chargement des tentatives",
+      error: "Error while loading attempts",
     };
   }
 }
@@ -273,7 +273,7 @@ export async function getQuestionBankStatsAction(courseId: string) {
 
     return {
       success: false,
-      error: "Erreur lors du chargement des statistiques",
+      error: "Error loading statistics",
     };
   }
 }

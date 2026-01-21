@@ -72,15 +72,15 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
     try {
       const result = await completeOrientationAction(courseId);
       if (result.success) {
-        toast.success("Orientation complétée!");
+        toast.success("Orientation completed!");
         router.refresh();
         onComplete?.();
       } else {
-        toast.error(result.error || "Erreur lors de la complétion de l'orientation");
+        toast.error(result.error || "Error completing orientation");
       }
     } catch (err) {
       console.error("Error completing orientation:", err);
-      toast.error("Une erreur est survenue. Veuillez réessayer.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,7 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
 
   const handleViewPlan = async () => {
     if (!videoWatched) {
-      toast.error("Veuillez marquer la vidéo comme regardée d'abord");
+      toast.error("Please mark the video as watched first");
       return;
     }
 
@@ -97,26 +97,26 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
       // Complete orientation first
       const result = await completeOrientationAction(courseId);
       if (result.success) {
-        toast.success("Orientation complétée!");
+        toast.success("Orientation completed!");
         // Call onComplete to update parent state
         onComplete?.();
         // Use window.location for a full page reload to ensure fresh data
         // This ensures the server fetches updated settings
-        window.location.href = `/apprendre/${courseId}`;
+        window.location.href = `/learn/${courseId}`;
       } else {
-        toast.error(result.error || "Erreur lors de la complétion de l'orientation");
+        toast.error(result.error || "Error completing orientation");
         setLoading(false);
       }
     } catch (err) {
       console.error("Error completing orientation:", err);
-      toast.error("Une erreur est survenue. Veuillez réessayer.");
+      toast.error("An error occurred. Please try again.");
       setLoading(false);
     }
   };
 
   const handleStartPhase1 = async () => {
     if (!videoWatched) {
-      toast.error("Veuillez marquer la vidéo comme regardée d'abord");
+      toast.error("Please mark the video as watched first");
       return;
     }
 
@@ -125,23 +125,23 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
       // Complete orientation first
       const result = await completeOrientationAction(courseId);
       if (result.success) {
-        toast.success("Orientation complétée!");
+        toast.success("Orientation completed!");
         // Call onComplete to update parent state
         onComplete?.();
         // Use window.location for a full page reload to ensure fresh data
         // Navigate to first module of phase 1
         if (firstModuleId) {
-          window.location.href = `/apprendre/${courseId}?module=${firstModuleId}`;
+          window.location.href = `/learn/${courseId}?module=${firstModuleId}`;
         } else {
-          window.location.href = `/apprendre/${courseId}`;
+          window.location.href = `/learn/${courseId}`;
         }
       } else {
-        toast.error(result.error || "Erreur lors de la complétion de l'orientation");
+        toast.error(result.error || "Error completing orientation");
         setLoading(false);
       }
     } catch (err) {
       console.error("Error completing orientation:", err);
-      toast.error("Une erreur est survenue. Veuillez réessayer.");
+      toast.error("An error occurred. Please try again.");
       setLoading(false);
     }
   };
@@ -209,7 +209,7 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
                       allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                       referrerPolicy="strict-origin-when-cross-origin"
                       style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                      title="Vidéo d'orientation"
+                      title="Orientation video"
                     />
                   </div>
                 </div>
@@ -308,7 +308,7 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
                 size="lg"
               >
                 <Calendar className="h-5 w-5 mr-2" />
-                {loading ? "Chargement..." : "Voir mon plan d'étude"}
+                {loading ? "Chargement..." : "View my study plan"}
               </Button>
               <Button
                 onClick={handleStartPhase1}

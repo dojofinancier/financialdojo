@@ -55,7 +55,7 @@ export function SupportTab() {
   };
 
   if (error) {
-    toast.error("Erreur lors du chargement des tickets");
+    toast.error("Error loading tickets");
   }
 
   if (isLoading) {
@@ -75,7 +75,7 @@ export function SupportTab() {
             Consultez et créez des tickets de support
           </p>
         </div>
-        <Link href="/tableau-de-bord/etudiant/support/new">
+        <Link href="/dashboard/student/support/new">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
             Nouveau ticket
@@ -91,7 +91,7 @@ export function SupportTab() {
             <p className="text-muted-foreground mb-4">
               Créez un ticket pour obtenir de l'aide
             </p>
-            <Link href="/tableau-de-bord/etudiant/support/new">
+            <Link href="/dashboard/student/support/new">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Créer un ticket
@@ -121,7 +121,7 @@ export function SupportTab() {
                       </span>
                     </div>
                   </div>
-                  <Link href={`/tableau-de-bord/etudiant/support/${ticket.id}`}>
+                  <Link href={`/dashboard/student/support/${ticket.id}`}>
                     <Button variant="outline" size="sm">
                       Voir
                     </Button>

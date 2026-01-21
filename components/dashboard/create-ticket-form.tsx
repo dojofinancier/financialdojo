@@ -41,14 +41,14 @@ export function CreateTicketForm() {
       });
 
       if (result.success) {
-        toast.success("Ticket créé avec succès!");
+        toast.success("Ticket created successfully!");
         // Redirect to support tab in the dashboard
-        router.push("/tableau-de-bord/etudiant?tab=support");
+        router.push("/dashboard/student?tab=support");
       } else {
-        toast.error(result.error || "Erreur lors de la création du ticket");
+        toast.error(result.error || "Error creating the ticket");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -70,7 +70,7 @@ export function CreateTicketForm() {
               id="subject"
               value={formData.subject}
               onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-              placeholder="Résumez votre problème en quelques mots"
+              placeholder="Summarize your issue in a few words"
               required
               disabled={isSubmitting}
             />
@@ -82,7 +82,7 @@ export function CreateTicketForm() {
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Décrivez votre problème en détail..."
+              placeholder="Describe your issue in detail..."
               rows={8}
               required
               disabled={isSubmitting}
@@ -100,7 +100,7 @@ export function CreateTicketForm() {
                 disabled={isSubmitting}
               >
                 <SelectTrigger id="priority">
-                  <SelectValue placeholder="Sélectionnez une priorité" />
+                  <SelectValue placeholder="Select a priority" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="LOW">Basse</SelectItem>
@@ -131,7 +131,7 @@ export function CreateTicketForm() {
                   Création...
                 </>
               ) : (
-                "Créer le ticket"
+                "Create ticket"
               )}
             </Button>
             <Button

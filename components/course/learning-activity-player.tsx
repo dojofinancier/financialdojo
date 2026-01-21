@@ -93,7 +93,7 @@ export function LearningActivityPlayer({
 
   const handleSubmit = async () => {
     if (!answers) {
-      toast.error("Veuillez répondre à l'activité");
+      toast.error("Please answer the activity");
       return;
     }
 
@@ -112,17 +112,17 @@ export function LearningActivityPlayer({
         toast.success(
           result.data.isGraded
             ? `Activité terminée! Score: ${result.data.score}%`
-            : "Activité soumise! Elle sera examinée par l'instructeur."
+            : "Activity submitted! It will be reviewed by the instructor."
         );
         if (onComplete) {
           onComplete(result.data.score);
         }
       } else {
-        toast.error(result.error || "Erreur lors de la soumission");
+        toast.error(result.error || "Error during submission");
       }
     } catch (error) {
       console.error("Error submitting activity:", error);
-      toast.error("Erreur lors de la soumission de l'activité");
+      toast.error("Error submitting activity");
     } finally {
       setSubmitting(false);
     }
@@ -208,13 +208,13 @@ export function LearningActivityPlayer({
   };
 
   const ACTIVITY_TYPE_LABELS: Record<string, string> = {
-    SHORT_ANSWER: "Réponse courte",
-    FILL_IN_BLANK: "Texte à trous",
+    SHORT_ANSWER: "Short answer",
+    FILL_IN_BLANK: "Fill-in-the-blank",
     SORTING_RANKING: "Tri / Classement",
     CLASSIFICATION: "Classification",
-    NUMERIC_ENTRY: "Calcul numérique",
-    TABLE_COMPLETION: "Tableau à compléter",
-    ERROR_SPOTTING: "Détection d'erreur",
+    NUMERIC_ENTRY: "Numeric calculation",
+    TABLE_COMPLETION: "Table to complete",
+    ERROR_SPOTTING: "Error detection",
     DEEP_DIVE: "Approfondissement",
   };
 
@@ -287,7 +287,7 @@ export function LearningActivityPlayer({
                     if (onAnswerChange) {
                       onAnswerChange(null);
                     }
-                    toast.info("Réponses réinitialisées. Vous pouvez réessayer.");
+                    toast.info("Answers have been reset. You can try again.");
                   }}
                 >
                   Réessayer
@@ -323,7 +323,7 @@ export function LearningActivityPlayer({
                     if (onAnswerChange) {
                       onAnswerChange(null);
                     }
-                    toast.info("Réponses réinitialisées. Vous pouvez réessayer.");
+                    toast.info("Answers have been reset. You can try again.");
                   }}
                 >
                   Réessayer

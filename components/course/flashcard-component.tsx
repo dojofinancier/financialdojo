@@ -86,10 +86,10 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
         setCurrentIndex(currentIndex + 1);
         setIsFlipped(false);
       } else {
-        toast.success("Toutes les flashcards ont été étudiées!");
+        toast.success("All flashcards have been studied!");
       }
     } catch (error) {
-      toast.error("Erreur lors de l'enregistrement");
+      toast.error("Error saving");
     }
   };
 

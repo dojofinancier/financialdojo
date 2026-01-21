@@ -84,7 +84,7 @@ export async function createCohortEnrollmentAction(
     if (!cohort) {
       return {
         success: false,
-        error: "Cohorte introuvable",
+        error: "Cohort not found",
       };
     }
 
@@ -92,7 +92,7 @@ export async function createCohortEnrollmentAction(
     if (cohort._count.enrollments >= cohort.maxStudents) {
       return {
         success: false,
-        error: "La cohorte a atteint le nombre maximum d'étudiants",
+        error: "The cohort has reached the maximum number of students",
       };
     }
 
@@ -100,7 +100,7 @@ export async function createCohortEnrollmentAction(
     if (new Date() > cohort.enrollmentClosingDate) {
       return {
         success: false,
-        error: "La date limite d'inscription est dépassée",
+        error: "The registration deadline has passed",
       };
     }
 
@@ -118,7 +118,7 @@ export async function createCohortEnrollmentAction(
     if (existingEnrollment) {
       return {
         success: false,
-        error: "L'utilisateur est déjà inscrit à cette cohorte",
+        error: "The user is already enrolled in this cohort",
       };
     }
 
@@ -215,7 +215,7 @@ export async function createCohortEnrollmentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -227,7 +227,7 @@ export async function createCohortEnrollmentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création de l'inscription",
+      error: "Error while creating the registration",
     };
   }
 }
@@ -270,7 +270,7 @@ export async function updateCohortEnrollmentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -283,7 +283,7 @@ export async function updateCohortEnrollmentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la mise à jour de l'inscription",
+      error: "Error while updating the registration",
     };
   }
 }
@@ -312,7 +312,7 @@ export async function deleteCohortEnrollmentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la suppression de l'inscription",
+      error: "Error while deleting the registration",
     };
   }
 }
@@ -352,7 +352,7 @@ export async function getCohortEnrollmentsAction(
 
     return {
       success: false,
-      error: "Erreur lors de la récupération des inscriptions",
+      error: "Error while retrieving registrations",
     };
   }
 }
@@ -374,7 +374,7 @@ export async function extendCohortEnrollmentAccessAction(
     if (!enrollment) {
       return {
         success: false,
-        error: "Inscription introuvable",
+        error: "Registration not found",
       };
     }
 
@@ -413,7 +413,7 @@ export async function extendCohortEnrollmentAccessAction(
 
     return {
       success: false,
-      error: "Erreur lors de la prolongation de l'accès",
+      error: "Error while extending access",
     };
   }
 }
@@ -460,7 +460,7 @@ export async function revokeCohortEnrollmentAccessAction(
 
     return {
       success: false,
-      error: "Erreur lors de la révocation de l'accès",
+      error: "Error while revoking access",
     };
   }
 }
@@ -599,21 +599,21 @@ export async function checkCohortEnrollmentAvailabilityAction(
     if (!cohort) {
       return {
         available: false,
-        reason: "Cohorte introuvable",
+        reason: "Cohort not found",
       };
     }
 
     if (cohort._count.enrollments >= cohort.maxStudents) {
       return {
         available: false,
-        reason: "La cohorte a atteint le nombre maximum d'étudiants",
+        reason: "The cohort has reached the maximum number of students",
       };
     }
 
     if (new Date() > cohort.enrollmentClosingDate) {
       return {
         available: false,
-        reason: "La date limite d'inscription est dépassée",
+        reason: "The registration deadline has passed",
       };
     }
 
@@ -629,7 +629,7 @@ export async function checkCohortEnrollmentAvailabilityAction(
 
     return {
       available: false,
-      reason: "Erreur lors de la vérification",
+      reason: "Error while verifying",
     };
   }
 }

@@ -30,7 +30,7 @@ export function CompletionRatesChart({ data }: CompletionRatesChartProps) {
     .slice(0, 10)
     .map((item) => ({
       course: item.courseTitle.length > 30 ? item.courseTitle.substring(0, 30) + "..." : item.courseTitle,
-      "Taux de complétion": Math.round(item.averageCompletionRate * 10) / 10,
+      "Completion rate": Math.round(item.averageCompletionRate * 10) / 10,
     }));
 
   return (
@@ -41,7 +41,7 @@ export function CompletionRatesChart({ data }: CompletionRatesChartProps) {
         <YAxis domain={[0, 100]} />
         <Tooltip formatter={(value) => `${Number(value)}%`} />
         <Legend />
-        <Bar dataKey="Taux de complétion" fill="hsl(var(--accent))" />
+        <Bar dataKey="Completion rate" fill="hsl(var(--accent))" />
       </BarChart>
     </ResponsiveContainer>
   );

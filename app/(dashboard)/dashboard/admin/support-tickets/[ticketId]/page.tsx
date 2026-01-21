@@ -23,7 +23,7 @@ async function TicketDetailContent({ params }: TicketDetailPageProps) {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <Link href="/tableau-de-bord/admin/support-tickets">
+        <Link href="/dashboard/admin/support-tickets">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Retour à la liste

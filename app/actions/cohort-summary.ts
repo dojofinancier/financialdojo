@@ -43,7 +43,7 @@ export async function getCohortSummaryAction(
     if (!enrollment && !isAdminOrInstructor) {
       return {
         success: false,
-        error: "Vous n'avez pas accès à cette cohorte",
+        error: "You do not have access to this cohort",
       };
     }
 
@@ -134,7 +134,7 @@ export async function getCohortSummaryAction(
 
     return {
       success: false,
-      error: "Erreur lors de la récupération des informations de la cohorte",
+      error: "Error retrieving the cohort information",
     };
   }
 }
@@ -170,7 +170,7 @@ export async function getCohortsSummaryAction(
 
     return {
       success: false,
-      error: "Erreur lors de la récupération des informations des cohortes",
+      error: "Error retrieving cohorts information",
     };
   }
 }

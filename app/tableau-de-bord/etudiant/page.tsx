@@ -8,8 +8,8 @@ async function StudentDashboardContent() {
   const user = await requireAuth();
 
   // IMPORTANT:
-  // The student dashboard only needs *summary* data (active formations/cohortes).
-  // Do NOT query course modules/quizzes/flashcards here — that belongs to /apprendre/*.
+  // The student dashboard only needs *summary* data (active formations/cohortss).
+  // Do NOT query course modules/quizzes/flashcards here — that belongs to /learn/*.
   //
   // Also avoid calling server actions that each call requireAuth() again; we already have `user`.
   const [enrollments, cohortEnrollments] = await Promise.all([

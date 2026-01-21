@@ -48,7 +48,7 @@ export async function createAppointmentPaymentIntentAction(
     if (user.role !== "STUDENT") {
       return {
         success: false,
-        error: "Seuls les étudiants peuvent réserver des rendez-vous",
+        error: "Only students can book appointments",
       };
     }
 
@@ -67,14 +67,14 @@ export async function createAppointmentPaymentIntentAction(
     if (!course) {
       return {
         success: false,
-        error: "Cours introuvable",
+        error: "Course not found",
       };
     }
 
     if (!course.appointmentHourlyRate || course.appointmentHourlyRate.toNumber() === 0) {
       return {
         success: false,
-        error: "Ce cours n'a pas de tarif horaire configuré",
+        error: "This course has no hourly rate configured",
       };
     }
 
@@ -129,7 +129,7 @@ export async function createAppointmentPaymentIntentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -141,7 +141,7 @@ export async function createAppointmentPaymentIntentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du paiement",
+      error: "Error creating payment",
     };
   }
 }
@@ -158,7 +158,7 @@ export async function createMultipleAppointmentsPaymentIntentAction(
     if (user.role !== "STUDENT") {
       return {
         success: false,
-        error: "Seuls les étudiants peuvent réserver des rendez-vous",
+        error: "Only students can book appointments",
       };
     }
 
@@ -167,7 +167,7 @@ export async function createMultipleAppointmentsPaymentIntentAction(
     if (validatedData.slots.length === 0) {
       return {
         success: false,
-        error: "Aucun créneau sélectionné",
+        error: "No time slot selected",
       };
     }
 
@@ -184,14 +184,14 @@ export async function createMultipleAppointmentsPaymentIntentAction(
     if (!course) {
       return {
         success: false,
-        error: "Cours introuvable",
+        error: "Course not found",
       };
     }
 
     if (!course.appointmentHourlyRate || course.appointmentHourlyRate.toNumber() === 0) {
       return {
         success: false,
-        error: "Ce cours n'a pas de tarif horaire configuré",
+        error: "This course has no hourly rate configured",
       };
     }
 
@@ -254,7 +254,7 @@ export async function createMultipleAppointmentsPaymentIntentAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -266,7 +266,7 @@ export async function createMultipleAppointmentsPaymentIntentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la création du paiement",
+      error: "Error creating payment",
     };
   }
 }
@@ -287,7 +287,7 @@ export async function confirmAppointmentPaymentAction(
     if (paymentIntent.status !== "succeeded") {
       return {
         success: false,
-        error: "Le paiement n'a pas été confirmé",
+        error: "Payment was not confirmed",
       };
     }
 
@@ -324,7 +324,7 @@ export async function confirmAppointmentPaymentAction(
     });
 
     // Revalidate the appointments page to ensure fresh data
-    revalidatePath("/tableau-de-bord/etudiant", "page");
+    revalidatePath("/dashboard/student", "page");
 
     // Send webhook to make.com for calendar integration (non-blocking)
     // Send for each appointment that was confirmed
@@ -372,7 +372,7 @@ export async function confirmAppointmentPaymentAction(
           studentEmail: appointmentWithDetails.user.email,
           studentName: `${appointmentWithDetails.user.firstName || ''} ${appointmentWithDetails.user.lastName || ''}`.trim() || appointmentWithDetails.user.email,
           courseId: appointmentWithDetails.courseId || null,
-          courseTitle: appointmentWithDetails.course?.title || 'Non spécifié',
+          courseTitle: appointmentWithDetails.course?.title || 'Not specified',
           scheduledAt: appointmentWithDetails.scheduledAt.toISOString(),
           scheduledDate: formattedDate,
           scheduledTime: formattedTime,
@@ -395,7 +395,7 @@ export async function confirmAppointmentPaymentAction(
 
     return {
       success: false,
-      error: "Erreur lors de la confirmation du paiement",
+      error: "Error confirming payment",
     };
   }
 }

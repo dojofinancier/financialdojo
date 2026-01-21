@@ -58,7 +58,7 @@ export async function uploadLearningActivitiesCSVAction(
 
     const lines = csvContent.split("\n").filter((line) => line.trim());
     if (lines.length < 2) {
-      return { success: false, error: "Le fichier CSV doit contenir au moins un en-tête et une ligne de données" };
+      return { success: false, error: "The CSV file must contain at least one header and one row of data" };
     }
 
     // Parse header
@@ -408,14 +408,14 @@ export async function uploadLearningActivitiesCSVAction(
         if (result.success) {
           activitiesCreated++;
         } else {
-          errors.push(`Ligne ${i + 1}: ${result.error || "Erreur lors de la création"}`);
+          errors.push(`Ligne ${i + 1}: ${result.error || "Error creating"}`);
         }
       } catch (error) {
-        errors.push(`Ligne ${i + 1}: ${error instanceof Error ? error.message : "Erreur inconnue"}`);
+        errors.push(`Ligne ${i + 1}: ${error instanceof Error ? error.message : "Unknown error"}`);
       }
     }
 
-    revalidatePath(`/tableau-de-bord/admin/courses/${courseId}`);
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
     return {
       success: true,
       data: {
@@ -432,7 +432,7 @@ export async function uploadLearningActivitiesCSVAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }

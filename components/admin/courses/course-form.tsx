@@ -44,9 +44,9 @@ const courseFormSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
   description: z.string().optional(),
   price: z.string().min(1, "Le prix est requis"),
-  accessDuration: z.string().min(1, "La durée d'accès est requise"),
+  accessDuration: z.string().min(1, "The access duration is required"),
   paymentType: z.enum(["ONE_TIME", "SUBSCRIPTION"]),
-  categoryId: z.string().min(1, "La catégorie est requise"),
+  categoryId: z.string().min(1, "Category is required"),
   published: z.boolean().default(false),
   componentVisibility: componentVisibilitySchema.optional(),
   appointmentHourlyRate: z.string().optional(),
@@ -147,7 +147,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
         const cats = await getCourseCategoriesAction();
         setCategories(cats);
       } catch (error) {
-        toast.error("Erreur lors du chargement des catégories");
+        toast.error("Error loading categories");
       }
     };
     loadCategories();
@@ -175,17 +175,17 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
 
       if (result.success) {
         toast.success(
-          courseId ? "Cours mis à jour avec succès" : "Cours créé avec succès"
+          courseId ? "Course updated successfully" : "Course created successfully"
         );
-        router.push("/tableau-de-bord/admin?tab=courses");
+        router.push("/dashboard/admin?tab=courses");
         router.refresh();
       } else {
         console.error("Course update/create error:", result.error);
-        toast.error(result.error || "Une erreur est survenue");
+        toast.error(result.error || "An error occurred");
       }
     } catch (error) {
       console.error("Course form submission error:", error);
-      const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       toast.error(`Une erreur est survenue: ${errorMessage}`);
     } finally {
       setLoading(false);
@@ -212,7 +212,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
           <Input
             id="title"
             {...register("title")}
-            placeholder="Ex: Introduction à la finance"
+            placeholder="Ex: Introduction to finance"
           />
           {errors.title && (
             <p className="text-sm text-destructive">{errors.title.message}</p>
@@ -228,7 +228,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             onValueChange={(value) => setValue("categoryId", value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionner une catégorie" />
+              <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent>
               {categories.map((cat) => (
@@ -249,7 +249,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
         <RichTextEditor
           content={description}
           onChange={setDescription}
-          placeholder="Décrivez votre cours..."
+          placeholder="Describe your course..."
         />
       </div>
 
@@ -292,10 +292,10 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             type="number"
             min="0"
             {...register("displayOrder")}
-            placeholder="Optionnel (plus bas = affiché en premier)"
+            placeholder="Optional (lower = displayed first)"
           />
           <p className="text-xs text-muted-foreground">
-            Numéro pour ordonner les cours sur la page /formations (optionnel, plus bas = affiché en premier)
+            Numéro pour ordonner les cours sur la page /courses (optionnel, plus bas = affiché en premier)
           </p>
         </div>
 
@@ -391,7 +391,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
         <RichTextEditor
           content={orientationText}
           onChange={setOrientationText}
-          placeholder="Texte d'explication pour la Phase 0 (affiché si aucune vidéo n'est fournie)..."
+          placeholder="Explanatory text for Phase 0 (displayed if no video is provided)..."
         />
         <p className="text-xs text-muted-foreground">
           Texte d'explication affiché aux étudiants lors de la Phase 0 si aucune vidéo d'orientation n'est fournie. Utilisez ce champ pour expliquer le format de l'examen, la note de passage, et comment utiliser la plateforme.
@@ -544,8 +544,8 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
           {loading
             ? "Enregistrement..."
             : courseId
-            ? "Mettre à jour"
-            : "Créer le cours"}
+            ? "Update"
+            : "Create course"}
         </Button>
         <Button
           type="button"

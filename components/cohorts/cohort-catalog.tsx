@@ -60,7 +60,7 @@ export function CohortCatalog({ initialCohorts }: CohortCatalogProps) {
       ) : (
         <div className="grid gap-0 border-4 border-black md:grid-cols-2 lg:grid-cols-3">
           {openCohorts.map((cohort, idx) => {
-            const cohortHref = `/cohorte/${cohort.slug || cohort.id}`;
+            const cohortHref = `/cohorts/${cohort.slug || cohort.id}`;
             const isRightEdgeLg = (idx + 1) % 3 === 0;
             const isRightEdgeMd = (idx + 1) % 2 === 0;
             const spots = spotsRemaining(cohort);

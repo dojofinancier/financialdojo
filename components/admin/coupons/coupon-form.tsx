@@ -35,7 +35,7 @@ const couponFormSchema = z.object({
   discountValue: z.string().min(1, "La valeur de remise est requise"),
   applicableCourses: z.array(z.string()).optional().nullable(),
   usageLimit: z.string().optional().nullable(),
-  validFrom: z.string().min(1, "La date de début est requise"),
+  validFrom: z.string().min(1, "Start date is required"),
   validUntil: z.string().min(1, "La date de fin est requise"),
   active: z.boolean().default(true),
 });
@@ -100,7 +100,7 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
         const result = await getCoursesAction({ limit: 1000 });
         setCourses(result.items || []);
       } catch (error) {
-        toast.error("Erreur lors du chargement des cours");
+        toast.error("Error loading courses");
       }
     };
     loadCourses();
@@ -126,13 +126,13 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
       }
 
       if (result.success) {
-        toast.success(couponId ? "Coupon mis à jour" : "Coupon créé");
+        toast.success(couponId ? "Coupon updated" : "Coupon created");
         onSuccess?.();
       } else {
-        toast.error(result.error || "Une erreur est survenue");
+        toast.error(result.error || "An error occurred");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue");
+      toast.error("An error occurred");
     } finally {
       setLoading(false);
     }
@@ -204,7 +204,7 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
             type="number"
             min="1"
             {...register("usageLimit")}
-            placeholder="Illimité si vide"
+            placeholder="Unlimited if empty"
           />
           <p className="text-xs text-muted-foreground">
             Laissez vide pour un usage illimité
@@ -319,9 +319,9 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
               Enregistrement...
             </>
           ) : couponId ? (
-            "Mettre à jour"
+            "Update"
           ) : (
-            "Créer le coupon"
+            "Create coupon"
           )}
         </Button>
       </div>

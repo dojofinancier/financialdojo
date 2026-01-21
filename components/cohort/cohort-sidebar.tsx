@@ -97,7 +97,7 @@ export function CohortSidebar({
             size="sm"
             className="ml-auto p-2"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            title={isCollapsed ? "Développer la barre latérale" : "Réduire la barre latérale"}
+            title={isCollapsed ? "Expand the sidebar" : "Collapse the sidebar"}
           >
             {isCollapsed ? (
               <ChevronRight className="h-4 w-4" />
@@ -137,10 +137,10 @@ export function CohortSidebar({
                 "hover:[&_svg]:scale-110"
               )}
               onClick={() => handleClick("messages")}
-              title={isCollapsed ? "Tableau de messages" : undefined}
+              title={isCollapsed ? "Message board" : undefined}
             >
               <MessageSquare className={cn("h-5 w-5 transition-transform duration-200", !isCollapsed && "mr-2")} />
-              {!isCollapsed && "Tableau de messages"}
+              {!isCollapsed && "Message board"}
               {unreadMessageCount > 0 && (
                 <Badge
                   variant="destructive"
@@ -213,7 +213,7 @@ export function CohortSidebar({
                 "hover:[&_svg]:scale-110"
               )}
               onClick={() => handleClick("learn")}
-              title="Phase 1 - Apprendre"
+              title="Phase 1 - Learn"
             >
               <BookOpen className="h-4 w-4 transition-transform duration-200" />
             </Button>
@@ -229,10 +229,10 @@ export function CohortSidebar({
               "hover:[&_svg]:scale-110"
             )}
             onClick={() => handleClick("review")}
-            title={isCollapsed ? "Phase 2 - Réviser" : undefined}
+            title={isCollapsed ? "Phase 2 - Review" : undefined}
           >
             <Brain className={cn("h-4 w-4 transition-transform duration-200", !isCollapsed && "mr-2")} />
-            {!isCollapsed && "Phase 2 - Réviser"}
+            {!isCollapsed && "Phase 2 - Review"}
           </Button>
 
           {/* Phase 3 - Pratiquer */}
@@ -296,10 +296,10 @@ export function CohortSidebar({
               "hover:[&_svg]:scale-110"
             )}
             onClick={() => handleClick("progress")}
-            title={isCollapsed ? "Progrès et statistiques" : undefined}
+            title={isCollapsed ? "Progress and statistics" : undefined}
           >
             <BarChart3 className={cn("h-4 w-4 transition-transform duration-200", !isCollapsed && "mr-2")} />
-            {!isCollapsed && "Progrès et statistiques"}
+            {!isCollapsed && "Progress and statistics"}
           </Button>
 
           {!isCollapsed && <Separator className="my-3 -mx-4" />}

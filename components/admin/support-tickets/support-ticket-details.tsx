@@ -101,7 +101,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
 
   const handleReply = async () => {
     if (!replyMessage.trim()) {
-      toast.error("Le message est requis");
+      toast.error("Message is required");
       return;
     }
 
@@ -109,14 +109,14 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
     try {
       const result = await replyToTicketAction(ticket.id, { message: replyMessage });
       if (result.success) {
-        toast.success("Réponse envoyée");
+        toast.success("Response sent");
         setReplyMessage("");
         window.location.reload();
       } else {
-        toast.error(result.error || "Erreur lors de l'envoi");
+        toast.error(result.error || "Error sending");
       }
     } catch (error) {
-      toast.error("Erreur lors de l'envoi");
+      toast.error("Error sending");
     } finally {
       setSendingReply(false);
     }
@@ -125,7 +125,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
   const handleStatusChange = async (status: string) => {
     const result = await updateTicketStatusAction(ticket.id, status as any);
     if (result.success) {
-      toast.success("Statut mis à jour");
+      toast.success("Status updated");
       setTicket({ ...ticket, status });
     } else {
       toast.error(result.error || "Erreur");
@@ -135,7 +135,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
   const handlePriorityChange = async (priority: string) => {
     const result = await updateTicketPriorityAction(ticket.id, priority as any);
     if (result.success) {
-      toast.success("Priorité mise à jour");
+      toast.success("Priority updated");
       setTicket({ ...ticket, priority });
     } else {
       toast.error(result.error || "Erreur");
@@ -145,7 +145,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
   const handleCategoryChange = async (category: string) => {
     const result = await updateTicketCategoryAction(ticket.id, category || null);
     if (result.success) {
-      toast.success("Catégorie mise à jour");
+      toast.success("Category updated");
       setTicket({ ...ticket, category: category || null });
     } else {
       toast.error(result.error || "Erreur");
@@ -154,13 +154,13 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
 
   const handleAssign = async () => {
     if (!selectedAdminId) {
-      toast.error("Sélectionnez un administrateur");
+      toast.error("Select an administrator");
       return;
     }
 
     const result = await assignTicketAction(ticket.id, selectedAdminId);
     if (result.success) {
-      toast.success("Ticket assigné");
+      toast.success("Ticket assigned");
       const assignedAdmin = admins.find((a) => a.id === selectedAdminId);
       setTicket({ ...ticket, assignedAdmin: assignedAdmin || null });
       setAssignDialogOpen(false);
@@ -248,7 +248,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
                     </div>
                   </div>
                   <Badge variant={reply.authorRole === "ADMIN" ? "default" : "outline"}>
-                    {reply.authorRole === "ADMIN" ? "Admin" : "Étudiant"}
+                    {reply.authorRole === "ADMIN" ? "Admin" : "Student"}
                   </Badge>
                 </div>
                 <div className="mt-2 text-sm whitespace-pre-wrap">{reply.message}</div>
@@ -263,7 +263,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
                   id="reply"
                   value={replyMessage}
                   onChange={(e) => setReplyMessage(e.target.value)}
-                  placeholder="Tapez votre réponse..."
+                  placeholder="Type your response..."
                   rows={4}
                   className="mt-2"
                 />
@@ -328,7 +328,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
               <Input
                 value={ticket.category || ""}
                 onChange={(e) => handleCategoryChange(e.target.value)}
-                placeholder="Catégorie..."
+                placeholder="Category..."
                 className="mt-2"
               />
             </div>
@@ -365,7 +365,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
                 <div className="text-sm">
                   <span className="font-medium">Email:</span> {ticket.student.email}
                 </div>
-                <Link href={`/tableau-de-bord/admin/students/${ticket.student.id}`}>
+                <Link href={`/dashboard/admin/students/${ticket.student.id}`}>
                   <Button variant="link" size="sm" className="p-0 h-auto">
                     Voir le profil
                   </Button>
@@ -388,7 +388,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
           <div className="space-y-4 mt-4">
             <Select value={selectedAdminId} onValueChange={setSelectedAdminId}>
               <SelectTrigger>
-                <SelectValue placeholder="Sélectionnez un administrateur" />
+                <SelectValue placeholder="Select an administrator" />
               </SelectTrigger>
               <SelectContent>
                 {loadingAdmins ? (

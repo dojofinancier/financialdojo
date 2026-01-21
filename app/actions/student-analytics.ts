@@ -720,7 +720,7 @@ export async function getStudentStudyHabitsAction(
 
     return {
       success: false,
-      error: "Erreur lors du chargement des habitudes d'étude",
+      error: "Error loading study habits",
     };
   }
 }
@@ -808,7 +808,7 @@ export async function getStudentGoalsAction(
 
     return {
       success: false,
-      error: "Erreur lors du chargement des objectifs",
+      error: "Error loading goals",
     };
   }
 }
@@ -1092,8 +1092,8 @@ async function getMilestones(
 
   milestones.push({
     id: "first-module",
-    title: "Premier module complété",
-    description: "Vous avez complété votre premier module",
+    title: "First module completed",
+    description: "You have completed your first module",
     achievedAt: firstModule?.lastLearnedAt || null,
   });
 
@@ -1118,15 +1118,15 @@ async function getMilestones(
 
   milestones.push({
     id: "first-quiz",
-    title: "Premier quiz réussi",
-    description: "Vous avez réussi votre premier quiz avec 70% ou plus",
+    title: "First quiz passed",
+    description: "You passed your first quiz with 70% or more",
     achievedAt: firstQuiz?.completedAt || null,
   });
 
   milestones.push({
     id: "first-review",
-    title: "Première session de révision",
-    description: "Vous avez complété votre première session de révision",
+    title: "First review session",
+    description: "You have completed your first review session",
     achievedAt: null,
   });
 
@@ -1154,15 +1154,15 @@ async function getMilestones(
 
     milestones.push({
       id: "course-complete",
-      title: "Cours complété",
-      description: "Vous avez complété tous les modules du cours",
+      title: "Course completed",
+      description: "You have completed all modules in the course",
       achievedAt: lastModule?.lastLearnedAt || null,
     });
   } else {
     milestones.push({
       id: "course-complete",
-      title: "Cours complété",
-      description: "Vous avez complété tous les modules du cours",
+      title: "Course completed",
+      description: "You have completed all modules in the course",
       achievedAt: null,
     });
   }
@@ -1189,15 +1189,15 @@ async function getAchievements(
   achievements.push({
     id: "streak-7",
     title: "Apprenant constant",
-    description: "7 jours consécutifs d'étude",
+    description: "7 consecutive days of study",
     achieved: streak.currentStreak >= 7,
   });
 
   // 30-day streak
   achievements.push({
     id: "streak-30",
-    title: "Étudiant dévoué",
-    description: "30 jours consécutifs d'étude",
+    title: "Dedicated student",
+    description: "30 consecutive days of study",
     achieved: streak.longestStreak >= 30,
   });
 
@@ -1224,7 +1224,7 @@ async function getAchievements(
 
   achievements.push({
     id: "quiz-master",
-    title: "Maître des quiz",
+    title: "Quiz master",
     description: "Tous vos quiz ont un score de 80% ou plus",
     achieved: allQuizzesAbove80,
   });
@@ -1235,8 +1235,8 @@ async function getAchievements(
 
   achievements.push({
     id: "review-champion",
-    title: "Champion de la révision",
-    description: "100 sessions de révision complétées",
+    title: "Review champion",
+    description: "100 review sessions completed",
     achieved: reviewSessions >= 100,
   });
 

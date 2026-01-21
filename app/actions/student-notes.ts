@@ -83,7 +83,7 @@ export async function getStudentModuleNoteAction(
 
     return {
       success: false,
-      error: "Erreur lors du chargement de la note",
+      error: "Error loading the note",
     };
   }
 }
@@ -122,7 +122,7 @@ export async function saveStudentModuleNoteAction(
     if (!anchorContentItemId) {
       return {
         success: false,
-        error: "Aucun contenu trouvé dans ce module. Veuillez contacter l'administrateur.",
+        error: "No content found in this module. Please contact the administrator.",
       };
     }
 
@@ -146,7 +146,7 @@ export async function saveStudentModuleNoteAction(
       },
     });
 
-    revalidatePath(`/apprendre/${module.courseId}`);
+    revalidatePath(`/learn/${module.courseId}`);
     return {
       success: true,
       data: note,
@@ -160,7 +160,7 @@ export async function saveStudentModuleNoteAction(
 
     return {
       success: false,
-      error: "Erreur lors de la sauvegarde de la note",
+      error: "Error saving the note",
     };
   }
 }

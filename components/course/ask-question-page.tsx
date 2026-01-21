@@ -65,7 +65,7 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
       setThreads(result.items || []);
     } catch (error) {
       console.error("Error fetching threads:", error);
-      toast.error("Erreur lors du chargement des questions");
+      toast.error("Error loading questions");
     } finally {
       setLoading(false);
     }
@@ -82,7 +82,7 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
       }
     } catch (error) {
       console.error("Error fetching thread messages:", error);
-      toast.error("Erreur lors du chargement des messages");
+      toast.error("Error loading messages");
     }
   };
 
@@ -101,13 +101,13 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
       if (result.success) {
         setNewQuestion("");
         await fetchThreads();
-        toast.success("Votre question a été envoyée avec succès !");
+        toast.success("Your question has been sent successfully!");
       } else {
-        toast.error(result.error || "Erreur lors de l'envoi de la question");
+        toast.error(result.error || "Error sending the question");
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Erreur lors de l'envoi de la question");
+      toast.error("Error sending the question");
     } finally {
       setSubmitting(false);
     }
@@ -164,7 +164,7 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
                     <RichTextEditor
                       content={newQuestion}
                       onChange={setNewQuestion}
-                      placeholder="Décrivez votre question ou votre problème de manière détaillée..."
+                      placeholder="Describe your question or problem in detail..."
                     />
                   </Suspense>
                 </div>

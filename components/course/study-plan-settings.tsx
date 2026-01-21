@@ -98,22 +98,22 @@ export function StudyPlanSettings({
     setError(null);
 
     if (!examDate) {
-      setError("Veuillez sélectionner une date d'examen");
+      setError("Please select an exam date");
       return;
     }
 
     if (examDate <= new Date()) {
-      setError("La date d'examen doit être dans le futur");
+      setError("The exam date must be in the future");
       return;
     }
 
     if (studyHoursPerWeek < 1 || studyHoursPerWeek > 40) {
-      setError("Le nombre d'heures par semaine doit être entre 1 et 40");
+      setError("The number of hours per week must be between 1 and 40");
       return;
     }
 
     if (preferredStudyDays.length === 0) {
-      setError("Veuillez sélectionner au moins un jour d'étude");
+      setError("Please select at least one study day");
       return;
     }
 
@@ -137,9 +137,9 @@ export function StudyPlanSettings({
 
         if (result.warnings && result.warnings.length > 0) {
           setWarnings(result.warnings);
-          toast.success("Paramètres mis à jour avec succès! Le plan d'étude a été régénéré.");
+          toast.success("Settings updated successfully! The study plan has been regenerated.");
         } else {
-          toast.success("Paramètres mis à jour avec succès! Le plan d'étude a été régénéré.");
+          toast.success("Settings updated successfully! The study plan has been regenerated.");
           setWarnings([]);
         }
 
@@ -152,12 +152,12 @@ export function StudyPlanSettings({
         setOpen(false);
         onUpdate?.();
       } else {
-        setError(result.error || "Erreur lors de la mise à jour des paramètres");
+        setError(result.error || "Error updating settings");
         setWarnings([]);
       }
     } catch (err) {
       console.error("Error updating settings:", err);
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -331,7 +331,7 @@ export function StudyPlanSettings({
 
             <div className="flex gap-4 pt-4">
               <Button type="submit" className="flex-1" disabled={loading}>
-                {loading ? "Mise à jour..." : "Mettre à jour et régénérer le plan"}
+                {loading ? "Updating..." : "Update and regenerate the plan"}
               </Button>
               <Button
                 type="button"

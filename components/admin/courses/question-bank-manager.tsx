@@ -137,12 +137,12 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       if (result.success && result.data) {
         setQuestionBanks(result.data);
       } else {
-        toast.error(result.error || "Erreur lors du chargement des banques de questions");
+        toast.error(result.error || "Error loading question banks");
         setQuestionBanks([]);
       }
     } catch (error) {
       console.error("Error loading question banks:", error);
-      toast.error("Erreur lors du chargement des banques de questions");
+      toast.error("Error loading question banks");
       setQuestionBanks([]);
     } finally {
       setLoading(false);
@@ -198,36 +198,36 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       if (result.success) {
         toast.success(
           selectedBankId
-            ? "Banque de questions mise à jour"
-            : "Banque de questions créée"
+            ? "Question bank updated"
+            : "Question bank created"
         );
         setDialogOpen(false);
         loadQuestionBanks();
       } else {
-        toast.error(result.error || "Erreur lors de la sauvegarde");
+        toast.error(result.error || "Error saving");
       }
     } catch (error) {
       console.error("Error saving question bank:", error);
-      toast.error("Erreur lors de la sauvegarde");
+      toast.error("Error saving");
     }
   };
 
   const handleDelete = async (bankId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette banque de questions ? Toutes les questions seront également supprimées.")) {
+    if (!confirm("Are you sure you want to delete this question bank? All questions will also be deleted.")) {
       return;
     }
 
     try {
       const result = await deleteQuestionBankAction(bankId);
       if (result.success) {
-        toast.success("Banque de questions supprimée");
+        toast.success("Question bank deleted");
         loadQuestionBanks();
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
       console.error("Error deleting question bank:", error);
-      toast.error("Erreur lors de la suppression");
+      toast.error("Error while deleting");
     }
   };
 
@@ -236,7 +236,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
     if (!file) return;
 
     if (!selectedBankId) {
-      toast.error("Veuillez sélectionner ou créer une banque de questions d'abord");
+      toast.error("Please select or create a question bank first");
       return;
     }
 
@@ -250,11 +250,11 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
         setUploadDialogOpen(false);
         loadQuestionBanks();
       } else {
-        toast.error(result.error || "Erreur lors de l'importation");
+        toast.error(result.error || "Error during import");
       }
     } catch (error) {
       console.error("Error uploading CSV:", error);
-      toast.error("Erreur lors de l'importation du fichier");
+      toast.error("Error importing file");
     } finally {
       setUploading(false);
       // Reset file input
@@ -281,11 +281,11 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
         setAssignToPhase1(false);
         loadQuestionBanks();
       } else {
-        toast.error(result.error || "Erreur lors de l'importation");
+        toast.error(result.error || "Error during import");
       }
     } catch (error) {
       console.error("Error uploading quiz CSV:", error);
-      toast.error("Erreur lors de l'importation du fichier");
+      toast.error("Error importing file");
     } finally {
       setUploading(false);
       // Reset file input
@@ -335,7 +335,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
     if (questionFormState.optionD.trim()) options["D"] = questionFormState.optionD.trim();
 
     if (!options[questionFormState.correctAnswer]) {
-      toast.error("La réponse correcte doit correspondre à une option valide");
+      toast.error("The correct answer must correspond to a valid option");
       return;
     }
 
@@ -348,42 +348,42 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       });
 
       if (result.success) {
-        toast.success("Question mise à jour");
+        toast.success("Question updated");
         setQuestionEditDialogOpen(false);
         setEditingQuestion(null);
         loadQuestionBanks();
       } else {
         console.error("Update question error:", result.error);
-        toast.error(result.error || "Erreur lors de la mise à jour");
+        toast.error(result.error || "Error updating");
       }
     } catch (error) {
       console.error("Error updating question:", error);
-      toast.error(`Erreur lors de la mise à jour: ${error instanceof Error ? error.message : "Erreur inconnue"}`);
+      toast.error(`Erreur lors de la mise à jour: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
   const handleDeleteQuestion = async (questionId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette question ?")) {
+    if (!confirm("Are you sure you want to delete this question?")) {
       return;
     }
 
     try {
       const result = await deleteQuestionFromBankAction(questionId);
       if (result.success) {
-        toast.success("Question supprimée");
+        toast.success("Question deleted");
         loadQuestionBanks();
       } else {
-        toast.error(result.error || "Erreur lors de la suppression");
+        toast.error(result.error || "Error while deleting");
       }
     } catch (error) {
       console.error("Error deleting question:", error);
-      toast.error("Erreur lors de la suppression");
+      toast.error("Error while deleting");
     }
   };
 
   const handleAssignToPhase1 = async (bankId: string, allQuestions: boolean = true) => {
     if (!selectedQuizId) {
-      toast.error("Veuillez sélectionner un quiz");
+      toast.error("Please select a quiz");
       return;
     }
 
@@ -394,7 +394,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
         result = await addQuestionBankToPhase1QuizAction(bankId, selectedQuizId);
       } else {
         if (selectedQuestionIds.size === 0) {
-          toast.error("Veuillez sélectionner au moins une question");
+          toast.error("Please select at least one question");
           setUploading(false);
           return;
         }
@@ -411,11 +411,11 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
         setSelectedQuestionIds(new Set());
         loadQuestionBanks();
       } else {
-        toast.error(result.error || "Erreur lors de l'ajout des questions");
+        toast.error(result.error || "Error adding questions");
       }
     } catch (error) {
       console.error("Error assigning questions to Phase 1:", error);
-      toast.error("Erreur lors de l'ajout des questions");
+      toast.error("Error adding questions");
     } finally {
       setUploading(false);
     }
@@ -436,7 +436,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
 
   const handleAssignSingleQuestion = async () => {
     if (!selectedQuizId || !singleQuestionId) {
-      toast.error("Veuillez sélectionner un quiz");
+      toast.error("Please select a quiz");
       return;
     }
 
@@ -448,17 +448,17 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       );
 
       if (result.success) {
-        toast.success("Question ajoutée au quiz");
+        toast.success("Question added to the quiz");
         setAssignSingleQuestionDialogOpen(false);
         setSingleQuestionId("");
         setSelectedQuizId("");
         loadQuestionBanks();
       } else {
-        toast.error(result.error || "Erreur lors de l'ajout de la question");
+        toast.error(result.error || "Error adding the question");
       }
     } catch (error) {
       console.error("Error assigning question to Phase 1:", error);
-      toast.error("Erreur lors de l'ajout de la question");
+      toast.error("Error adding the question");
     } finally {
       setUploading(false);
     }
@@ -519,7 +519,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
   const openBatchAssignDialog = () => {
     const selected = getAllSelectedQuestions();
     if (selected.length === 0) {
-      toast.error("Veuillez sélectionner au moins une question");
+      toast.error("Please select at least one question");
       return;
     }
     setSelectedQuestionIds(new Set(selected));
@@ -530,7 +530,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
   const handleBatchAssign = async () => {
     const selected = getAllSelectedQuestions();
     if (!selectedQuizId || selected.length === 0) {
-      toast.error("Veuillez sélectionner un quiz et au moins une question");
+      toast.error("Please select a quiz and at least one question");
       return;
     }
 
@@ -549,11 +549,11 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
         setSelectedQuestionIds(new Set());
         loadQuestionBanks();
       } else {
-        toast.error(result.error || "Erreur lors de l'ajout des questions");
+        toast.error(result.error || "Error adding questions");
       }
     } catch (error) {
       console.error("Error assigning questions to Phase 1:", error);
-      toast.error("Erreur lors de l'ajout des questions");
+      toast.error("Error adding questions");
     } finally {
       setUploading(false);
     }
@@ -616,8 +616,8 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                   </Select>
                   <p className="text-xs text-muted-foreground">
                     {assignToPhase1 
-                      ? "Les questions seront créées comme des quiz dans Phase 1 (apprentissage avec le module)"
-                      : "Les questions seront ajoutées à une banque de questions pour Phase 3 (pratique)"}
+                      ? "Questions will be created as quizzes in Phase 1 (learning with the module)"
+                      : "Questions will be added to a question bank for Phase 3 (practice)"}
                   </p>
                 </div>
                 <div>
@@ -795,7 +795,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                                     bank.questions.map((q) => q.id)
                                   )
                                 }
-                                title="Sélectionner tout"
+                                title="Select all"
                               />
                             </TableHead>
                             <TableHead>Question</TableHead>
@@ -837,7 +837,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                                       variant="ghost"
                                       size="sm"
                                       onClick={() => openAssignSingleQuestionDialog(question.id)}
-                                      title="Assigner à Phase 1"
+                                      title="Assign to Phase 1"
                                     >
                                       <Upload className="h-4 w-4" />
                                     </Button>
@@ -876,7 +876,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {selectedBankId ? "Modifier la banque de questions" : "Créer une banque de questions"}
+              {selectedBankId ? "Edit question bank" : "Create question bank"}
             </DialogTitle>
             <DialogDescription>
               Créez une banque de questions pour la Phase 3 (Pratique). Les questions seront servies aléatoirement.
@@ -890,7 +890,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 onChange={(e) =>
                   setFormState({ ...formState, title: e.target.value })
                 }
-                placeholder="Ex: Questions Chapitre 1 à 3"
+                placeholder="Ex: Questions Chapter 1 to 3"
               />
             </div>
             <div className="space-y-2">
@@ -913,7 +913,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un module" />
+                  <SelectValue placeholder="Select a module" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Aucun module</SelectItem>
@@ -930,7 +930,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 Annuler
               </Button>
               <Button onClick={handleSubmit}>
-                {selectedBankId ? "Mettre à jour" : "Créer"}
+                {selectedBankId ? "Update" : "Create"}
               </Button>
             </div>
           </div>
@@ -1036,7 +1036,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 onChange={(e) =>
                   setQuestionFormState({ ...questionFormState, explanation: e.target.value })
                 }
-                placeholder="Explication de la réponse correcte..."
+                placeholder="Explanation of the correct answer..."
                 rows={3}
               />
             </div>
@@ -1076,7 +1076,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
               <Label>Quiz Phase 1 *</Label>
               <Select value={selectedQuizId} onValueChange={setSelectedQuizId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un quiz" />
+                  <SelectValue placeholder="Select a quiz" />
                 </SelectTrigger>
                 <SelectContent>
                   {phase1Quizzes.map((quiz) => (
@@ -1244,7 +1244,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
               <Label>Quiz Phase 1 *</Label>
               <Select value={selectedQuizId} onValueChange={setSelectedQuizId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un quiz" />
+                  <SelectValue placeholder="Select a quiz" />
                 </SelectTrigger>
                 <SelectContent>
                   {phase1Quizzes.map((quiz) => (
@@ -1309,7 +1309,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
               <Label>Quiz Phase 1 *</Label>
               <Select value={selectedQuizId} onValueChange={setSelectedQuizId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un quiz" />
+                  <SelectValue placeholder="Select a quiz" />
                 </SelectTrigger>
                 <SelectContent>
                   {phase1Quizzes.map((quiz) => (

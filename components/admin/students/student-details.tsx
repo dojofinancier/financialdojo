@@ -115,7 +115,7 @@ export function StudentDetails({ student }: StudentDetailsProps) {
       setExtendDialogOpen(false);
       window.location.reload();
     } else {
-      toast.error(result.error || "Erreur lors de la prolongation");
+      toast.error(result.error || "Error extending");
     }
   };
 
@@ -123,11 +123,11 @@ export function StudentDetails({ student }: StudentDetailsProps) {
     if (!selectedEnrollment) return;
     const result = await revokeEnrollmentAccessAction(selectedEnrollment.id);
     if (result.success) {
-      toast.success("Accès révoqué");
+      toast.success("Access revoked");
       setRevokeDialogOpen(false);
       window.location.reload();
     } else {
-      toast.error(result.error || "Erreur lors de la révocation");
+      toast.error(result.error || "Error revoking");
     }
   };
 
@@ -135,11 +135,11 @@ export function StudentDetails({ student }: StudentDetailsProps) {
     if (!selectedEnrollment) return;
     const result = await deleteEnrollmentAction(selectedEnrollment.id);
     if (result.success) {
-      toast.success("Inscription supprimée");
+      toast.success("Enrollment removed");
       setDeleteDialogOpen(false);
       window.location.reload();
     } else {
-      toast.error(result.error || "Erreur lors de la suppression");
+      toast.error(result.error || "Error while deleting");
     }
   };
 
@@ -147,7 +147,7 @@ export function StudentDetails({ student }: StudentDetailsProps) {
     const now = new Date();
     const expiresAt = new Date(enrollment.expiresAt);
     if (expiresAt < now) {
-      return { label: "Expiré", variant: "destructive" as const };
+      return { label: "Expired", variant: "destructive" as const };
     }
     const daysUntilExpiry = Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     if (daysUntilExpiry <= 7) {

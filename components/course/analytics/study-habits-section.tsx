@@ -94,7 +94,7 @@ export function StudyHabitsSection({ data }: StudyHabitsSectionProps) {
               <YAxis />
               <Tooltip formatter={(value) => formatTime(Number(value))} />
               <Legend />
-              <Bar dataKey="timeSpent" fill="#8884d8" name="Temps d'étude" />
+              <Bar dataKey="timeSpent" fill="#8884d8" name="Study time" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -118,7 +118,7 @@ export function StudyHabitsSection({ data }: StudyHabitsSectionProps) {
                 <YAxis />
                 <Tooltip formatter={(value) => formatTime(Number(value))} />
                 <Legend />
-                <Line type="monotone" dataKey="time" stroke="#8884d8" name="Temps d'étude" />
+                <Line type="monotone" dataKey="time" stroke="#8884d8" name="Study time" />
               </LineChart>
             </ResponsiveContainer>
           ) : (

@@ -111,7 +111,7 @@ export async function submitQuizAttemptAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -123,7 +123,7 @@ export async function submitQuizAttemptAction(
 
     return {
       success: false,
-      error: "Erreur lors de la soumission du quiz",
+      error: "Error submitting the quiz",
     };
   }
 }

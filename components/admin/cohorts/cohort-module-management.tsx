@@ -140,7 +140,7 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
         setCohortModules(modules.sort((a, b) => a.order - b.order));
       }
     } catch (error) {
-      toast.error("Erreur lors du chargement des modules");
+      toast.error("Error loading modules");
     } finally {
       setLoading(false);
     }
@@ -151,7 +151,7 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
       const result = await getCoursesAction({ limit: 1000 });
       setAllCourses(result.items.map((course: any) => ({ id: course.id, title: course.title })));
     } catch (error) {
-      toast.error("Erreur lors du chargement des cours");
+      toast.error("Error loading courses");
     }
   };
 
@@ -165,11 +165,11 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
         description: module.description,
         courseId: module.courseId,
         order: module.order,
-        course: course || { id: courseId, title: "Cours inconnu" },
+        course: course || { id: courseId, title: "Unknown course" },
       })) as ModuleWithCourse[];
       setAvailableModules(modulesWithCourse);
     } catch (error) {
-      toast.error("Erreur lors du chargement des modules");
+      toast.error("Error loading modules");
       setAvailableModules([]);
     }
   };
@@ -190,29 +190,29 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
 
   const handleAddModule = async () => {
     if (!selectedModuleId) {
-      toast.error("Veuillez sélectionner un module");
+      toast.error("Please select a module");
       return;
     }
 
     // Check if module is already in cohort
     if (cohortModules.some((cm) => cm.moduleId === selectedModuleId)) {
-      toast.error("Ce module est déjà dans la cohorte");
+      toast.error("This module is already in the cohort");
       return;
     }
 
     try {
       const result = await addModuleToCohortAction(cohortId, selectedModuleId);
       if (result.success) {
-        toast.success("Module ajouté avec succès");
+        toast.success("Module added successfully");
         setAddDialogOpen(false);
         setSelectedCourseId("");
         setSelectedModuleId("");
         loadCohortModules();
       } else {
-        toast.error(result.error || "Erreur lors de l'ajout du module");
+        toast.error(result.error || "Error adding module");
       }
     } catch (error) {
-      toast.error("Erreur lors de l'ajout du module");
+      toast.error("Error adding module");
     }
   };
 
@@ -220,13 +220,13 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
     try {
       const result = await removeModuleFromCohortAction(cohortId, moduleId);
       if (result.success) {
-        toast.success("Module retiré avec succès");
+        toast.success("Module removed successfully");
         loadCohortModules();
       } else {
-        toast.error(result.error || "Erreur lors de la suppression du module");
+        toast.error(result.error || "Error deleting module");
       }
     } catch (error) {
-      toast.error("Erreur lors de la suppression du module");
+      toast.error("Error deleting module");
     }
   };
 
@@ -256,11 +256,11 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
     try {
       const result = await reorderCohortModulesAction(cohortId, moduleOrders);
       if (!result.success) {
-        toast.error(result.error || "Erreur lors du réordonnancement");
+        toast.error(result.error || "Error reordering");
         loadCohortModules(); // Reload on error
       }
     } catch (error) {
-      toast.error("Erreur lors du réordonnancement");
+      toast.error("Error reordering");
       loadCohortModules(); // Reload on error
     }
   };
@@ -293,7 +293,7 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
                 <label className="text-sm font-medium">Cours</label>
                 <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un cours" />
+                    <SelectValue placeholder="Select a course" />
                   </SelectTrigger>
                   <SelectContent>
                     {allCourses.map((course) => (
@@ -309,7 +309,7 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
                   <label className="text-sm font-medium">Module</label>
                   <Select value={selectedModuleId} onValueChange={setSelectedModuleId}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un module" />
+                      <SelectValue placeholder="Select a module" />
                     </SelectTrigger>
                     <SelectContent>
                       {availableModules

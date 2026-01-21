@@ -69,7 +69,7 @@ export async function generateEnhancedStudyPlan(
   if (inventory.modules.length === 0) {
     return {
       blocks: [],
-      warnings: ["Aucun module trouvé dans ce cours"],
+      warnings: ["No module found in this course"],
       minimumStudyTime: 0,
       blocksAvailable,
       meetsMinimum: false,

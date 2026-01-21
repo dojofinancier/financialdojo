@@ -70,7 +70,7 @@ export async function uploadCohortFileAction(
 
       return {
         success: false,
-        error: "Erreur lors du téléversement du fichier",
+        error: "Error uploading the file",
       };
     }
 
@@ -93,7 +93,7 @@ export async function uploadCohortFileAction(
 
     return {
       success: false,
-      error: "Erreur lors du téléversement du fichier",
+      error: "Error uploading the file",
     };
   }
 }
@@ -129,7 +129,7 @@ export async function deleteCohortFileAction(
     if (error) {
       return {
         success: false,
-        error: "Erreur lors de la suppression du fichier",
+        error: "Error deleting the file",
       };
     }
 
@@ -137,7 +137,7 @@ export async function deleteCohortFileAction(
   } catch (error) {
     return {
       success: false,
-      error: "Erreur lors de la suppression du fichier",
+      error: "Error deleting the file",
     };
   }
 }

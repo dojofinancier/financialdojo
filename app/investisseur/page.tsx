@@ -3,37 +3,37 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Diagnostic Investisseur | Le Dojo Financier",
-  description: "Un diagnostic court et structuré pour clarifier ta manière de décider en investissement.",
+  title: "Investor Assessment | Financial Dojo",
+  description: "A short, structured assessment to clarify how you make investment decisions.",
 };
 
 export default function InvestisseurLandingPage() {
   const resonance = [
-    "Tu investis déjà, mais tu consommes trop d’information contradictoire",
-    "Tu ne sais plus quoi est réellement important à long terme",
-    "Tu fais confiance à un conseiller, sans toujours comprendre tes décisions",
-    "Tu passes du temps à optimiser des détails, sans vision d’ensemble",
-    "Tu veux investir sérieusement, sans tomber dans le bruit et les promesses",
+    "You already invest, but you consume too much conflicting information",
+    "You no longer know what is really important in the long term",
+    "You trust an advisor, without always understanding your decisions",
+    "You spend time optimizing details, without a big-picture view",
+    "You want to invest seriously, without falling for the noise and promises",
   ];
 
   const helps = [
-    "Identifier comment tu prends tes décisions d’investissement",
+    "Identify how you make your investment decisions",
     "Mettre le doigt sur ton principal point de friction",
-    "Comprendre ce qui mérite ton attention maintenant",
+    "Understand what deserves your attention now",
     "Savoir quoi ignorer, au moins pour l’instant",
   ];
 
-  const notThis = ["Un quiz de personnalité", "Un conseil d’investissement", "Une promesse de rendement"];
+  const notThis = ["A personality quiz", "Un conseil d’investissement", "Une promesse de rendement"];
 
   const forWho = [
-    "Ont déjà commencé à investir",
-    "Ont une formation universitaire ou un esprit analytique",
+    "Have already started investing",
+    "Have a university education or an analytical mind",
     "Veulent comprendre avant d’optimiser",
-    "Préférent la rigueur aux promesses",
-    "Investissent au Québec ou au Canada",
+    "Prefer rigor to promises",
+    "Invest in Quebec or Canada",
   ];
 
-  const notForWho = ["Des “trucs rapides”", "Des prédictions de marché", "Des rendements garantis"];
+  const notForWho = ["Des “trucs rapides”", "Market predictions", "Des rendements garantis"];
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[#fbf7f2] text-neutral-900">
@@ -45,10 +45,10 @@ export default function InvestisseurLandingPage() {
           </Link>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" className="font-semibold">
-              <Link href="/formations">Formations</Link>
+              <Link href="/courses">Formations</Link>
             </Button>
             <Button asChild className="font-semibold">
-              <Link href="/investisseur/questionnaire">Faire le diagnostic</Link>
+              <Link href="/investor/questionnaire">Faire le diagnostic</Link>
             </Button>
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function InvestisseurLandingPage() {
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="font-semibold">
-                    <Link href="/investisseur/questionnaire">👉 Faire le Diagnostic Investisseur</Link>
+                    <Link href="/investor/questionnaire">👉 Faire le Diagnostic Investisseur</Link>
                   </Button>
                   <Button asChild variant="outline" size="lg" className="border-black/15 bg-white/60 font-semibold">
                     <Link href="#comment-ca-marche">Comment ça fonctionne</Link>
@@ -208,7 +208,7 @@ export default function InvestisseurLandingPage() {
               <h2 className="text-3xl font-black tracking-tight">Avant d’optimiser tes placements, clarifie ta manière de décider.</h2>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Button asChild size="lg" className="font-semibold">
-                  <Link href="/investisseur/questionnaire">👉 Commencer le Diagnostic Investisseur</Link>
+                  <Link href="/investor/questionnaire">👉 Commencer le Diagnostic Investisseur</Link>
                 </Button>
                 <p className="text-sm text-white/70">(gratuit · éducatif · sans promesse)</p>
               </div>

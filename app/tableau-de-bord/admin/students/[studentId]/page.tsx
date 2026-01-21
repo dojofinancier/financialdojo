@@ -31,7 +31,7 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
         <h1 className="text-3xl font-bold">
           {student.firstName || student.lastName
             ? `${student.firstName || ""} ${student.lastName || ""}`.trim()
-            : "Étudiant"}
+            : "Student"}
         </h1>
         <p className="text-muted-foreground mt-2">{student.email}</p>
       </div>

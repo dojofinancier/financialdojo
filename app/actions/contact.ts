@@ -6,9 +6,9 @@ import { logServerError } from "@/lib/utils/error-logging";
 
 const contactFormSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
-  email: z.string().email("Courriel invalide"),
-  subject: z.string().min(1, "Le sujet est requis"),
-  message: z.string().min(1, "Le message est requis"),
+  email: z.string().email("Invalid email"),
+  subject: z.string().min(1, "Subject is required"),
+  message: z.string().min(1, "Message is required"),
 });
 
 export type ContactFormResult = {
@@ -39,7 +39,7 @@ export async function submitContactFormAction(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: error.issues[0]?.message || "Données invalides",
+        error: error.issues[0]?.message || "Invalid data",
       };
     }
 
@@ -51,7 +51,7 @@ export async function submitContactFormAction(
 
     return {
       success: false,
-      error: "Erreur lors de l'envoi du message. Veuillez réessayer.",
+      error: "Error sending the message. Please try again.",
     };
   }
 }
