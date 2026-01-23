@@ -86,9 +86,9 @@ export function CohortFeaturesManagement({ cohortId, initialFeatures }: CohortFe
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Fonctionnalités</CardTitle>
+          <CardTitle>Features</CardTitle>
           <CardDescription>
-            Liste des fonctionnalités à afficher dans la section héro de la page de la cohorte
+            List of features to display in the cohort page hero section
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -120,7 +120,7 @@ export function CohortFeaturesManagement({ cohortId, initialFeatures }: CohortFe
             <div className="border-t pt-4 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor="featureIcon">Icône</Label>
+                  <Label htmlFor="featureIcon">Icon</Label>
                   <Select
                     value={newFeature.icon}
                     onValueChange={(value) => setNewFeature({ ...newFeature, icon: value })}
@@ -141,12 +141,12 @@ export function CohortFeaturesManagement({ cohortId, initialFeatures }: CohortFe
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="featureText">Texte</Label>
+                  <Label htmlFor="featureText">Text</Label>
                   <Input
                     id="featureText"
                     value={newFeature.text}
                     onChange={(e) => setNewFeature({ ...newFeature, text: e.target.value })}
-                    placeholder="Ex: Sessions de coaching en groupe"
+                    placeholder="e.g., Group coaching sessions"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
@@ -158,7 +158,7 @@ export function CohortFeaturesManagement({ cohortId, initialFeatures }: CohortFe
               </div>
               <Button onClick={handleAddFeature} variant="outline" className="w-full">
                 <Plus className="h-4 w-4 mr-2" />
-                Ajouter une fonctionnalité
+                Add a feature
               </Button>
             </div>
           </div>
@@ -168,7 +168,7 @@ export function CohortFeaturesManagement({ cohortId, initialFeatures }: CohortFe
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
-          {saving ? "Enregistrement..." : "Enregistrer"}
+          {saving ? "Saving..." : "Save"}
         </Button>
       </div>
     </div>

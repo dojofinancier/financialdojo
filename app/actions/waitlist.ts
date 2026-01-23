@@ -4,9 +4,9 @@ import { z } from "zod";
 import { logServerError } from "@/lib/utils/error-logging";
 
 const waitlistSchema = z.object({
-  email: z.string().email("Email invalide"),
+  email: z.string().email("Invalid email"),
   firstName: z.string().min(1, "First name is required").optional(),
-  lastName: z.string().min(1, "Le nom est requis").optional(),
+  lastName: z.string().min(1, "Last name is required").optional(),
   type: z.enum(["investisseur", "entrepreneur"]),
 });
 

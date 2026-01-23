@@ -84,7 +84,7 @@ export function ErrorSpottingActivity({
       </div>
       {showAnswers && correctAnswers && (
         <div className="p-3 bg-muted rounded-md">
-          <p className="text-sm font-semibold mb-1">Réponse attendue:</p>
+          <p className="text-sm font-semibold mb-1">Expected answer:</p>
           <p className="text-sm">{correctAnswers}</p>
         </div>
       )}

@@ -46,7 +46,7 @@ import { TestimonialCarousel } from "../courses/testimonial-carousel";
 import { StickyBottomCTA } from "../courses/sticky-bottom-cta";
 import Image from "next/image";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 
 // Icon mapping for dynamic features
 const iconMap: Record<string, any> = {
@@ -304,7 +304,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
               {/* Category badge */}
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="inline-flex items-center border-2 border-white px-3 py-1 font-mono text-xs uppercase tracking-[0.25em] text-white/80">
-                  Cohorte professionnelle
+                  Professional cohort
                 </div>
                 {cohort.instructor && (
                   <div className="inline-flex items-center border-2 border-white px-3 py-1 font-mono text-xs uppercase tracking-[0.25em] text-white/80">
@@ -313,17 +313,17 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                 )}
                 {!cohort.isEnrollmentOpen && (
                   <div className="inline-flex items-center border-2 border-white px-3 py-1 font-mono text-xs uppercase tracking-[0.25em] text-white/80 bg-orange-500">
-                    Inscriptions fermées
+                    Enrollment closed
                   </div>
                 )}
                 {cohort.isEnrollmentOpen && cohort.spotsRemaining <= 0 && (
                   <div className="inline-flex items-center border-2 border-white px-3 py-1 font-mono text-xs uppercase tracking-[0.25em] text-white/80 bg-red-500">
-                    Complet
+                    Full
                   </div>
                 )}
                 {cohort.isEnrollmentOpen && cohort.spotsRemaining > 0 && (
                   <div className="inline-flex items-center border-2 border-white px-3 py-1 font-mono text-xs uppercase tracking-[0.25em] text-white/80 bg-primary text-black">
-                    {cohort.spotsRemaining} place{cohort.spotsRemaining !== 1 ? "s" : ""} disponible{cohort.spotsRemaining !== 1 ? "s" : ""}
+                    {cohort.spotsRemaining} spot{cohort.spotsRemaining !== 1 ? "s" : ""} available
                   </div>
                 )}
               </div>
@@ -349,10 +349,10 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                 <div className="border-4 border-orange-500 bg-orange-500/20 p-4">
                   <div className="flex items-center gap-2 text-orange-300">
                     <AlertCircle className="h-5 w-5" />
-                    <span className="font-semibold">Les inscriptions sont fermées</span>
+                    <span className="font-semibold">Enrollment is closed</span>
                   </div>
                   <p className="text-sm text-orange-200 mt-2">
-                    La date limite d'inscription était le {format(new Date(cohort.enrollmentClosingDate), "d MMMM yyyy", { locale: fr })}
+                    Enrollment deadline was {format(new Date(cohort.enrollmentClosingDate), "d MMMM yyyy", { locale: enCA })}
                   </p>
                 </div>
               )}
@@ -361,10 +361,10 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                 <div className="border-4 border-red-500 bg-red-500/20 p-4">
                   <div className="flex items-center gap-2 text-red-300">
                     <AlertCircle className="h-5 w-5" />
-                    <span className="font-semibold">Cohorte complète</span>
+                    <span className="font-semibold">Cohort full</span>
                   </div>
                   <p className="text-sm text-red-200 mt-2">
-                    Tous les {cohort.maxStudents} places sont occupées
+                    All {cohort.maxStudents} spots are taken
                   </p>
                 </div>
               )}
@@ -379,7 +379,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                   >
                     <span className="inline-flex items-center gap-2">
                       <Play className="h-5 w-5" />
-                      Accéder à la cohorte →
+                      Access cohort →
                     </span>
                   </button>
                 ) : !cohort.isEnrollmentOpen || cohort.spotsRemaining <= 0 ? (
@@ -388,7 +388,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                     disabled
                     className="bg-white/50 text-white/50 font-black uppercase tracking-wider px-10 py-5 border-4 border-white/50 cursor-not-allowed"
                   >
-                    Inscription fermée
+                    Enrollment closed
                   </button>
                 ) : inCart ? (
                   <button
@@ -398,7 +398,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                   >
                     <span className="inline-flex items-center gap-2">
                       <ShoppingCart className="h-5 w-5" />
-                      Voir le panier →
+                      View cart →
                     </span>
                   </button>
                 ) : (
@@ -408,15 +408,15 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                       onClick={handleAddToCart}
                       className="bg-white text-black font-black uppercase tracking-wider px-10 py-5 border-4 border-white hover:bg-primary hover:border-primary hover:text-black transition-colors shadow-[8px_8px_0_0_hsl(var(--primary))]"
                     >
-                      S'inscrire maintenant →
+                      Enroll now →
                     </button>
                     <div className="border-4 border-white p-6">
                       <div className="text-4xl font-black text-primary">{formatCurrency(cohort.price)}</div>
                       <div className="font-mono text-xs uppercase tracking-[0.25em] text-white/70 mt-2">
-                        pour {cohort.accessDuration} jour{cohort.accessDuration !== 1 ? "s" : ""} d'accès
+                        for {cohort.accessDuration} day{cohort.accessDuration !== 1 ? "s" : ""} of access
                       </div>
                       <div className="font-mono text-xs uppercase tracking-[0.25em] text-white/70 mt-1">
-                        Clôture: {format(new Date(cohort.enrollmentClosingDate), "d MMMM yyyy", { locale: fr })}
+                        Closes: {format(new Date(cohort.enrollmentClosingDate), "d MMMM yyyy", { locale: enCA })}
                       </div>
                     </div>
                   </>
@@ -451,7 +451,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
               >
                 <Image
                   src={heroImageSrc}
-                  alt={`${cohort.title} - Capture d'écran`}
+                  alt={`${cohort.title} - Screenshot`}
                   fill
                   className="object-cover"
                   priority
@@ -474,10 +474,10 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
             {/* About Section */}
             <div className="space-y-6">
               <span className="font-mono text-xs uppercase tracking-[0.3em] text-black/60 block">
-                [À PROPOS]
+                [ABOUT]
               </span>
               <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
-                Tout ce que vous devez savoir
+                Everything you need to know
               </h2>
               {cohort.aboutText ? (
                 <div 
@@ -491,7 +491,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                 />
               ) : (
                 <p className="opacity-80">
-                  Découvrez cette cohorte professionnelle qui vous permettra d'atteindre vos objectifs avec accompagnement personnalisé.
+                  Discover this professional cohort that will help you reach your goals with personalized support.
                 </p>
               )}
 
@@ -507,7 +507,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                 </div>
                 <div className="text-center p-4">
                   <div className="text-4xl font-black text-primary">{coachingSessions}</div>
-                  <div className="font-mono text-xs uppercase tracking-[0.25em] text-black/60 mt-1">Séances de coaching</div>
+                  <div className="font-mono text-xs uppercase tracking-[0.25em] text-black/60 mt-1">Coaching sessions</div>
                 </div>
               </div>
             </div>
@@ -518,7 +518,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                 [PROGRAMME]
               </span>
               <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
-                Programme détaillé
+                Detailed curriculum
               </h2>
               
               <div className="space-y-0 border-4 border-black max-h-[520px] overflow-y-auto">
@@ -556,10 +556,10 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
             <div className="max-w-[1400px] mx-auto">
             <div className="text-center mb-12">
               <span className="text-primary font-mono text-xs uppercase tracking-[0.3em] block mb-4">
-                [TÉMOIGNAGES]
+                [TESTIMONIALS]
               </span>
               <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
-                Ce que disent nos participants
+                What participants say
               </h2>
             </div>
             
@@ -584,7 +584,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                   [FAQ]
                 </span>
                 <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
-                  Questions fréquentes
+                  Frequently asked questions
                 </h2>
               </div>
 
@@ -617,10 +617,10 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
         <div className="px-4 sm:px-8 text-center">
           <div className="max-w-[1400px] mx-auto">
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-6">
-            Prêt à rejoindre cette cohorte ?
+            Ready to join this cohort?
           </h2>
           <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
-            Rejoignez les {cohort._count.enrollments} participant{cohort._count.enrollments !== 1 ? "s" : ""} qui ont déjà fait confiance à cette cohorte.
+            Join the {cohort._count.enrollments} participant{cohort._count.enrollments !== 1 ? "s" : ""} who already trusted this cohort.
           </p>
           
           <div className="flex flex-col items-center gap-4">
@@ -632,7 +632,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
               >
                 <span className="inline-flex items-center gap-2">
                   <Play className="h-5 w-5" />
-                  Accéder à la cohorte →
+                  Access cohort →
                 </span>
               </button>
             ) : !cohort.isEnrollmentOpen || cohort.spotsRemaining <= 0 ? (
@@ -641,7 +641,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                 disabled
                 className="bg-white/50 text-white/50 font-black uppercase tracking-wider px-10 py-5 border-4 border-white/50 cursor-not-allowed"
               >
-                Inscription fermée
+                Enrollment closed
               </button>
             ) : inCart ? (
               <button
@@ -651,7 +651,7 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
               >
                 <span className="inline-flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5" />
-                  Voir le panier →
+                  View cart →
                 </span>
               </button>
             ) : (
@@ -661,15 +661,15 @@ export function CohortProductPage({ cohort, isEnrolled }: CohortProductPageProps
                   onClick={handleAddToCart}
                   className="bg-white text-black font-black uppercase tracking-wider px-10 py-5 border-4 border-white hover:bg-primary hover:border-primary hover:text-black transition-colors shadow-[8px_8px_0_0_hsl(var(--primary))]"
                 >
-                  S'inscrire maintenant →
+                  Enroll now →
                 </button>
                 <div className="border-4 border-white p-6">
                   <p className="text-3xl font-black text-primary">{formatCurrency(cohort.price)}</p>
                   <p className="font-mono text-xs uppercase tracking-[0.25em] text-white/70 mt-2">
-                    pour {cohort.accessDuration} jour{cohort.accessDuration !== 1 ? "s" : ""} d'accès
+                    for {cohort.accessDuration} day{cohort.accessDuration !== 1 ? "s" : ""} of access
                   </p>
                   <p className="font-mono text-xs uppercase tracking-[0.25em] text-white/70 mt-1">
-                    Clôture: {format(new Date(cohort.enrollmentClosingDate), "d MMMM yyyy", { locale: fr })}
+                    Closes: {format(new Date(cohort.enrollmentClosingDate), "d MMMM yyyy", { locale: enCA })}
                   </p>
                 </div>
               </>

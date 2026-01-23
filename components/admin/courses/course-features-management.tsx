@@ -85,9 +85,9 @@ export function CourseFeaturesManagement({ courseId, initialFeatures }: CourseFe
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Fonctionnalités du cours</CardTitle>
+        <CardTitle>Course features</CardTitle>
         <CardDescription>
-          Ajoutez les fonctionnalités clés qui seront affichées sur la page du cours (8 max recommandé)
+          Add key features shown on the course page (8 max recommended)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -95,7 +95,7 @@ export function CourseFeaturesManagement({ courseId, initialFeatures }: CourseFe
         <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
           <div className="grid gap-4 md:grid-cols-[150px_1fr_auto]">
             <div className="space-y-2">
-              <Label>Icône</Label>
+              <Label>Icon</Label>
               <Select
                 value={newFeature.icon}
                 onValueChange={(value) => setNewFeature({ ...newFeature, icon: value })}
@@ -121,17 +121,17 @@ export function CourseFeaturesManagement({ courseId, initialFeatures }: CourseFe
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Texte de la fonctionnalité</Label>
+              <Label>Feature text</Label>
               <Input
                 value={newFeature.text}
                 onChange={(e) => setNewFeature({ ...newFeature, text: e.target.value })}
-                placeholder="Ex: 12 modules complets"
+                placeholder="e.g., 12 full modules"
               />
             </div>
             <div className="flex items-end">
               <Button onClick={handleAddFeature} size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Ajouter
+                Add
               </Button>
             </div>
           </div>
@@ -141,7 +141,7 @@ export function CourseFeaturesManagement({ courseId, initialFeatures }: CourseFe
         <div className="space-y-3">
           {features.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
-              Aucune fonctionnalité ajoutée. Ajoutez-en une ci-dessus.
+              No features added yet. Add one above.
             </p>
           ) : (
             features.map((feature, index) => (
@@ -172,7 +172,7 @@ export function CourseFeaturesManagement({ courseId, initialFeatures }: CourseFe
         <div className="flex justify-end pt-4 border-t">
           <Button onClick={handleSave} disabled={saving}>
             <Save className="h-4 w-4 mr-2" />
-            {saving ? "Enregistrement..." : "Save features"}
+            {saving ? "Saving..." : "Save features"}
           </Button>
         </div>
       </CardContent>

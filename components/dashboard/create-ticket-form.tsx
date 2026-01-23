@@ -57,15 +57,15 @@ export function CreateTicketForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Nouveau ticket de support</CardTitle>
+        <CardTitle>New support ticket</CardTitle>
         <CardDescription>
-          Remplissez le formulaire ci-dessous pour créer un ticket de support
+          Fill out the form below to create a support ticket
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="subject">Sujet *</Label>
+            <Label htmlFor="subject">Subject *</Label>
             <Input
               id="subject"
               value={formData.subject}
@@ -91,7 +91,7 @@ export function CreateTicketForm() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="priority">Priorité *</Label>
+              <Label htmlFor="priority">Priority *</Label>
               <Select
                 value={formData.priority}
                 onValueChange={(value: "LOW" | "MEDIUM" | "HIGH" | "URGENT") =>
@@ -103,21 +103,21 @@ export function CreateTicketForm() {
                   <SelectValue placeholder="Select a priority" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="LOW">Basse</SelectItem>
-                  <SelectItem value="MEDIUM">Moyenne</SelectItem>
-                  <SelectItem value="HIGH">Élevée</SelectItem>
-                  <SelectItem value="URGENT">Urgente</SelectItem>
+                  <SelectItem value="LOW">Low</SelectItem>
+                  <SelectItem value="MEDIUM">Medium</SelectItem>
+                  <SelectItem value="HIGH">High</SelectItem>
+                  <SelectItem value="URGENT">Urgent</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">Catégorie (optionnel)</Label>
+              <Label htmlFor="category">Category (optional)</Label>
               <Input
                 id="category"
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                placeholder="Ex: Technique, Facturation, etc."
+                placeholder="e.g., Technical, Billing, etc."
                 disabled={isSubmitting}
               />
             </div>
@@ -128,7 +128,7 @@ export function CreateTicketForm() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Création...
+                  Creating...
                 </>
               ) : (
                 "Create ticket"
@@ -140,7 +140,7 @@ export function CreateTicketForm() {
               onClick={() => router.back()}
               disabled={isSubmitting}
             >
-              Annuler
+              Cancel
             </Button>
           </div>
         </form>

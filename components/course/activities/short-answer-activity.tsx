@@ -37,7 +37,7 @@ export function ShortAnswerActivity({
       isSyncingFromParent.current = true;
       setAnswer(newValue);
     }
-  }, [initialValue]);
+  }, [initialValue, answer]);
 
   useEffect(() => {
     // Only call onAnswerChange when user changes the value, not when syncing from parent
@@ -69,7 +69,7 @@ export function ShortAnswerActivity({
         <p className="text-lg mt-2">{content.question}</p>
       </div>
       <div className="space-y-2">
-        <Label>Votre réponse</Label>
+        <Label>Your answer</Label>
         <div className="relative">
           <Input
             value={answer}
@@ -108,7 +108,7 @@ export function ShortAnswerActivity({
       </div>
       {showAnswers && !isCorrect && correctAnswers && (
         <div className="p-3 bg-muted rounded-md">
-          <p className="text-sm font-semibold mb-1">Réponses acceptables:</p>
+          <p className="text-sm font-semibold mb-1">Accepted answers:</p>
           <ul className="list-disc list-inside text-sm">
             {correctAnswers.map((ans, idx) => (
               <li key={idx}>{ans}</li>

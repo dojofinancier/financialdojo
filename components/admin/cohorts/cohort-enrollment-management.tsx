@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Users, Search, Calendar, Clock, Edit, Trash2, Plus } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import {
   getCohortEnrollmentsAction,
   extendCohortEnrollmentAccessAction,
@@ -55,7 +55,7 @@ export function CohortEnrollmentManagement({
   const [selectedEnrollment, setSelectedEnrollment] = useState<CohortEnrollment | null>(null);
   const [extensionDays, setExtensionDays] = useState("30");
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const [enrollmentsResult, cohortResult] = await Promise.all([
@@ -78,11 +78,11 @@ export function CohortEnrollmentManagement({
     } finally {
       setLoading(false);
     }
-  };
+  }, [cohortId]);
 
   useEffect(() => {
     loadData();
-  }, [cohortId]);
+  }, [loadData]);
 
   const handleExtendAccess = async () => {
     if (!selectedEnrollment || !extensionDays) {
@@ -98,7 +98,7 @@ export function CohortEnrollmentManagement({
 
       const result = await extendCohortEnrollmentAccessAction(selectedEnrollment.id, days);
       if (result.success) {
-        toast.success(`Accès étendu de ${days} jours`);
+        toast.success(`Access extended by ${days} days`);
         setExtendDialogOpen(false);
         setSelectedEnrollment(null);
         setExtensionDays("30");
@@ -161,9 +161,9 @@ export function CohortEnrollmentManagement({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold">Gestion des inscriptions</h3>
+        <h3 className="text-lg font-semibold">Enrollment management</h3>
         <p className="text-sm text-muted-foreground">
-          Gérez les inscriptions à cette cohorte
+          Manage enrollments for this cohort
         </p>
       </div>
 
@@ -172,18 +172,18 @@ export function CohortEnrollmentManagement({
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Inscriptions actives</CardDescription>
+              <CardDescription>Active enrollments</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{activeEnrollments.length}</div>
               <p className="text-xs text-muted-foreground">
-                sur {cohort.maxStudents} maximum
+                out of {cohort.maxStudents} max
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Inscriptions expirées</CardDescription>
+              <CardDescription>Expired enrollments</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{expiredEnrollments.length}</div>
@@ -191,7 +191,7 @@ export function CohortEnrollmentManagement({
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Places disponibles</CardDescription>
+              <CardDescription>Available seats</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -206,7 +206,7 @@ export function CohortEnrollmentManagement({
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Rechercher par nom ou email..."
+          placeholder="Search by name or email..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
@@ -214,13 +214,13 @@ export function CohortEnrollmentManagement({
       </div>
 
       {loading ? (
-        <div className="text-center py-8">Chargement...</div>
+        <div className="text-center py-8">Loading...</div>
       ) : (
         <div className="space-y-6">
           {/* Active Enrollments */}
           {filteredActiveEnrollments.length > 0 && (
             <div>
-              <h4 className="text-md font-semibold mb-3">Inscriptions actives</h4>
+              <h4 className="text-md font-semibold mb-3">Active enrollments</h4>
               <div className="space-y-2">
                 {filteredActiveEnrollments.map((enrollment) => (
                   <Card key={enrollment.id}>
@@ -259,15 +259,15 @@ export function CohortEnrollmentManagement({
                     <CardContent>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <div className="text-muted-foreground">Date d'inscription</div>
+                          <div className="text-muted-foreground">Enrollment date</div>
                           <div className="font-medium">
-                            {format(new Date(enrollment.purchaseDate), "d MMMM yyyy", { locale: fr })}
+                            {format(new Date(enrollment.purchaseDate), "d MMMM yyyy", { locale: enUS })}
                           </div>
                         </div>
                         <div>
-                          <div className="text-muted-foreground">Expire le</div>
+                          <div className="text-muted-foreground">Expires on</div>
                           <div className="font-medium">
-                            {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: fr })}
+                            {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: enUS })}
                           </div>
                         </div>
                       </div>
@@ -278,7 +278,7 @@ export function CohortEnrollmentManagement({
                             (new Date(enrollment.expiresAt).getTime() - Date.now()) /
                               (1000 * 60 * 60 * 24)
                           )}{" "}
-                          jours restants
+                          days remaining
                         </span>
                       </div>
                     </CardContent>
@@ -291,7 +291,7 @@ export function CohortEnrollmentManagement({
           {/* Expired Enrollments */}
           {filteredExpiredEnrollments.length > 0 && (
             <div>
-              <h4 className="text-md font-semibold mb-3">Inscriptions expirées</h4>
+              <h4 className="text-md font-semibold mb-3">Expired enrollments</h4>
               <div className="space-y-2">
                 {filteredExpiredEnrollments.map((enrollment) => (
                   <Card key={enrollment.id} className="opacity-60">
@@ -311,9 +311,9 @@ export function CohortEnrollmentManagement({
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm">
-                        <div className="text-muted-foreground">Expiré le</div>
+                        <div className="text-muted-foreground">Expired on</div>
                         <div className="font-medium">
-                          {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: fr })}
+                          {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: enUS })}
                         </div>
                       </div>
                     </CardContent>
@@ -327,9 +327,9 @@ export function CohortEnrollmentManagement({
             <Card>
               <CardContent className="py-12 text-center">
                 <Users className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">Aucune inscription</h3>
+                <h3 className="text-lg font-semibold mb-2">No enrollments</h3>
                 <p className="text-muted-foreground">
-                  Aucun étudiant n'est inscrit à cette cohorte
+                  No students are enrolled in this cohort
                 </p>
               </CardContent>
             </Card>
@@ -341,15 +341,15 @@ export function CohortEnrollmentManagement({
       <Dialog open={extendDialogOpen} onOpenChange={setExtendDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Étendre l'accès</DialogTitle>
+            <DialogTitle>Extend access</DialogTitle>
             <DialogDescription>
-              Ajoutez des jours d'accès supplémentaires pour cet étudiant
+              Add extra access days for this student
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             {selectedEnrollment && (
               <div className="space-y-2">
-                <Label>Étudiant</Label>
+                <Label>Student</Label>
                 <div className="text-sm">
                   {selectedEnrollment.user.firstName || selectedEnrollment.user.lastName
                     ? `${selectedEnrollment.user.firstName || ""} ${selectedEnrollment.user.lastName || ""}`.trim()
@@ -359,13 +359,13 @@ export function CohortEnrollmentManagement({
                   {selectedEnrollment.user.email}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Expire actuellement le:{" "}
-                  {format(new Date(selectedEnrollment.expiresAt), "d MMMM yyyy", { locale: fr })}
+                  Currently expires on:{" "}
+                  {format(new Date(selectedEnrollment.expiresAt), "d MMMM yyyy", { locale: enUS })}
                 </div>
               </div>
             )}
             <div className="space-y-2">
-              <Label>Nombre de jours à ajouter</Label>
+              <Label>Number of days to add</Label>
               <Input
                 type="number"
                 min="1"
@@ -376,9 +376,9 @@ export function CohortEnrollmentManagement({
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setExtendDialogOpen(false)}>
-                Annuler
+                Cancel
               </Button>
-              <Button onClick={handleExtendAccess}>Étendre</Button>
+              <Button onClick={handleExtendAccess}>Extend</Button>
             </div>
           </div>
         </DialogContent>

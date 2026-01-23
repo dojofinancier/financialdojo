@@ -10,7 +10,7 @@ async function AdminAnalyticsContent() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Tableau de bord analytique</h1>
         <p className="text-muted-foreground mt-2">
-          Métriques d'inscription, taux de complétion et engagement
+          Enrollment metrics, completion rates, and engagement
         </p>
       </div>
       <AnalyticsDashboard />

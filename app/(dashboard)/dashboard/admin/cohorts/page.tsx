@@ -15,18 +15,18 @@ async function AdminCohortsContent({ searchParams }: AdminCohortsPageProps) {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Tableau de bord administrateur</h1>
+        <h1 className="text-3xl font-bold">Admin dashboard</h1>
       </div>
       
       <AdminDashboardTabs defaultTab="cohorts">
         <div className="mt-6">
           <div className="mb-6">
-            <h2 className="text-2xl font-semibold">Gestion des cohortes</h2>
+            <h2 className="text-2xl font-semibold">Cohort management</h2>
             <p className="text-muted-foreground mt-2">
-              Créez, modifiez et gérez vos cohortes de coaching de groupe
+              Create, edit, and manage your group coaching cohorts
             </p>
           </div>
-          <Suspense fallback={<div className="text-muted-foreground">Chargement des onglets...</div>}>
+          <Suspense fallback={<div className="text-muted-foreground">Loading tabs...</div>}>
             <CohortTabs defaultTab={defaultTab} />
           </Suspense>
         </div>
@@ -40,7 +40,7 @@ export default function AdminCohortsPage(props: AdminCohortsPageProps) {
     <Suspense
       fallback={
         <div className="container mx-auto p-6">
-          <div className="text-muted-foreground">Chargement...</div>
+          <div className="text-muted-foreground">Loading...</div>
         </div>
       }
     >
@@ -48,4 +48,3 @@ export default function AdminCohortsPage(props: AdminCohortsPageProps) {
     </Suspense>
   );
 }
-

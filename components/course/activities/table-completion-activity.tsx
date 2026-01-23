@@ -59,7 +59,7 @@ export function TableCompletionActivity({
   };
 
   if (!content.table || !content.table.headers || !content.table.rows) {
-    return <div>Structure de tableau invalide</div>;
+    return <div>Invalid table structure</div>;
   }
 
   const { headers, rows } = content.table;
@@ -73,7 +73,7 @@ export function TableCompletionActivity({
         </div>
       )}
       <div className="space-y-2">
-        <Label>Complétez les cellules manquantes</Label>
+        <Label>Complete the missing cells</Label>
         <div className="border rounded-md overflow-hidden">
           <Table>
             <TableHeader>
@@ -134,11 +134,11 @@ export function TableCompletionActivity({
       </div>
       {showAnswers && correctAnswers && (
         <div className="p-3 bg-muted rounded-md">
-          <p className="text-sm font-semibold mb-2">Réponses correctes:</p>
+          <p className="text-sm font-semibold mb-2">Correct answers:</p>
           <ul className="list-disc list-inside space-y-1 text-sm">
             {Object.entries(correctAnswers).map(([key, value]) => (
               <li key={key}>
-                Cellule {key}: {value}
+                Cell {key}: {value}
               </li>
             ))}
           </ul>

@@ -15,3 +15,10 @@ Created: 2026-01-21
 - 2026-01-21: Applied translations to 206 files using scripts/translation/apply-translations.ts.
 - 2026-01-21: Scanned for remaining French strings; saved reports to scripts/translation/output/remaining-strings.json, remaining-strings-summary.md, and remaining-strings-cleanup.md.
 - 2026-01-21: User requested to leave remaining strings as-is and proceed to next step.
+- 2026-01-21: Prisma migrate/db push failed with "Tenant or user not found" when connecting to DATABASE_URL; DB translation not run.
+- 2026-01-21: User shared current env keys (DATABASE_URL, DIRECT_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PULIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY); noted expected app keys mismatch.
+- 2026-01-21: Updated Supabase integration to use publishable/secret key env vars with fallbacks, added env helpers, and refreshed docs/scripts to reference new key names.
+- 2026-01-21: Retried Prisma migrate/db push; same "Tenant or user not found" error from DATABASE_URL.
+- 2026-01-21: Prisma migrate deploy succeeded on new DB; prisma db push stopped due to data-loss warning about adding unique constraints on order_number for enrollments/cohort_enrollments.
+- 2026-01-21: Prisma db push --accept-data-loss failed because Postgres type "vector" is missing.
+- 2026-01-21: Continued translation cleanup (Phase 3/4), translating remaining French UI strings and admin/dashboard copy across course tools, cohorts, admin panels, and action messages.

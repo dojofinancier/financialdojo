@@ -31,7 +31,7 @@ import {
 } from "@/app/actions/support-tickets";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { User, MessageSquare, Send, Settings, UserPlus } from "lucide-react";
 import Link from "next/link";
 
@@ -128,7 +128,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
       toast.success("Status updated");
       setTicket({ ...ticket, status });
     } else {
-      toast.error(result.error || "Erreur");
+      toast.error(result.error || "Error");
     }
   };
 
@@ -173,13 +173,13 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "OPEN":
-        return <Badge variant="default">Ouvert</Badge>;
+        return <Badge variant="default">Open</Badge>;
       case "IN_PROGRESS":
-        return <Badge className="bg-blue-500">En cours</Badge>;
+        return <Badge className="bg-blue-500">In progress</Badge>;
       case "RESOLVED":
-        return <Badge className="bg-green-500">Résolu</Badge>;
+        return <Badge className="bg-green-500">Resolved</Badge>;
       case "CLOSED":
-        return <Badge variant="secondary">Fermé</Badge>;
+        return <Badge variant="secondary">Closed</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -190,11 +190,11 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
       case "URGENT":
         return <Badge variant="destructive">Urgent</Badge>;
       case "HIGH":
-        return <Badge className="bg-orange-500">Élevée</Badge>;
+        return <Badge className="bg-orange-500">High</Badge>;
       case "MEDIUM":
-        return <Badge className="bg-yellow-500">Moyenne</Badge>;
+        return <Badge className="bg-yellow-500">Medium</Badge>;
       case "LOW":
-        return <Badge variant="secondary">Basse</Badge>;
+        return <Badge variant="secondary">Low</Badge>;
       default:
         return <Badge variant="outline">{priority}</Badge>;
     }
@@ -217,10 +217,10 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
                 <div>
                   <div className="font-semibold">{ticket.student.email}</div>
                   <div className="text-sm text-muted-foreground">
-                    {format(new Date(ticket.createdAt), "d MMMM yyyy, HH:mm", { locale: fr })}
+                    {format(new Date(ticket.createdAt), "d MMMM yyyy, HH:mm", { locale: enCA })}
                   </div>
                 </div>
-                <Badge variant="outline">Étudiant</Badge>
+                <Badge variant="outline">Student</Badge>
               </div>
               <div className="mt-2">
                 <div className="font-semibold mb-2">{ticket.subject}</div>
@@ -244,7 +244,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
                         : reply.author.email}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {format(new Date(reply.createdAt), "d MMMM yyyy, HH:mm", { locale: fr })}
+                      {format(new Date(reply.createdAt), "d MMMM yyyy, HH:mm", { locale: enCA })}
                     </div>
                   </div>
                   <Badge variant={reply.authorRole === "ADMIN" ? "default" : "outline"}>
@@ -258,7 +258,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
             {/* Reply form */}
             <div className="border-t pt-4 space-y-4">
               <div>
-                <Label htmlFor="reply">Répondre</Label>
+                <Label htmlFor="reply">Reply</Label>
                 <Textarea
                   id="reply"
                   value={replyMessage}
@@ -272,12 +272,12 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
                 {sendingReply ? (
                   <>
                     <Send className="h-4 w-4 mr-2 animate-spin" />
-                    Envoi...
+                    Sending...
                   </>
                 ) : (
                   <>
                     <Send className="h-4 w-4 mr-2" />
-                    Envoyer
+                    Send
                   </>
                 )}
               </Button>
@@ -289,42 +289,42 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              Paramètres
+              Settings
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Statut</Label>
+              <Label>Status</Label>
               <Select value={ticket.status} onValueChange={handleStatusChange}>
                 <SelectTrigger className="mt-2">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="OPEN">Ouvert</SelectItem>
-                  <SelectItem value="IN_PROGRESS">En cours</SelectItem>
-                  <SelectItem value="RESOLVED">Résolu</SelectItem>
-                  <SelectItem value="CLOSED">Fermé</SelectItem>
+                  <SelectItem value="OPEN">Open</SelectItem>
+                  <SelectItem value="IN_PROGRESS">In progress</SelectItem>
+                  <SelectItem value="RESOLVED">Resolved</SelectItem>
+                  <SelectItem value="CLOSED">Closed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <Label>Priorité</Label>
+              <Label>Priority</Label>
               <Select value={ticket.priority} onValueChange={handlePriorityChange}>
                 <SelectTrigger className="mt-2">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="LOW">Basse</SelectItem>
-                  <SelectItem value="MEDIUM">Moyenne</SelectItem>
-                  <SelectItem value="HIGH">Élevée</SelectItem>
+                  <SelectItem value="LOW">Low</SelectItem>
+                  <SelectItem value="MEDIUM">Medium</SelectItem>
+                  <SelectItem value="HIGH">High</SelectItem>
                   <SelectItem value="URGENT">Urgent</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <Label>Catégorie</Label>
+              <Label>Category</Label>
               <Input
                 value={ticket.category || ""}
                 onChange={(e) => handleCategoryChange(e.target.value)}
@@ -334,7 +334,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
             </div>
 
             <div>
-              <Label>Assigné à</Label>
+              <Label>Assigned to</Label>
               <div className="mt-2 space-y-2">
                 {ticket.assignedAdmin ? (
                   <div className="flex items-center justify-between p-2 border rounded">
@@ -345,7 +345,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
                     </span>
                   </div>
                 ) : (
-                  <div className="text-sm text-muted-foreground">Non assigné</div>
+                  <div className="text-sm text-muted-foreground">Unassigned</div>
                 )}
                 <Button
                   variant="outline"
@@ -354,20 +354,20 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
                   onClick={() => setAssignDialogOpen(true)}
                 >
                   <UserPlus className="h-4 w-4 mr-2" />
-                  Assigner
+                  Assign
                 </Button>
               </div>
             </div>
 
             <div className="border-t pt-4">
-              <Label className="text-muted-foreground">Informations étudiant</Label>
+              <Label className="text-muted-foreground">Student information</Label>
               <div className="mt-2 space-y-1">
                 <div className="text-sm">
                   <span className="font-medium">Email:</span> {ticket.student.email}
                 </div>
                 <Link href={`/dashboard/admin/students/${ticket.student.id}`}>
                   <Button variant="link" size="sm" className="p-0 h-auto">
-                    Voir le profil
+                    View profile
                   </Button>
                 </Link>
               </div>
@@ -380,9 +380,9 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
       <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Assigner le ticket</DialogTitle>
+            <DialogTitle>Assign ticket</DialogTitle>
             <DialogDescription>
-              Sélectionnez un administrateur pour assigner ce ticket
+              Select an admin to assign this ticket
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
@@ -392,7 +392,7 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
               </SelectTrigger>
               <SelectContent>
                 {loadingAdmins ? (
-                  <SelectItem value="loading" disabled>Chargement...</SelectItem>
+                  <SelectItem value="loading" disabled>Loading...</SelectItem>
                 ) : (
                   admins.map((admin) => (
                     <SelectItem key={admin.id} value={admin.id}>
@@ -406,10 +406,10 @@ export function SupportTicketDetails({ ticket: initialTicket }: SupportTicketDet
             </Select>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setAssignDialogOpen(false)}>
-                Annuler
+                Cancel
               </Button>
               <Button onClick={handleAssign} disabled={!selectedAdminId}>
-                Assigner
+                Assign
               </Button>
             </div>
           </div>

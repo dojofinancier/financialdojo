@@ -17,7 +17,7 @@ export type ModuleContentResult = {
  */
 const getCachedModuleContent = unstable_cache(
   async (moduleId: string) => {
-    const module = await prisma.module.findUnique({
+    const moduleRecord = await prisma.module.findUnique({
       where: { id: moduleId },
       select: {
         id: true,
@@ -79,12 +79,12 @@ const getCachedModuleContent = unstable_cache(
       },
     });
 
-    if (!module) {
+    if (!moduleRecord) {
       return null;
     }
 
     // Separate content by type
-    const videos = module.contentItems
+    const videos = moduleRecord.contentItems
       .filter((item) => item.contentType === "VIDEO" && item.video)
       .map((item) => ({
         id: item.id,
@@ -92,7 +92,7 @@ const getCachedModuleContent = unstable_cache(
         video: item.video,
       }));
 
-    const notes = module.contentItems
+    const notes = moduleRecord.contentItems
       .filter((item) => item.contentType === "NOTE" && item.notes.length > 0)
       .map((item) => ({
         id: item.id,
@@ -100,7 +100,7 @@ const getCachedModuleContent = unstable_cache(
         note: item.notes[0],
       }));
 
-    const quizzes = module.contentItems
+    const quizzes = moduleRecord.contentItems
       .filter((item) => item.contentType === "QUIZ" && item.quiz && !item.quiz.isMockExam)
       .map((item) => ({
         id: item.id,
@@ -110,10 +110,10 @@ const getCachedModuleContent = unstable_cache(
 
     return {
       module: {
-        id: module.id,
-        title: module.title,
-        description: module.description,
-        order: module.order,
+        id: moduleRecord.id,
+        title: moduleRecord.title,
+        description: moduleRecord.description,
+        order: moduleRecord.order,
       },
       videos,
       notes,
@@ -137,12 +137,12 @@ export async function getModuleContentAction(moduleId: string): Promise<ModuleCo
     if (!cachedData) {
       return {
         success: false,
-        error: "Module introuvable",
+        error: "Module not found",
       };
     }
 
     // Get the module to find the course and check componentVisibility
-    const module = await prisma.module.findUnique({
+    const moduleRecord = await prisma.module.findUnique({
       where: { id: moduleId },
       select: {
         course: {
@@ -155,7 +155,7 @@ export async function getModuleContentAction(moduleId: string): Promise<ModuleCo
     });
 
     // Get component visibility settings (default to enabled if not set)
-    const componentVisibility = (module?.course?.componentVisibility as any) || {};
+    const componentVisibility = (moduleRecord?.course?.componentVisibility as any) || {};
     const videosEnabled = componentVisibility.videos !== false; // Default to true if not set
 
     // Filter videos based on componentVisibility
@@ -276,8 +276,8 @@ export async function getBatchModuleContentAction(
     // Transform data into the expected format
     const result: Record<string, any> = {};
 
-    for (const module of modules) {
-      const videos = module.contentItems
+    for (const moduleRecord of modules) {
+      const videos = moduleRecord.contentItems
         .filter((item) => item.contentType === "VIDEO" && item.video)
         .map((item) => ({
           id: item.id,
@@ -285,7 +285,7 @@ export async function getBatchModuleContentAction(
           ...(includeFullData && item.video ? { video: item.video } : {}),
         }));
 
-      const notes = module.contentItems
+      const notes = moduleRecord.contentItems
         .filter((item) => item.contentType === "NOTE" && item.notes.length > 0)
         .map((item) => ({
           id: item.id,
@@ -293,14 +293,14 @@ export async function getBatchModuleContentAction(
           ...(includeFullData && item.notes[0] ? { note: item.notes[0] } : {}),
         }));
 
-      const quizzes = module.contentItems
+      const quizzes = moduleRecord.contentItems
         .filter((item) => item.contentType === "QUIZ" && item.quiz && !item.quiz.isMockExam)
         .map((item) => ({
           id: item.id,
           order: item.order,
         }));
 
-      result[module.id] = { videos, notes, quizzes };
+      result[moduleRecord.id] = { videos, notes, quizzes };
     }
 
     // Ensure all requested moduleIds are in the result (even if empty)
@@ -324,4 +324,3 @@ export async function getBatchModuleContentAction(
     };
   }
 }
-

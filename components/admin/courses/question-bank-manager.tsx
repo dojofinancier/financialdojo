@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -113,13 +113,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
   });
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    loadQuestionBanks();
-    loadModules();
-    loadPhase1Quizzes();
-  }, [courseId]);
-
-  const loadPhase1Quizzes = async () => {
+  const loadPhase1Quizzes = useCallback(async () => {
     try {
       const result = await getPhase1QuizzesAction(courseId);
       if (result.success && result.data) {
@@ -128,9 +122,9 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
     } catch (error) {
       console.error("Error loading Phase 1 quizzes:", error);
     }
-  };
+  }, [courseId]);
 
-  const loadQuestionBanks = async () => {
+  const loadQuestionBanks = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getQuestionBanksAction(courseId);
@@ -147,16 +141,22 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
 
-  const loadModules = async () => {
+  const loadModules = useCallback(async () => {
     try {
       const modulesData = await getModulesAction(courseId);
       setModules(modulesData);
     } catch (error) {
       console.error("Error loading modules:", error);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadQuestionBanks();
+    loadModules();
+    loadPhase1Quizzes();
+  }, [loadQuestionBanks, loadModules, loadPhase1Quizzes]);
 
   const openCreateDialog = () => {
     setFormState({
@@ -246,7 +246,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       const result = await uploadQuestionsFromCSVAction(selectedBankId, fileContent);
 
       if (result.success) {
-        toast.success(`${result.data?.count || 0} questions importées avec succès`);
+        toast.success(`${result.data?.count || 0} questions imported successfully`);
         setUploadDialogOpen(false);
         loadQuestionBanks();
       } else {
@@ -275,7 +275,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
         const data = result.data as any;
         const phaseText = assignToPhase1 ? "Phase 1" : "Phase 3";
         toast.success(
-          `${data?.totalQuestions || 0} questions importées dans ${data?.chaptersProcessed || 0} chapitre(s) (${phaseText})`
+          `${data?.totalQuestions || 0} questions imported into ${data?.chaptersProcessed || 0} chapter(s) (${phaseText})`
         );
         setUploadQuizDialogOpen(false);
         setAssignToPhase1(false);
@@ -319,12 +319,12 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
     if (!editingQuestion) return;
 
     if (!questionFormState.question.trim()) {
-      toast.error("La question est requise");
+      toast.error("Question is required");
       return;
     }
 
     if (!questionFormState.optionA.trim() || !questionFormState.optionB.trim()) {
-      toast.error("Au moins deux options (A et B) sont requises");
+      toast.error("At least two options (A and B) are required");
       return;
     }
 
@@ -358,7 +358,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       }
     } catch (error) {
       console.error("Error updating question:", error);
-      toast.error(`Erreur lors de la mise à jour: ${error instanceof Error ? error.message : "Unknown error"}`);
+      toast.error(`Error while updating: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
@@ -405,7 +405,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       }
 
       if (result.success) {
-        toast.success(`${result.data?.count || 0} question(s) ajoutée(s) au quiz`);
+        toast.success(`${result.data?.count || 0} question(s) added to the quiz`);
         setAssignToPhase1DialogOpen(false);
         setSelectedQuizId("");
         setSelectedQuestionIds(new Set());
@@ -542,7 +542,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       );
 
       if (result.success) {
-        toast.success(`${result.data?.count || selected.length} question(s) ajoutée(s) au quiz`);
+        toast.success(`${result.data?.count || selected.length} question(s) added to the quiz`);
         setBatchAssignDialogOpen(false);
         setSelectedQuizId("");
         setBatchSelectedQuestionIds(new Map());
@@ -563,7 +563,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
     return (
       <div className="flex items-center justify-center py-12 text-muted-foreground gap-2">
         <Loader2 className="h-5 w-5 animate-spin" />
-        Chargement des banques de questions...
+        Loading question banks...
       </div>
     );
   }
@@ -572,9 +572,9 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold">Banques de questions</h2>
+          <h2 className="text-2xl font-semibold">Question banks</h2>
           <p className="text-sm text-muted-foreground">
-            Gérez les banques de questions MCQ pour la Phase 3 (Pratique). Les questions sont servies aléatoirement.
+            Manage MCQ question banks for Phase 3 (Practice). Questions are served randomly.
           </p>
         </div>
         <div className="flex gap-2">
@@ -587,21 +587,21 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
             <DialogTrigger asChild>
               <Button variant="outline">
                 <Upload className="h-4 w-4 mr-2" />
-                Importer Quiz CSV (par chapitre)
+                Import Quiz CSV (by chapter)
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Importer des questions depuis un fichier CSV de quiz</DialogTitle>
+                <DialogTitle>Import questions from a quiz CSV file</DialogTitle>
                 <DialogDescription>
-                  Format attendu: id,chapter,question,option_a,option_b,option_c,option_d,correct_option,explanation
+                  Expected format: id,chapter,question,option_a,option_b,option_c,option_d,correct_option,explanation
                   <br />
-                  Les questions seront automatiquement assignées aux modules correspondants selon le numéro de chapitre.
+                  Questions will be automatically assigned to the corresponding modules by chapter number.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label>Phase d'assignation</Label>
+                  <Label>Assignment phase</Label>
                   <Select
                     value={assignToPhase1 ? "phase1" : "phase3"}
                     onValueChange={(value) => setAssignToPhase1(value === "phase1")}
@@ -610,8 +610,8 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="phase3">Phase 3 - Pratique (Question Bank)</SelectItem>
-                      <SelectItem value="phase1">Phase 1 - Apprentissage (Quiz)</SelectItem>
+                      <SelectItem value="phase3">Phase 3 - Practice (Question Bank)</SelectItem>
+                      <SelectItem value="phase1">Phase 1 - Learning (Quiz)</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
@@ -621,7 +621,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                   </p>
                 </div>
                 <div>
-                  <Label>Fichier CSV</Label>
+                  <Label>CSV file</Label>
                   <Input
                     type="file"
                     accept=".csv"
@@ -631,21 +631,21 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                   {uploading && (
                     <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Importation en cours...
+                      Importing...
                     </div>
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Le format attendu est: id,chapter,question,option_a,option_b,option_c,option_d,correct_option,explanation
+                  Expected format: id,chapter,question,option_a,option_b,option_c,option_d,correct_option,explanation
                   <br />
-                  Le champ "chapter" doit être au format "Chapitre X" où X est le numéro du module.
+                  The "chapter" field must use the format "Chapter X" where X is the module number.
                 </p>
               </div>
             </DialogContent>
           </Dialog>
           <Button onClick={openCreateDialog}>
             <Plus className="h-4 w-4 mr-2" />
-            Nouvelle banque
+            New bank
           </Button>
         </div>
       </div>
@@ -655,11 +655,11 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
           <CardContent className="py-12 text-center">
             <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-muted-foreground mb-4">
-              Aucune banque de questions pour le moment.
+              No question banks yet.
             </p>
             <Button onClick={openCreateDialog}>
               <Plus className="h-4 w-4 mr-2" />
-              Créer une banque de questions
+              Create a question bank
             </Button>
           </CardContent>
         </Card>
@@ -698,14 +698,14 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
-                          Importer CSV
+                          Import CSV
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Importer des questions depuis un fichier CSV</DialogTitle>
+                          <DialogTitle>Import questions from a CSV file</DialogTitle>
                           <DialogDescription>
-                            Sélectionnez un fichier CSV au format: question,answer,answer,answer,answer
+                            Select a CSV file in the format: question,answer,answer,answer,answer
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 mt-4">
@@ -720,13 +720,13 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                             {uploading && (
                               <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                                 <Loader2 className="h-4 w-4 animate-spin" />
-                                Importation en cours...
+                                Importing...
                               </div>
                             )}
                           </div>
                           <p className="text-xs text-muted-foreground">
-                            Format attendu: première ligne "settings", puis lignes "question" suivies de lignes "answer".
-                            Les réponses correctes sont marquées avec "1" dans la colonne 4.
+                            Expected format: first line "settings", then "question" lines followed by "answer" lines.
+                            Correct answers are marked with "1" in column 4.
                           </p>
                         </div>
                       </DialogContent>
@@ -737,14 +737,14 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                       onClick={() => openAssignToPhase1Dialog(bank.id)}
                       disabled={bank._count.questions === 0}
                     >
-                      Assigner à Phase 1
+                      Assign to Phase 1
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => openEditDialog(bank)}
                     >
-                      Modifier
+                      Edit
                     </Button>
                     <Button
                       variant="destructive"
@@ -764,14 +764,14 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                       return selectedCount > 0 ? (
                         <div className="flex items-center justify-between p-2 bg-muted rounded-md">
                           <span className="text-sm font-medium">
-                            {selectedCount} question{selectedCount !== 1 ? "s" : ""} sélectionnée{selectedCount !== 1 ? "s" : ""}
+                            {selectedCount} question{selectedCount !== 1 ? "s" : ""} selected
                           </span>
                           <Button
                             size="sm"
                             onClick={openBatchAssignDialog}
                           >
                             <Upload className="h-4 w-4 mr-2" />
-                            Assigner à Phase 1 ({selectedCount})
+                            Assign to Phase 1 ({selectedCount})
                           </Button>
                         </div>
                       ) : null;
@@ -800,7 +800,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                             </TableHead>
                             <TableHead>Question</TableHead>
                             <TableHead>Options</TableHead>
-                            <TableHead>Réponse correcte</TableHead>
+                            <TableHead>Correct answer</TableHead>
                             <TableHead className="w-[100px]">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -879,7 +879,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
               {selectedBankId ? "Edit question bank" : "Create question bank"}
             </DialogTitle>
             <DialogDescription>
-              Créez une banque de questions pour la Phase 3 (Pratique). Les questions seront servies aléatoirement.
+              Create a question bank for Phase 3 (Practice). Questions are served randomly.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
@@ -900,12 +900,12 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 onChange={(e) =>
                   setFormState({ ...formState, description: e.target.value })
                 }
-                placeholder="Description de la banque de questions..."
+                placeholder="Question bank description..."
                 rows={3}
               />
             </div>
             <div className="space-y-2">
-              <Label>Module (optionnel)</Label>
+              <Label>Module (optional)</Label>
               <Select
                 value={formState.moduleId || "none"}
                 onValueChange={(value) =>
@@ -916,7 +916,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                   <SelectValue placeholder="Select a module" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">Aucun module</SelectItem>
+                <SelectItem value="none">No module</SelectItem>
                   {modules.map((module) => (
                     <SelectItem key={module.id} value={module.id}>
                       {module.title}
@@ -927,7 +927,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                Annuler
+                Cancel
               </Button>
               <Button onClick={handleSubmit}>
                 {selectedBankId ? "Update" : "Create"}
@@ -941,9 +941,9 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       <Dialog open={questionEditDialogOpen} onOpenChange={setQuestionEditDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Modifier la question</DialogTitle>
+            <DialogTitle>Edit question</DialogTitle>
             <DialogDescription>
-              Modifiez la question, les options et la réponse correcte.
+              Edit the question, options, and correct answer.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
@@ -954,7 +954,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 onChange={(e) =>
                   setQuestionFormState({ ...questionFormState, question: e.target.value })
                 }
-                placeholder="Entrez la question..."
+                placeholder="Enter the question..."
                 rows={3}
               />
             </div>
@@ -980,7 +980,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Option C (optionnel)</Label>
+                <Label>Option C (optional)</Label>
                 <Input
                   value={questionFormState.optionC}
                   onChange={(e) =>
@@ -990,7 +990,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Option D (optionnel)</Label>
+                <Label>Option D (optional)</Label>
                 <Input
                   value={questionFormState.optionD}
                   onChange={(e) =>
@@ -1001,7 +1001,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Réponse correcte *</Label>
+              <Label>Correct answer *</Label>
               <Select
                 value={
                   questionFormState.correctAnswer &&
@@ -1030,7 +1030,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Explication (optionnel)</Label>
+              <Label>Explanation (optional)</Label>
               <Textarea
                 value={questionFormState.explanation}
                 onChange={(e) =>
@@ -1045,10 +1045,10 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 setQuestionEditDialogOpen(false);
                 setEditingQuestion(null);
               }}>
-                Annuler
+                Cancel
               </Button>
               <Button onClick={handleUpdateQuestion}>
-                Mettre à jour
+                Update
               </Button>
             </div>
           </div>
@@ -1066,9 +1066,9 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       }}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Assigner des questions à un quiz Phase 1</DialogTitle>
+            <DialogTitle>Assign questions to a Phase 1 quiz</DialogTitle>
             <DialogDescription>
-              Sélectionnez un quiz Phase 1 et les questions à assigner.
+              Select a Phase 1 quiz and the questions to assign.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
@@ -1088,7 +1088,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
               </Select>
               {phase1Quizzes.length === 0 && (
                 <p className="text-xs text-muted-foreground">
-                  Aucun quiz Phase 1 trouvé. Créez d'abord un quiz dans un module.
+                  No Phase 1 quiz found. Create a quiz in a module first.
                 </p>
               )}
             </div>
@@ -1096,7 +1096,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
             {selectedBankId && (
               <>
                 <div className="space-y-2">
-                  <Label>Questions à assigner</Label>
+                  <Label>Questions to assign</Label>
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
@@ -1109,14 +1109,14 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                         }
                       }}
                     >
-                      Sélectionner tout
+                      Select all
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setSelectedQuestionIds(new Set())}
                     >
-                      Désélectionner tout
+                      Deselect all
                     </Button>
                   </div>
                 </div>
@@ -1144,7 +1144,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                               />
                             </TableHead>
                             <TableHead>Question</TableHead>
-                            <TableHead>Réponse</TableHead>
+                            <TableHead>Answer</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1198,10 +1198,10 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                     {uploading ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Ajout en cours...
+                        Adding...
                       </>
                     ) : (
-                      `Assigner ${selectedQuestionIds.size} question(s)`
+                      `Assign ${selectedQuestionIds.size} question(s)`
                     )}
                   </Button>
                   <Button
@@ -1212,10 +1212,10 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                     {uploading ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Ajout en cours...
+                        Adding...
                       </>
                     ) : (
-                      "Assigner toutes les questions"
+                      "Assign all questions"
                     )}
                   </Button>
                 </div>
@@ -1234,9 +1234,9 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Assigner les questions sélectionnées à un quiz Phase 1</DialogTitle>
+            <DialogTitle>Assign selected questions to a Phase 1 quiz</DialogTitle>
             <DialogDescription>
-              {getAllSelectedQuestions().length} question{getAllSelectedQuestions().length !== 1 ? "s" : ""} sélectionnée{getAllSelectedQuestions().length !== 1 ? "s" : ""}. Sélectionnez un quiz Phase 1 pour les assigner.
+              {getAllSelectedQuestions().length} question{getAllSelectedQuestions().length !== 1 ? "s" : ""} selected. Select a Phase 1 quiz to assign them.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
@@ -1256,7 +1256,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
               </Select>
               {phase1Quizzes.length === 0 && (
                 <p className="text-xs text-muted-foreground">
-                  Aucun quiz Phase 1 trouvé. Créez d'abord un quiz dans un module.
+                  No Phase 1 quiz found. Create a quiz in a module first.
                 </p>
               )}
             </div>
@@ -1269,7 +1269,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                   setSelectedQuizId("");
                 }}
               >
-                Annuler
+                Cancel
               </Button>
               <Button
                 onClick={handleBatchAssign}
@@ -1278,10 +1278,10 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 {uploading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Ajout en cours...
+                    Adding...
                   </>
                 ) : (
-                  `Assigner ${getAllSelectedQuestions().length} question(s)`
+                  `Assign ${getAllSelectedQuestions().length} question(s)`
                 )}
               </Button>
             </div>
@@ -1299,9 +1299,9 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Assigner la question à un quiz Phase 1</DialogTitle>
+            <DialogTitle>Assign question to a Phase 1 quiz</DialogTitle>
             <DialogDescription>
-              Sélectionnez un quiz Phase 1 pour assigner cette question.
+              Select a Phase 1 quiz to assign this question.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
@@ -1321,7 +1321,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
               </Select>
               {phase1Quizzes.length === 0 && (
                 <p className="text-xs text-muted-foreground">
-                  Aucun quiz Phase 1 trouvé. Créez d'abord un quiz dans un module.
+                  No Phase 1 quiz found. Create a quiz in a module first.
                 </p>
               )}
             </div>
@@ -1364,7 +1364,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                   setSelectedQuizId("");
                 }}
               >
-                Annuler
+                Cancel
               </Button>
               <Button
                 onClick={handleAssignSingleQuestion}
@@ -1373,10 +1373,10 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                 {uploading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Ajout en cours...
+                    Adding...
                   </>
                 ) : (
-                  "Assigner la question"
+                  "Assign question"
                 )}
               </Button>
             </div>
@@ -1386,4 +1386,3 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
     </div>
   );
 }
-

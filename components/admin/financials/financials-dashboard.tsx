@@ -168,7 +168,7 @@ export function FinancialsDashboard() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Abonnements actifs</CardDescription>
+            <CardDescription>Active subscriptions</CardDescription>
             <CardTitle className="text-2xl">
               {subscriptionStats?.activeSubscriptions || 0}
             </CardTitle>
@@ -178,21 +178,21 @@ export function FinancialsDashboard() {
               Total: {subscriptionStats?.totalSubscriptions || 0}
             </div>
             <div className="text-xs text-muted-foreground">
-              Taux de désabonnement: {subscriptionStats?.churnRate?.toFixed(1) || "0.0"}%
+              Churn rate: {subscriptionStats?.churnRate?.toFixed(1) || "0.0"}%
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Revenu mensuel estimé</CardDescription>
+            <CardDescription>Estimated monthly revenue</CardDescription>
             <CardTitle className="text-2xl">
               ${subscriptionStats?.estimatedMonthlyRevenue?.toFixed(2) || "0.00"}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              Abonnements récurrents
+              Recurring subscriptions
             </div>
           </CardContent>
         </Card>
@@ -202,8 +202,8 @@ export function FinancialsDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Tendances de revenus (12 derniers mois)</CardTitle>
-            <CardDescription>Revenu net par mois</CardDescription>
+            <CardTitle>Revenue trends (last 12 months)</CardTitle>
+            <CardDescription>Net revenue per month</CardDescription>
           </CardHeader>
           <CardContent>
             {revenueTrends?.months ? (
@@ -218,8 +218,8 @@ export function FinancialsDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Revenu par cours</CardTitle>
-            <CardDescription>Revenu total par cours</CardDescription>
+            <CardTitle>Revenue by course</CardTitle>
+            <CardDescription>Total revenue by course</CardDescription>
           </CardHeader>
           <CardContent>
             {totalRevenue?.revenueByCourse ? (

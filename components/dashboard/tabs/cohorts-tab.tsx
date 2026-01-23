@@ -17,7 +17,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { format, formatDistanceToNow, isPast, isToday, isTomorrow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import Link from "next/link";
 import { getCohortsSummaryAction } from "@/app/actions/cohort-summary";
 import { toast } from "sonner";
@@ -86,16 +86,16 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
     }
 
     loadSummaries();
-  }, [activeEnrollments.length]);
+  }, [activeEnrollments]);
 
   const getSessionTimeDisplay = (scheduledAt: Date) => {
     if (isToday(scheduledAt)) {
-      return `Aujourd'hui à ${format(scheduledAt, "HH:mm", { locale: fr })}`;
+      return `Today at ${format(scheduledAt, "HH:mm", { locale: enCA })}`;
     }
     if (isTomorrow(scheduledAt)) {
-      return `Demain à ${format(scheduledAt, "HH:mm", { locale: fr })}`;
+      return `Tomorrow at ${format(scheduledAt, "HH:mm", { locale: enCA })}`;
     }
-    return format(scheduledAt, "d MMMM yyyy at HH:mm", { locale: fr });
+    return format(scheduledAt, "d MMMM yyyy 'at' HH:mm", { locale: enCA });
   };
 
   const getSessionUrgency = (scheduledAt: Date) => {
@@ -112,7 +112,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
     if (link) {
       window.open(link, "_blank");
     } else {
-      toast.error("Aucun lien de session disponible");
+      toast.error("No session link available");
     }
   };
 
@@ -121,12 +121,12 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
       <Card>
         <CardContent className="py-12 text-center">
           <GraduationCap className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-          <h3 className="text-lg font-semibold mb-2">Aucune cohorte inscrite</h3>
+          <h3 className="text-lg font-semibold mb-2">No cohorts enrolled</h3>
           <p className="text-muted-foreground mb-4">
-            Découvrez nos cohortes pour un apprentissage en groupe
+            Discover our cohorts for group learning
           </p>
           <Link href="/cohorts">
-            <Button>Voir les cohortes</Button>
+            <Button>View cohorts</Button>
           </Link>
         </CardContent>
       </Card>
@@ -137,7 +137,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
     <div className="space-y-6">
       {activeEnrollments.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold mb-4">Mes cohortes actives</h2>
+          <h2 className="text-xl font-semibold mb-4">My active cohorts</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {activeEnrollments.map((enrollment) => {
               const summary = summaries[enrollment.cohortId];
@@ -155,19 +155,19 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                     {nextSession && sessionUrgency === "now" && (
                       <Badge className="bg-red-500 hover:bg-red-600 animate-pulse">
                         <Video className="h-3 w-3 mr-1" />
-                        En cours
+                        Live
                       </Badge>
                     )}
                     {nextSession && sessionUrgency === "soon" && (
                       <Badge className="bg-orange-500 hover:bg-orange-600">
                         <Video className="h-3 w-3 mr-1" />
-                        Bientôt
+                        Soon
                       </Badge>
                     )}
                     {unreadCount > 0 && (
                       <Badge className="bg-blue-500 hover:bg-blue-600">
                         <MessageSquare className="h-3 w-3 mr-1" />
-                        {unreadCount} nouveau{unreadCount > 1 ? "x" : ""}
+                        {unreadCount} new
                       </Badge>
                     )}
                   </div>
@@ -176,12 +176,12 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                     <div className="flex items-start justify-between mb-2">
                       <Badge variant="outline" className="flex items-center gap-1">
                         <GraduationCap className="h-3 w-3" />
-                        Cohorte
+                        Cohort
                       </Badge>
                     </div>
                     <CardTitle className="text-lg pr-20">{enrollment.cohort.title}</CardTitle>
                     <CardDescription>
-                      Inscrit le {format(new Date(enrollment.purchaseDate), "d MMMM yyyy", { locale: fr })}
+                      Enrolled on {format(new Date(enrollment.purchaseDate), "d MMMM yyyy", { locale: enCA })}
                     </CardDescription>
                   </CardHeader>
 
@@ -203,7 +203,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                       <div className="p-3 bg-muted rounded-lg space-y-2">
                         <div className="flex items-center gap-2 text-sm font-medium">
                           <Video className="h-4 w-4 text-primary" />
-                          <span>Prochaine session</span>
+                          <span>Next session</span>
                         </div>
                         <p className="text-sm font-semibold">{nextSession.title}</p>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -217,7 +217,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                             onClick={() => handleJoinSession(nextSession)}
                           >
                             <ExternalLink className="h-3 w-3 mr-2" />
-                            Rejoindre la session
+                            Join session
                           </Button>
                         )}
                       </div>
@@ -230,7 +230,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                           <div className="flex items-center gap-2 text-sm">
                             <MessageSquare className="h-4 w-4 text-blue-600" />
                             <span className="font-medium">
-                              {unreadCount} message{unreadCount > 1 ? "s" : ""} non lu{unreadCount > 1 ? "s" : ""}
+                                {unreadCount} unread message{unreadCount > 1 ? "s" : ""}
                             </span>
                           </div>
                         </div>
@@ -255,9 +255,9 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
 
                     {/* Expiration Info */}
                     <div className="flex items-center justify-between text-sm pt-2 border-t">
-                      <span className="text-muted-foreground">Expire le</span>
+                      <span className="text-muted-foreground">Expires on</span>
                       <span className="font-medium">
-                        {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: fr })}
+                        {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: enCA })}
                       </span>
                     </div>
 
@@ -270,7 +270,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                           onClick={() => handleJoinSession(nextSession)}
                         >
                           <Video className="h-4 w-4 mr-2" />
-                          Rejoindre la session
+                            Join session
                         </Button>
                       )}
                       {unreadCount > 0 && (
@@ -281,7 +281,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                         >
                           <Button variant="outline" className="w-full">
                             <MessageSquare className="h-4 w-4 mr-2" />
-                            Voir les messages ({unreadCount})
+                            View messages ({unreadCount})
                           </Button>
                         </Link>
                       )}
@@ -294,7 +294,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                           variant={unreadCount > 0 || (nextSession && sessionUrgency === "now") ? "outline" : "default"} 
                           className="w-full"
                         >
-                          Accéder à la cohorte
+                          Go to cohort
                           <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                       </Link>
@@ -309,7 +309,7 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
 
       {expiredEnrollments.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold mb-4">Cohortes expirées</h2>
+          <h2 className="text-xl font-semibold mb-4">Expired cohorts</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {expiredEnrollments.map((enrollment) => (
               <Card key={enrollment.id} className="opacity-60 border-l-4 border-l-blue-500">
@@ -317,18 +317,18 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
                   <div className="flex items-start justify-between mb-2">
                     <Badge variant="outline" className="flex items-center gap-1">
                       <GraduationCap className="h-3 w-3" />
-                      Cohorte
+                      Cohort
                     </Badge>
                   </div>
                   <CardTitle className="text-lg">{enrollment.cohort.title}</CardTitle>
                   <CardDescription>
-                    Expiré le {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: fr })}
+                    Expired on {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: enCA })}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Link href={`/cohorts/${enrollment.cohort.slug || enrollment.cohort.id}`}>
                     <Button variant="outline" className="w-full">
-                      Voir les détails
+                      View details
                     </Button>
                   </Link>
                 </CardContent>
@@ -340,4 +340,3 @@ export function CohortsTab({ cohortEnrollments }: CohortsTabProps) {
     </div>
   );
 }
-

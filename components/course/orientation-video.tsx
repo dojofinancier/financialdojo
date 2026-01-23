@@ -152,47 +152,47 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
         <CardHeader>
           <CardTitle>Phase 0 - Orientation</CardTitle>
           <CardDescription>
-            Regardez cette vidéo pour comprendre le format de l'examen et comment utiliser cette plateforme
+            Watch this video to understand the exam format and how to use this platform
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Orientation Content */}
           <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold mb-2">À propos de cet examen</h3>
+              <h3 className="text-lg font-semibold mb-2">About this exam</h3>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>
-                  Cette formation vous prépare à l'examen. Le format, la difficulté et les critères de réussite
-                  seront expliqués dans la vidéo ci-dessous.
+                  This course prepares you for the exam. The format, difficulty, and passing criteria
+                  will be explained in the video below.
                 </p>
               </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-2">Les trois phases d'apprentissage</h3>
+              <h3 className="text-lg font-semibold mb-2">The three learning phases</h3>
               <div className="grid gap-4 md:grid-cols-3">
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Phase 1 - Apprendre</CardTitle>
+                    <CardTitle className="text-base">Phase 1 - Learn</CardTitle>
                   </CardHeader>
                   <CardContent className="text-sm text-muted-foreground">
-                    Première passe complète du syllabus avec vidéos, notes et mini-tests
+                    First complete pass through the syllabus with videos, notes, and mini-tests
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Phase 2 - Réviser</CardTitle>
+                    <CardTitle className="text-base">Phase 2 - Review</CardTitle>
                   </CardHeader>
                   <CardContent className="text-sm text-muted-foreground">
-                    Consolidation via rappel actif et répétition espacée avec flashcards et quiz
+                    Consolidation through active recall and spaced repetition with flashcards and quizzes
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Phase 3 - Pratiquer</CardTitle>
+                    <CardTitle className="text-base">Phase 3 - Practice</CardTitle>
                   </CardHeader>
                   <CardContent className="text-sm text-muted-foreground">
-                    Tests de préparation avec exercices et examens simulés
+                    Practice tests with exercises and mock exams
                   </CardContent>
                 </Card>
               </div>
@@ -223,12 +223,12 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
                     {videoWatched ? (
                       <>
                         <CheckCircle2 className="h-4 w-4 mr-2" />
-                        Vidéo regardée
+                        Video watched
                       </>
                     ) : (
                       <>
                         <Play className="h-4 w-4 mr-2" />
-                        Marquer comme regardée
+                        Mark as watched
                       </>
                     )}
                   </Button>
@@ -252,12 +252,12 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
                     {videoWatched ? (
                       <>
                         <CheckCircle2 className="h-4 w-4 mr-2" />
-                        Lu et compris
+                        Read and understood
                       </>
                     ) : (
                       <>
                         <CheckCircle2 className="h-4 w-4 mr-2" />
-                        Marquer comme lu
+                        Mark as read
                       </>
                     )}
                   </Button>
@@ -266,11 +266,11 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
             ) : (
               <div className="border rounded-lg p-8 bg-muted/50 text-center">
                 <p className="text-muted-foreground mb-4">
-                  Vidéo d'orientation (5-10 minutes)
+                  Orientation video (5-10 minutes)
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  La vidéo d'orientation sera ajoutée par l'administrateur. Elle expliquera le format de l'examen,
-                  la note de passage, et comment utiliser cette plateforme pour maximiser vos chances de réussite.
+                  The orientation video will be added by the administrator. It will explain the exam format,
+                  passing score, and how to use this platform to maximize your chances of success.
                 </p>
                 {/* Allow marking as watched even without video */}
                 <div className="mt-4 flex justify-center">
@@ -283,12 +283,12 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
                     {videoWatched ? (
                       <>
                         <CheckCircle2 className="h-4 w-4 mr-2" />
-                        Vidéo regardée
+                        Video watched
                       </>
                     ) : (
                       <>
                         <Play className="h-4 w-4 mr-2" />
-                        Marquer comme regardée
+                        Mark as watched
                       </>
                     )}
                   </Button>
@@ -308,7 +308,7 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
                 size="lg"
               >
                 <Calendar className="h-5 w-5 mr-2" />
-                {loading ? "Chargement..." : "View my study plan"}
+                {loading ? "Loading..." : "View my study plan"}
               </Button>
               <Button
                 onClick={handleStartPhase1}
@@ -317,12 +317,12 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
                 size="lg"
               >
                 <BookOpen className="h-5 w-5 mr-2" />
-                {loading ? "Chargement..." : "Commencer la phase 1"}
+                {loading ? "Loading..." : "Start Phase 1"}
               </Button>
             </div>
             {!videoWatched && (
               <p className="text-sm text-muted-foreground text-center">
-                Veuillez marquer la vidéo comme regardée avant de commencer la phase 1
+                Please mark the video as watched before starting Phase 1
               </p>
             )}
           </div>
@@ -331,5 +331,4 @@ export function OrientationVideo({ courseId, courseTitle, orientationVideoUrl, o
     </div>
   );
 }
-
 

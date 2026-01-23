@@ -35,21 +35,21 @@ export default function CohortError({
         <CardHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="h-6 w-6 text-destructive" />
-            <CardTitle>Erreur lors du chargement de la cohorte</CardTitle>
+            <CardTitle>Error loading cohort</CardTitle>
           </div>
           <CardDescription>
-            Une erreur s'est produite lors du chargement de la cohorte.
+            An error occurred while loading the cohort.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-sm text-muted-foreground">
             {error.digest && (
               <p className="mb-2 font-mono text-xs">
-                <strong>ID d'erreur:</strong> {error.digest}
+                <strong>Error ID:</strong> {error.digest}
               </p>
             )}
             <p>
-              Veuillez réessayer ou retourner au tableau de bord pour accéder à vos cohortes.
+              Please try again or return to the dashboard to access your cohorts.
             </p>
           </div>
 
@@ -66,7 +66,7 @@ export default function CohortError({
           <div className="flex gap-2">
             <Button onClick={reset} className="flex-1" variant="default">
               <RefreshCw className="h-4 w-4 mr-2" />
-              Réessayer
+              Try again
             </Button>
             <Button
               onClick={() => router.push("/dashboard/student?tab=cohorts")}
@@ -74,7 +74,7 @@ export default function CohortError({
               variant="outline"
             >
               <GraduationCap className="h-4 w-4 mr-2" />
-              Mes cohortes
+              My cohorts
             </Button>
           </div>
         </CardContent>

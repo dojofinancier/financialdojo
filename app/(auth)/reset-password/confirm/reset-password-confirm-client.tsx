@@ -79,7 +79,7 @@ export function ConfirmResetPasswordClient() {
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
             <div className="text-center text-muted-foreground">
-              Vérification de la session...
+              Verifying session...
             </div>
           </CardContent>
         </Card>
@@ -92,14 +92,14 @@ export function ConfirmResetPasswordClient() {
       <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Lien invalide</CardTitle>
+            <CardTitle className="text-2xl font-bold">Invalid link</CardTitle>
             <CardDescription>
-              La session de réinitialisation est manquante ou expirée. Veuillez demander un nouveau lien.
+              The reset session is missing or expired. Please request a new link.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button className="w-full" onClick={() => router.push("/reset-password")}>
-              Demander un nouveau lien
+              Request a new link
             </Button>
           </CardContent>
         </Card>
@@ -111,13 +111,13 @@ export function ConfirmResetPasswordClient() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Nouveau mot de passe</CardTitle>
-          <CardDescription>Entrez votre nouveau mot de passe</CardDescription>
+          <CardTitle className="text-2xl font-bold">New password</CardTitle>
+          <CardDescription>Enter your new password</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">Nouveau mot de passe</Label>
+              <Label htmlFor="password">New password</Label>
               <Input
                 id="password"
                 type="password"
@@ -130,7 +130,7 @@ export function ConfirmResetPasswordClient() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+              <Label htmlFor="confirmPassword">Confirm password</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -151,4 +151,3 @@ export function ConfirmResetPasswordClient() {
     </div>
   );
 }
-

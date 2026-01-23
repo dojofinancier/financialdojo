@@ -81,13 +81,13 @@ export function CSVUploadDialog({ courseId, type, onSuccess }: CSVUploadDialogPr
       if (result.success) {
         const data = result.data;
         if (type === "flashcard" && data?.flashcardsCreated) {
-          toast.success(`${data.flashcardsCreated} flashcard${data.flashcardsCreated > 1 ? "s" : ""} créée${data.flashcardsCreated > 1 ? "s" : ""}`);
+          toast.success(`${data.flashcardsCreated} flashcard${data.flashcardsCreated > 1 ? "s" : ""} created`);
         } else if (data?.quizzesCreated) {
-          toast.success(`${data.quizzesCreated} ${type === "exam" ? "examen" : "quiz"} créé`);
+          toast.success(`${data.quizzesCreated} ${type === "exam" ? "exam" : "quiz"} created`);
         }
 
         if (data?.errors && data.errors.length > 0) {
-          toast.warning(`${data.errors.length} erreur${data.errors.length > 1 ? "s" : ""} lors de l'import`, {
+          toast.warning(`${data.errors.length} error${data.errors.length > 1 ? "s" : ""} during import`, {
             description: data.errors.slice(0, 3).join(", "),
           });
         }
@@ -118,19 +118,19 @@ export function CSVUploadDialog({ courseId, type, onSuccess }: CSVUploadDialogPr
       <DialogTrigger asChild>
         <Button variant="outline">
           <Upload className="h-4 w-4 mr-2" />
-          Importer CSV
+          Import CSV
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Importer {type === "flashcard" ? "des flashcards" : type === "exam" ? "un examen" : "un quiz"} depuis CSV
+            Import {type === "flashcard" ? "flashcards" : type === "exam" ? "an exam" : "a quiz"} from CSV
           </DialogTitle>
           <DialogDescription>
             {type === "flashcard" ? (
-              "Format attendu: ID,Title,Question,Answer,Chapter"
+              "Expected format: ID, Title, Question, Answer, Chapter"
             ) : (
-              "Format attendu: settings, question, answer (format Tutor)"
+              "Expected format: settings, question, answer (Tutor format)"
             )}
           </DialogDescription>
         </DialogHeader>
@@ -154,7 +154,7 @@ export function CSVUploadDialog({ courseId, type, onSuccess }: CSVUploadDialogPr
           )}
 
           <div className="space-y-2">
-            <Label>Fichier CSV *</Label>
+            <Label>CSV file *</Label>
             <div className="flex items-center gap-2">
               <Input
                 type="file"
@@ -175,13 +175,13 @@ export function CSVUploadDialog({ courseId, type, onSuccess }: CSVUploadDialogPr
             <AlertDescription className="text-xs">
               {type === "flashcard" ? (
                 <>
-                  Format CSV attendu: colonnes ID, Title, Question, Answer, Chapter.
-                  Les flashcards seront créées avec les questions et réponses du fichier.
+                  Expected CSV format: columns ID, Title, Question, Answer, Chapter.
+                  Flashcards will be created from the file's questions and answers.
                 </>
               ) : (
                 <>
-                  Format CSV attendu: première ligne avec settings (titre, durée, note de passage),
-                  puis lignes question/answer. Le format doit correspondre au format Tutor.
+                  Expected CSV format: first line with settings (title, duration, passing score),
+                  then question/answer lines. The format must match the Tutor format.
                 </>
               )}
             </AlertDescription>
@@ -189,18 +189,18 @@ export function CSVUploadDialog({ courseId, type, onSuccess }: CSVUploadDialogPr
 
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setOpen(false)} disabled={uploading}>
-              Annuler
+              Cancel
             </Button>
             <Button onClick={handleUpload} disabled={!file || uploading || (type !== "flashcard" && !moduleId)}>
               {uploading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Import en cours...
+                  Importing...
                 </>
               ) : (
                 <>
                   <Upload className="h-4 w-4 mr-2" />
-                  Importer
+                  Import
                 </>
               )}
             </Button>

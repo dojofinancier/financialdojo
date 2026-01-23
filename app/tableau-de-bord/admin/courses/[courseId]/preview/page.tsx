@@ -33,17 +33,17 @@ export default async function CoursePreviewPage({
             <Link href="/dashboard/admin?tab=courses">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Retour à la liste
+                Back to list
               </Button>
             </Link>
             <div>
-              <h1 className="text-lg font-semibold">Aperçu étudiant</h1>
+              <h1 className="text-lg font-semibold">Student preview</h1>
               <p className="text-sm text-muted-foreground">{result.data.title}</p>
             </div>
           </div>
           <Link href={`/dashboard/admin/courses/${courseId}`}>
             <Button variant="outline" size="sm">
-              Mode édition
+              Edit mode
             </Button>
           </Link>
         </div>
@@ -56,4 +56,3 @@ export default async function CoursePreviewPage({
     </div>
   );
 }
-

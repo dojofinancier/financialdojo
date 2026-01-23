@@ -307,7 +307,7 @@ export async function confirmAppointmentPaymentAction(
     if (appointments.length === 0) {
       return {
         success: false,
-        error: "Rendez-vous introuvable",
+        error: "Appointment not found",
       };
     }
 
@@ -399,4 +399,3 @@ export async function confirmAppointmentPaymentAction(
     };
   }
 }
-

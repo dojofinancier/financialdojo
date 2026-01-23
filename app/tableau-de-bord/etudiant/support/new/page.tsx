@@ -13,12 +13,12 @@ export default async function CreateTicketPage() {
         <Link href="/dashboard/student">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour au tableau de bord
+            Back to dashboard
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Créer un ticket de support</h1>
+        <h1 className="text-3xl font-bold">Create a support ticket</h1>
         <p className="text-muted-foreground mt-2">
-          Décrivez votre problème et nous vous aiderons rapidement
+          Describe your issue and we will help you quickly
         </p>
       </div>
       <CreateTicketForm />

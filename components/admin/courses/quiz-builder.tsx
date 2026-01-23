@@ -259,10 +259,10 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
           </ul>
         )}
         {question.type === "TRUE_FALSE" && (
-          <p className="text-sm text-muted-foreground">Réponse: {question.correctAnswer === "true" ? "Vrai" : "Faux"}</p>
+          <p className="text-sm text-muted-foreground">Answer: {question.correctAnswer === "true" ? "True" : "False"}</p>
         )}
         {question.type === "SHORT_ANSWER" && (
-          <p className="text-sm text-muted-foreground">Réponse attendue: {question.correctAnswer}</p>
+          <p className="text-sm text-muted-foreground">Expected answer: {question.correctAnswer}</p>
         )}
       </div>
     );
@@ -274,15 +274,15 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
         <div>
           <h3 className="text-lg font-semibold">Questions</h3>
           <p className="text-sm text-muted-foreground">
-            Glissez-déposez pour réordonner les questions.
+            Drag and drop to reorder questions.
           </p>
         </div>
-        <Button onClick={openCreateDialog}>Ajouter une question</Button>
+        <Button onClick={openCreateDialog}>Add a question</Button>
       </div>
 
       {questions.length === 0 ? (
         <div className="rounded-lg border border-dashed p-6 text-center text-muted-foreground">
-          Aucune question pour l'instant.
+          No questions yet.
         </div>
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -306,16 +306,16 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
       <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editingQuestion?.id ? "Edit the question" : "Nouvelle question"}</DialogTitle>
+            <DialogTitle>{editingQuestion?.id ? "Edit the question" : "New question"}</DialogTitle>
             <DialogDescription>
-              Configurez l'énoncé, le type de question et la réponse attendue.
+              Configure the prompt, question type, and expected answer.
             </DialogDescription>
           </DialogHeader>
 
           {editingQuestion && (
             <div className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label>Type de question</Label>
+                <Label>Question type</Label>
                 <Select
                   value={editingQuestion.type}
                   onValueChange={(value: QuizQuestionType) =>
@@ -327,30 +327,30 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Choisir un type" />
+                    <SelectValue placeholder="Choose a type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="MULTIPLE_CHOICE">Choix multiples</SelectItem>
-                    <SelectItem value="TRUE_FALSE">Vrai / Faux</SelectItem>
-                    <SelectItem value="SHORT_ANSWER">Réponse courte</SelectItem>
+                    <SelectItem value="MULTIPLE_CHOICE">Multiple choice</SelectItem>
+                    <SelectItem value="TRUE_FALSE">True / False</SelectItem>
+                    <SelectItem value="SHORT_ANSWER">Short answer</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label>Énoncé</Label>
+                <Label>Prompt</Label>
                 <Textarea
                   value={editingQuestion.question}
                   onChange={(event) =>
                     setEditingQuestion({ ...editingQuestion, question: event.target.value })
                   }
-                  placeholder="Saisissez la question ici..."
+                  placeholder="Enter the question here..."
                 />
               </div>
 
               {editingQuestion.type === "MULTIPLE_CHOICE" && (
                 <div className="space-y-3">
-                  <Label>Options de réponse</Label>
+                  <Label>Answer options</Label>
                   <div className="space-y-2">
                     {editingQuestion.options.map((option) => (
                       <div key={option.id} className="flex items-center gap-2">
@@ -358,13 +358,13 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
                         <Input
                           value={option.value}
                           onChange={(event) => updateOptionValue(option.id, event.target.value)}
-                          placeholder={`Réponse ${option.label}`}
+                          placeholder={`Answer ${option.label}`}
                         />
                       </div>
                     ))}
                   </div>
                   <div className="space-y-2">
-                    <Label>Réponse correcte</Label>
+                    <Label>Correct answer</Label>
                     <Select
                       value={editingQuestion.correctAnswer}
                       onValueChange={(value) =>
@@ -390,7 +390,7 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
 
               {editingQuestion.type === "TRUE_FALSE" && (
                 <div className="space-y-2">
-                  <Label>Réponse attendue</Label>
+                  <Label>Expected answer</Label>
                   <Select
                     value={editingQuestion.correctAnswer}
                     onValueChange={(value) =>
@@ -398,11 +398,11 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Choisissez" />
+                      <SelectValue placeholder="Choose" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="true">Vrai</SelectItem>
-                      <SelectItem value="false">Faux</SelectItem>
+                      <SelectItem value="true">True</SelectItem>
+                      <SelectItem value="false">False</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -410,7 +410,7 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
 
               {editingQuestion.type === "SHORT_ANSWER" && (
                 <div className="space-y-2">
-                  <Label>Réponse correcte</Label>
+                  <Label>Correct answer</Label>
                   <Input
                     value={editingQuestion.correctAnswer}
                     onChange={(event) =>
@@ -423,10 +423,10 @@ export function QuizBuilder({ quizId, questions: initialQuestions, onChanged }: 
 
               <div className="flex justify-end gap-2 pt-4">
                 <Button variant="outline" onClick={() => handleDialogClose(false)}>
-                  Annuler
+                  Cancel
                 </Button>
                 <Button onClick={handleSave} disabled={saving || !editingQuestion.question.trim()}>
-                  {editingQuestion.id ? "Enregistrer" : "Create"}
+                  {editingQuestion.id ? "Save" : "Create"}
                 </Button>
               </div>
             </div>

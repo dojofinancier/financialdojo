@@ -17,7 +17,7 @@ import {
 } from "@/app/actions/appointments";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import { Calendar, User, BookOpen, Settings } from "lucide-react";
 import Link from "next/link";
 
@@ -52,20 +52,20 @@ export function AppointmentDetails({ appointment: initialAppointment }: Appointm
       toast.success("Status updated");
       setAppointment({ ...appointment, status });
     } else {
-      toast.error(result.error || "Erreur");
+      toast.error(result.error || "Error");
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "PENDING":
-        return <Badge variant="secondary">En attente</Badge>;
+        return <Badge variant="secondary">Pending</Badge>;
       case "CONFIRMED":
-        return <Badge className="bg-blue-500">Confirmé</Badge>;
+        return <Badge className="bg-blue-500">Confirmed</Badge>;
       case "COMPLETED":
-        return <Badge className="bg-green-500">Terminé</Badge>;
+        return <Badge className="bg-green-500">Completed</Badge>;
       case "CANCELLED":
-        return <Badge variant="destructive">Annulé</Badge>;
+        return <Badge variant="destructive">Cancelled</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -78,16 +78,16 @@ export function AppointmentDetails({ appointment: initialAppointment }: Appointm
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              Informations étudiant
+              Student information
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-muted-foreground">Nom</Label>
+              <Label className="text-muted-foreground">Name</Label>
               <p className="font-medium">
                 {appointment.user.firstName || appointment.user.lastName
                   ? `${appointment.user.firstName || ""} ${appointment.user.lastName || ""}`.trim()
-                  : "Sans nom"}
+                  : "No name"}
               </p>
             </div>
             <div>
@@ -96,14 +96,14 @@ export function AppointmentDetails({ appointment: initialAppointment }: Appointm
             </div>
             {appointment.user.phone && (
               <div>
-                <Label className="text-muted-foreground">Téléphone</Label>
+                <Label className="text-muted-foreground">Phone</Label>
                 <p className="font-medium">{appointment.user.phone}</p>
               </div>
             )}
             <div>
               <Link href={`/dashboard/admin/students/${appointment.user.id}`}>
                 <Button variant="outline" size="sm">
-                  Voir le profil étudiant
+                  View student profile
                 </Button>
               </Link>
             </div>
@@ -114,23 +114,23 @@ export function AppointmentDetails({ appointment: initialAppointment }: Appointm
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              Détails du rendez-vous
+              Appointment details
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-muted-foreground">Date et heure</Label>
+              <Label className="text-muted-foreground">Date & time</Label>
               <p className="font-medium">
-                {format(new Date(appointment.scheduledAt), "d MMMM yyyy, HH:mm", { locale: fr })}
+                {format(new Date(appointment.scheduledAt), "d MMMM yyyy, HH:mm", { locale: enUS })}
               </p>
             </div>
             {appointment.course && (
               <div>
-                <Label className="text-muted-foreground">Cours</Label>
+                <Label className="text-muted-foreground">Course</Label>
                 <p className="font-medium">{appointment.course.title}</p>
                 <Link href={`/dashboard/admin/courses/${appointment.course.id}`}>
                   <Button variant="link" size="sm" className="p-0 h-auto mt-1">
-                    Voir le cours
+                    View course
                   </Button>
                 </Link>
               </div>
@@ -149,26 +149,26 @@ export function AppointmentDetails({ appointment: initialAppointment }: Appointm
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
-            Gestion
+            Management
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Statut</Label>
+            <Label>Status</Label>
             <Select value={appointment.status} onValueChange={handleStatusChange}>
               <SelectTrigger className="mt-2">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="PENDING">En attente</SelectItem>
-                <SelectItem value="CONFIRMED">Confirmé</SelectItem>
-                <SelectItem value="COMPLETED">Terminé</SelectItem>
-                <SelectItem value="CANCELLED">Annulé</SelectItem>
+                <SelectItem value="PENDING">Pending</SelectItem>
+                <SelectItem value="CONFIRMED">Confirmed</SelectItem>
+                <SelectItem value="COMPLETED">Completed</SelectItem>
+                <SelectItem value="CANCELLED">Cancelled</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="mt-2">
-            Statut actuel: {getStatusBadge(appointment.status)}
+            Current status: {getStatusBadge(appointment.status)}
           </div>
         </CardContent>
       </Card>

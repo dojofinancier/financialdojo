@@ -129,7 +129,7 @@ export function CourseSidebar({
             {showExpanded && "Plan du jour"}
           </Button>
 
-          {/* Paramètres du plan */}
+          {/* Plan settings */}
           {showExpanded && (
           <div className="mb-2">
             <StudyPlanSettings
@@ -206,7 +206,7 @@ export function CourseSidebar({
             </Button>
           )}
 
-          {/* Phase 2 - Réviser */}
+          {/* Phase 2 - Review */}
           <Button
             variant={activeItem === "review" ? "default" : "ghost"}
             className={cn(
@@ -273,7 +273,7 @@ export function CourseSidebar({
             {showExpanded && "Outils d'apprentissage"}
           </Button>
 
-          {/* Progrès et statistiques */}
+          {/* Progress and stats */}
           <Button
             variant={activeItem === "progress" ? "default" : "ghost"}
             className={cn(
@@ -333,4 +333,3 @@ export function CourseSidebar({
     </>
   );
 }
-

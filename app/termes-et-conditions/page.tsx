@@ -10,110 +10,110 @@ export default function TermsAndConditionsPage() {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <div className="container mx-auto px-4 py-16 md:py-24 max-w-4xl">
         <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8">
-          Termes et conditions
+          Terms and Conditions
         </h1>
         
         <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed space-y-6">
           <p className="text-sm text-slate-500">
-            Dernière mise à jour : 17 décembre 2025
+            Last updated: December 17, 2025
           </p>
 
           <section>
-            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">1. Acceptation des termes</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">1. Acceptance of terms</h2>
             <p>
-              En accédant et en utilisant le site web du Dojo Financier ("le Site"), vous acceptez d'être lié par ces termes et conditions. Si vous n'acceptez pas ces termes, veuillez ne pas utiliser le Site.
+              By accessing and using the Financial Dojo website ("the Site"), you agree to be bound by these terms and conditions. If you do not accept these terms, please do not use the Site.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">2. Utilisation du service</h2>
-            <p>Vous acceptez d'utiliser le Site uniquement à des fins légales et de manière qui ne viole pas les droits d'autrui. Vous vous engagez à :</p>
+            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">2. Use of the service</h2>
+            <p>You agree to use the Site only for lawful purposes and in a way that does not violate the rights of others. You agree to:</p>
             <ul className="list-disc list-inside space-y-2 ml-4">
-              <li>Fournir des informations exactes et à jour lors de l'inscription</li>
-              <li>Maintenir la confidentialité de votre compte et de votre mot de passe</li>
-              <li>Ne pas partager votre compte avec des tiers</li>
-              <li>Ne pas utiliser le Site à des fins frauduleuses ou illégales</li>
-              <li>Respecter tous les droits de propriété intellectuelle</li>
+              <li>Provide accurate and up-to-date information when registering</li>
+              <li>Maintain the confidentiality of your account and password</li>
+              <li>Not share your account with third parties</li>
+              <li>Not use the Site for fraudulent or illegal purposes</li>
+              <li>Respect all intellectual property rights</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">3. Inscription et compte</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">3. Registration and account</h2>
             <p>
-              Pour accéder à certains services, vous devez créer un compte. Vous êtes responsable de maintenir la confidentialité de vos identifiants de connexion et de toutes les activités qui se produisent sous votre compte.
+              To access certain services, you must create an account. You are responsible for maintaining the confidentiality of your login credentials and all activities that occur under your account.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">4. Paiements et remboursements</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">4. Payments and refunds</h2>
             <p>
-              Les prix de nos cours sont indiqués en dollars canadiens. Les paiements sont traités de manière sécurisée via nos prestataires de paiement. 
+              Prices for our courses are listed in Canadian dollars. Payments are processed securely through our payment providers.
             </p>
             <p>
-              <strong>Politique de remboursement :</strong> Les remboursements sont disponibles dans les 14 jours suivant l'achat, à condition que moins de 25% du contenu du cours ait été consulté. Les demandes de remboursement doivent être soumises par écrit à admin@dojofnancier.com.
+              <strong>Refund policy:</strong> Refunds are available within 14 days of purchase, provided that less than 25% of the course content has been accessed. Refund requests must be submitted in writing to admin@dojofnancier.com.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">5. Propriété intellectuelle</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">5. Intellectual property</h2>
             <p>
-              Tout le contenu du Site, y compris mais sans s'y limiter, les textes, graphiques, logos, images, vidéos, et logiciels, est la propriété du Dojo Financier ou de ses concédants de licence et est protégé par les lois sur le droit d'auteur et autres lois sur la propriété intellectuelle.
+              All content on the Site, including but not limited to text, graphics, logos, images, videos, and software, is the property of Financial Dojo or its licensors and is protected by copyright and other intellectual property laws.
             </p>
             <p>
-              Vous recevez une licence limitée, non exclusive et non transférable pour accéder et utiliser le contenu des cours que vous avez achetés uniquement à des fins personnelles et éducatives. Vous ne pouvez pas :
+              You receive a limited, non-exclusive, non-transferable license to access and use the course content you purchased for personal and educational purposes only. You may not:
             </p>
             <ul className="list-disc list-inside space-y-2 ml-4">
-              <li>Reproduire, distribuer ou partager le contenu avec des tiers</li>
-              <li>Utiliser le contenu à des fins commerciales</li>
-              <li>Modifier ou créer des œuvres dérivées du contenu</li>
+              <li>Reproduce, distribute, or share content with third parties</li>
+              <li>Use content for commercial purposes</li>
+              <li>Modify or create derivative works from the content</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">6. Durée d'accès</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">6. Access duration</h2>
             <p>
-              L'accès aux cours est accordé pour la durée spécifiée au moment de l'achat (généralement 12 mois). L'accès expire automatiquement à la fin de la période d'accès, sauf indication contraire.
+              Access to courses is granted for the duration specified at purchase (generally 12 months). Access expires automatically at the end of the access period, unless otherwise stated.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">7. Limitation de responsabilité</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">7. Limitation of liability</h2>
             <p>
-              Le Dojo Financier fournit le Site et son contenu "en l'état". Nous ne garantissons pas que le Site sera exempt d'erreurs, ininterrompu ou sécurisé. Dans la mesure permise par la loi, nous déclinons toute responsabilité pour les dommages directs, indirects, accessoires ou consécutifs résultant de l'utilisation du Site.
+              Financial Dojo provides the Site and its content "as is." We do not guarantee that the Site will be error-free, uninterrupted, or secure. To the extent permitted by law, we disclaim any liability for direct, indirect, incidental, or consequential damages resulting from the use of the Site.
             </p>
             <p>
-              <strong>Avertissement :</strong> Le contenu éducatif fourni est à des fins d'information et d'éducation uniquement. Il ne constitue pas des conseils financiers, juridiques ou fiscaux personnalisés. Consultez toujours un professionnel qualifié pour obtenir des conseils adaptés à votre situation.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">8. Résiliation</h2>
-            <p>
-              Nous nous réservons le droit de suspendre ou de résilier votre compte à tout moment, avec ou sans préavis, pour violation de ces termes ou pour toute autre raison que nous jugeons appropriée.
+              <strong>Disclaimer:</strong> The educational content provided is for information and education only. It does not constitute personalized financial, legal, or tax advice. Always consult a qualified professional for advice tailored to your situation.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">9. Modifications des termes</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">8. Termination</h2>
             <p>
-              Nous nous réservons le droit de modifier ces termes à tout moment. Les modifications entreront en vigueur dès leur publication sur le Site. Il est de votre responsabilité de consulter régulièrement ces termes.
+              We reserve the right to suspend or terminate your account at any time, with or without notice, for violation of these terms or for any other reason we deem appropriate.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">10. Droit applicable</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">9. Changes to terms</h2>
             <p>
-              Ces termes sont régis par les lois du Québec et du Canada. Tout litige sera soumis à la juridiction exclusive des tribunaux du Québec.
+              We reserve the right to modify these terms at any time. Changes take effect upon posting on the Site. It is your responsibility to review these terms regularly.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">10. Governing law</h2>
+            <p>
+              These terms are governed by the laws of Quebec and Canada. Any dispute will be submitted to the exclusive jurisdiction of the courts of Quebec.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">11. Contact</h2>
             <p>
-              Pour toute question concernant ces termes et conditions, veuillez nous contacter :
+              For any questions regarding these terms and conditions, please contact us:
             </p>
             <p className="mt-2">
-              <strong>Le Dojo Financier</strong><br />
+              <strong>Financial Dojo</strong><br />
               Email : admin@dojofnancier.com
             </p>
           </section>

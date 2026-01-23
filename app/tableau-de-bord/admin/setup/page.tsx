@@ -130,7 +130,7 @@ export default function AdminSetupPage() {
             <p className="text-xs text-muted-foreground">
               <strong>Note:</strong> Make sure you have set the{" "}
               <code className="bg-muted px-1 py-0.5 rounded">
-                SUPABASE_SERVICE_ROLE_KEY
+                SUPABASE_SECRET_KEY
               </code>{" "}
               environment variable in your <code>.env</code> file.
             </p>

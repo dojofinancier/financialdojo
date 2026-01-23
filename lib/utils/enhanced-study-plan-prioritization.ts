@@ -21,8 +21,8 @@ export async function prioritizeFlashcards(
   const MIN_FLASHCARDS_PER_MODULE = 10;
 
   // First, ensure minimum coverage per module
-  for (const module of learnedModules) {
-    const moduleFlashcards = moduleFlashcardMap.get(module.id) || [];
+  for (const moduleRecord of learnedModules) {
+    const moduleFlashcards = moduleFlashcardMap.get(moduleRecord.id) || [];
     if (moduleFlashcards.length > 0) {
       // Take minimum per module
       const toTake = Math.min(MIN_FLASHCARDS_PER_MODULE, moduleFlashcards.length);
@@ -112,8 +112,8 @@ export async function prioritizeActivities(
   }
 
   // First, ensure minimum coverage per module
-  for (const module of learnedModules) {
-    const moduleActivities = moduleActivityMap.get(module.id) || [];
+  for (const moduleRecord of learnedModules) {
+    const moduleActivities = moduleActivityMap.get(moduleRecord.id) || [];
     if (moduleActivities.length > 0) {
       // Take minimum per module
       const toTake = Math.min(MIN_ACTIVITIES_PER_MODULE, moduleActivities.length);
@@ -122,9 +122,9 @@ export async function prioritizeActivities(
   }
 
   // Then, prioritize activities from modules with failed quizzes
-  for (const module of learnedModules) {
-    if (failedQuizModuleIds.has(module.id)) {
-      const moduleActivities = moduleActivityMap.get(module.id) || [];
+  for (const moduleRecord of learnedModules) {
+    if (failedQuizModuleIds.has(moduleRecord.id)) {
+      const moduleActivities = moduleActivityMap.get(moduleRecord.id) || [];
       for (const activityId of moduleActivities) {
         if (!prioritized.includes(activityId)) {
           prioritized.push(activityId);
@@ -139,4 +139,3 @@ export async function prioritizeActivities(
 
   return prioritized;
 }
-

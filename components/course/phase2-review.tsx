@@ -22,10 +22,10 @@ export function Phase2Review({ courseId, course, settings }: Phase2ReviewProps) 
       <Card>
         <CardHeader>
           <CardTitle>
-            Phase 2 - Révision et rappel actif
+            Phase 2 - Review and active recall
           </CardTitle>
           <CardDescription>
-            Consolidation des connaissances via rappel actif et répétition espacée.
+            Consolidate knowledge through active recall and spaced repetition.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -33,8 +33,8 @@ export function Phase2Review({ courseId, course, settings }: Phase2ReviewProps) 
             <TabsList className="grid w-full grid-cols-3 h-auto gap-1">
               <TabsTrigger value="smart-review" className="flex items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-1.5 text-xs sm:text-sm px-1 sm:px-3 min-w-0">
                 <Play className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-                <span className="hidden sm:inline truncate">Révision intelligente</span>
-                <span className="sm:hidden truncate">Révision</span>
+                <span className="hidden sm:inline truncate">Smart review</span>
+                <span className="sm:hidden truncate">Review</span>
               </TabsTrigger>
               <TabsTrigger value="flashcards" className="flex items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-1.5 text-xs sm:text-sm px-1 sm:px-3 min-w-0">
                 <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
@@ -42,7 +42,7 @@ export function Phase2Review({ courseId, course, settings }: Phase2ReviewProps) 
               </TabsTrigger>
               <TabsTrigger value="activities" className="flex items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-1.5 text-xs sm:text-sm px-1 sm:px-3 min-w-0">
                 <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-                <span className="truncate">Activités</span>
+                <span className="truncate">Activities</span>
               </TabsTrigger>
             </TabsList>
             <TabsContent value="smart-review" className="mt-6">
@@ -60,4 +60,3 @@ export function Phase2Review({ courseId, course, settings }: Phase2ReviewProps) 
     </div>
   );
 }
-

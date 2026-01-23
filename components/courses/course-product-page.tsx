@@ -333,7 +333,7 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
                   >
                     <span className="inline-flex items-center gap-2">
                       <Play className="h-5 w-5" />
-                      Continuer l'apprentissage →
+                      Continue learning →
                     </span>
                   </button>
                 ) : inCart ? (
@@ -344,7 +344,7 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
                   >
                     <span className="inline-flex items-center gap-2">
                       <ShoppingCart className="h-5 w-5" />
-                      Voir le panier →
+                      View cart →
                     </span>
                   </button>
                 ) : (
@@ -354,12 +354,12 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
                       onClick={handleAddToCart}
                       className="bg-white text-black font-black uppercase tracking-wider px-10 py-5 border-4 border-white hover:bg-primary hover:border-primary hover:text-black transition-colors shadow-[8px_8px_0_0_hsl(var(--primary))]"
                     >
-                      S'inscrire maintenant →
+                      Enroll now →
                     </button>
                     <div className="border-4 border-white p-6">
                       <div className="text-4xl font-black text-primary">{formatCurrency(course.price)}</div>
                       <div className="font-mono text-xs uppercase tracking-[0.25em] text-white/70 mt-2">
-                        pour 12 mois d'accès illimité
+                        for 12 months of unlimited access
                       </div>
                     </div>
                   </>
@@ -394,7 +394,7 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
               >
                 <Image
                   src={heroImageSrc}
-                  alt={`${course.title} - Capture d'écran`}
+                  alt={`${course.title} - Screenshot`}
                   fill
                   className="object-cover"
                   priority
@@ -417,10 +417,10 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
             {/* About Section */}
             <div className="space-y-6">
               <span className="font-mono text-xs uppercase tracking-[0.3em] text-black/60 block">
-                [À PROPOS]
+                [ABOUT]
               </span>
               <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
-                Tout ce que vous devez savoir
+                Everything you need to know
               </h2>
               {course.aboutText ? (
                 <div 
@@ -434,7 +434,7 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
                 />
               ) : (
                 <p className="opacity-80">
-                  Découvrez cette formation complète qui vous permettra d'atteindre vos objectifs professionnels.
+                  Discover this comprehensive course to help you reach your professional goals.
                 </p>
               )}
 
@@ -442,7 +442,7 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
               <div className="grid grid-cols-3 gap-0 pt-6 border-4 border-black">
                 <div className="text-center p-4 border-r-4 border-black">
                   <div className="text-4xl font-black text-primary">{totalVideos}</div>
-                  <div className="font-mono text-xs uppercase tracking-[0.25em] text-black/60 mt-1">Vidéos</div>
+                  <div className="font-mono text-xs uppercase tracking-[0.25em] text-black/60 mt-1">Videos</div>
                 </div>
                 <div className="text-center p-4 border-r-4 border-black">
                   <div className="text-4xl font-black text-primary">{totalQuestions}</div>
@@ -461,7 +461,7 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
                 [PROGRAMME]
               </span>
               <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
-                Programme détaillé
+                Detailed curriculum
               </h2>
               
               <div className="space-y-0 border-4 border-black max-h-[520px] overflow-y-auto">
@@ -499,10 +499,10 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
             <div className="max-w-[1400px] mx-auto">
             <div className="text-center mb-12">
               <span className="text-primary font-mono text-xs uppercase tracking-[0.3em] block mb-4">
-                [TÉMOIGNAGES]
+                [TESTIMONIALS]
               </span>
               <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
-                Ce que disent nos étudiants
+                What our students say
               </h2>
             </div>
             
@@ -527,7 +527,7 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
                   [FAQ]
                 </span>
                 <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
-                  Questions fréquentes
+                  Frequently asked questions
                 </h2>
               </div>
 
@@ -560,10 +560,10 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
         <div className="px-4 sm:px-8 text-center">
           <div className="max-w-[1400px] mx-auto">
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-6">
-            Prêt à commencer votre préparation ?
+            Ready to start your preparation?
           </h2>
           <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
-            Rejoignez les {856 + course._count.enrollments} étudiants qui ont déjà fait confiance à cette formation.
+            Join the {856 + course._count.enrollments} students who have already trusted this course.
           </p>
           
           <div className="flex flex-col items-center gap-4">
@@ -575,7 +575,7 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
               >
                 <span className="inline-flex items-center gap-2">
                   <Play className="h-5 w-5" />
-                  Continuer l'apprentissage →
+                  Continue learning →
                 </span>
               </button>
             ) : inCart ? (
@@ -586,7 +586,7 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
               >
                 <span className="inline-flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5" />
-                  Voir le panier →
+                  View cart →
                 </span>
               </button>
             ) : (
@@ -596,12 +596,12 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
                   onClick={handleAddToCart}
                   className="bg-white text-black font-black uppercase tracking-wider px-10 py-5 border-4 border-white hover:bg-primary hover:border-primary hover:text-black transition-colors shadow-[8px_8px_0_0_hsl(var(--primary))]"
                 >
-                  S'inscrire maintenant →
+                  Enroll now →
                 </button>
                 <div className="border-4 border-white p-6">
                   <p className="text-3xl font-black text-primary">{formatCurrency(course.price)}</p>
                   <p className="font-mono text-xs uppercase tracking-[0.25em] text-white/70 mt-2">
-                    pour 12 mois d'accès illimité
+                    for 12 months of unlimited access
                   </p>
                 </div>
               </>
@@ -614,6 +614,5 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
     </>
   );
 }
-
 
 

@@ -12,7 +12,7 @@ import { addToCart, isInCart } from "@/lib/utils/cart";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 
 type Cohort = {
   id: string;
@@ -120,7 +120,7 @@ export function CohortDetail({ cohort, isEnrolled, enrollment }: CohortDetailPro
           {/* Header */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="outline">Cohorte de coaching</Badge>
+              <Badge variant="outline">Coaching cohort</Badge>
               {cohort.instructor && (
                 <Badge variant="secondary">
                   {instructorName}
@@ -142,10 +142,10 @@ export function CohortDetail({ cohort, isEnrolled, enrollment }: CohortDetailPro
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2 text-orange-700">
                   <AlertCircle className="h-5 w-5" />
-                  <span className="font-semibold">Les inscriptions sont fermées</span>
+                   <span className="font-semibold">Enrollment is closed</span>
                 </div>
                 <p className="text-sm text-orange-600 mt-2">
-                  La date limite d'inscription était le {format(new Date(cohort.enrollmentClosingDate), "d MMMM yyyy", { locale: fr })}
+                  Enrollment deadline was {format(new Date(cohort.enrollmentClosingDate), "d MMMM yyyy", { locale: enCA })}
                 </p>
               </CardContent>
             </Card>
@@ -156,10 +156,10 @@ export function CohortDetail({ cohort, isEnrolled, enrollment }: CohortDetailPro
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2 text-red-700">
                   <AlertCircle className="h-5 w-5" />
-                  <span className="font-semibold">Cohorte complète</span>
+                   <span className="font-semibold">Cohort full</span>
                 </div>
                 <p className="text-sm text-red-600 mt-2">
-                  Tous les {cohort.maxStudents} places sont occupées
+                  All {cohort.maxStudents} spots are taken
                 </p>
               </CardContent>
             </Card>
@@ -170,7 +170,7 @@ export function CohortDetail({ cohort, isEnrolled, enrollment }: CohortDetailPro
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5" />
-                Contenu de la cohorte
+                Cohort content
               </CardTitle>
               <CardDescription>
                 {cohort.cohortModules.length} module{cohort.cohortModules.length !== 1 ? "s" : ""}
@@ -193,7 +193,7 @@ export function CohortDetail({ cohort, isEnrolled, enrollment }: CohortDetailPro
                           />
                         )}
                         <div className="text-xs text-muted-foreground">
-                          {cohortModule.module.contentItems.length} élément{cohortModule.module.contentItems.length !== 1 ? "s" : ""}
+                  {cohortModule.module.contentItems.length} item{cohortModule.module.contentItems.length !== 1 ? "s" : ""}
                         </div>
                       </div>
                     </div>
@@ -207,7 +207,7 @@ export function CohortDetail({ cohort, isEnrolled, enrollment }: CohortDetailPro
           {cohort.faqs && cohort.faqs.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Questions fréquentes</CardTitle>
+                <CardTitle>Frequently asked questions</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -227,65 +227,65 @@ export function CohortDetail({ cohort, isEnrolled, enrollment }: CohortDetailPro
         <div className="lg:col-span-1">
           <Card className="sticky top-6">
             <CardHeader>
-              <CardTitle>Inscription</CardTitle>
+              <CardTitle>Enrollment</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {isEnrolled ? (
                 <>
                   <div className="flex items-center gap-2 text-green-600">
                     <CheckCircle2 className="h-5 w-5" />
-                    <span className="font-semibold">Vous êtes inscrit</span>
+                    <span className="font-semibold">You are enrolled</span>
                   </div>
                   <Button onClick={handleContinue} className="w-full" size="lg">
-                    Accéder à la cohorte
+                    Access cohort
                   </Button>
                 </>
               ) : (
                 <>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Prix</span>
+                      <span className="text-sm text-muted-foreground">Price</span>
                       <span className="text-2xl font-bold">
                         {formatCurrency(Number(cohort.price))}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Durée d'accès</span>
-                      <span>{cohort.accessDuration} jours</span>
+                      <span className="text-muted-foreground">Access duration</span>
+                      <span>{cohort.accessDuration} days</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Places disponibles</span>
+                      <span className="text-muted-foreground">Spots available</span>
                       <span>{cohort.spotsRemaining} / {cohort.maxStudents}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Date limite</span>
+                      <span className="text-muted-foreground">Deadline</span>
                       <span className="text-xs">
-                        {format(new Date(cohort.enrollmentClosingDate), "d MMM yyyy", { locale: fr })}
+                        {format(new Date(cohort.enrollmentClosingDate), "d MMM yyyy", { locale: enCA })}
                       </span>
                     </div>
                   </div>
                   <Separator />
                   {!cohort.isEnrollmentOpen || cohort.spotsRemaining <= 0 ? (
                     <Button disabled className="w-full" size="lg">
-                      Inscription fermée
+                      Enrollment closed
                     </Button>
                   ) : inCart ? (
                     <>
                       <Button onClick={handleGoToCart} className="w-full" size="lg" variant="outline">
                         <ShoppingCart className="h-4 w-4 mr-2" />
-                        Voir le panier
+                        View cart
                       </Button>
                       <p className="text-xs text-center text-muted-foreground">
-                        Cette cohorte est déjà dans votre panier
+                        This cohort is already in your cart
                       </p>
                     </>
                   ) : (
                     <>
                       <Button onClick={handleAddToCart} className="w-full" size="lg">
-                        S'inscrire maintenant
+                        Enroll now
                       </Button>
                       <p className="text-xs text-center text-muted-foreground">
-                        Accès immédiat après paiement
+                        Immediate access after payment
                       </p>
                     </>
                   )}
@@ -306,12 +306,12 @@ export function CohortDetail({ cohort, isEnrolled, enrollment }: CohortDetailPro
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Clock className="h-4 w-4" />
-                  <span>Accès {cohort.accessDuration} jours</span>
+                  <span>Access {cohort.accessDuration} days</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Calendar className="h-4 w-4" />
                   <span className="text-xs">
-                    Clôture: {format(new Date(cohort.enrollmentClosingDate), "d MMM yyyy", { locale: fr })}
+                    Closes: {format(new Date(cohort.enrollmentClosingDate), "d MMM yyyy", { locale: enCA })}
                   </span>
                 </div>
               </div>

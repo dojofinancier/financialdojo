@@ -66,18 +66,18 @@ export function WaitlistPageClient({ type }: WaitlistPageClientProps) {
                 <CheckCircle2 className="w-8 h-8 text-black" />
               </div>
               <CardTitle className="text-3xl font-black uppercase tracking-tight">
-                Merci !
+                Thank you!
               </CardTitle>
               <CardDescription className="text-lg mt-4">
-                Vous avez été ajouté à la liste d'attente. Nous vous contacterons dès que nos formations pour{" "}
-                {type === "investisseur" ? "investisseurs" : "entrepreneurs"} seront disponibles.
+                You have been added to the waitlist. We will contact you as soon as our courses for{" "}
+                {type === "investisseur" ? "investors" : "entrepreneurs"} are available.
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <Button asChild variant="outline" className="mt-4">
                 <Link href="/">
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Retour à l'accueil
+                  Back to home
                 </Link>
               </Button>
             </CardContent>
@@ -97,10 +97,10 @@ export function WaitlistPageClient({ type }: WaitlistPageClientProps) {
             className="inline-flex items-center text-sm text-neutral-600 hover:text-neutral-900 mb-8 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour à l'accueil
+            Back to home
           </Link>
           <div className="font-mono text-sm uppercase tracking-[0.3em] text-neutral-500 mb-4">
-            [LISTE D'ATTENTE]
+            [WAITLIST]
           </div>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter mb-4">
             {title}
@@ -119,30 +119,30 @@ export function WaitlistPageClient({ type }: WaitlistPageClientProps) {
           <div className="space-y-6">
             <Card className="border-4 border-black shadow-[8px_8px_0_0_black]">
               <CardHeader>
-                <CardTitle className="text-2xl font-black uppercase">Bientôt disponible</CardTitle>
+              <CardTitle className="text-2xl font-black uppercase">Coming soon</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-neutral-700 leading-relaxed">
-                  Nos formations pour {type === "investisseur" ? "investisseurs" : "entrepreneurs"} sont en cours de développement.
-                  Rejoignez la liste d'attente pour être parmi les premiers informés du lancement.
+                  Our courses for {type === "investisseur" ? "investors" : "entrepreneurs"} are in development.
+                  Join the waitlist to be among the first to know when we launch.
                 </p>
                 <div className="space-y-2">
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                     <p className="text-sm text-neutral-600">
-                      Notification prioritaire lors du lancement
+                      Priority notification at launch
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                     <p className="text-sm text-neutral-600">
-                      Accès anticipé aux formations
+                      Early access to courses
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                     <p className="text-sm text-neutral-600">
-                      Offres exclusives pour les membres de la liste d'attente
+                      Exclusive offers for waitlist members
                     </p>
                   </div>
                 </div>
@@ -153,9 +153,9 @@ export function WaitlistPageClient({ type }: WaitlistPageClientProps) {
           {/* Right: Form */}
           <Card className="border-4 border-black shadow-[8px_8px_0_0_black]">
             <CardHeader>
-              <CardTitle className="text-2xl font-black uppercase">Rejoindre la liste</CardTitle>
+              <CardTitle className="text-2xl font-black uppercase">Join the list</CardTitle>
               <CardDescription>
-                Remplissez le formulaire ci-dessous pour être ajouté à la liste d'attente.
+                Fill out the form below to be added to the waitlist.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -165,7 +165,7 @@ export function WaitlistPageClient({ type }: WaitlistPageClientProps) {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="votre@email.com"
+                    placeholder="your@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -175,11 +175,11 @@ export function WaitlistPageClient({ type }: WaitlistPageClientProps) {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">Prénom</Label>
+                    <Label htmlFor="firstName">First name</Label>
                     <Input
                       id="firstName"
                       type="text"
-                      placeholder="Jean"
+                      placeholder="Alex"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       disabled={isSubmitting}
@@ -187,11 +187,11 @@ export function WaitlistPageClient({ type }: WaitlistPageClientProps) {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Nom</Label>
+                    <Label htmlFor="lastName">Last name</Label>
                     <Input
                       id="lastName"
                       type="text"
-                      placeholder="Dupont"
+                      placeholder="Doe"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       disabled={isSubmitting}
@@ -208,14 +208,14 @@ export function WaitlistPageClient({ type }: WaitlistPageClientProps) {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Envoi en cours...
+                      Submitting...
                     </>
                   ) : (
-                    "Rejoindre la liste d'attente"
+                    "Join the waitlist"
                   )}
                 </Button>
                 <p className="text-xs text-neutral-500 text-center">
-                  En vous inscrivant, vous acceptez de recevoir des communications de notre part.
+                  By signing up, you agree to receive communications from us.
                 </p>
               </form>
             </CardContent>

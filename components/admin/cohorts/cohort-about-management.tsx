@@ -45,14 +45,14 @@ export function CohortAboutManagement({
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Description courte</CardTitle>
+          <CardTitle>Short description</CardTitle>
           <CardDescription>
-            Cette description apparaîtra dans la section héro de la page de la cohorte (2-3 phrases)
+            This description will appear in the cohort page hero section (2-3 sentences)
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="shortDescription">Description courte</Label>
+            <Label htmlFor="shortDescription">Short description</Label>
             <Input
               id="shortDescription"
               value={shortDescription}
@@ -65,14 +65,14 @@ export function CohortAboutManagement({
 
       <Card>
         <CardHeader>
-          <CardTitle>Section À propos</CardTitle>
+          <CardTitle>About section</CardTitle>
           <CardDescription>
-            Texte riche détaillant la cohorte, ses objectifs, et ce que les participants peuvent attendre
+            Rich text detailing the cohort, its goals, and what participants can expect
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="aboutText">Texte À propos</Label>
+            <Label htmlFor="aboutText">About text</Label>
             <RichTextEditor
               content={aboutText}
               onChange={setAboutText}
@@ -85,7 +85,7 @@ export function CohortAboutManagement({
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
-          {saving ? "Enregistrement..." : "Enregistrer"}
+          {saving ? "Saving..." : "Save"}
         </Button>
       </div>
     </div>

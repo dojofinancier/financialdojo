@@ -365,20 +365,20 @@ export function CourseLearningInterface({
                   onClick={handlePrevious}
                   disabled={!getPreviousContentItem()}
                 >
-                  ← Précédent
+                  ← Previous
                 </Button>
                 <Button
                   onClick={handleNext}
                   disabled={!getNextContentItem()}
                 >
-                  Suivant →
+                  Next →
                 </Button>
               </div>
             </div>
           ) : (
             <div className="text-center py-12">
               <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-              <p className="text-muted-foreground">Sélectionnez un contenu pour commencer</p>
+              <p className="text-muted-foreground">Select content to get started</p>
             </div>
           )}
         </div>
@@ -386,4 +386,3 @@ export function CourseLearningInterface({
     </div>
   );
 }
-

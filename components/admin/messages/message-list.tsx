@@ -25,7 +25,7 @@ import {
 import { toast } from "sonner";
 import { Loader2, Eye, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import Link from "next/link";
 
 type MessageThreadItem = {
@@ -93,9 +93,9 @@ export function MessageList() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "OPEN":
-        return <Badge variant="default">Ouvert</Badge>;
+        return <Badge variant="default">Open</Badge>;
       case "CLOSED":
-        return <Badge variant="secondary">Fermé</Badge>;
+        return <Badge variant="secondary">Closed</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -115,9 +115,9 @@ export function MessageList() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous les statuts</SelectItem>
-            <SelectItem value="OPEN">Ouvert</SelectItem>
-            <SelectItem value="CLOSED">Fermé</SelectItem>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="OPEN">Open</SelectItem>
+            <SelectItem value="CLOSED">Closed</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -128,7 +128,7 @@ export function MessageList() {
         </div>
       ) : threads.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
-          Aucun message trouvé
+          No messages found
         </div>
       ) : (
         <>
@@ -136,12 +136,12 @@ export function MessageList() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Sujet</TableHead>
-                  <TableHead>Étudiant</TableHead>
-                  <TableHead>Cours</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead>Student</TableHead>
+                  <TableHead>Course</TableHead>
                   <TableHead>Messages</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Dernière activité</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Last activity</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -156,7 +156,7 @@ export function MessageList() {
                           <div className="font-medium">
                             {thread.user.firstName || thread.user.lastName
                               ? `${thread.user.firstName || ""} ${thread.user.lastName || ""}`.trim()
-                              : "Sans nom"}
+                              : "No name"}
                           </div>
                           <div className="text-sm text-muted-foreground">{thread.user.email}</div>
                         </div>
@@ -165,15 +165,15 @@ export function MessageList() {
                         {thread.course ? (
                           <span className="text-sm">{thread.course.title}</span>
                         ) : (
-                          <span className="text-sm text-muted-foreground">Non spécifié</span>
+                          <span className="text-sm text-muted-foreground">Not specified</span>
                         )}
                       </TableCell>
                       <TableCell>{thread._count.messages}</TableCell>
                       <TableCell>{getStatusBadge(thread.status)}</TableCell>
                       <TableCell className="text-sm">
                         {latestMessage
-                          ? format(new Date(latestMessage.createdAt), "d MMM yyyy, HH:mm", { locale: fr })
-                          : format(new Date(thread.updatedAt), "d MMM yyyy", { locale: fr })}
+                          ? format(new Date(latestMessage.createdAt), "d MMM yyyy, HH:mm", { locale: enCA })
+                          : format(new Date(thread.updatedAt), "d MMM yyyy", { locale: enCA })}
                       </TableCell>
                       <TableCell className="text-right">
                         <Link href={`/dashboard/admin/messages/${thread.id}`}>
@@ -199,10 +199,10 @@ export function MessageList() {
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Chargement...
+                    Loading...
                   </>
                 ) : (
-                  "Charger plus"
+                  "Load more"
                 )}
               </Button>
             </div>

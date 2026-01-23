@@ -7,9 +7,9 @@ export default async function AdminMessagesPage() {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Gestion des messages</h1>
+        <h1 className="text-3xl font-bold">Message management</h1>
         <p className="text-muted-foreground mt-2">
-          Consultez et répondez aux questions des étudiants
+          Review and reply to student questions
         </p>
       </div>
       <MessageList />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -36,16 +36,7 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
   const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadAllModules();
-  }, [courseId]);
-
-  useEffect(() => {
-    // Reset note index when module changes
-    setCurrentNoteIndex(0);
-  }, [selectedModuleId]);
-
-  const loadAllModules = async () => {
+  const loadAllModules = useCallback(async () => {
     try {
       setLoading(true);
       const courseModules = await getCourseModulesAction(courseId);
@@ -57,13 +48,13 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
       const modulesWithNotes: ModuleData[] = [];
 
       if (batchResult.success && batchResult.data) {
-        for (const module of courseModules) {
-          const moduleContent = batchResult.data[module.id];
+        for (const moduleRecord of courseModules) {
+          const moduleContent = batchResult.data[moduleRecord.id];
           if (moduleContent && moduleContent.notes && moduleContent.notes.length > 0) {
             modulesWithNotes.push({
-              id: module.id,
-              title: module.title,
-              order: module.order,
+              id: moduleRecord.id,
+              title: moduleRecord.title,
+              order: moduleRecord.order,
               notes: moduleContent.notes.map((noteItem: any) => ({
                 id: noteItem.id,
                 order: noteItem.order,
@@ -88,7 +79,16 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadAllModules();
+  }, [loadAllModules]);
+
+  useEffect(() => {
+    // Reset note index when module changes
+    setCurrentNoteIndex(0);
+  }, [selectedModuleId]);
 
   const selectedModule = modules.find((m) => m.id === selectedModuleId);
   const currentNote = selectedModule?.notes[currentNoteIndex];
@@ -203,7 +203,7 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
       <div className="space-y-4">
         <Button variant="ghost" onClick={onBack}>
           <ChevronLeft className="h-4 w-4 mr-2" />
-          Retour
+          Back
         </Button>
         <Card>
           <CardContent className="py-12 text-center">
@@ -227,9 +227,9 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
               <SelectValue placeholder="Select a module" />
             </SelectTrigger>
             <SelectContent>
-              {modules.map((module) => (
-                <SelectItem key={module.id} value={module.id}>
-                  Module {module.order + 1}: {module.title} ({module.notes.length} note{module.notes.length > 1 ? 's' : ''})
+              {modules.map((moduleRecord) => (
+                <SelectItem key={moduleRecord.id} value={moduleRecord.id}>
+                  Module {moduleRecord.order + 1}: {moduleRecord.title} ({moduleRecord.notes.length} note{moduleRecord.notes.length > 1 ? 's' : ''})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -241,7 +241,7 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
             disabled={!currentNote}
           >
             <Download className="h-4 w-4 mr-2" />
-            Télécharger PDF
+            Download PDF
           </Button>
         </div>
 
@@ -271,14 +271,14 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
               disabled={!canGoPrevious}
             >
               <ChevronLeft className="h-4 w-4 mr-2" />
-              Précédent
+              Previous
             </Button>
             <Button
               variant="outline"
               onClick={handleNextNote}
               disabled={!canGoNext}
             >
-              Suivant
+              Next
               <ChevronRight className="h-4 w-4 ml-2" />
             </Button>
           </div>

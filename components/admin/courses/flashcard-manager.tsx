@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -38,7 +38,7 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
   const [formState, setFormState] = useState({ front: "", back: "", moduleId: "" as string | null });
 
-  const loadFlashcards = async () => {
+  const loadFlashcards = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getFlashcardsAction(courseId);
@@ -66,21 +66,21 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    loadFlashcards();
-    loadModules();
   }, [courseId]);
 
-  const loadModules = async () => {
+  const loadModules = useCallback(async () => {
     try {
       const modulesData = await getModulesAction(courseId);
       setModules(modulesData.map((m: any) => ({ id: m.id, title: m.title })));
     } catch (error) {
       console.error("Error loading modules:", error);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadFlashcards();
+    loadModules();
+  }, [loadFlashcards, loadModules]);
 
   const openCreateDialog = () => {
     setEditingCard(null);
@@ -144,9 +144,9 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold">Flashcards du cours</h2>
+          <h2 className="text-2xl font-semibold">Course flashcards</h2>
           <p className="text-sm text-muted-foreground">
-            Créez des cartes recto-verso pour renforcer les notions clés du cours.
+            Create front-and-back cards to reinforce key course concepts.
           </p>
         </div>
         <div className="flex gap-2">
@@ -159,19 +159,19 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
             <DialogTrigger asChild>
               <Button onClick={openCreateDialog}>
                 <Plus className="h-4 w-4 mr-2" />
-                Nouvelle flashcard
+                New flashcard
               </Button>
             </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{editingCard ? "Edit flashcard" : "Add a flashcard"}</DialogTitle>
               <DialogDescription>
-                Définissez le recto (question) et le verso (réponse / explication).
+                Define the front (question) and back (answer / explanation).
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label>Module (optionnel)</Label>
+                <Label>Module (optional)</Label>
                 <Select
                   value={formState.moduleId || "none"}
                   onValueChange={(value) => setFormState({ ...formState, moduleId: value === "none" ? null : value })}
@@ -180,7 +180,7 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
                     <SelectValue placeholder="Select a module" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Aucun module</SelectItem>
+                    <SelectItem value="none">No module</SelectItem>
                     {modules.map((module) => (
                       <SelectItem key={module.id} value={module.id}>
                         {module.title}
@@ -190,15 +190,15 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Recto</Label>
+                <Label>Front</Label>
                 <Textarea
                   value={formState.front}
                   onChange={(event) => setFormState({ ...formState, front: event.target.value })}
-                  placeholder="Question, terme, notion..."
+                  placeholder="Question, term, concept..."
                 />
               </div>
               <div className="space-y-2">
-                <Label>Verso</Label>
+                <Label>Back</Label>
                 <Textarea
                   value={formState.back}
                   onChange={(event) => setFormState({ ...formState, back: event.target.value })}
@@ -207,10 +207,10 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                  Annuler
+                  Cancel
                 </Button>
                 <Button onClick={handleSubmit}>
-                  {editingCard ? "Enregistrer" : "Create"}
+                  {editingCard ? "Save" : "Create"}
                 </Button>
               </div>
             </div>
@@ -222,12 +222,12 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
       {loading ? (
         <div className="flex items-center justify-center py-12 text-muted-foreground gap-2">
           <Loader2 className="h-5 w-5 animate-spin" />
-          Chargement des flashcards...
+          Loading flashcards...
         </div>
       ) : flashcards.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
-            Aucune flashcard pour le moment.
+            No flashcards yet.
           </CardContent>
         </Card>
       ) : (
@@ -236,7 +236,7 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
             <Card key={card.id}>
               <CardHeader className="flex flex-row items-start justify-between space-y-0">
                 <div className="flex-1">
-                  <CardTitle className="text-base">Recto</CardTitle>
+                  <CardTitle className="text-base">Front</CardTitle>
                   {card.module && (
                     <p className="text-xs text-muted-foreground mt-1">Module: {card.module.title}</p>
                   )}
@@ -253,7 +253,7 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
               <CardContent className="space-y-4">
                 <p className="text-sm text-foreground whitespace-pre-wrap">{card.front}</p>
                 <div>
-                  <p className="text-xs uppercase font-semibold text-muted-foreground mb-2">Verso</p>
+                  <p className="text-xs uppercase font-semibold text-muted-foreground mb-2">Back</p>
                   <p className="text-sm text-foreground whitespace-pre-wrap">{card.back}</p>
                 </div>
               </CardContent>
@@ -264,4 +264,3 @@ export function FlashcardManager({ courseId }: FlashcardManagerProps) {
     </div>
   );
 }
-

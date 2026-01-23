@@ -9,7 +9,7 @@ import crypto from "crypto";
 
 const submitInvestisseurDiagnosticSchema = z.object({
   firstName: z.string().trim().min(1, "First name required").max(100, "First name too long"),
-  email: z.string().trim().email("Email invalide").max(200, "Email trop long"),
+  email: z.string().trim().email("Invalid email").max(200, "Email too long"),
   responses: z
     .record(z.string(), z.string().min(1))
     .refine((r) => Object.keys(r).length > 0, "Answers required"),

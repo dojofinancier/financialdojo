@@ -20,7 +20,7 @@ const componentVisibilitySchema = z.object({
 
 const courseSchema = z.object({
   code: z.string().optional().nullable(),
-  title: z.string().min(1, "Le titre est requis"),
+  title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   price: z.number().min(0, "The price must be positive"),
   accessDuration: z.number().int().positive().default(365),
@@ -232,7 +232,7 @@ export async function updateCourseAction(
 
     return {
       success: false,
-      error: `Erreur lors de la mise à jour du cours: ${errorMessage}`,
+      error: `Error updating the course: ${errorMessage}`,
     };
   }
 }
@@ -860,11 +860,11 @@ export async function getCourseContentAction(courseId: string) {
           title: item.contentType === "QUIZ" && item.quiz
             ? item.quiz.title
             : item.contentType === "VIDEO"
-            ? `Vidéo ${item.order}`
+            ? `Video ${item.order}`
             : item.contentType === "NOTE" && item.notes && item.notes.length > 0
             ? `Note ${item.order}`
             : item.contentType === "FLASHCARD"
-            ? `Carte mémoire ${item.order}`
+            ? `Flashcard ${item.order}`
             : `Contenu ${item.order}`,
         })),
       })),
@@ -951,11 +951,11 @@ export async function getCourseContentForAdminPreviewAction(courseId: string) {
             item.contentType === "QUIZ" && item.quiz
               ? item.quiz.title
               : item.contentType === "VIDEO"
-              ? `Vidéo ${item.order}`
+              ? `Video ${item.order}`
               : item.contentType === "NOTE" && item.notes && item.notes.length > 0
               ? `Note ${item.order}`
               : item.contentType === "FLASHCARD"
-              ? `Carte mémoire ${item.order}`
+              ? `Flashcard ${item.order}`
               : `Contenu ${item.order}`,
         })),
       })),
@@ -1101,4 +1101,3 @@ export async function updateCourseAboutAction(
     };
   }
 }
-

@@ -7,9 +7,9 @@ export default async function AdminFinancialsPage() {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Gestion financière</h1>
+        <h1 className="text-3xl font-bold">Financial management</h1>
         <p className="text-muted-foreground mt-2">
-          Revenus, abonnements et rapports financiers
+          Revenue, subscriptions, and financial reports
         </p>
       </div>
       <FinancialsDashboard />

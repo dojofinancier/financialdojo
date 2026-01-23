@@ -79,7 +79,7 @@ export function ContentEngagement({ courseId }: ContentEngagementProps) {
         </div>
         <Button onClick={loadData} variant="outline" size="sm">
           <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
+          Refresh
         </Button>
       </div>
 
@@ -89,10 +89,10 @@ export function ContentEngagement({ courseId }: ContentEngagementProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
-              Engagement par module
+              Module engagement
             </CardTitle>
             <CardDescription>
-              Nombre de vues et taux de complétion par module
+              View count and completion rate per module
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -104,7 +104,7 @@ export function ContentEngagement({ courseId }: ContentEngagementProps) {
                 <YAxis yAxisId="right" orientation="right" domain={[0, 100]} />
                 <Tooltip />
                 <Legend />
-                <Bar yAxisId="left" dataKey="views" fill="#8884d8" name="Vues" />
+                <Bar yAxisId="left" dataKey="views" fill="#8884d8" name="Views" />
                 <Bar yAxisId="right" dataKey="completion" fill="#82ca9d" name="Completion (%)" />
               </BarChart>
             </ResponsiveContainer>
@@ -118,9 +118,9 @@ export function ContentEngagement({ courseId }: ContentEngagementProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Eye className="h-5 w-5" />
-              Vidéos les plus regardées
+              Most watched videos
             </CardTitle>
-            <CardDescription>Top 10 vidéos par nombre de vues</CardDescription>
+            <CardDescription>Top 10 videos by view count</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -136,13 +136,13 @@ export function ContentEngagement({ courseId }: ContentEngagementProps) {
                     <div>
                       <p className="font-medium">{video.moduleTitle}</p>
                       <p className="text-xs text-muted-foreground">
-                        {Math.round(video.totalTimeSpent / 3600)}h de temps total
+                        {Math.round(video.totalTimeSpent / 3600)}h total time
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="font-bold">{video.viewCount}</p>
-                    <p className="text-xs text-muted-foreground">Vues</p>
+                    <p className="text-xs text-muted-foreground">Views</p>
                   </div>
                 </div>
               ))}
@@ -157,9 +157,9 @@ export function ContentEngagement({ courseId }: ContentEngagementProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
-              Quiz les plus tentés
+              Most attempted quizzes
             </CardTitle>
-            <CardDescription>Top 10 quiz par nombre de tentatives</CardDescription>
+            <CardDescription>Top 10 quizzes by attempt count</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -178,7 +178,7 @@ export function ContentEngagement({ courseId }: ContentEngagementProps) {
                   </div>
                   <div className="text-right">
                     <p className="font-bold">{quiz.attemptCount}</p>
-                    <p className="text-xs text-muted-foreground">Tentatives</p>
+                    <p className="text-xs text-muted-foreground">Attempts</p>
                   </div>
                 </div>
               ))}

@@ -472,7 +472,7 @@ export function PhaseBasedLearningInterface({
           )}
           {activePhase === "progress" && (
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Progrès et statistiques</h1>
+              <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Progress and stats</h1>
               <Suspense fallback={<PhaseSkeleton />}>
                 <StudentAnalyticsDashboard courseId={course.id} />
               </Suspense>
@@ -488,4 +488,3 @@ export function PhaseBasedLearningInterface({
     </div>
   );
 }
-

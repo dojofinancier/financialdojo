@@ -96,7 +96,7 @@ export function CohortList() {
 
   useEffect(() => {
     loadCohorts(undefined, true);
-  }, [publishedFilter]);
+  }, [loadCohorts]);
 
   const handleLoadMore = () => {
     if (hasMore && !loading && nextCursor) {
@@ -128,7 +128,7 @@ export function CohortList() {
   });
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("fr-CA", {
+    return new Date(date).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -150,12 +150,12 @@ export function CohortList() {
           </div>
           <Select value={publishedFilter} onValueChange={setPublishedFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Statut" />
+              <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tous les statuts</SelectItem>
-              <SelectItem value="true">Publiées</SelectItem>
-              <SelectItem value="false">Non publiées</SelectItem>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="true">Published</SelectItem>
+              <SelectItem value="false">Unpublished</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -168,7 +168,7 @@ export function CohortList() {
           className="flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
-          Créer une cohorte
+          Create cohort
         </Button>
       </div>
 
@@ -176,12 +176,12 @@ export function CohortList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Titre</TableHead>
-              <TableHead>Instructeur</TableHead>
-              <TableHead>Prix</TableHead>
-              <TableHead>Étudiants</TableHead>
-              <TableHead>Date limite</TableHead>
-              <TableHead>Statut</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Instructor</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Students</TableHead>
+              <TableHead>Enrollment deadline</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -189,13 +189,13 @@ export function CohortList() {
             {loading && cohorts.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-8">
-                  Chargement...
+                  Loading...
                 </TableCell>
               </TableRow>
             ) : filteredCohorts.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-8">
-                  Aucune cohorte trouvée
+                  No cohorts found
                 </TableCell>
               </TableRow>
             ) : (
@@ -238,7 +238,7 @@ export function CohortList() {
                           onClick={() => router.push(`/dashboard/admin/cohorts/${cohort.id}`)}
                         >
                           <Edit className="h-4 w-4 mr-2" />
-                          Modifier
+                          Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => {
@@ -248,7 +248,7 @@ export function CohortList() {
                           className="text-destructive"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
-                          Supprimer
+                          Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -263,7 +263,7 @@ export function CohortList() {
       {hasMore && (
         <div className="flex justify-center">
           <Button variant="outline" onClick={handleLoadMore} disabled={loading}>
-            {loading ? "Chargement..." : "Charger plus"}
+            {loading ? "Loading..." : "Load more"}
           </Button>
         </div>
       )}
@@ -271,17 +271,17 @@ export function CohortList() {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Supprimer la cohorte</DialogTitle>
+            <DialogTitle>Delete cohort</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer cette cohorte ? Cette action est irréversible.
+              Are you sure you want to delete this cohort? This action is irreversible.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Annuler
+              Cancel
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
-              Supprimer
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -289,4 +289,3 @@ export function CohortList() {
     </div>
   );
 }
-

@@ -7,9 +7,9 @@ export default async function AdminOrdersPage() {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Gestion des commandes</h1>
+        <h1 className="text-3xl font-bold">Order management</h1>
         <p className="text-muted-foreground mt-2">
-          Consultez et gérez toutes les transactions et commandes
+          Review and manage all transactions and orders
         </p>
       </div>
       <OrderList />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,7 +12,7 @@ import { Loader2, Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, Sh
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek, isToday, isPast } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { formatInTimeZone } from "date-fns-tz";
 import { EASTERN_TIMEZONE } from "@/lib/utils/timezone";
 import { AppointmentPaymentDialog } from "./appointment-payment-dialog";
@@ -56,33 +56,6 @@ export function AppointmentBooking() {
     loadCourses();
   }, []);
 
-  // Load month availability when course, month, or duration changes
-  useEffect(() => {
-    if (selectedCourse) {
-      loadMonthAvailability();
-      // Clear loaded slots for the selected date when switching course/month/duration
-      setAvailabilities([]);
-      setSelectedDate(null);
-    } else {
-      setAvailabilities([]);
-      setAvailabilityMap({});
-      setSelectedDate(null);
-    }
-  }, [selectedCourse, currentMonth, selectedDuration]);
-
-  // Only clear selected slots when course or duration changes (not when navigating months)
-  useEffect(() => {
-    if (!selectedCourse) {
-      setSelectedSlots([]);
-    }
-  }, [selectedCourse, selectedDuration]);
-
-  useEffect(() => {
-    if (selectedDate && selectedCourse) {
-      loadAvailabilitiesForDate(selectedDate);
-    }
-  }, [selectedDate, selectedDuration, selectedCourse]);
-
   const loadCourses = async () => {
     try {
       const result = await getPublishedCoursesAction({});
@@ -105,7 +78,7 @@ export function AppointmentBooking() {
     }
   };
 
-  const loadMonthAvailability = async () => {
+  const loadMonthAvailability = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -141,9 +114,9 @@ export function AppointmentBooking() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCourse, currentMonth, selectedDuration]);
 
-  const loadAvailabilitiesForDate = async (date: Date) => {
+  const loadAvailabilitiesForDate = useCallback(async (date: Date) => {
     try {
       setLoading(true);
       const dateStr = formatInTimeZone(date, EASTERN_TIMEZONE, "yyyy-MM-dd");
@@ -172,7 +145,34 @@ export function AppointmentBooking() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCourse, selectedDuration]);
+
+  // Load month availability when course, month, or duration changes
+  useEffect(() => {
+    if (selectedCourse) {
+      loadMonthAvailability();
+      // Clear loaded slots for the selected date when switching course/month/duration
+      setAvailabilities([]);
+      setSelectedDate(null);
+    } else {
+      setAvailabilities([]);
+      setAvailabilityMap({});
+      setSelectedDate(null);
+    }
+  }, [selectedCourse, currentMonth, selectedDuration, loadMonthAvailability]);
+
+  // Only clear selected slots when course or duration changes (not when navigating months)
+  useEffect(() => {
+    if (!selectedCourse) {
+      setSelectedSlots([]);
+    }
+  }, [selectedCourse, selectedDuration]);
+
+  useEffect(() => {
+    if (selectedDate && selectedCourse) {
+      loadAvailabilitiesForDate(selectedDate);
+    }
+  }, [selectedDate, selectedDuration, selectedCourse, loadAvailabilitiesForDate]);
 
   // Helper function to check if two time slots overlap
   const slotsOverlap = (slot1: SelectedSlot, slot2: SelectedSlot): boolean => {
@@ -266,7 +266,7 @@ export function AppointmentBooking() {
 
 
   const formatTime = (dateString: string) => {
-    return format(new Date(dateString), "HH:mm", { locale: fr });
+    return format(new Date(dateString), "HH:mm", { locale: enCA });
   };
 
   const calculatePrice = (hourlyRate: number, durationMinutes: number) => {
@@ -300,20 +300,20 @@ export function AppointmentBooking() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold mb-2">Réserver un rendez-vous</h2>
+        <h2 className="text-2xl font-bold mb-2">Book an appointment</h2>
         <p className="text-muted-foreground">
-          Sélectionnez un cours et choisissez un créneau disponible
+          Select a course and choose an available slot
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Paramètres de réservation</CardTitle>
+          <CardTitle>Booking settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="course">Cours</Label>
+              <Label htmlFor="course">Course</Label>
               <Select value={selectedCourse} onValueChange={setSelectedCourse}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a course" />
@@ -329,7 +329,7 @@ export function AppointmentBooking() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="duration">Durée</Label>
+              <Label htmlFor="duration">Duration</Label>
               <Select
                 value={selectedDuration.toString()}
                 onValueChange={(val) => setSelectedDuration(parseInt(val) as 60 | 90 | 120)}
@@ -349,7 +349,7 @@ export function AppointmentBooking() {
           {selectedCourse && (
             <div className="p-4 bg-muted rounded-md">
               <p className="text-sm">
-                <strong>Tarif:</strong>{" "}
+                <strong>Rate:</strong>{" "}
                 {(() => {
                   const course = courses.find((c) => c.id === selectedCourse);
                   if (!course || !course.appointmentHourlyRate) return "N/A";
@@ -369,7 +369,7 @@ export function AppointmentBooking() {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <CalendarIcon className="h-5 w-5" />
-                  {format(currentMonth, "MMMM yyyy", { locale: fr })}
+                  {format(currentMonth, "MMMM yyyy", { locale: enCA })}
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   <Button
@@ -393,7 +393,7 @@ export function AppointmentBooking() {
               {/* Calendar Grid */}
               <div className="grid grid-cols-7 gap-1">
                 {/* Day headers - Monday to Sunday */}
-                {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
                   <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
                     {day}
                   </div>
@@ -438,7 +438,7 @@ export function AppointmentBooking() {
               <div className="flex items-center justify-center gap-4 mt-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 bg-green-500 rounded-full" />
-                  <span>Disponible</span>
+                    <span>Available</span>
                 </div>
               </div>
             </CardContent>
@@ -450,7 +450,7 @@ export function AppointmentBooking() {
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
                 {selectedDate
-                  ? format(selectedDate, "EEEE d MMMM yyyy", { locale: fr })
+                  ? format(selectedDate, "EEEE d MMMM yyyy", { locale: enCA })
                   : "Select a date"}
               </CardTitle>
             </CardHeader>
@@ -459,7 +459,7 @@ export function AppointmentBooking() {
                 <div className="text-center py-12">
                   <CalendarIcon className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                   <p className="text-muted-foreground">
-                    Sélectionnez une date dans le calendrier pour voir les créneaux disponibles
+                    Select a date in the calendar to see available slots
                   </p>
                 </div>
               ) : loading ? (
@@ -471,7 +471,7 @@ export function AppointmentBooking() {
               ) : availabilities.length === 0 ? (
                 <div className="text-center py-8">
                   <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">Aucun créneau disponible pour cette date</p>
+                  <p className="text-muted-foreground">No available time slots for this date</p>
                 </div>
               ) : (
                 <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -506,7 +506,7 @@ export function AppointmentBooking() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ShoppingCart className="h-5 w-5" />
-              Créneaux sélectionnés ({selectedSlots.length})
+              Selected slots ({selectedSlots.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -522,7 +522,7 @@ export function AppointmentBooking() {
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex-1">
                       <div className="font-medium">
-                        {format(new Date(slot.start), "EEEE d MMMM yyyy", { locale: fr })}
+                        {format(new Date(slot.start), "EEEE d MMMM yyyy", { locale: enCA })}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {formatTime(slot.start)} - {formatTime(slot.end)}
@@ -576,21 +576,21 @@ export function AppointmentBooking() {
               {isProcessingPayment ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Traitement...
+                  Processing...
                 </>
               ) : (
                 <>
                   <ShoppingCart className="h-4 w-4 mr-2" />
-                  Procéder au paiement ({selectedSlots.length} créneau{selectedSlots.length > 1 ? "x" : ""})
+                  Proceed to payment ({selectedSlots.length} slot{selectedSlots.length > 1 ? "s" : ""})
                 </>
               )}
             </Button>
 
             {/* Info */}
             <div className="text-xs text-muted-foreground space-y-1">
-              <p>• Vous pouvez ajouter plus de créneaux en continuant la sélection</p>
-              <p>• Annulation gratuite jusqu&apos;à 2h avant chaque rendez-vous</p>
-              <p>• Paiement sécurisé avec Stripe</p>
+              <p>• You can add more slots by continuing your selection</p>
+              <p>• Free cancellation up to 2 hours before each appointment</p>
+              <p>• Secure payment with Stripe</p>
             </div>
           </CardContent>
         </Card>

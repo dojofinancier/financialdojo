@@ -43,25 +43,25 @@ export default async function CohortDetailPage({ params }: CohortDetailPageProps
             <Link href="/dashboard/admin/cohorts">
               <Button variant="ghost" size="sm" className="mb-4">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Retour à la liste
+                Back to list
               </Button>
             </Link>
             <h2 className="text-2xl font-semibold">{cohort.title}</h2>
             <p className="text-muted-foreground mt-2">
-              Gérez les détails de cette cohorte
+              Manage this cohort's details
             </p>
           </div>
 
       <Tabs defaultValue="details" className="w-full">
         <TabsList>
-          <TabsTrigger value="details">Détails</TabsTrigger>
-          <TabsTrigger value="about">À propos</TabsTrigger>
-          <TabsTrigger value="features">Fonctionnalités</TabsTrigger>
-          <TabsTrigger value="testimonials">Témoignages</TabsTrigger>
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="features">Features</TabsTrigger>
+          <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
           <TabsTrigger value="modules">Modules</TabsTrigger>
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
           <TabsTrigger value="messages">Messages</TabsTrigger>
-          <TabsTrigger value="enrollments">Inscriptions</TabsTrigger>
+          <TabsTrigger value="enrollments">Enrollments</TabsTrigger>
           <TabsTrigger value="faqs">FAQ</TabsTrigger>
         </TabsList>
         <TabsContent value="details" className="mt-6">

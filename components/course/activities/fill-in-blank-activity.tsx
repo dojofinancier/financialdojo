@@ -64,7 +64,7 @@ export function FillInBlankActivity({
   return (
     <div className="space-y-4">
       <div>
-        <Label className="text-base font-semibold">Complétez les blancs</Label>
+        <Label className="text-base font-semibold">Fill in the blanks</Label>
         <div className="mt-4 space-y-3">
           {parts.map((part, index) => (
             <span key={index}>
@@ -101,7 +101,7 @@ export function FillInBlankActivity({
       </div>
       {showAnswers && correctAnswers && (
         <div className="p-3 bg-muted rounded-md">
-          <p className="text-sm font-semibold mb-1">Réponse correcte:</p>
+          <p className="text-sm font-semibold mb-1">Correct answer:</p>
           <ul className="list-disc list-inside text-sm">
             {correctAnswers.map((ans, idx) => (
               <li key={idx}>{ans}</li>

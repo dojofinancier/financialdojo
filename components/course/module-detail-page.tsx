@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -105,25 +105,6 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
   }>>>({});
   const [loadingAttempts, setLoadingAttempts] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    loadModuleContent();
-    loadStudentNote();
-    
-    // Check URL parameters for tab
-    const params = new URLSearchParams(window.location.search);
-    const tab = params.get('tab');
-    if (tab === 'videos' || tab === 'notes' || tab === 'quiz') {
-      setActiveTab(tab);
-    }
-  }, [moduleId]);
-
-  // Load quiz attempts when quizzes are loaded
-  useEffect(() => {
-    if (quizzes.length > 0) {
-      loadQuizAttempts();
-    }
-  }, [quizzes]);
-
   // Update active tab if videos tab is selected but there are no videos
   useEffect(() => {
     if (activeTab === "videos" && (!videosEnabled || videos.length === 0)) {
@@ -136,7 +117,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     }
   }, [activeTab, videosEnabled, videos.length, notesEnabled, quizzesEnabled]);
 
-  const loadStudentNote = async () => {
+  const loadStudentNote = useCallback(async () => {
     try {
       const result = await getStudentModuleNoteAction(moduleId);
       if (result.success && result.data) {
@@ -146,7 +127,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     } catch (error) {
       console.error("Error loading student note:", error);
     }
-  };
+  }, [moduleId]);
 
   const handleSaveNote = async () => {
     setSavingNote(true);
@@ -168,7 +149,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     }
   };
 
-  const loadModuleContent = async () => {
+  const loadModuleContent = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getModuleContentAction(moduleId);
@@ -187,10 +168,22 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     } finally {
       setLoading(false);
     }
-  };
+  }, [moduleId]);
+
+  useEffect(() => {
+    loadModuleContent();
+    loadStudentNote();
+
+    // Check URL parameters for tab
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab");
+    if (tab === "videos" || tab === "notes" || tab === "quiz") {
+      setActiveTab(tab);
+    }
+  }, [loadModuleContent, loadStudentNote]);
 
 
-  const loadQuizAttempts = async () => {
+  const loadQuizAttempts = useCallback(async () => {
     try {
       const attemptsPromises = quizzes.map(async (quizItem) => {
         setLoadingAttempts((prev) => ({ ...prev, [quizItem.quiz.id]: true }));
@@ -230,7 +223,14 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     } catch (error) {
       console.error("Error loading quiz attempts:", error);
     }
-  };
+  }, [quizzes]);
+
+  // Load quiz attempts when quizzes are loaded
+  useEffect(() => {
+    if (quizzes.length > 0) {
+      loadQuizAttempts();
+    }
+  }, [loadQuizAttempts, quizzes.length]);
 
   const handleRetakeQuiz = (quizId: string) => {
     // Reset the quiz state to allow retaking
@@ -353,9 +353,9 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
       if (result.success && result.data) {
         setQuizSubmitted((prev) => ({ ...prev, [quiz.quiz.id]: true }));
         if (result.data.passed) {
-          toast.success(`Quiz réussi ! Score: ${result.data.score}%`);
+          toast.success(`Quiz passed! Score: ${result.data.score}%`);
         } else {
-          toast.warning(`Score: ${result.data.score}%. Note de passage: ${quiz.quiz.passingScore}%`);
+          toast.warning(`Score: ${result.data.score}%. Passing score: ${quiz.quiz.passingScore}%`);
         }
         // Reload attempts to show the new submission
         await loadQuizAttempts();
@@ -413,7 +413,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Module introuvable</p>
+            <p className="text-muted-foreground">Module not found</p>
         </CardContent>
       </Card>
     );
@@ -428,7 +428,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
         <div className="flex-1 min-w-0">
           <Button variant="ghost" onClick={onBack} className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour
+            Back
           </Button>
           <h1 className="text-xl sm:text-2xl font-bold break-words">{module.title}</h1>
           {module.description && (
@@ -439,7 +439,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
           {isCompleted ? (
             <Badge variant="default" className="h-8 w-full sm:w-auto justify-center">
               <CheckCircle2 className="h-4 w-4 mr-2" />
-              Complété
+              Completed
             </Badge>
           ) : (
             <Button 
@@ -450,12 +450,12 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
               {markingComplete ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Enregistrement...
+                  Saving...
                 </>
               ) : (
                 <>
                   <CheckCircle2 className="h-4 w-4 mr-2" />
-                  Marquer comme complété
+                  Mark as completed
                 </>
               )}
             </Button>
@@ -469,13 +469,13 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
           {videosEnabled && videos.length > 0 && (
             <TabsTrigger value="videos">
               <VideoIcon className="h-4 w-4 mr-2" />
-              Vidéos
+              Videos
             </TabsTrigger>
           )}
           {notesEnabled && (
             <TabsTrigger value="notes">
               <FileText className="h-4 w-4 mr-2" />
-              Notes du cours
+              Course notes
             </TabsTrigger>
           )}
           {quizzesEnabled && (
@@ -502,7 +502,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                           allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                           referrerPolicy="strict-origin-when-cross-origin"
                           style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                          title={`Vidéo ${videoItem.order}`}
+                           title={`Video ${videoItem.order}`}
                         />
                       </div>
                       {videoItem.video.transcript && (
@@ -524,7 +524,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
           {notes.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">Aucune note disponible pour ce module.</p>
+                <p className="text-muted-foreground">No notes available for this module.</p>
               </CardContent>
             </Card>
           ) : (
@@ -539,7 +539,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                       onClick={() => handleDownloadNotePdf(noteItem)}
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      Télécharger PDF
+                      Download PDF
                     </Button>
                   </CardHeader>
                   <CardContent>
@@ -562,7 +562,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
           {quizzes.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">Aucun quiz disponible pour ce module.</p>
+                <p className="text-muted-foreground">No quiz available for this module.</p>
               </CardContent>
             </Card>
           ) : (
@@ -607,7 +607,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                       <CardHeader>
                         <CardTitle>{quiz.title}</CardTitle>
                         <CardDescription>
-                          Question {currentIndex + 1} / {totalQuestions} • Note de passage: {quiz.passingScore}%
+                          Question {currentIndex + 1} / {totalQuestions} • Passing score: {quiz.passingScore}%
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-6">
@@ -642,7 +642,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
 
                         <div className="pt-4 border-t space-y-3">
                           <div className="text-sm text-muted-foreground text-center">
-                            {Object.keys(answers).length} / {totalQuestions} répondues
+                            {Object.keys(answers).length} / {totalQuestions} answered
                           </div>
                           <div className="flex items-center justify-between gap-2">
                             <Button
@@ -652,7 +652,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                               className="flex-1 sm:flex-initial"
                             >
                               <ChevronLeft className="h-4 w-4 mr-2" />
-                              Précédent
+                              Previous
                             </Button>
                             {currentIndex < totalQuestions - 1 ? (
                               <Button
@@ -673,10 +673,10 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                                 {isSubmitting ? (
                                   <>
                                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                    Soumission...
+                                    Submitting...
                                   </>
                                 ) : (
-                                  "Soumettre le quiz"
+                                  "Submit quiz"
                                 )}
                               </Button>
                             )}
@@ -685,14 +685,14 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
 
                         {isSubmitted && (
                           <div className="p-4 bg-muted rounded-lg space-y-3">
-                            <p className="text-sm text-muted-foreground text-center">Quiz soumis</p>
+                            <p className="text-sm text-muted-foreground text-center">Quiz submitted</p>
                             <div className="flex justify-center">
                               <Button
                                 variant="outline"
                                 onClick={() => handleRetakeQuiz(quiz.id)}
                                 size="sm"
                               >
-                                Refaire le quiz
+                                Retake quiz
                               </Button>
                             </div>
                           </div>
@@ -704,9 +704,9 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                     {quizAttempts[quiz.id] && quizAttempts[quiz.id].length > 0 && (
                       <Card>
                         <CardHeader>
-                          <CardTitle className="text-lg">Tentatives précédentes</CardTitle>
+                          <CardTitle className="text-lg">Previous attempts</CardTitle>
                           <CardDescription>
-                            Historique de vos tentatives pour ce quiz
+                            History of your attempts for this quiz
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -718,7 +718,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                             <div className="space-y-3">
                               {quizAttempts[quiz.id].map((attempt, index) => {
                                 const isPassed = attempt.passed ?? (attempt.score >= quiz.passingScore);
-                                const formattedDate = new Intl.DateTimeFormat('fr-CA', {
+                                const formattedDate = new Intl.DateTimeFormat('en-CA', {
                                   year: 'numeric',
                                   month: 'long',
                                   day: 'numeric',
@@ -744,7 +744,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                                       <div>
                                         <div className="flex items-center gap-2">
                                           <span className="font-semibold">
-                                            Tentative #{quizAttempts[quiz.id].length - index}
+                                            Attempt #{quizAttempts[quiz.id].length - index}
                                           </span>
                                           <Badge
                                             variant={isPassed ? 'default' : 'destructive'}
@@ -754,7 +754,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                                           </Badge>
                                           {isPassed && (
                                             <Badge variant="outline" className="text-xs border-green-600 text-green-700 dark:text-green-400">
-                                              Réussi
+                                              Passed
                                             </Badge>
                                           )}
                                         </div>
@@ -785,11 +785,11 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
               <StickyNote className="h-4 w-4" />
-              Mes notes
+              My notes
             </CardTitle>
             <div className="flex items-center gap-2">
               {noteSaved && (
-                <span className="text-xs text-muted-foreground">Sauvegardé</span>
+                <span className="text-xs text-muted-foreground">Saved</span>
               )}
               <Button
                 size="sm"
@@ -800,12 +800,12 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                 {savingNote ? (
                   <>
                     <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                    Sauvegarde...
+                    Saving...
                   </>
                 ) : (
                   <>
                     <Save className="h-3 w-3 mr-2" />
-                    Sauvegarder
+                    Save
                   </>
                 )}
               </Button>
@@ -822,11 +822,11 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
           />
           <div className="flex items-center justify-between mt-2">
             <p className="text-xs text-muted-foreground">
-              Vos notes sont sauvegardées lorsque vous cliquez sur "Sauvegarder"
+              Your notes are saved when you click "Save"
             </p>
             {studentNote.length > 0 && (
               <p className="text-xs text-muted-foreground">
-                {studentNote.length} caractère{studentNote.length > 1 ? 's' : ''}
+                {studentNote.length} character{studentNote.length > 1 ? 's' : ''}
               </p>
             )}
           </div>
@@ -835,4 +835,3 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     </div>
   );
 }
-

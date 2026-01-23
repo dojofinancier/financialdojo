@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Target, Award, CheckCircle2, Clock, Calendar } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 
 interface GoalsSectionProps {
   data: {
@@ -38,9 +38,9 @@ export function GoalsSection({ data }: GoalsSectionProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Aucun plan d'étude</CardTitle>
+          <CardTitle>No study plan</CardTitle>
           <CardDescription>
-            Configurez un plan d'étude pour voir vos objectifs et progrès
+            Set up a study plan to see your goals and progress
           </CardDescription>
         </CardHeader>
       </Card>
@@ -54,44 +54,44 @@ export function GoalsSection({ data }: GoalsSectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
-            Objectifs du plan d'étude
+            Study plan goals
           </CardTitle>
-          <CardDescription>Progression vers votre examen</CardDescription>
+          <CardDescription>Progress toward your exam</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div>
               <div className="flex justify-between text-sm mb-2">
-                <span>Blocs complétés</span>
+                <span>Blocks completed</span>
                 <span>
                   {data.goals.completedBlocks} / {data.goals.totalBlocks}
                 </span>
               </div>
               <Progress value={data.goals.percentage} />
               <p className="text-xs text-muted-foreground mt-1">
-                {data.goals.percentage.toFixed(1)}% complété
+                {data.goals.percentage.toFixed(1)}% completed
               </p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 pt-4 border-t">
               <div>
-                <p className="text-sm font-medium mb-1">Jours jusqu'à l'examen</p>
+                <p className="text-sm font-medium mb-1">Days until exam</p>
                 <p className="text-2xl font-bold">{data.goals.daysUntilExam}</p>
                 <p className="text-xs text-muted-foreground">
-                  Date: {format(new Date(data.goals.examDate), "d MMMM yyyy", { locale: fr })}
+                  Date: {format(new Date(data.goals.examDate), "d MMMM yyyy", { locale: enCA })}
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium mb-1">Statut</p>
+                <p className="text-sm font-medium mb-1">Status</p>
                 {data.goals.onTrack ? (
                   <Badge variant="default" className="bg-green-500">
                     <CheckCircle2 className="h-3 w-3 mr-1" />
-                    Sur la bonne voie
+                    On track
                   </Badge>
                 ) : (
                   <Badge variant="destructive">
                     <Clock className="h-3 w-3 mr-1" />
-                    En retard
+                    Behind
                   </Badge>
                 )}
               </div>
@@ -105,9 +105,9 @@ export function GoalsSection({ data }: GoalsSectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Jalons
+            Milestones
           </CardTitle>
-          <CardDescription>Étapes importantes de votre parcours</CardDescription>
+          <CardDescription>Key steps along your journey</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -130,16 +130,16 @@ export function GoalsSection({ data }: GoalsSectionProps) {
                   <p className="text-xs text-muted-foreground mt-1">{milestone.description}</p>
                   {milestone.achievedAt && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      Atteint le {format(new Date(milestone.achievedAt), "d MMMM yyyy", { locale: fr })}
+                      Achieved on {format(new Date(milestone.achievedAt), "d MMMM yyyy", { locale: enCA })}
                     </p>
                   )}
                 </div>
                 {milestone.achievedAt ? (
                   <Badge variant="default" className="bg-green-500">
-                    Atteint
+                    Achieved
                   </Badge>
                 ) : (
-                  <Badge variant="outline">En attente</Badge>
+                  <Badge variant="outline">Pending</Badge>
                 )}
               </div>
             ))}
@@ -152,9 +152,9 @@ export function GoalsSection({ data }: GoalsSectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Award className="h-5 w-5" />
-            Réalisations
+            Achievements
           </CardTitle>
-          <CardDescription>Badges et accomplissements</CardDescription>
+          <CardDescription>Badges and accomplishments</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 md:grid-cols-2">
@@ -176,7 +176,7 @@ export function GoalsSection({ data }: GoalsSectionProps) {
                 <p className="text-xs text-muted-foreground mt-1">{achievement.description}</p>
                 {achievement.achieved && (
                   <Badge variant="outline" className="mt-2 bg-yellow-100 dark:bg-yellow-900">
-                    Débloqué
+                    Unlocked
                   </Badge>
                 )}
               </div>

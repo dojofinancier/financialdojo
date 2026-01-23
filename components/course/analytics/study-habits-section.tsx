@@ -82,9 +82,9 @@ export function StudyHabitsSection({ data }: StudyHabitsSectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Temps d'étude par jour de la semaine
+            Study time by day of the week
           </CardTitle>
-          <CardDescription>Répartition de votre temps d'étude sur la semaine</CardDescription>
+          <CardDescription>Breakdown of your study time across the week</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -105,9 +105,9 @@ export function StudyHabitsSection({ data }: StudyHabitsSectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
-            Temps d'étude quotidien (30 derniers jours)
+            Daily study time (last 30 days)
           </CardTitle>
-          <CardDescription>Évolution de votre temps d'étude quotidien</CardDescription>
+          <CardDescription>Trend of your daily study time</CardDescription>
         </CardHeader>
         <CardContent>
           {data.dailyStudyTime.length > 0 ? (
@@ -123,7 +123,7 @@ export function StudyHabitsSection({ data }: StudyHabitsSectionProps) {
             </ResponsiveContainer>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-8">
-              Aucune donnée disponible pour les 30 derniers jours
+              No data available for the last 30 days
             </p>
           )}
         </CardContent>
@@ -135,32 +135,32 @@ export function StudyHabitsSection({ data }: StudyHabitsSectionProps) {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Résumé hebdomadaire
+              Weekly summary
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div>
                 <p className="text-2xl font-bold">{averageWeeklyHours}h</p>
-                <p className="text-xs text-muted-foreground">Temps moyen par semaine</p>
+                 <p className="text-xs text-muted-foreground">Average time per week</p>
               </div>
               <div className="pt-3 border-t">
-                <p className="text-sm font-medium mb-2">Recommandation</p>
+                 <p className="text-sm font-medium mb-2">Recommendation</p>
                 <p className="text-xs text-muted-foreground">
-                  {data.recommendedHours.min} - {data.recommendedHours.max} heures par semaine
+                   {data.recommendedHours.min} - {data.recommendedHours.max} hours per week
                 </p>
                 {averageWeeklyHours < data.recommendedHours.min && (
                   <p className="text-xs text-yellow-600 mt-1">
-                    ⚠️ En dessous de la recommandation minimale
+                     ⚠️ Below the minimum recommendation
                   </p>
                 )}
                 {averageWeeklyHours >= data.recommendedHours.min &&
                   averageWeeklyHours <= data.recommendedHours.max && (
-                    <p className="text-xs text-green-600 mt-1">✓ Dans la zone recommandée</p>
+                    <p className="text-xs text-green-600 mt-1">✓ Within the recommended range</p>
                   )}
                 {averageWeeklyHours > data.recommendedHours.max && (
                   <p className="text-xs text-blue-600 mt-1">
-                    ℹ️ Au-dessus de la recommandation (excellent!)
+                     ℹ️ Above the recommendation (excellent!)
                   </p>
                 )}
               </div>
@@ -172,26 +172,26 @@ export function StudyHabitsSection({ data }: StudyHabitsSectionProps) {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
-              Adhérence au plan d'étude
+              Study plan adherence
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div>
                 <p className="text-2xl font-bold">{data.studyPlanAdherence.adherenceRate.toFixed(1)}%</p>
-                <p className="text-xs text-muted-foreground">Taux d'adhérence</p>
+                 <p className="text-xs text-muted-foreground">Adherence rate</p>
               </div>
               <div className="pt-3 border-t space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-green-600">À temps</span>
+                   <span className="text-green-600">On time</span>
                   <span>{data.studyPlanAdherence.tasksCompletedOnTime}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-yellow-600">En retard</span>
+                   <span className="text-yellow-600">Late</span>
                   <span>{data.studyPlanAdherence.tasksCompletedLate}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-red-600">Ignorées</span>
+                   <span className="text-red-600">Skipped</span>
                   <span>{data.studyPlanAdherence.tasksSkipped}</span>
                 </div>
               </div>
@@ -202,4 +202,3 @@ export function StudyHabitsSection({ data }: StudyHabitsSectionProps) {
     </div>
   );
 }
-

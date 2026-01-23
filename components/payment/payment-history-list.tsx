@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Download, CheckCircle, XCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 
 type PaymentHistoryListProps = {
   initialPayments: any;
@@ -51,19 +51,19 @@ export function PaymentHistoryList({ initialPayments }: PaymentHistoryListProps)
         // Generate PDF receipt (simplified - in production, use a PDF library)
         const receipt = result.data;
         const receiptText = `
-REÇU DE PAIEMENT
+ PAYMENT RECEIPT
 ================
 
-Date: ${format(receipt.date, "d MMMM yyyy", { locale: fr })}
-Numéro de transaction: ${receipt.paymentIntentId}
+Date: ${format(receipt.date, "d MMMM yyyy", { locale: enCA })}
+Transaction ID: ${receipt.paymentIntentId}
 
-Cours: ${receipt.course.title}
-Montant: ${receipt.amount.toFixed(2)} ${receipt.currency}
+Course: ${receipt.course.title}
+Amount: ${receipt.amount.toFixed(2)} ${receipt.currency}
 
-Client: ${receipt.customer.name}
-Courriel: ${receipt.customer.email}
+Customer: ${receipt.customer.name}
+Email: ${receipt.customer.email}
 
-Statut: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
+Status: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
         `.trim();
 
         // Create blob and download
@@ -96,7 +96,7 @@ Statut: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Aucun paiement trouvé</p>
+          <p className="text-muted-foreground">No payments found</p>
         </CardContent>
       </Card>
     );
@@ -123,7 +123,7 @@ Statut: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
                 <div>
                   <CardTitle>{enrollment.course.title}</CardTitle>
                   <CardDescription>
-                    {format(enrollment.purchaseDate, "d MMMM yyyy")}
+                    {format(enrollment.purchaseDate, "d MMMM yyyy", { locale: enCA })}
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
@@ -137,7 +137,7 @@ Statut: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Montant</span>
+                <span className="text-muted-foreground">Amount</span>
                 <span className="font-medium">
                   {(paymentIntent?.amount || 0) / 100} CAD
                 </span>
@@ -146,7 +146,7 @@ Statut: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
               {enrollment.couponUsage && (
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">
-                    Réduction ({enrollment.couponUsage.coupon.code})
+                    Discount ({enrollment.couponUsage.coupon.code})
                   </span>
                   <span className="text-green-600">
                     -{Number(enrollment.couponUsage.discountAmount).toFixed(2)} CAD
@@ -157,11 +157,11 @@ Statut: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
               {hasRefunds && (
                 <div className="space-y-2 border-t pt-2">
                   <div className="flex justify-between text-sm text-red-600">
-                    <span>Remboursements</span>
+                    <span>Refunds</span>
                     <span>-{totalRefunded.toFixed(2)} CAD</span>
                   </div>
                   <div className="flex justify-between font-medium">
-                    <span>Montant net</span>
+                    <span>Net amount</span>
                     <span>{netAmount.toFixed(2)} CAD</span>
                   </div>
                 </div>
@@ -182,7 +182,7 @@ Statut: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
                   ) : (
                     <Download className="h-4 w-4 mr-2" />
                   )}
-                  Télécharger le reçu
+                  Download receipt
                 </Button>
               </div>
             </CardContent>
@@ -200,12 +200,12 @@ Statut: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Chargement...
+                Loading...
               </>
             ) : (
               <>
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Charger plus
+                Load more
               </>
             )}
           </Button>
@@ -214,4 +214,3 @@ Statut: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
     </div>
   );
 }
-

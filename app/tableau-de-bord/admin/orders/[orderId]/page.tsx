@@ -25,10 +25,10 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         <Link href="/dashboard/admin/orders">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour à la liste
+            Back to list
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Détails de la commande</h1>
+        <h1 className="text-3xl font-bold">Order details</h1>
         <p className="text-muted-foreground mt-2">
           ID: {orderData.enrollment.paymentIntentId?.slice(-8) || orderData.enrollment.id.slice(-8)}
         </p>

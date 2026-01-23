@@ -125,7 +125,7 @@ export async function uploadLearningActivitiesCSVAction(
         const activityType = fields[headerMap["ActivityType"]]?.toUpperCase();
 
         if (!activityType) {
-          errors.push(`Ligne ${i + 1}: ActivityType manquant`);
+          errors.push(`Line ${i + 1}: ActivityType missing`);
           continue;
         }
 
@@ -186,9 +186,9 @@ export async function uploadLearningActivitiesCSVAction(
         if (!moduleId) {
           moduleId = modules[0]?.id || null;
           if (moduleId) {
-            errors.push(`Ligne ${i + 1}: Module "${moduleName}" introuvable, assigné au premier module par défaut`);
+            errors.push(`Line ${i + 1}: Module "${moduleName}" not found, assigned to the first module by default`);
           } else {
-            errors.push(`Ligne ${i + 1}: Module "${moduleName}" introuvable et aucun module disponible`);
+            errors.push(`Line ${i + 1}: Module "${moduleName}" not found and no modules are available`);
             continue;
           }
         }
@@ -205,7 +205,7 @@ export async function uploadLearningActivitiesCSVAction(
         });
 
         if (!contentItemResult.success || !contentItemResult.data) {
-          errors.push(`Ligne ${i + 1}: Erreur lors de la création de l'élément de contenu`);
+          errors.push(`Line ${i + 1}: Error creating the content item`);
           continue;
         }
 
@@ -224,7 +224,7 @@ export async function uploadLearningActivitiesCSVAction(
             const answer3 = fields[headerMap["CorrectAnswer3"]] || "";
 
             if (!question || !answer1) {
-              errors.push(`Ligne ${i + 1}: Question ou réponse manquante`);
+              errors.push(`Line ${i + 1}: Question or answer missing`);
               continue;
             }
 
@@ -238,7 +238,7 @@ export async function uploadLearningActivitiesCSVAction(
             const correctAnswer = fields[headerMap["CorrectAnswer"]] || "";
 
             if (!text || !correctAnswer) {
-              errors.push(`Ligne ${i + 1}: Texte ou réponse manquante`);
+              errors.push(`Line ${i + 1}: Text or answer missing`);
               continue;
             }
 
@@ -259,7 +259,7 @@ export async function uploadLearningActivitiesCSVAction(
             }
 
             if (items.length < 2) {
-              errors.push(`Ligne ${i + 1}: Au moins 2 éléments requis pour le tri`);
+              errors.push(`Line ${i + 1}: At least 2 items required for sorting`);
               continue;
             }
 
@@ -298,7 +298,7 @@ export async function uploadLearningActivitiesCSVAction(
             });
 
             if (categories.length < 2 || Object.keys(items).length === 0) {
-              errors.push(`Ligne ${i + 1}: Au moins 2 catégories et des éléments requis`);
+              errors.push(`Line ${i + 1}: At least 2 categories and items are required`);
               continue;
             }
 
@@ -313,13 +313,13 @@ export async function uploadLearningActivitiesCSVAction(
             const toleranceStr = fields[headerMap["Tolerance"]] || "";
 
             if (!question || !correctAnswerStr) {
-              errors.push(`Ligne ${i + 1}: Question ou réponse manquante`);
+              errors.push(`Line ${i + 1}: Question or answer missing`);
               continue;
             }
 
             const correctAnswerNum = parseFloat(correctAnswerStr);
             if (isNaN(correctAnswerNum)) {
-              errors.push(`Ligne ${i + 1}: Réponse numérique invalide`);
+              errors.push(`Line ${i + 1}: Invalid numeric answer`);
               continue;
             }
 
@@ -334,7 +334,7 @@ export async function uploadLearningActivitiesCSVAction(
             const answersJSON = fields[headerMap["AnswersJSON"]] || "";
 
             if (!tableJSON || !answersJSON) {
-              errors.push(`Ligne ${i + 1}: TableJSON ou AnswersJSON manquant`);
+              errors.push(`Line ${i + 1}: TableJSON or AnswersJSON missing`);
               continue;
             }
 
@@ -344,7 +344,7 @@ export async function uploadLearningActivitiesCSVAction(
               content = { table, instructions: instructions || "" };
               correctAnswers = answers;
             } catch (e) {
-              errors.push(`Ligne ${i + 1}: JSON invalide: ${e instanceof Error ? e.message : "Erreur"}`);
+              errors.push(`Line ${i + 1}: Invalid JSON: ${e instanceof Error ? e.message : "Error"}`);
               continue;
             }
             break;
@@ -356,7 +356,7 @@ export async function uploadLearningActivitiesCSVAction(
             const correctAnswer = fields[headerMap["CorrectAnswer"]] || "";
 
             if (!incorrectSolution || !question || !correctAnswer) {
-              errors.push(`Ligne ${i + 1}: Champs manquants`);
+              errors.push(`Line ${i + 1}: Missing fields`);
               continue;
             }
 
@@ -372,13 +372,13 @@ export async function uploadLearningActivitiesCSVAction(
             const question3 = fields[headerMap["Question3"]] || "";
 
             if (!topic) {
-              errors.push(`Ligne ${i + 1}: Topic manquant`);
+              errors.push(`Line ${i + 1}: Missing topic`);
               continue;
             }
 
             const questions = [question1, question2, question3].filter((q) => q.trim());
             if (questions.length === 0) {
-              errors.push(`Ligne ${i + 1}: Au moins une question requise`);
+              errors.push(`Line ${i + 1}: At least one question required`);
               continue;
             }
 
@@ -388,7 +388,7 @@ export async function uploadLearningActivitiesCSVAction(
           }
 
           default:
-            errors.push(`Ligne ${i + 1}: Type d'activité inconnu: ${activityType}`);
+            errors.push(`Line ${i + 1}: Unknown activity type: ${activityType}`);
             continue;
         }
 
@@ -432,8 +432,7 @@ export async function uploadLearningActivitiesCSVAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error during upload: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
-

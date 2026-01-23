@@ -12,8 +12,8 @@ import { EASTERN_TIMEZONE } from "@/lib/utils/timezone";
 const availabilityRuleSchema = z.object({
   courseId: z.string().optional().nullable(),
   weekday: z.number().int().min(0).max(6),
-  startTime: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Format invalide (HH:MM)"),
-  endTime: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Format invalide (HH:MM)"),
+  startTime: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Invalid format (HH:MM)"),
+  endTime: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Invalid format (HH:MM)"),
 });
 
 const availabilityExceptionSchema = z.object({
@@ -288,15 +288,15 @@ function validateAvailabilityRules(
 
       if (current.endTime > next.startTime) {
         const dayNames = [
-          "Dimanche",
-          "Lundi",
-          "Mardi",
-          "Mercredi",
-          "Jeudi",
-          "Vendredi",
-          "Samedi",
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
         ];
-        return `Chevauchement détecté le ${dayNames[parseInt(weekday)]}: ${current.startTime}-${current.endTime} et ${next.startTime}-${next.endTime}`;
+        return `Overlap detected on ${dayNames[parseInt(weekday)]}: ${current.startTime}-${current.endTime} and ${next.startTime}-${next.endTime}`;
       }
     }
 
@@ -304,15 +304,15 @@ function validateAvailabilityRules(
     for (const rule of dayRules) {
       if (rule.startTime >= rule.endTime) {
         const dayNames = [
-          "Dimanche",
-          "Lundi",
-          "Mardi",
-          "Mercredi",
-          "Jeudi",
-          "Vendredi",
-          "Samedi",
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
         ];
-        return `Heure de fin doit être après l'heure de début le ${dayNames[parseInt(weekday)]}: ${rule.startTime}-${rule.endTime}`;
+        return `End time must be after start time on ${dayNames[parseInt(weekday)]}: ${rule.startTime}-${rule.endTime}`;
       }
     }
   }
@@ -335,10 +335,9 @@ function validateAvailabilityExceptions(
 
     // Check if start date is before end date
     if (startDate > endDate) {
-      return `La date de début doit être avant la date de fin: ${exception.startDate} - ${exception.endDate}`;
+      return `Start date must be before end date: ${exception.startDate} - ${exception.endDate}`;
     }
   }
 
   return null;
 }
-

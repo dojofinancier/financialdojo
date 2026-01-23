@@ -172,7 +172,7 @@ export async function getStudentOverviewAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement des statistiques: ${errorMessage}`,
+      error: `Error loading statistics: ${errorMessage}`,
     };
   }
 }
@@ -344,7 +344,7 @@ export async function getStudentProgressAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement de la progression: ${errorMessage}`,
+      error: `Error loading progress: ${errorMessage}`,
     };
   }
 }
@@ -542,7 +542,7 @@ export async function getStudentPerformanceAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement des performances: ${errorMessage}`,
+      error: `Error loading performance: ${errorMessage}`,
     };
   }
 }

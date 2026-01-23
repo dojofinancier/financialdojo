@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -30,18 +30,18 @@ export function Phase3Practice({ courseId, course, settings }: Phase3PracticePro
   // Check if case studies are enabled
   const caseStudiesEnabled = course?.componentVisibility?.caseStudies ?? false;
 
-  useEffect(() => {
-    checkAccess();
-  }, [courseId]);
-
-  const checkAccess = async () => {
+  const checkAccess = useCallback(async () => {
     const result = await checkPhase3AccessAction(courseId);
     if (result.success && result.data) {
       setCanAccess(result.data.canAccess);
       setGateMessage(result.data.message || null);
       setUnlearnedModules(result.data.unlearnedModules || []);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    checkAccess();
+  }, [checkAccess]);
 
   if (selectedExamId) {
     return (
@@ -71,12 +71,12 @@ export function Phase3Practice({ courseId, course, settings }: Phase3PracticePro
       <div className="space-y-6">
         <Alert variant="destructive">
           <Lock className="h-4 w-4" />
-          <AlertTitle>Accès à la Phase 3 restreint</AlertTitle>
+          <AlertTitle>Phase 3 access restricted</AlertTitle>
           <AlertDescription className="space-y-3 mt-2">
             <p>{gateMessage}</p>
             {unlearnedModules.length > 0 && (
               <div>
-                <p className="font-semibold mb-2">Modules à compléter:</p>
+                <p className="font-semibold mb-2">Modules to complete:</p>
                 <ul className="list-disc list-inside space-y-1">
                   {unlearnedModules.map((module) => (
                     <li key={module.id}>
@@ -93,7 +93,7 @@ export function Phase3Practice({ courseId, course, settings }: Phase3PracticePro
               className="mt-4"
             >
               <BookOpen className="h-4 w-4 mr-2" />
-              Aller à la Phase 1 - Apprendre
+              Go to Phase 1 - Learn
             </Button>
           </AlertDescription>
         </Alert>
@@ -107,7 +107,7 @@ export function Phase3Practice({ courseId, course, settings }: Phase3PracticePro
       <div className="space-y-6">
         <Card>
           <CardContent className="py-8 text-center">
-            <p className="text-muted-foreground">Vérification de l'accès...</p>
+            <p className="text-muted-foreground">Checking access...</p>
           </CardContent>
         </Card>
       </div>
@@ -120,11 +120,11 @@ export function Phase3Practice({ courseId, course, settings }: Phase3PracticePro
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
-            Phase 3 - Pratique et simulation d'examen
+            Phase 3 - Practice and exam simulation
           </CardTitle>
           <CardDescription>
-            Testez votre préparation et calibrez vos performances avec des examens simulés, des
-            questions pratiques et des études de cas.
+            Test your readiness and calibrate performance with practice exams, practice
+            questions, and case studies.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -132,16 +132,16 @@ export function Phase3Practice({ courseId, course, settings }: Phase3PracticePro
             <TabsList className={`grid w-full ${caseStudiesEnabled ? "grid-cols-3" : "grid-cols-2"}`}>
               <TabsTrigger value="exams">
                 <FileText className="h-4 w-4 mr-2" />
-                Examens simulés
+                Practice exams
               </TabsTrigger>
               <TabsTrigger value="questions">
                 <BookOpen className="h-4 w-4 mr-2" />
-                Questions pratiques
+                Practice questions
               </TabsTrigger>
               {caseStudiesEnabled && (
                 <TabsTrigger value="case-studies">
                   <FileText className="h-4 w-4 mr-2" />
-                  Études de cas
+                  Case studies
                 </TabsTrigger>
               )}
             </TabsList>

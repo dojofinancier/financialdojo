@@ -26,7 +26,7 @@ import {
 } from "@/app/actions/orders";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { DollarSign, User, BookOpen, Calendar, CreditCard, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
@@ -142,16 +142,16 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              Informations étudiant
+              Student information
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-muted-foreground">Nom</Label>
+              <Label className="text-muted-foreground">Name</Label>
               <p className="font-medium">
                 {enrollment.user.firstName || enrollment.user.lastName
                   ? `${enrollment.user.firstName || ""} ${enrollment.user.lastName || ""}`.trim()
-                  : "Sans nom"}
+                  : "No name"}
               </p>
             </div>
             <div>
@@ -160,14 +160,14 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
             </div>
             {enrollment.user.phone && (
               <div>
-                <Label className="text-muted-foreground">Téléphone</Label>
+                <Label className="text-muted-foreground">Phone</Label>
                 <p className="font-medium">{enrollment.user.phone}</p>
               </div>
             )}
             <div>
               <Link href={`/dashboard/admin/students/${enrollment.user.id}`}>
                 <Button variant="outline" size="sm">
-                  Voir le profil étudiant
+                  View student profile
                 </Button>
               </Link>
             </div>
@@ -178,34 +178,34 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
-              Informations cours
+              Course information
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-muted-foreground">Cours</Label>
+              <Label className="text-muted-foreground">Course</Label>
               <p className="font-medium">{enrollment.course.title}</p>
             </div>
             <div>
-              <Label className="text-muted-foreground">Catégorie</Label>
+              <Label className="text-muted-foreground">Category</Label>
               <p className="font-medium">{enrollment.course.category.name}</p>
             </div>
             <div>
-              <Label className="text-muted-foreground">Date d'achat</Label>
+              <Label className="text-muted-foreground">Purchase date</Label>
               <p className="font-medium">
-                {format(new Date(enrollment.purchaseDate), "d MMMM yyyy, HH:mm", { locale: fr })}
+                {format(new Date(enrollment.purchaseDate), "d MMMM yyyy, HH:mm", { locale: enCA })}
               </p>
             </div>
             <div>
               <Label className="text-muted-foreground">Expiration</Label>
               <p className="font-medium">
-                {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: fr })}
+                {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: enCA })}
               </p>
             </div>
             <div>
               <Link href={`/dashboard/admin/courses/${enrollment.course.id}`}>
                 <Button variant="outline" size="sm">
-                  Voir le cours
+                  View course
                 </Button>
               </Link>
             </div>
@@ -217,27 +217,27 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
-            Détails de paiement
+            Payment details
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <Label className="text-muted-foreground">Prix original</Label>
+              <Label className="text-muted-foreground">Original price</Label>
               <p className="text-2xl font-bold">${originalPrice.toFixed(2)}</p>
             </div>
             {enrollment.couponUsage && (
               <div>
-                <Label className="text-muted-foreground">Réduction (coupon: {enrollment.couponUsage.coupon.code})</Label>
+                <Label className="text-muted-foreground">Discount (coupon: {enrollment.couponUsage.coupon.code})</Label>
                 <p className="text-2xl font-bold text-destructive">-${discount.toFixed(2)}</p>
               </div>
             )}
             <div>
-              <Label className="text-muted-foreground">Montant payé</Label>
+              <Label className="text-muted-foreground">Amount paid</Label>
               <p className="text-2xl font-bold text-primary">${finalPrice.toFixed(2)}</p>
             </div>
             <div>
-              <Label className="text-muted-foreground">Statut</Label>
+              <Label className="text-muted-foreground">Status</Label>
               <div className="mt-1">
                 <Badge variant={status.variant}>{status.label}</Badge>
               </div>
@@ -247,12 +247,12 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
           {paymentIntent && (
             <div className="mt-4 space-y-2">
               <div>
-                <Label className="text-muted-foreground">ID Paiement Stripe</Label>
+                <Label className="text-muted-foreground">Stripe payment ID</Label>
                 <p className="font-mono text-sm">{paymentIntent.id}</p>
               </div>
               {paymentIntent.payment_method && (
                 <div>
-                  <Label className="text-muted-foreground">Méthode de paiement</Label>
+                <Label className="text-muted-foreground">Payment method</Label>
                   <p className="font-medium">
                     {paymentIntent.payment_method_types?.[0]?.toUpperCase() || "N/A"}
                   </p>
@@ -263,14 +263,14 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
 
           {refunds.length > 0 && (
             <div className="mt-4">
-              <Label className="text-muted-foreground mb-2 block">Historique des remboursements</Label>
+              <Label className="text-muted-foreground mb-2 block">Refund history</Label>
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Date</TableHead>
-                      <TableHead>Montant</TableHead>
-                      <TableHead>Statut</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>ID Stripe</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -278,7 +278,7 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
                     {refunds.map((refund) => (
                       <TableRow key={refund.id}>
                         <TableCell>
-                          {format(new Date(refund.created * 1000), "d MMM yyyy, HH:mm", { locale: fr })}
+                          {format(new Date(refund.created * 1000), "d MMM yyyy, HH:mm", { locale: enCA })}
                         </TableCell>
                         <TableCell>${((refund.amount || 0) / 100).toFixed(2)}</TableCell>
                         <TableCell>
@@ -307,7 +307,7 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
                 variant="destructive"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Rembourser {refunds.length > 0 ? "le reste" : "la commande"}
+                Refund {refunds.length > 0 ? "remaining" : "order"}
               </Button>
               {refunds.length === 0 && (
                 <Button
@@ -318,7 +318,7 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
                   variant="outline"
                   className="ml-2"
                 >
-                  Remboursement partiel
+                  Partial refund
                 </Button>
               )}
             </div>
@@ -331,18 +331,18 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {refundType === "full" ? "Remboursement complet" : "Remboursement partiel"}
+              {refundType === "full" ? "Full refund" : "Partial refund"}
             </DialogTitle>
             <DialogDescription>
               {refundType === "full"
-                ? `Rembourser ${remainingAmount.toFixed(2)} $ à l'étudiant`
+                ? `Refund ${remainingAmount.toFixed(2)} $ to the student`
                 : "Enter the amount to refund"}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             {refundType === "partial" && (
               <div className="space-y-2">
-                <Label>Montant ($)</Label>
+                <Label>Amount ($)</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -353,20 +353,20 @@ export function OrderDetails({ orderData }: OrderDetailsProps) {
                   placeholder={remainingAmount.toFixed(2)}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Montant restant: ${remainingAmount.toFixed(2)}
+                  Remaining amount: ${remainingAmount.toFixed(2)}
                 </p>
               </div>
             )}
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setRefundDialogOpen(false)}>
-                Annuler
+                Cancel
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleRefund}
                 disabled={processing}
               >
-                {processing ? "Traitement..." : "Confirmer le remboursement"}
+                {processing ? "Processing..." : "Confirm refund"}
               </Button>
             </div>
           </div>

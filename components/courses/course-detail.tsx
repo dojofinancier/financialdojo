@@ -119,7 +119,7 @@ export function CourseDetail({ course, isEnrolled, enrollment }: CourseDetailPro
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5" />
-                Contenu du cours
+                Course content
               </CardTitle>
               <CardDescription>
                 {course._count.modules} module{course._count.modules !== 1 ? "s" : ""}
@@ -142,7 +142,7 @@ export function CourseDetail({ course, isEnrolled, enrollment }: CourseDetailPro
                           />
                         )}
                         <div className="text-xs text-muted-foreground">
-                          {module.contentItems.length} élément{module.contentItems.length !== 1 ? "s" : ""}
+                          {module.contentItems.length} item{module.contentItems.length !== 1 ? "s" : ""}
                         </div>
                       </div>
                     </div>
@@ -156,7 +156,7 @@ export function CourseDetail({ course, isEnrolled, enrollment }: CourseDetailPro
           {course.faqs && course.faqs.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Questions fréquentes</CardTitle>
+                <CardTitle>Frequently asked questions</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -176,17 +176,17 @@ export function CourseDetail({ course, isEnrolled, enrollment }: CourseDetailPro
         <div className="lg:col-span-1">
           <Card className="sticky top-6">
             <CardHeader>
-              <CardTitle>Inscription</CardTitle>
+              <CardTitle>Enrollment</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {isEnrolled ? (
                 <>
                   <div className="flex items-center gap-2 text-green-600">
                     <CheckCircle2 className="h-5 w-5" />
-                    <span className="font-semibold">Vous êtes inscrit</span>
+                    <span className="font-semibold">You are enrolled</span>
                   </div>
                   <Button onClick={handleContinue} className="w-full" size="lg">
-                    Continuer l'apprentissage
+                    Continue learning
                   </Button>
                 </>
               ) : (
@@ -199,14 +199,14 @@ export function CourseDetail({ course, isEnrolled, enrollment }: CourseDetailPro
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Type de paiement</span>
+                      <span className="text-muted-foreground">Payment type</span>
                       <span>
-                        {course.paymentType === "SUBSCRIPTION" ? "Abonnement" : "One-time payment"}
+                        {course.paymentType === "SUBSCRIPTION" ? "Subscription" : "One-time payment"}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Durée d'accès</span>
-                      <span>{course.accessDuration} jours</span>
+                      <span className="text-muted-foreground">Access duration</span>
+                      <span>{course.accessDuration} days</span>
                     </div>
                   </div>
                   <Separator />
@@ -214,19 +214,19 @@ export function CourseDetail({ course, isEnrolled, enrollment }: CourseDetailPro
                     <>
                       <Button onClick={handleGoToCart} className="w-full" size="lg" variant="outline">
                         <ShoppingCart className="h-4 w-4 mr-2" />
-                        Voir le panier
+                        View cart
                       </Button>
                       <p className="text-xs text-center text-muted-foreground">
-                        Ce cours est déjà dans votre panier
+                        This course is already in your cart
                       </p>
                     </>
                   ) : (
                     <>
                       <Button onClick={handleAddToCart} className="w-full" size="lg">
-                        S'inscrire maintenant
+                        Enroll now
                       </Button>
                       <p className="text-xs text-center text-muted-foreground">
-                        Accès immédiat après paiement
+                        Immediate access after payment
                       </p>
                     </>
                   )}
@@ -239,7 +239,7 @@ export function CourseDetail({ course, isEnrolled, enrollment }: CourseDetailPro
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Users className="h-4 w-4" />
-                  <span>{course._count.enrollments} étudiant{course._count.enrollments !== 1 ? "s" : ""}</span>
+                  <span>{course._count.enrollments} student{course._count.enrollments !== 1 ? "s" : ""}</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <BookOpen className="h-4 w-4" />
@@ -247,7 +247,7 @@ export function CourseDetail({ course, isEnrolled, enrollment }: CourseDetailPro
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Clock className="h-4 w-4" />
-                  <span>Accès {course.accessDuration} jours</span>
+                  <span>Access {course.accessDuration} days</span>
                 </div>
               </div>
             </CardContent>

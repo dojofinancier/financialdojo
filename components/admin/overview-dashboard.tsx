@@ -223,7 +223,7 @@ export function OverviewDashboard() {
         {/* Analytics Cards */}
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total inscriptions</CardDescription>
+            <CardDescription>Total enrollments</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
               {enrollmentStats?.totalEnrollments || 0}
@@ -231,17 +231,17 @@ export function OverviewDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              Actives: {enrollmentStats?.activeEnrollments || 0}
+              Active: {enrollmentStats?.activeEnrollments || 0}
             </div>
             <div className="text-xs text-muted-foreground">
-              Expirées: {enrollmentStats?.expiredEnrollments || 0}
+              Expired: {enrollmentStats?.expiredEnrollments || 0}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Utilisateurs actifs</CardDescription>
+            <CardDescription>Active users</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <Users className="h-5 w-5" />
               {userEngagement?.activeUsers || 0}
@@ -252,7 +252,7 @@ export function OverviewDashboard() {
               Total: {userEngagement?.totalUsers || 0}
             </div>
             <div className="text-xs text-muted-foreground">
-              Derniers 30 jours
+              Last 30 days
             </div>
           </CardContent>
         </Card>
@@ -262,7 +262,7 @@ export function OverviewDashboard() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Abonnements actifs</CardDescription>
+            <CardDescription>Active subscriptions</CardDescription>
             <CardTitle className="text-2xl">
               {subscriptionStats?.activeSubscriptions || 0}
             </CardTitle>
@@ -272,28 +272,28 @@ export function OverviewDashboard() {
               Total: {subscriptionStats?.totalSubscriptions || 0}
             </div>
             <div className="text-xs text-muted-foreground">
-              Taux de désabonnement: {subscriptionStats?.churnRate?.toFixed(1) || "0.0"}%
+              Churn rate: {subscriptionStats?.churnRate?.toFixed(1) || "0.0"}%
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Revenu mensuel estimé</CardDescription>
+            <CardDescription>Estimated monthly revenue</CardDescription>
             <CardTitle className="text-2xl">
               ${subscriptionStats?.estimatedMonthlyRevenue?.toFixed(2) || "0.00"}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              Abonnements récurrents
+              Recurring subscriptions
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Taux de complétion moyen</CardDescription>
+            <CardDescription>Average completion rate</CardDescription>
             <CardTitle className="text-2xl">
               {completionRates && completionRates.length > 0
                 ? (
@@ -308,14 +308,14 @@ export function OverviewDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              Tous les cours
+              All courses
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Temps moyen par étudiant</CardDescription>
+            <CardDescription>Average time per student</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <Clock className="h-5 w-5" />
               {userEngagement?.averageTimeSpent
@@ -326,7 +326,7 @@ export function OverviewDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              Temps total passé
+              Total time spent
             </div>
           </CardContent>
         </Card>
@@ -336,8 +336,8 @@ export function OverviewDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Tendances de revenus (12 derniers mois)</CardTitle>
-            <CardDescription>Revenu net par mois</CardDescription>
+            <CardTitle>Revenue trends (last 12 months)</CardTitle>
+            <CardDescription>Net revenue per month</CardDescription>
           </CardHeader>
           <CardContent>
             {trendsLoading ? (
@@ -348,7 +348,7 @@ export function OverviewDashboard() {
               <RevenueChart data={revenueTrends.months} />
             ) : (
               <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                <span>Chargement des tendances...</span>
+                <span>Loading trends...</span>
               </div>
             )}
           </CardContent>
@@ -356,8 +356,8 @@ export function OverviewDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Revenu par cours</CardTitle>
-            <CardDescription>Revenu total par cours</CardDescription>
+            <CardTitle>Revenue by course</CardTitle>
+            <CardDescription>Total revenue by course</CardDescription>
           </CardHeader>
           <CardContent>
             {totalRevenue?.revenueByCourse ? (
@@ -375,8 +375,8 @@ export function OverviewDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Inscriptions par cours</CardTitle>
-            <CardDescription>Top 10 cours par nombre d'inscriptions</CardDescription>
+            <CardTitle>Enrollments by course</CardTitle>
+            <CardDescription>Top 10 courses by enrollment count</CardDescription>
           </CardHeader>
           <CardContent>
             {enrollmentStats?.enrollmentsByCourse ? (
@@ -391,8 +391,8 @@ export function OverviewDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Taux de complétion par cours</CardTitle>
-            <CardDescription>Pourcentage de complétion moyen</CardDescription>
+            <CardTitle>Completion rate by course</CardTitle>
+            <CardDescription>Average completion percentage</CardDescription>
           </CardHeader>
           <CardContent>
             {completionRates ? (
@@ -411,14 +411,14 @@ export function OverviewDashboard() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Métriques par cours</CardTitle>
+              <CardTitle>Course metrics</CardTitle>
               <CardDescription>
-                Détails d'inscription, complétion et engagement
+                Enrollment, completion, and engagement details
               </CardDescription>
             </div>
             <Button onClick={loadData} variant="outline" size="sm">
               <RefreshCw className="h-4 w-4 mr-2" />
-              Actualiser
+              Refresh
             </Button>
           </div>
         </CardHeader>
@@ -435,4 +435,3 @@ export function OverviewDashboard() {
     </div>
   );
 }
-

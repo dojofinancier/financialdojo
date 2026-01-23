@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -83,11 +83,7 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
   const [showResults, setShowResults] = useState(false);
   const [narrativeModalOpen, setNarrativeModalOpen] = useState(false);
 
-  useEffect(() => {
-    loadCaseStudy();
-  }, [caseStudyId]);
-
-  const loadCaseStudy = async () => {
+  const loadCaseStudy = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getCaseStudyAction(caseStudyId);
@@ -111,7 +107,11 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [caseStudyId, onExit]);
+
+  useEffect(() => {
+    loadCaseStudy();
+  }, [loadCaseStudy]);
 
   const handleAnswerChange = (questionId: string, answer: string) => {
     setAnswers((prev) => ({
@@ -125,7 +125,7 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
       const answeredCount = Object.keys(answers).length;
       if (answeredCount < caseStudy.questions.length) {
         const confirmSubmit = confirm(
-          `Vous avez répondu à ${answeredCount} sur ${caseStudy.questions.length} questions. Voulez-vous vraiment soumettre ?`
+          `You answered ${answeredCount} of ${caseStudy.questions.length} questions. Do you really want to submit?`
         );
         if (!confirmSubmit) return;
       }
@@ -265,7 +265,7 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
         </div>
         <Button className="w-full sm:w-auto" variant="outline" onClick={onExit}>
           <X className="h-4 w-4 mr-2" />
-          Quitter
+          Exit
         </Button>
       </div>
 
@@ -275,7 +275,7 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base">Récit du cas</CardTitle>
+                <CardTitle className="text-base">Case narrative</CardTitle>
                 <Dialog open={narrativeModalOpen} onOpenChange={setNarrativeModalOpen}>
                   <DialogTrigger asChild>
                     <Button variant="ghost" size="sm">
@@ -285,7 +285,7 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
                   <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>{caseStudy.title}</DialogTitle>
-                      <DialogDescription>Récit complet de l'étude de cas</DialogDescription>
+                      <DialogDescription>Full case study narrative</DialogDescription>
                     </DialogHeader>
                     <ScrollArea className="max-h-[calc(90vh-120px)] mt-4">
                       {renderNarrative()}
@@ -306,10 +306,10 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
             <CardHeader>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <CardTitle>
-                    Question {currentQuestionIndex + 1} sur {caseStudy.questions.length}
+                    Question {currentQuestionIndex + 1} of {caseStudy.questions.length}
                   </CardTitle>
                   <Badge variant="outline" className="w-fit">
-                    {answeredCount} / {caseStudy.questions.length} répondues
+                    {answeredCount} / {caseStudy.questions.length} answered
                   </Badge>
                 </div>
 
@@ -352,11 +352,11 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
                     className="w-full sm:w-auto"
                   >
                     <ChevronLeft className="h-4 w-4 mr-2" />
-                    Précédent
+                    Previous
                   </Button>
                   {currentQuestionIndex < caseStudy.questions.length - 1 ? (
                     <Button className="w-full sm:w-auto" onClick={handleNext}>
-                      Suivant
+                      Next
                       <ChevronRight className="h-4 w-4 ml-2" />
                     </Button>
                   ) : (
@@ -364,12 +364,12 @@ export function CaseStudyPlayer({ caseStudyId, onExit }: CaseStudyPlayerProps) {
                       {submitting ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Soumission...
+                          Submitting...
                         </>
                       ) : (
                         <>
                           <CheckCircle2 className="h-4 w-4 mr-2" />
-                          Soumettre
+                          Submit
                         </>
                       )}
                     </Button>

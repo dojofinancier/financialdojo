@@ -29,7 +29,7 @@ import {
 } from "@/app/actions/enrollments";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { Calendar, Clock, BookOpen, TrendingUp, Ban, Trash2, Plus } from "lucide-react";
 import type { UserRole } from "@prisma/client";
 
@@ -106,12 +106,12 @@ export function StudentDetails({ student }: StudentDetailsProps) {
     if (!selectedEnrollment) return;
     const days = parseInt(additionalDays, 10);
     if (isNaN(days) || days <= 0) {
-      toast.error("Nombre de jours invalide");
+      toast.error("Invalid number of days");
       return;
     }
     const result = await extendEnrollmentAccessAction(selectedEnrollment.id, days);
     if (result.success) {
-      toast.success(`Accès prolongé de ${days} jours`);
+      toast.success(`Access extended by ${days} days`);
       setExtendDialogOpen(false);
       window.location.reload();
     } else {
@@ -151,9 +151,9 @@ export function StudentDetails({ student }: StudentDetailsProps) {
     }
     const daysUntilExpiry = Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     if (daysUntilExpiry <= 7) {
-      return { label: `Expire dans ${daysUntilExpiry}j`, variant: "secondary" as const };
+      return { label: `Expires in ${daysUntilExpiry}d`, variant: "secondary" as const };
     }
-    return { label: "Actif", variant: "default" as const };
+    return { label: "Active", variant: "default" as const };
   };
 
   const completedItems = student.progressTracking.filter((pt) => pt.completedAt !== null).length;
@@ -164,17 +164,17 @@ export function StudentDetails({ student }: StudentDetailsProps) {
   return (
     <Tabs defaultValue="profile" className="w-full">
       <TabsList>
-        <TabsTrigger value="profile">Profil</TabsTrigger>
-        <TabsTrigger value="enrollments">Inscriptions</TabsTrigger>
-        <TabsTrigger value="progress">Progression</TabsTrigger>
-        <TabsTrigger value="subscriptions">Abonnements</TabsTrigger>
+        <TabsTrigger value="profile">Profile</TabsTrigger>
+        <TabsTrigger value="enrollments">Enrollments</TabsTrigger>
+        <TabsTrigger value="progress">Progress</TabsTrigger>
+        <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
       </TabsList>
 
       <TabsContent value="profile" className="mt-6">
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Informations personnelles</CardTitle>
+              <CardTitle>Personal information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -183,35 +183,35 @@ export function StudentDetails({ student }: StudentDetailsProps) {
               </div>
               {student.firstName && (
                 <div>
-                  <Label className="text-muted-foreground">Prénom</Label>
+                  <Label className="text-muted-foreground">First name</Label>
                   <p className="font-medium">{student.firstName}</p>
                 </div>
               )}
               {student.lastName && (
                 <div>
-                  <Label className="text-muted-foreground">Nom</Label>
+                  <Label className="text-muted-foreground">Last name</Label>
                   <p className="font-medium">{student.lastName}</p>
                 </div>
               )}
               {student.phone && (
                 <div>
-                  <Label className="text-muted-foreground">Téléphone</Label>
+                  <Label className="text-muted-foreground">Phone</Label>
                   <p className="font-medium">{student.phone}</p>
                 </div>
               )}
               <div>
-                <Label className="text-muted-foreground">Date d'inscription</Label>
+                <Label className="text-muted-foreground">Signup date</Label>
                 <p className="font-medium">
-                  {format(new Date(student.createdAt), "d MMMM yyyy", { locale: fr })}
+                  {format(new Date(student.createdAt), "d MMMM yyyy", { locale: enCA })}
                 </p>
               </div>
               <div>
-                <Label className="text-muted-foreground">Statut</Label>
+                <Label className="text-muted-foreground">Status</Label>
                 <div className="mt-1">
                   {student.suspendedAt ? (
-                    <Badge variant="destructive">Suspendu</Badge>
+                    <Badge variant="destructive">Suspended</Badge>
                   ) : (
-                    <Badge className="bg-primary">Actif</Badge>
+                    <Badge className="bg-primary">Active</Badge>
                   )}
                 </div>
               </div>
@@ -220,25 +220,25 @@ export function StudentDetails({ student }: StudentDetailsProps) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Statistiques</CardTitle>
+              <CardTitle>Stats</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-muted-foreground">Inscriptions</Label>
+                <Label className="text-muted-foreground">Enrollments</Label>
                 <p className="text-2xl font-bold">{student.enrollments.length}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground">Éléments complétés</Label>
+                <Label className="text-muted-foreground">Items completed</Label>
                 <p className="text-2xl font-bold">{completedItems}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground">Temps total</Label>
+                <Label className="text-muted-foreground">Total time</Label>
                 <p className="text-2xl font-bold">
                   {hoursSpent}h {minutesSpent}min
                 </p>
               </div>
               <div>
-                <Label className="text-muted-foreground">Abonnements actifs</Label>
+                <Label className="text-muted-foreground">Active subscriptions</Label>
                 <p className="text-2xl font-bold">
                   {student.subscriptions.filter((s) => s.status === "ACTIVE").length}
                 </p>
@@ -251,25 +251,25 @@ export function StudentDetails({ student }: StudentDetailsProps) {
       <TabsContent value="enrollments" className="mt-6">
         <Card>
           <CardHeader>
-            <CardTitle>Inscriptions aux cours</CardTitle>
+            <CardTitle>Course enrollments</CardTitle>
             <CardDescription>
-              Gérez les inscriptions et les accès aux cours
+              Manage enrollments and course access
             </CardDescription>
           </CardHeader>
           <CardContent>
             {student.enrollments.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                Aucune inscription
+                No enrollments
               </div>
             ) : (
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Cours</TableHead>
-                      <TableHead>Date d'achat</TableHead>
+                      <TableHead>Course</TableHead>
+                      <TableHead>Purchase date</TableHead>
                       <TableHead>Expiration</TableHead>
-                      <TableHead>Statut</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -287,10 +287,10 @@ export function StudentDetails({ student }: StudentDetailsProps) {
                             </div>
                           </TableCell>
                           <TableCell>
-                            {format(new Date(enrollment.purchaseDate), "d MMM yyyy", { locale: fr })}
+                            {format(new Date(enrollment.purchaseDate), "d MMM yyyy", { locale: enCA })}
                           </TableCell>
                           <TableCell>
-                            {format(new Date(enrollment.expiresAt), "d MMM yyyy", { locale: fr })}
+                            {format(new Date(enrollment.expiresAt), "d MMM yyyy", { locale: enCA })}
                           </TableCell>
                           <TableCell>
                             <Badge variant={status.variant}>{status.label}</Badge>
@@ -306,7 +306,7 @@ export function StudentDetails({ student }: StudentDetailsProps) {
                                 }}
                               >
                                 <Plus className="h-4 w-4 mr-1" />
-                                Prolonger
+                                Extend
                               </Button>
                               <Button
                                 variant="ghost"
@@ -317,7 +317,7 @@ export function StudentDetails({ student }: StudentDetailsProps) {
                                 }}
                               >
                                 <Ban className="h-4 w-4 mr-1" />
-                                Révoquer
+                                Revoke
                               </Button>
                               <Button
                                 variant="ghost"
@@ -345,27 +345,27 @@ export function StudentDetails({ student }: StudentDetailsProps) {
       <TabsContent value="progress" className="mt-6">
         <Card>
           <CardHeader>
-            <CardTitle>Progression</CardTitle>
+            <CardTitle>Progress</CardTitle>
             <CardDescription>
-              Activité récente et progression dans les cours
+              Recent activity and course progress
             </CardDescription>
           </CardHeader>
           <CardContent>
             {student.progressTracking.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                Aucune progression enregistrée
+                No progress recorded
               </div>
             ) : (
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Cours</TableHead>
+                      <TableHead>Course</TableHead>
                       <TableHead>Module</TableHead>
                       <TableHead>Type</TableHead>
-                      <TableHead>Temps passé</TableHead>
-                      <TableHead>Dernière visite</TableHead>
-                      <TableHead>Statut</TableHead>
+                      <TableHead>Time spent</TableHead>
+                      <TableHead>Last visit</TableHead>
+                      <TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -387,14 +387,14 @@ export function StudentDetails({ student }: StudentDetailsProps) {
                           </TableCell>
                           <TableCell>
                             {format(new Date(progress.lastAccessedAt), "d MMM yyyy, HH:mm", {
-                              locale: fr,
+                              locale: enCA,
                             })}
                           </TableCell>
                           <TableCell>
                             {progress.completedAt ? (
-                              <Badge className="bg-primary">Complété</Badge>
+                              <Badge className="bg-primary">Completed</Badge>
                             ) : (
-                              <Badge variant="secondary">En cours</Badge>
+                              <Badge variant="secondary">In progress</Badge>
                             )}
                           </TableCell>
                         </TableRow>
@@ -411,15 +411,15 @@ export function StudentDetails({ student }: StudentDetailsProps) {
       <TabsContent value="subscriptions" className="mt-6">
         <Card>
           <CardHeader>
-            <CardTitle>Abonnements</CardTitle>
+            <CardTitle>Subscriptions</CardTitle>
             <CardDescription>
-              Gérer les abonnements actifs et passés
+              Manage active and past subscriptions
             </CardDescription>
           </CardHeader>
           <CardContent>
             {student.subscriptions.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                Aucun abonnement
+                No subscriptions
               </div>
             ) : (
               <div className="rounded-md border">
@@ -427,9 +427,9 @@ export function StudentDetails({ student }: StudentDetailsProps) {
                   <TableHeader>
                     <TableRow>
                       <TableHead>ID Stripe</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Période actuelle</TableHead>
-                      <TableHead>Date de création</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Current period</TableHead>
+                      <TableHead>Created date</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -453,11 +453,11 @@ export function StudentDetails({ student }: StudentDetailsProps) {
                         </TableCell>
                         <TableCell>
                           {format(new Date(subscription.currentPeriodEnd), "d MMM yyyy", {
-                            locale: fr,
+                            locale: enCA,
                           })}
                         </TableCell>
                         <TableCell>
-                          {format(new Date(subscription.createdAt), "d MMM yyyy", { locale: fr })}
+                          {format(new Date(subscription.createdAt), "d MMM yyyy", { locale: enCA })}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -473,14 +473,14 @@ export function StudentDetails({ student }: StudentDetailsProps) {
       <Dialog open={extendDialogOpen} onOpenChange={setExtendDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Prolonger l'accès</DialogTitle>
+            <DialogTitle>Extend access</DialogTitle>
             <DialogDescription>
-              Ajoutez des jours supplémentaires à l'accès de cet étudiant
+              Add extra days to this student's access
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label>Nombre de jours supplémentaires</Label>
+              <Label>Number of additional days</Label>
               <Input
                 type="number"
                 min="1"
@@ -491,9 +491,9 @@ export function StudentDetails({ student }: StudentDetailsProps) {
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setExtendDialogOpen(false)}>
-                Annuler
+                Cancel
               </Button>
-              <Button onClick={handleExtendAccess}>Prolonger</Button>
+              <Button onClick={handleExtendAccess}>Extend</Button>
             </div>
           </div>
         </DialogContent>
@@ -503,17 +503,17 @@ export function StudentDetails({ student }: StudentDetailsProps) {
       <Dialog open={revokeDialogOpen} onOpenChange={setRevokeDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Révoquer l'accès</DialogTitle>
+            <DialogTitle>Revoke access</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir révoquer l'accès à ce cours ? L'accès expirera immédiatement.
+              Are you sure you want to revoke access to this course? Access will end immediately.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2 mt-4">
             <Button variant="outline" onClick={() => setRevokeDialogOpen(false)}>
-              Annuler
+              Cancel
             </Button>
             <Button variant="destructive" onClick={handleRevokeAccess}>
-              Révoquer
+              Revoke
             </Button>
           </div>
         </DialogContent>
@@ -523,17 +523,17 @@ export function StudentDetails({ student }: StudentDetailsProps) {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Supprimer l'inscription</DialogTitle>
+            <DialogTitle>Delete enrollment</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer cette inscription ? Cette action est irréversible.
+              Are you sure you want to delete this enrollment? This action is irreversible.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2 mt-4">
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Annuler
+              Cancel
             </Button>
             <Button variant="destructive" onClick={handleDeleteEnrollment}>
-              Supprimer
+              Delete
             </Button>
           </div>
         </DialogContent>
@@ -541,4 +541,3 @@ export function StudentDetails({ student }: StudentDetailsProps) {
     </Tabs>
   );
 }
-

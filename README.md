@@ -20,7 +20,7 @@ npm install
 npm run db:generate
 
 # Set up environment variables (see .env.example)
-# DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_ANON_KEY, STRIPE_SECRET_KEY, etc.
+# DATABASE_URL, DIRECT_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY, STRIPE_SECRET_KEY, etc.
 
 # Run database migrations
 npm run db:migrate
@@ -202,8 +202,8 @@ DIRECT_URL="postgresql://..."
 
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL="https://..."
-NEXT_PUBLIC_SUPABASE_ANON_KEY="..."
-SUPABASE_SERVICE_ROLE_KEY="..."
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="..."
+SUPABASE_SECRET_KEY="..."
 
 # Stripe
 STRIPE_SECRET_KEY="sk_..."

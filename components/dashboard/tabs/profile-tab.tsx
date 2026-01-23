@@ -20,7 +20,7 @@ export function ProfileTab({ user }: ProfileTabProps) {
       <div>
         <h2 className="text-2xl font-bold mb-2">Mon profil</h2>
         <p className="text-muted-foreground">
-          Gérez vos informations personnelles et la sécurité de votre compte
+          Manage your personal information and account security
         </p>
       </div>
       <ProfileForm

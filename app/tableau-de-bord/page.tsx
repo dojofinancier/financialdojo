@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 
-export default async function TableauDeBordPage() {
+async function TableauDeBordRedirect() {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -16,10 +17,20 @@ export default async function TableauDeBordPage() {
   } else if (user.role === "STUDENT") {
     redirect("/dashboard/student");
   } else if (user.role === "INSTRUCTOR") {
-    redirect("/dashboard/instructeur");
+    redirect("/dashboard/admin");
   } else {
     // Unknown role, redirect to login
     console.error(`[TableauDeBordPage] Unknown user role: ${user.role}`);
     redirect("/login");
   }
+
+  return null;
+}
+
+export default function TableauDeBordPage() {
+  return (
+    <Suspense fallback={<div className="text-muted-foreground">Loading dashboard...</div>}>
+      <TableauDeBordRedirect />
+    </Suspense>
+  );
 }

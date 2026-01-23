@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   DndContext,
   closestCenter,
@@ -97,7 +97,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
     })
   );
 
-  const loadModules = async () => {
+  const loadModules = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getModulesAction(courseId);
@@ -107,11 +107,11 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
 
   useEffect(() => {
     loadModules();
-  }, [courseId]);
+  }, [loadModules]);
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -247,36 +247,36 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Nouveau module
+              New module
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Créer un module</DialogTitle>
+              <DialogTitle>Create module</DialogTitle>
               <DialogDescription>
-                Ajoutez un nouveau module à ce cours
+                Add a new module to this course
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Titre *</Label>
+                <Label htmlFor="title">Title *</Label>
                 <Input
                   id="title"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Ex: Introduction"
+                   placeholder="e.g., Introduction"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="shortTitle">Titre court (pour la barre latérale)</Label>
+                <Label htmlFor="shortTitle">Short title (for sidebar)</Label>
                 <Input
                   id="shortTitle"
                   value={formData.shortTitle}
                   onChange={(e) => setFormData({ ...formData, shortTitle: e.target.value })}
-                  placeholder="Ex: Intro (optionnel)"
+                   placeholder="e.g., Intro (optional)"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Optionnel. Un titre plus court qui s'affichera dans la barre latérale si le titre complet est trop long.
+                  Optional. A shorter title that appears in the sidebar if the full title is too long.
                 </p>
               </div>
               <div className="space-y-2">
@@ -285,11 +285,11 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Description du module..."
+                   placeholder="Module description..."
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="examWeight">Pondération à l'examen (%)</Label>
+                <Label htmlFor="examWeight">Exam weight (%)</Label>
                 <Input
                   id="examWeight"
                   type="number"
@@ -298,18 +298,18 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
                   step="0.1"
                   value={formData.examWeight}
                   onChange={(e) => setFormData({ ...formData, examWeight: e.target.value })}
-                  placeholder="Ex: 15 (pour 15%)"
+                   placeholder="e.g., 15 (for 15%)"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Optionnel. Entrez un pourcentage (0-100) représentant le poids de ce module à l'examen.
+                  Optional. Enter a percentage (0-100) representing this module's weight on the exam.
                 </p>
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
-                  Annuler
+                  Cancel
                 </Button>
                 <Button onClick={handleCreate} disabled={!formData.title}>
-                  Créer
+                  Create
                 </Button>
               </div>
             </div>
@@ -327,7 +327,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
             {modules.length === 0 ? (
               <Card>
                 <CardContent className="py-8 text-center text-muted-foreground">
-                  Aucun module. Créez votre premier module pour commencer.
+                  No modules yet. Create your first module to get started.
                 </CardContent>
               </Card>
             ) : (
@@ -350,14 +350,14 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Modifier le module</DialogTitle>
+            <DialogTitle>Edit module</DialogTitle>
             <DialogDescription>
-              Modifiez les détails du module
+              Edit the module details
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-title">Titre *</Label>
+              <Label htmlFor="edit-title">Title *</Label>
               <Input
                 id="edit-title"
                 value={formData.title}
@@ -365,15 +365,15 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-shortTitle">Titre court (pour la barre latérale)</Label>
+              <Label htmlFor="edit-shortTitle">Short title (for sidebar)</Label>
               <Input
                 id="edit-shortTitle"
                 value={formData.shortTitle}
                 onChange={(e) => setFormData({ ...formData, shortTitle: e.target.value })}
-                placeholder="Ex: Intro (optionnel)"
+                 placeholder="e.g., Intro (optional)"
               />
               <p className="text-xs text-muted-foreground">
-                Optionnel. Un titre plus court qui s'affichera dans la barre latérale si le titre complet est trop long.
+                Optional. A shorter title that appears in the sidebar if the full title is too long.
               </p>
             </div>
             <div className="space-y-2">
@@ -385,7 +385,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-examWeight">Pondération à l'examen (%)</Label>
+              <Label htmlFor="edit-examWeight">Exam weight (%)</Label>
               <Input
                 id="edit-examWeight"
                 type="number"
@@ -394,18 +394,18 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
                 step="0.1"
                 value={formData.examWeight}
                 onChange={(e) => setFormData({ ...formData, examWeight: e.target.value })}
-                placeholder="Ex: 15 (pour 15%)"
+                 placeholder="e.g., 15 (for 15%)"
               />
               <p className="text-xs text-muted-foreground">
-                Optionnel. Entrez un pourcentage (0-100) représentant le poids de ce module à l'examen.
+                Optional. Enter a percentage (0-100) representing this module's weight on the exam.
               </p>
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-                Annuler
+                Cancel
               </Button>
               <Button onClick={handleUpdate} disabled={!formData.title}>
-                Enregistrer
+                Save
               </Button>
             </div>
           </div>
@@ -416,17 +416,17 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Supprimer le module</DialogTitle>
+            <DialogTitle>Delete module</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer ce module ? Tous les contenus associés seront également supprimés.
+              Are you sure you want to delete this module? All associated content will also be deleted.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2 mt-4">
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Annuler
+              Cancel
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
-              Supprimer
+              Delete
             </Button>
           </div>
         </DialogContent>
@@ -815,7 +815,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
         return (
           <div className="text-sm text-muted-foreground">
             <p>Vimeo: {item.video?.vimeoUrl}</p>
-            {item.video?.duration && <p>Durée: {item.video.duration} sec</p>}
+            {item.video?.duration && <p>Duration: {item.video.duration} sec</p>}
           </div>
         );
       case "QUIZ":
@@ -850,12 +850,12 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
                   {isExpanded ? (
                     <>
                       <ChevronUp className="h-3 w-3 mr-1" />
-                      Réduire
+                      Collapse
                     </>
                   ) : (
                     <>
                       <ChevronDown className="h-3 w-3 mr-1" />
-                      Afficher le contenu complet
+                      Show full content
                     </>
                   )}
                 </Button>
@@ -872,7 +872,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
       case "FLASHCARD":
         return (
           <div className="text-sm text-muted-foreground">
-            Associe les flashcards du cours à ce module.
+            Links the course flashcards to this module.
           </div>
         );
       default:
@@ -884,18 +884,18 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-semibold">Contenu du module</h3>
-          <p className="text-sm text-muted-foreground">Organisez vidéos, quiz, notes et flashcards.</p>
+          <h3 className="text-base font-semibold">Module content</h3>
+          <p className="text-sm text-muted-foreground">Organize videos, quizzes, notes, and flashcards.</p>
         </div>
         <Button size="sm" onClick={openCreateContentDialog}>
           <Plus className="h-4 w-4 mr-2" />
-          Ajouter
+          Add
         </Button>
       </div>
 
       {items.length === 0 ? (
         <div className="rounded-lg border border-dashed py-6 text-center text-muted-foreground">
-          Aucun élément pour l'instant.
+          No items yet.
         </div>
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleContentDragEnd}>
@@ -925,22 +925,22 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
           <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0">
             <DialogTitle>{contentMode === "create" ? "Add content" : "Edit content"}</DialogTitle>
             <DialogDescription>
-              Configurez le type et les informations spécifiques au contenu.
+              Configure the content type and specific details.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 px-6 overflow-y-auto flex-1 min-h-0">
             {contentMode === "create" && (
               <div className="space-y-2">
-                <Label>Type de contenu</Label>
+                <Label>Content type</Label>
                 <Select value={contentType} onValueChange={(value: ContentType) => setContentType(value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choisissez un type" />
+                    <SelectValue placeholder="Choose a type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="VIDEO">Vidéo (Vimeo)</SelectItem>
+                    <SelectItem value="VIDEO">Video (Vimeo)</SelectItem>
                     <SelectItem value="QUIZ">Quiz</SelectItem>
-                    <SelectItem value="NOTE">Notes d'étude</SelectItem>
+                    <SelectItem value="NOTE">Study notes</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -958,7 +958,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label>Durée (secondes)</Label>
+                    <Label>Duration (seconds)</Label>
                     <Input
                       type="number"
                       value={videoForm.duration}
@@ -966,7 +966,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Transcription ou lien</Label>
+                    <Label>Transcript or link</Label>
                     <Textarea
                       value={videoForm.transcript}
                       onChange={(event) => setVideoForm({ ...videoForm, transcript: event.target.value })}
@@ -994,7 +994,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Score de réussite (%)</Label>
+                  <Label>Passing score (%)</Label>
                   <Input
                     type="number"
                     min={0}
@@ -1004,7 +1004,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Limite de temps (secondes)</Label>
+                  <Label>Time limit (seconds)</Label>
                   <Input
                     type="number"
                     value={quizForm.timeLimit}
@@ -1016,7 +1016,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
 
             {contentType === "NOTE" && (
               <div className="space-y-2">
-                <Label>Contenu de la note</Label>
+                <Label>Note content</Label>
                 <RichTextEditor content={noteContent} onChange={setNoteContent} />
                 <div className="flex gap-2 flex-wrap">
                   <input
@@ -1033,7 +1033,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
                     onClick={() => document.getElementById("markdown-upload")?.click()}
                   >
                     <FileText className="h-4 w-4 mr-2" />
-                    Importer un document Markdown
+                    Import a Markdown document
                   </Button>
                   <FileUploadButton
                     folder={`${courseId}/notes`}
@@ -1046,7 +1046,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
 
             {contentType === "FLASHCARD" && (
               <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground">
-                Ce contenu affichera l'ensemble de flashcards du cours pour les étudiants. Gérez les cartes dans l'onglet
+                This content will display the course flashcards for students. Manage the cards in the
                 « Flashcards ».
               </div>
             )}
@@ -1054,11 +1054,11 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
           </div>
 
           <div className="flex justify-end gap-2 pt-4 pb-6 px-6 border-t flex-shrink-0">
-            <Button variant="outline" onClick={() => handleContentDialogChange(false)}>
-              Annuler
+             <Button variant="outline" onClick={() => handleContentDialogChange(false)}>
+              Cancel
             </Button>
             <Button onClick={handleContentSave}>
-              {contentMode === "create" ? "Create" : "Enregistrer"}
+              {contentMode === "create" ? "Create" : "Save"}
             </Button>
           </div>
         </DialogContent>
@@ -1067,17 +1067,17 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Supprimer le contenu</DialogTitle>
+            <DialogTitle>Delete content</DialogTitle>
             <DialogDescription>
-              Cette action supprimera définitivement l'élément de contenu.
+              This action will permanently delete the content item.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Annuler
+              Cancel
             </Button>
             <Button variant="destructive" onClick={handleDeleteContent}>
-              Supprimer
+              Delete
             </Button>
           </div>
         </DialogContent>
@@ -1086,8 +1086,8 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
       <Dialog open={quizDialogOpen} onOpenChange={setQuizDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Questions du quiz</DialogTitle>
-            <DialogDescription>Ajoutez, éditez et réordonnez les questions.</DialogDescription>
+            <DialogTitle>Quiz questions</DialogTitle>
+            <DialogDescription>Add, edit, and reorder questions.</DialogDescription>
           </DialogHeader>
           <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
             {activeQuizItem?.quiz ? (
@@ -1100,7 +1100,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
               />
             ) : (
               <div className="text-sm text-muted-foreground">
-                Ce contenu n'a pas de quiz associé.
+                This content has no associated quiz.
               </div>
             )}
           </div>
@@ -1176,4 +1176,3 @@ function SortableContentItemCard({ item, children, onEdit, onDelete, onManageQui
     </div>
   );
 }
-

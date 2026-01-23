@@ -97,7 +97,7 @@ function validateAndSetup(
   const minHours = getMinimumHours(config.selfRating);
   if (config.studyHoursPerWeek < minHours) {
     warnings.push(
-      `Minimum ${minHours} heures/semaine requis pour ${config.selfRating}. Le nombre d'heures a été ajusté à ${minHours}.`
+      `Minimum ${minHours} hours/week required for ${config.selfRating}. The hours have been adjusted to ${minHours}.`
     );
     return {
       valid: true,
@@ -174,7 +174,7 @@ function calculatePhase1Requirements(
       phase1BlocksPerWeek,
       phase2BlocksPerWeek: Math.max(1, Math.floor(requiredHoursPerWeek * 2 * 0.2)), // Ensure at least 1 block
       requiredHoursPerWeek,
-      warning: `Vous avez besoin de ${requiredHoursPerWeek} heures/semaine pour compléter la Phase 1.`,
+      warning: `You need ${requiredHoursPerWeek} hours/week to complete Phase 1.`,
       suggestChangeExamDate: true,
     };
   }
@@ -283,23 +283,23 @@ async function generatePhase1Blocks(
       Math.min(moduleIndex + modulesPerWeek, modules.length)
     );
 
-    for (const module of modulesThisWeek) {
+    for (const moduleRecord of modulesThisWeek) {
       // Identify content by relations or contentType as fallback
       // Only include videos if they are enabled in componentVisibility
       const videos = videosEnabled
-        ? module.contentItems.filter(
+        ? moduleRecord.contentItems.filter(
             (c) => c.video || c.contentType === "VIDEO"
           )
         : [];
-      const notes = module.contentItems.filter(
+      const notes = moduleRecord.contentItems.filter(
         (c) => (c.notes && c.notes.length > 0) || c.contentType === "NOTE"
       );
-      const quizzes = module.contentItems.filter(
+      const quizzes = moduleRecord.contentItems.filter(
         (c) => (c.quiz && !c.quiz.isMockExam) || c.contentType === "QUIZ"
       );
 
       console.log(
-        `[generatePhase1Blocks] Module ${module.title}: ${videos.length} videos (enabled: ${videosEnabled}), ${notes.length} notes, ${quizzes.length} quizzes`
+        `[generatePhase1Blocks] Module ${moduleRecord.title}: ${videos.length} videos (enabled: ${videosEnabled}), ${notes.length} notes, ${quizzes.length} quizzes`
       );
 
       // Get preferred date for this week, but ensure it's before Phase 1 end date
@@ -312,8 +312,8 @@ async function generatePhase1Blocks(
       blocks.push({
         date: new Date(scheduleDate),
         taskType: TaskType.LEARN,
-        targetModuleId: module.id,
-        targetContentItemId: `lecture-rapide-${module.id}`, // Special ID pattern for lecture rapide
+        targetModuleId: moduleRecord.id,
+        targetContentItemId: `lecture-rapide-${moduleRecord.id}`, // Special ID pattern for lecture rapide
         estimatedBlocks: 1,
         order: 0,
         isOffPlatform: true,
@@ -326,8 +326,8 @@ async function generatePhase1Blocks(
           blocks.push({
             date: new Date(scheduleDate),
             taskType: TaskType.LEARN,
-            targetModuleId: module.id,
-            targetContentItemId: `video-placeholder-${module.id}`,
+            targetModuleId: moduleRecord.id,
+            targetContentItemId: `video-placeholder-${moduleRecord.id}`,
             estimatedBlocks: 2,
             order: 0,
           });
@@ -337,7 +337,7 @@ async function generatePhase1Blocks(
               blocks.push({
                 date: new Date(scheduleDate),
                 taskType: TaskType.LEARN,
-                targetModuleId: module.id,
+                targetModuleId: moduleRecord.id,
                 targetContentItemId: video.id,
                 estimatedBlocks: 2,
                 order: 0,
@@ -351,8 +351,8 @@ async function generatePhase1Blocks(
       blocks.push({
         date: new Date(scheduleDate),
         taskType: TaskType.LEARN,
-        targetModuleId: module.id,
-        targetContentItemId: `lecture-lente-${module.id}`, // Special ID pattern for lecture lente
+        targetModuleId: moduleRecord.id,
+        targetContentItemId: `lecture-lente-${moduleRecord.id}`, // Special ID pattern for lecture lente
         estimatedBlocks: 3,
         order: 0,
         isOffPlatform: true,
@@ -363,8 +363,8 @@ async function generatePhase1Blocks(
         blocks.push({
           date: new Date(scheduleDate),
           taskType: TaskType.LEARN,
-          targetModuleId: module.id,
-          targetContentItemId: `notes-placeholder-${module.id}`,
+          targetModuleId: moduleRecord.id,
+          targetContentItemId: `notes-placeholder-${moduleRecord.id}`,
           estimatedBlocks: 1,
           order: 0,
         });
@@ -374,7 +374,7 @@ async function generatePhase1Blocks(
             blocks.push({
               date: new Date(scheduleDate),
               taskType: TaskType.LEARN,
-              targetModuleId: module.id,
+              targetModuleId: moduleRecord.id,
               targetContentItemId: note.id,
               estimatedBlocks: 1,
               order: 0,
@@ -388,8 +388,8 @@ async function generatePhase1Blocks(
         blocks.push({
           date: new Date(scheduleDate),
           taskType: TaskType.LEARN,
-          targetModuleId: module.id,
-          targetQuizId: `quiz-placeholder-${module.id}`,
+          targetModuleId: moduleRecord.id,
+          targetQuizId: `quiz-placeholder-${moduleRecord.id}`,
           estimatedBlocks: 1,
           order: 0,
         });
@@ -399,7 +399,7 @@ async function generatePhase1Blocks(
             blocks.push({
               date: new Date(scheduleDate),
               taskType: TaskType.LEARN,
-              targetModuleId: module.id,
+              targetModuleId: moduleRecord.id,
               targetQuizId: quiz.quiz.id,
               estimatedBlocks: 1,
               order: 0,
@@ -705,7 +705,7 @@ export async function generateNewStudyPlan(
       warnings.push(phase1Req.warning);
       if (phase1Req.requiredHoursPerWeek) {
         warnings.push(
-          `Considérez augmenter vos heures d'étude à ${phase1Req.requiredHoursPerWeek} heures/semaine ou modifier votre date d'examen.`
+          `Consider increasing your study hours to ${phase1Req.requiredHoursPerWeek} hours/week or adjusting your exam date.`
         );
       }
     }
@@ -813,4 +813,3 @@ export async function generateNewStudyPlan(
     requiredHoursPerWeek,
   };
 }
-

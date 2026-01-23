@@ -72,7 +72,7 @@ export function CourseCatalog({ initialCourses }: CourseCatalogProps) {
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSearch();
               }}
-              placeholder="Titre, description, code…"
+              placeholder="Title, description, code..."
               className="w-full bg-white text-black font-mono px-4 py-4 border-4 border-black focus:outline-none focus:border-primary"
             />
           </div>
@@ -83,7 +83,7 @@ export function CourseCatalog({ initialCourses }: CourseCatalogProps) {
             disabled={loading}
             className="bg-black text-white font-black uppercase tracking-wider px-8 py-4 border-4 border-black hover:bg-primary hover:text-black hover:border-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Recherche…" : "Rechercher →"}
+            {loading ? "Searching..." : "Search →"}
           </button>
         </div>
       </div>
@@ -92,10 +92,10 @@ export function CourseCatalog({ initialCourses }: CourseCatalogProps) {
       {filteredCourses.length === 0 ? (
         <div className="border-4 border-black p-10 text-center">
           <div className="font-mono text-xs uppercase tracking-[0.3em] text-black/60 mb-3">
-            [0 résultat]
+            [0 results]
           </div>
           <div className="text-2xl font-black uppercase tracking-tight">
-            Aucun cours trouvé
+            No courses found
           </div>
         </div>
       ) : (
@@ -144,7 +144,7 @@ export function CourseCatalog({ initialCourses }: CourseCatalogProps) {
                 </h3>
 
                 <p className="mt-4 text-base leading-relaxed opacity-80 line-clamp-4">
-                  {course.description ? stripHtmlAndDecode(course.description) : "Aucune description disponible"}
+                  {course.description ? stripHtmlAndDecode(course.description) : "No description available"}
                 </p>
 
                 <div className="mt-8 border-t-4 border-black pt-6 flex items-end justify-between gap-6">
@@ -153,13 +153,13 @@ export function CourseCatalog({ initialCourses }: CourseCatalogProps) {
                       {formatCurrency(Number(course.price))}
                     </div>
                     <div className="font-mono text-xs uppercase tracking-[0.25em] text-black/60 mt-2">
-                      {course.paymentType === "SUBSCRIPTION" ? "Abonnement" : "One-time payment"} ·{" "}
+                      {course.paymentType === "SUBSCRIPTION" ? "Subscription" : "One-time payment"} ·{" "}
                       {course._count.modules} module{course._count.modules !== 1 ? "s" : ""}
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 font-black uppercase tracking-wider group-hover:gap-4 transition-all">
-                    Détails <span className="text-2xl">→</span>
+                    Details <span className="text-2xl">→</span>
                   </div>
                 </div>
               </Link>
@@ -170,4 +170,3 @@ export function CourseCatalog({ initialCourses }: CourseCatalogProps) {
     </div>
   );
 }
-

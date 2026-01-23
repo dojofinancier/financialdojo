@@ -9,7 +9,7 @@ import { sendCohortMessageWebhook } from "@/lib/webhooks/make";
 
 const cohortMessageSchema = z.object({
   cohortId: z.string().min(1),
-  content: z.string().min(1, "Le contenu est requis"),
+  content: z.string().min(1, "Content is required"),
   attachments: z.array(z.string()).optional().default([]),
 });
 
@@ -546,4 +546,3 @@ export async function getCohortUnreadMessageCountAction(
     };
   }
 }
-

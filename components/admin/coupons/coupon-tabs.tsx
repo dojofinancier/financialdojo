@@ -12,7 +12,7 @@ export function CouponTabs() {
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList>
         <TabsTrigger value="list">Liste des coupons</TabsTrigger>
-        <TabsTrigger value="create">Créer un coupon</TabsTrigger>
+        <TabsTrigger value="create">Create coupon</TabsTrigger>
       </TabsList>
       <TabsContent value="list" className="mt-6">
         <CouponList onEdit={(couponId) => {

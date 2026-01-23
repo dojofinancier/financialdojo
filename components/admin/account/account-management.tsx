@@ -61,10 +61,10 @@ export function AccountManagement() {
       <div>
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <Shield className="h-6 w-6" />
-          Gestion du compte administrateur
+          Admin account management
         </h2>
         <p className="text-muted-foreground mt-1">
-          Gérez votre mot de passe et vos paramètres de compte
+          Manage your password and account settings
         </p>
       </div>
 
@@ -72,16 +72,16 @@ export function AccountManagement() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Key className="h-5 w-5" />
-            Changer le mot de passe
+            Change password
           </CardTitle>
           <CardDescription>
-            Modifiez votre mot de passe pour sécuriser votre compte administrateur
+            Update your password to secure your admin account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="currentPassword">Mot de passe actuel</Label>
+              <Label htmlFor="currentPassword">Current password</Label>
               <Input
                 id="currentPassword"
                 type="password"
@@ -99,7 +99,7 @@ export function AccountManagement() {
             <Separator />
 
             <div className="space-y-2">
-              <Label htmlFor="newPassword">Nouveau mot de passe</Label>
+              <Label htmlFor="newPassword">New password</Label>
               <Input
                 id="newPassword"
                 type="password"
@@ -113,12 +113,12 @@ export function AccountManagement() {
                 minLength={6}
               />
               <p className="text-sm text-muted-foreground">
-                Le mot de passe doit contenir au moins 6 caractères
+                The password must be at least 6 characters
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le nouveau mot de passe</Label>
+              <Label htmlFor="confirmPassword">Confirm new password</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -134,7 +134,7 @@ export function AccountManagement() {
             </div>
 
             <Button type="submit" disabled={isLoading} className="w-full md:w-auto">
-              {isLoading ? "Modification..." : "Change password"}
+              {isLoading ? "Updating..." : "Change password"}
             </Button>
           </form>
         </CardContent>
@@ -144,29 +144,29 @@ export function AccountManagement() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Informations de sécurité
+            Security information
           </CardTitle>
           <CardDescription>
-            Conseils pour maintenir la sécurité de votre compte
+            Tips to keep your account secure
           </CardDescription>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex items-start gap-2">
               <span className="text-primary">•</span>
-              <span>Utilisez un mot de passe unique et fort (minimum 12 caractères recommandé)</span>
+              <span>Use a unique, strong password (12+ characters recommended)</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary">•</span>
-              <span>Ne partagez jamais votre mot de passe administrateur</span>
+              <span>Never share your admin password</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary">•</span>
-              <span>Changez votre mot de passe régulièrement</span>
+              <span>Change your password regularly</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary">•</span>
-              <span>Déconnectez-vous après chaque session sur un ordinateur partagé</span>
+              <span>Log out after each session on a shared computer</span>
             </li>
           </ul>
         </CardContent>

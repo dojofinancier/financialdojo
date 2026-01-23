@@ -22,9 +22,10 @@ export async function getStudentModuleNoteAction(
 
     // Find the note by module (we'll store it on the first content item or create a virtual one)
     // Actually, let's store it on the module itself by finding any content item in the module
-    const module = await prisma.module.findUnique({
+    const moduleRecord = await prisma.module.findUnique({
       where: { id: moduleId },
-      include: {
+      select: {
+        courseId: true,
         contentItems: {
           take: 1,
           orderBy: { order: "asc" },
@@ -32,10 +33,10 @@ export async function getStudentModuleNoteAction(
       },
     });
 
-    if (!module) {
+    if (!moduleRecord) {
       return {
         success: false,
-        error: "Module introuvable",
+        error: "Module not found",
       };
     }
 
@@ -44,7 +45,7 @@ export async function getStudentModuleNoteAction(
     // For now, we'll use the first content item as anchor
     // Use the first content item as anchor for module-level notes
     // If no content items exist, we can't store the note (would need a different approach)
-    const anchorContentItemId = module.contentItems[0]?.id;
+    const anchorContentItemId = moduleRecord.contentItems[0]?.id;
 
     if (!anchorContentItemId) {
       // No content items in module - return empty note
@@ -99,7 +100,7 @@ export async function saveStudentModuleNoteAction(
     const user = await requireAuth();
 
     // Get module and find anchor content item
-    const module = await prisma.module.findUnique({
+    const moduleRecord = await prisma.module.findUnique({
       where: { id: moduleId },
       include: {
         contentItems: {
@@ -109,15 +110,15 @@ export async function saveStudentModuleNoteAction(
       },
     });
 
-    if (!module) {
+    if (!moduleRecord) {
       return {
         success: false,
-        error: "Module introuvable",
+        error: "Module not found",
       };
     }
 
     // Use the first content item as anchor for module-level notes
-    const anchorContentItemId = module.contentItems[0]?.id;
+    const anchorContentItemId = moduleRecord.contentItems[0]?.id;
 
     if (!anchorContentItemId) {
       return {
@@ -146,7 +147,7 @@ export async function saveStudentModuleNoteAction(
       },
     });
 
-    revalidatePath(`/learn/${module.courseId}`);
+    revalidatePath(`/learn/${moduleRecord.courseId}`);
     return {
       success: true,
       data: note,

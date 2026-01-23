@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, TrendingUp, Brain, Target, Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 
 // Dynamically import recharts to reduce initial bundle size
 const LineChart = dynamic(
@@ -62,14 +62,14 @@ export function PerformanceSection({ data }: PerformanceSectionProps) {
   if (!data) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Aucune donnée disponible</p>
+        <p className="text-muted-foreground">No data available</p>
       </div>
     );
   }
 
   // Format quiz score trends for chart
   const quizTrendsData = (data.quizScoreTrends || []).map((item) => ({
-    date: format(new Date(item.date), "d MMM", { locale: fr }),
+    date: format(new Date(item.date), "d MMM", { locale: enCA }),
     score: item.score,
   }));
 
@@ -89,9 +89,9 @@ export function PerformanceSection({ data }: PerformanceSectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
-            Tendances des scores de quiz
+            Quiz score trends
           </CardTitle>
-          <CardDescription>Évolution de vos scores au fil du temps</CardDescription>
+          <CardDescription>Score trend over time</CardDescription>
         </CardHeader>
         <CardContent>
           {quizTrendsData.length > 0 ? (
@@ -107,7 +107,7 @@ export function PerformanceSection({ data }: PerformanceSectionProps) {
             </ResponsiveContainer>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-8">
-              Aucun quiz complété pour le moment
+              No quizzes completed yet
             </p>
           )}
         </CardContent>
@@ -118,9 +118,9 @@ export function PerformanceSection({ data }: PerformanceSectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
-            Performance par module
+            Performance by module
           </CardTitle>
-          <CardDescription>Scores moyens et taux de complétion par module</CardDescription>
+          <CardDescription>Average scores and completion rate by module</CardDescription>
         </CardHeader>
         <CardContent>
           {modulePerformanceData.length > 0 ? (
@@ -131,13 +131,13 @@ export function PerformanceSection({ data }: PerformanceSectionProps) {
                 <YAxis domain={[0, 100]} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="score" fill="#8884d8" name="Score moyen (%)" />
+                 <Bar dataKey="score" fill="#8884d8" name="Average score (%)" />
                 <Bar dataKey="completion" fill="#82ca9d" name="Completion (%)" />
               </BarChart>
             </ResponsiveContainer>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-8">
-              Aucune donnée de performance disponible
+              No performance data available
             </p>
           )}
         </CardContent>
@@ -149,9 +149,9 @@ export function PerformanceSection({ data }: PerformanceSectionProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-yellow-500" />
-              Zones à améliorer
+              Areas to improve
             </CardTitle>
-            <CardDescription>Modules nécessitant une attention particulière</CardDescription>
+            <CardDescription>Modules needing extra attention</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -177,43 +177,43 @@ export function PerformanceSection({ data }: PerformanceSectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5" />
-            Efficacité de la révision
+            Review effectiveness
           </CardTitle>
-          <CardDescription>Statistiques sur vos sessions de révision</CardDescription>
+          <CardDescription>Stats for your review sessions</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
             <div>
               <p className="text-2xl font-bold">{data.reviewEffectiveness.sessionsCompleted}</p>
-              <p className="text-xs text-muted-foreground">Sessions complétées</p>
+              <p className="text-xs text-muted-foreground">Sessions completed</p>
             </div>
             <div>
               <p className="text-2xl font-bold">
                 {data.reviewEffectiveness.averageItemsPerSession.toFixed(1)}
               </p>
-              <p className="text-xs text-muted-foreground">Éléments par session (moyenne)</p>
+               <p className="text-xs text-muted-foreground">Items per session (average)</p>
             </div>
             <div>
               <p className="text-2xl font-bold">
                 {data.reviewEffectiveness.masteryRate.toFixed(1)}%
               </p>
-              <p className="text-xs text-muted-foreground">Taux de maîtrise</p>
+               <p className="text-xs text-muted-foreground">Mastery rate</p>
             </div>
           </div>
           <div className="mt-4 pt-4 border-t">
-            <p className="text-sm font-medium mb-2">Distribution de difficulté</p>
+             <p className="text-sm font-medium mb-2">Difficulty distribution</p>
             <div className="flex gap-4">
               <div>
                 <p className="text-lg font-bold text-green-600">
                   {data.reviewEffectiveness.difficultyDistribution.easy}
                 </p>
-                <p className="text-xs text-muted-foreground">Faciles</p>
+                 <p className="text-xs text-muted-foreground">Easy</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-red-600">
                   {data.reviewEffectiveness.difficultyDistribution.difficult}
                 </p>
-                <p className="text-xs text-muted-foreground">Difficiles</p>
+                 <p className="text-xs text-muted-foreground">Hard</p>
               </div>
             </div>
           </div>

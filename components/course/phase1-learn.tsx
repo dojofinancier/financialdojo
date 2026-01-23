@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -21,11 +21,7 @@ export function Phase1Learn({ courseId, course, settings, onModuleSelect }: Phas
   const [loading, setLoading] = useState(true);
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadProgress();
-  }, [courseId]);
-
-  const loadProgress = async () => {
+  const loadProgress = useCallback(async () => {
     try {
       const result = await getModuleProgressAction(courseId);
       if (result.success && result.data) {
@@ -36,7 +32,11 @@ export function Phase1Learn({ courseId, course, settings, onModuleSelect }: Phas
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadProgress();
+  }, [loadProgress]);
 
   const handleStartModule = (moduleId: string) => {
     if (onModuleSelect) {
@@ -88,10 +88,10 @@ export function Phase1Learn({ courseId, course, settings, onModuleSelect }: Phas
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BookOpen className="h-5 w-5" />
-            Phase 1 - Apprendre le matériel
+            Phase 1 - Learn the material
           </CardTitle>
           <CardDescription>
-            Première passe complète du syllabus. Complétez chaque module et passez les mini-tests.
+            First full pass through the syllabus. Complete each module and pass the mini-tests.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -147,4 +147,3 @@ export function Phase1Learn({ courseId, course, settings, onModuleSelect }: Phas
     </div>
   );
 }
-

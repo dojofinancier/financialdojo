@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -133,7 +133,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
     correctAnswer: "A",
   });
 
-  const loadExams = async () => {
+  const loadExams = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getExamsAction(courseId);
@@ -153,14 +153,9 @@ export function ExamManager({ courseId }: ExamManagerProps) {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    loadExams();
-    loadFirstModule();
   }, [courseId]);
 
-  const loadFirstModule = async () => {
+  const loadFirstModule = useCallback(async () => {
     try {
       const modulesData = await getModulesAction(courseId);
       setModules(modulesData);
@@ -170,7 +165,12 @@ export function ExamManager({ courseId }: ExamManagerProps) {
     } catch (error) {
       console.error("Error loading modules:", error);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadExams();
+    loadFirstModule();
+  }, [loadExams, loadFirstModule]);
 
   const openCreateExamDialog = () => {
     setEditingExam(null);
@@ -496,14 +496,14 @@ export function ExamManager({ courseId }: ExamManagerProps) {
   };
 
   const handleCleanupEscapedQuotes = async (examId: string) => {
-    if (!confirm("Voulez-vous nettoyer les guillemets échappés (\\') dans toutes les questions de cet examen ?")) {
+    if (!confirm("Do you want to clean escaped quotes (\\') in all questions for this exam?")) {
       return;
     }
 
     try {
       const result = await cleanupEscapedQuotesAction(examId);
       if (result.success) {
-        toast.success(`${result.data?.updatedCount || 0} question(s) mise(s) à jour`);
+        toast.success(`${result.data?.updatedCount || 0} question(s) updated`);
         await loadExams();
         // Refresh selected exam if it's the one we cleaned
         if (selectedExam && selectedExam.id === examId) {
@@ -542,7 +542,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
       if (result.success) {
         const data = result.data as any;
         toast.success(
-          `${data?.questionsAdded || 0} question(s) importée(s) avec succès${data?.errors?.length ? ` (${data.errors.length} erreurs)` : ""}`
+          `${data?.questionsAdded || 0} question(s) imported successfully${data?.errors?.length ? ` (${data.errors.length} errors)` : ""}`
         );
         setImportPracticeExamDialogOpen(false);
         setImportExamTitle("");
@@ -573,9 +573,9 @@ export function ExamManager({ courseId }: ExamManagerProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold">Examens simulés</h2>
+          <h2 className="text-2xl font-semibold">Practice exams</h2>
           <p className="text-sm text-muted-foreground">
-            Créez des examens simulés chronométrés pour les étudiants.
+            Create timed practice exams for students.
           </p>
         </div>
         <div className="flex gap-2">
@@ -590,19 +590,19 @@ export function ExamManager({ courseId }: ExamManagerProps) {
             <DialogTrigger asChild>
               <Button variant="outline">
                 <Upload className="h-4 w-4 mr-2" />
-                Importer examen pratique
+                Import practice exam
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Importer un examen pratique depuis CSV</DialogTitle>
+                <DialogTitle>Import a practice exam from CSV</DialogTitle>
                 <DialogDescription>
                   Format attendu: id,chapter,question,option_a,option_b,option_c,option_d,correct_option,explanation
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label>Fichier CSV *</Label>
+                  <Label>CSV file *</Label>
                   <Input
                     type="file"
                     accept=".csv"
@@ -612,23 +612,23 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                   {importing && (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Importation en cours...
+                      Importing...
                     </div>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label>Titre de l'examen (optionnel)</Label>
+                  <Label>Exam title (optional)</Label>
                   <Input
                     value={importExamTitle}
                     onChange={(e) => setImportExamTitle(e.target.value)}
                     placeholder="Leave blank to use a default title"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Si vide, un titre par défaut sera généré avec la date.
+                    If left blank, a default title will be generated with the date.
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label>Module (optionnel)</Label>
+                  <Label>Module (optional)</Label>
                   <Select
                     value={importModuleId || "none"}
                     onValueChange={(value) => setImportModuleId(value === "none" ? null : value)}
@@ -637,7 +637,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                       <SelectValue placeholder="Select a module" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">Utiliser le premier module</SelectItem>
+                      <SelectItem value="none">Use the first module</SelectItem>
                       {modules.map((module) => (
                         <SelectItem key={module.id} value={module.id}>
                           {module.title}
@@ -646,11 +646,11 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    Si non spécifié, le premier module du cours sera utilisé.
+                    If not specified, the first course module will be used.
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label>Ajouter à un examen existant (optionnel)</Label>
+                  <Label>Add to an existing exam (optional)</Label>
                   <Select
                     value={importExistingExamId || "none"}
                     onValueChange={(value) => setImportExistingExamId(value === "none" ? null : value)}
@@ -659,7 +659,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                       <SelectValue placeholder="Create a new exam" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">Créer un nouvel examen</SelectItem>
+                      <SelectItem value="none">Create a new exam</SelectItem>
                       {exams.map((exam) => (
                         <SelectItem key={exam.id} value={exam.id}>
                           {exam.title}
@@ -668,13 +668,13 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    Si sélectionné, les questions seront ajoutées à cet examen existant.
+                    If selected, questions will be added to this existing exam.
                   </p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Le format CSV attendu est: id,chapter,question,option_a,option_b,option_c,option_d,correct_option,explanation
+                  Expected CSV format is: id,chapter,question,option_a,option_b,option_c,option_d,correct_option,explanation
                   <br />
-                  Les colonnes option_c, option_d et explanation sont optionnelles.
+                  Columns option_c, option_d, and explanation are optional.
                 </p>
               </div>
             </DialogContent>
@@ -683,7 +683,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
             <DialogTrigger asChild>
               <Button onClick={openCreateExamDialog}>
                 <Plus className="h-4 w-4 mr-2" />
-                Nouvel examen
+                New exam
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -695,17 +695,17 @@ export function ExamManager({ courseId }: ExamManagerProps) {
               </DialogHeader>
               <div className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label>Titre de l'examen *</Label>
+                  <Label>Exam title *</Label>
                   <Input
                     value={examFormState.title}
                     onChange={(e) => setExamFormState({ ...examFormState, title: e.target.value })}
-                    placeholder="Ex: Examen final - Chapitre 1-3"
+                    placeholder="e.g., Final Exam - Chapters 1-3"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Durée (minutes) *</Label>
+                    <Label>Duration (minutes) *</Label>
                     <Input
                       type="number"
                       min="1"
@@ -715,7 +715,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Note de passage (%) *</Label>
+                    <Label>Passing score (%) *</Label>
                     <Input
                       type="number"
                       min="0"
@@ -727,21 +727,21 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Format de l'examen (optionnel)</Label>
+                  <Label>Exam format (optional)</Label>
                   <Textarea
                     value={examFormState.examFormat}
                     onChange={(e) => setExamFormState({ ...examFormState, examFormat: e.target.value })}
-                    placeholder="Description du format de l'examen..."
+                    placeholder="Exam format description..."
                     rows={3}
                   />
                 </div>
 
                 <div className="flex justify-end gap-2">
                   <Button variant="outline" onClick={() => setExamDialogOpen(false)}>
-                    Annuler
+                    Cancel
                   </Button>
                   <Button onClick={handleExamSubmit}>
-                    {editingExam ? "Enregistrer" : "Create and add questions"}
+                    {editingExam ? "Save" : "Create and add questions"}
                   </Button>
                 </div>
               </div>
@@ -753,12 +753,12 @@ export function ExamManager({ courseId }: ExamManagerProps) {
       {loading ? (
         <div className="flex items-center justify-center py-12 text-muted-foreground gap-2">
           <Loader2 className="h-5 w-5 animate-spin" />
-          Chargement des examens...
+          Loading exams...
         </div>
       ) : exams.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
-            Aucun examen simulé pour le moment.
+            No practice exams yet.
           </CardContent>
         </Card>
       ) : (
@@ -771,11 +771,11 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                   <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
-                      {exam.timeLimit ? `${Math.floor(exam.timeLimit / 60)} min` : "Sans limite"}
+                      {exam.timeLimit ? `${Math.floor(exam.timeLimit / 60)} min` : "No limit"}
                     </div>
                     <div className="flex items-center gap-1">
                       <Target className="h-4 w-4" />
-                      {exam.passingScore}% pour réussir
+                      {exam.passingScore}% to pass
                     </div>
                     <div>
                       {exam.questions.length} question{exam.questions.length > 1 ? "s" : ""}
@@ -800,7 +800,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                     {expandedExamId === exam.id ? (
                       <>
                         <ChevronUp className="h-4 w-4 mr-2" />
-                        Masquer
+                        Hide
                       </>
                     ) : (
                       <>
@@ -815,7 +815,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                     onClick={() => handleCleanupEscapedQuotes(exam.id)}
                     title="Clean escaped quotes (\\\\')"
                   >
-                    Nettoyer
+                      Clean
                   </Button>
                   <Button variant="ghost" size="icon" onClick={() => openEditExamDialog(exam)}>
                     <Edit className="h-4 w-4" />
@@ -850,14 +850,14 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <DialogTitle>Importer des questions depuis CSV</DialogTitle>
+                              <DialogTitle>Import questions from CSV</DialogTitle>
                               <DialogDescription>
                                 Format attendu: settings, question, answer (format Tutor)
                               </DialogDescription>
                             </DialogHeader>
                             <div className="space-y-4 mt-4">
                               <div className="space-y-2">
-                                <Label>Fichier CSV *</Label>
+                                  <Label>CSV file *</Label>
                                 <Input
                                   type="file"
                                   accept=".csv"
@@ -872,13 +872,13 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                           onClick={() => openQuestionsDialog(exam)}
                         >
                           <Plus className="h-4 w-4 mr-2" />
-                          Ajouter une question
+                          Add a question
                         </Button>
                       </div>
                     </div>
                     {exam.questions.length === 0 ? (
                       <p className="text-sm text-muted-foreground text-center py-4">
-                        Aucune question. Ajoutez des questions pour commencer.
+                        No questions yet. Add questions to get started.
                       </p>
                     ) : (
                       <Table>
@@ -887,7 +887,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                             <TableHead className="w-12">#</TableHead>
                             <TableHead>Question</TableHead>
                             <TableHead>Options</TableHead>
-                            <TableHead>Réponse correcte</TableHead>
+                            <TableHead>Correct answer</TableHead>
                             <TableHead className="w-24">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -949,9 +949,9 @@ export function ExamManager({ courseId }: ExamManagerProps) {
       <Dialog open={questionsDialogOpen} onOpenChange={setQuestionsDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Gérer les questions - {selectedExam?.title}</DialogTitle>
+            <DialogTitle>Manage questions - {selectedExam?.title}</DialogTitle>
             <DialogDescription>
-              Ajoutez, modifiez ou supprimez des questions pour cet examen.
+              Add, edit, or delete questions for this exam.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
@@ -967,14 +967,14 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Importer des questions depuis CSV</DialogTitle>
+                      <DialogTitle>Import questions from CSV</DialogTitle>
                       <DialogDescription>
                         Format attendu: settings, question, answer (format Tutor)
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 mt-4">
                       <div className="space-y-2">
-                        <Label>Fichier CSV *</Label>
+                          <Label>CSV file *</Label>
                         <Input
                           type="file"
                           accept=".csv"
@@ -990,7 +990,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
             {/* Add Question Form */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Ajouter une question</CardTitle>
+                <CardTitle className="text-lg">Add a question</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -998,7 +998,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                   <Textarea
                     value={questionFormState.question}
                     onChange={(e) => setQuestionFormState({ ...questionFormState, question: e.target.value })}
-                    placeholder="Entrez la question..."
+                    placeholder="Enter the question..."
                     rows={3}
                   />
                 </div>
@@ -1037,7 +1037,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Réponse correcte *</Label>
+                  <Label>Correct answer *</Label>
                   <Select
                     value={questionFormState.correctAnswer}
                     onValueChange={(value) => setQuestionFormState({ ...questionFormState, correctAnswer: value })}
@@ -1055,7 +1055,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                 </div>
                 <Button onClick={handleAddQuestion} className="w-full">
                   <Plus className="h-4 w-4 mr-2" />
-                  Ajouter la question
+                  Add question
                 </Button>
               </CardContent>
             </Card>
@@ -1063,13 +1063,13 @@ export function ExamManager({ courseId }: ExamManagerProps) {
             {/* Questions List */}
             {selectedExam && selectedExam.questions.length > 0 && (
               <div className="space-y-2">
-                <h3 className="font-semibold">Questions existantes</h3>
+                <h3 className="font-semibold">Existing questions</h3>
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-12">#</TableHead>
                       <TableHead>Question</TableHead>
-                      <TableHead>Réponse correcte</TableHead>
+                      <TableHead>Correct answer</TableHead>
                       <TableHead className="w-24">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -1119,7 +1119,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
       <Dialog open={questionEditDialogOpen} onOpenChange={setQuestionEditDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Modifier la question</DialogTitle>
+            <DialogTitle>Edit question</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
@@ -1127,7 +1127,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
               <Textarea
                 value={questionFormState.question}
                 onChange={(e) => setQuestionFormState({ ...questionFormState, question: e.target.value })}
-                placeholder="Entrez la question..."
+                placeholder="Enter the question..."
                 rows={3}
               />
             </div>
@@ -1166,7 +1166,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Réponse correcte *</Label>
+              <Label>Correct answer *</Label>
               <select
                 className="w-full px-3 py-2 border rounded-md"
                 value={questionFormState.correctAnswer}
@@ -1180,10 +1180,10 @@ export function ExamManager({ courseId }: ExamManagerProps) {
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setQuestionEditDialogOpen(false)}>
-                Annuler
+                Cancel
               </Button>
               <Button onClick={handleUpdateQuestion}>
-                Enregistrer
+                Save
               </Button>
             </div>
           </div>

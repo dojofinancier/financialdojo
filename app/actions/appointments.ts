@@ -272,7 +272,7 @@ export async function updateAppointmentAction(
     if (!appointment) {
       return {
         success: false,
-        error: "Rendez-vous introuvable",
+        error: "Appointment not found",
       };
     }
 
@@ -406,7 +406,7 @@ export async function rescheduleAppointmentAction(
     if (!appointment) {
       return {
         success: false,
-        error: "Rendez-vous introuvable",
+        error: "Appointment not found",
       };
     }
 
@@ -433,7 +433,7 @@ export async function rescheduleAppointmentAction(
     if (appointmentDate <= twoHoursFromNow) {
       return {
         success: false,
-        error: "Impossible de reprogrammer moins de 2 heures avant le rendez-vous",
+        error: "Cannot reschedule less than 2 hours before the appointment",
       };
     }
 
@@ -507,7 +507,7 @@ export async function rescheduleAppointmentAction(
       where: { id: appointmentId },
       data: {
         scheduledAt: newScheduledAt,
-        notes: reason ? `${appointment.notes || ""}\n\n[Reprogrammé] ${reason}`.trim() : appointment.notes,
+        notes: reason ? `${appointment.notes || ""}\n\n[Rescheduled] ${reason}`.trim() : appointment.notes,
       },
     });
 
@@ -598,4 +598,3 @@ export async function getAppointmentDetailsAction(appointmentId: string) {
     return null;
   }
 }
-

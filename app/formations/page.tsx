@@ -30,17 +30,17 @@ async function CohortsSection() {
         <div className="max-w-[1400px] mx-auto">
           <div className="mb-10">
             <span className="text-primary font-mono text-sm uppercase tracking-[0.3em] block mb-4">
-              [COHORTES PROFESSIONNELLES]
+              [PROFESSIONAL COHORTS]
             </span>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9] mb-4">
-              COHORTES
+              COHORTS
               <br />
-              <span className="text-primary">PROFESSIONNELLES</span>
+              <span className="text-primary">PROFESSIONAL</span>
             </h2>
             <div className="max-w-2xl mt-4">
               <div className="border-l-4 border-primary pl-6 py-2">
                 <p className="text-lg sm:text-xl font-light leading-relaxed opacity-80">
-                  Formations en groupe avec accompagnement personnalisé et sessions de coaching.
+                  Group training with personalized support and coaching sessions.
                 </p>
               </div>
             </div>
@@ -73,17 +73,17 @@ export default function FormationsPage() {
           <div className="relative px-4 sm:px-8">
             <div className="max-w-[1400px] mx-auto">
               <span className="text-primary font-mono text-sm uppercase tracking-[0.3em] block mb-4">
-                [CATALOGUE]
+                [CATALOG]
               </span>
               <h1 className="text-6xl sm:text-7xl md:text-8xl font-black uppercase tracking-tighter leading-[0.9]">
-                FORMATIONS
+                FINANCE
                 <br />
-                <span className="text-primary">EN FINANCE</span>
+                <span className="text-primary">COURSES</span>
               </h1>
               <div className="max-w-2xl mt-8">
                 <div className="border-l-4 border-primary pl-6 py-2">
                   <p className="text-xl sm:text-2xl font-light leading-relaxed opacity-80">
-                    Parcours OCRI, AMF, CSI. Choisissez votre cible et attaquez.
+                    OCRI, AMF, CSI tracks. Pick your target and go.
                   </p>
                 </div>
               </div>
@@ -130,4 +130,3 @@ export default function FormationsPage() {
     </>
   );
 }
-

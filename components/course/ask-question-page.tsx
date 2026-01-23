@@ -15,7 +15,7 @@ import {
 import { sendMessageAction, getMessageThreadsAction, getThreadMessagesAction } from "@/app/actions/messages";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Lazy load TipTap editor to reduce initial bundle size
@@ -125,14 +125,14 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
   };
 
   const formatDate = (date: Date | string) => {
-    return format(new Date(date), "d MMMM yyyy, HH:mm", { locale: fr });
+    return format(new Date(date), "d MMMM yyyy, HH:mm", { locale: enCA });
   };
 
   if (loading) {
     return (
       <div className="text-center py-12">
         <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
-        <p className="text-muted-foreground">Chargement de vos questions...</p>
+        <p className="text-muted-foreground">Loading your questions...</p>
       </div>
     );
   }
@@ -141,9 +141,9 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
     <div className="space-y-8">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">Poser une question</h1>
+        <h1 className="text-2xl font-bold mb-2">Ask a question</h1>
         <p className="text-muted-foreground">
-          Obtenez de l'aide personnalisée pour le cours: {courseTitle}
+          Get personalized help for the course: {courseTitle}
         </p>
       </div>
           {/* Submit New Question */}
@@ -151,10 +151,10 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
             <CardHeader>
               <CardTitle className="flex items-center">
                 <MessageCircle className="h-5 w-5 text-primary mr-2" />
-                Poser une nouvelle question
+                Ask a new question
               </CardTitle>
               <CardDescription>
-                Décrivez votre question ou votre problème de manière détaillée
+                Describe your question or issue in detail
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -177,12 +177,12 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
                     {submitting ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Envoi en cours...
+                        Sending...
                       </>
                     ) : (
                       <>
                         <Send className="h-4 w-4 mr-2" />
-                        Envoyer la question
+                        Send question
                       </>
                     )}
                   </Button>
@@ -195,17 +195,17 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
           <div>
             <h2 className="text-xl font-semibold mb-6 flex items-center">
               <MessageCircle className="h-5 w-5 text-primary mr-2" />
-              Vos questions ({threads.length})
+              Your questions ({threads.length})
             </h2>
 
             {threads.length === 0 ? (
               <Card className="text-center py-12">
                 <MessageCircle className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-muted-foreground mb-2">
-                  Aucune question posée
+                  No questions asked yet
                 </h3>
                 <p className="text-muted-foreground">
-                  Posez votre première question ci-dessus pour obtenir de l'aide !
+                  Ask your first question above to get help!
                 </p>
               </Card>
             ) : (
@@ -227,17 +227,17 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
                               {thread.subject}
                             </CardTitle>
                             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                              <span>Posée le {formatDate(thread.createdAt)}</span>
+                              <span>Asked on {formatDate(thread.createdAt)}</span>
                               <div className="flex items-center">
                                 {hasResponse ? (
                                   <>
                                     <CheckCircle2 className="h-4 w-4 mr-1 text-green-500" />
-                                    <span className="text-green-600">Répondue</span>
+                                    <span className="text-green-600">Answered</span>
                                   </>
                                 ) : (
                                   <>
                                     <Clock className="h-4 w-4 mr-1 text-yellow-500" />
-                                    <span className="text-yellow-600">En attente de réponse</span>
+                                    <span className="text-yellow-600">Awaiting response</span>
                                   </>
                                 )}
                               </div>
@@ -251,9 +251,9 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
                           onClick={() => handleToggleThread(thread.id)}
                           className="w-full justify-between"
                         >
-                          <span>{isExpanded ? "Masquer" : "Voir"} les messages</span>
+                           <span>{isExpanded ? "Hide" : "View"} messages</span>
                           <span className="text-xs text-muted-foreground">
-                            {thread._count.messages} message(s)
+                             {thread._count.messages} message(s)
                           </span>
                         </Button>
 
@@ -262,7 +262,7 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
                             {messages.length === 0 ? (
                               <div className="text-center py-4 text-muted-foreground">
                                 <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" />
-                                Chargement des messages...
+                                Loading messages...
                               </div>
                             ) : (
                               messages.map((msg) => (
@@ -303,27 +303,27 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
             <CardHeader>
               <CardTitle className="flex items-center">
                 <FileText className="h-5 w-5 text-primary mr-2" />
-                Comment poser une bonne question ?
+                How to ask a good question?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-medium mb-2">✅ À faire :</h4>
+                   <h4 className="font-medium mb-2">✅ Do:</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• Soyez spécifique et détaillé</li>
-                    <li>• Mentionnez le chapitre ou le concept</li>
-                    <li>• Expliquez ce que vous avez déjà essayé</li>
-                    <li>• Posez une question claire et précise</li>
+                     <li>• Be specific and detailed</li>
+                     <li>• Mention the chapter or concept</li>
+                     <li>• Explain what you already tried</li>
+                     <li>• Ask a clear, precise question</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">❌ À éviter :</h4>
+                   <h4 className="font-medium mb-2">❌ Avoid:</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• Questions trop générales</li>
-                    <li>• Demander les réponses aux exercices</li>
-                    <li>• Questions non liées au cours</li>
-                    <li>• Messages trop courts ou vagues</li>
+                     <li>• Overly general questions</li>
+                     <li>• Asking for exercise answers</li>
+                     <li>• Questions unrelated to the course</li>
+                     <li>• Messages that are too short or vague</li>
                   </ul>
                 </div>
               </div>
@@ -332,5 +332,4 @@ export function AskQuestionPage({ courseId, courseTitle }: AskQuestionPageProps)
     </div>
   );
 }
-
 

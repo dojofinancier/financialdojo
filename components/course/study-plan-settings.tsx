@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Progress } from "@/components/ui/progress";
 import { CalendarIcon, AlertCircle, Loader2, Settings } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { initializeCourseSettingsAction } from "@/app/actions/study-plan";
 import { toast } from "sonner";
@@ -163,14 +163,14 @@ export function StudyPlanSettings({
     }
   };
 
-  const dayLabels = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+  const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   // Prevent hydration mismatch by only rendering Dialog after mount
   if (!mounted) {
     return (
       <Button variant="outline" size="sm" disabled>
         <Settings className="h-4 w-4 mr-2" />
-        Paramètres du plan
+        Plan settings
       </Button>
     );
   }
@@ -180,19 +180,19 @@ export function StudyPlanSettings({
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
           <Settings className="h-4 w-4 mr-2" />
-          Paramètres du plan
+          Plan settings
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Paramètres du plan d'étude</DialogTitle>
+          <DialogTitle>Study plan settings</DialogTitle>
           <DialogDescription>
-            Modifiez vos paramètres pour régénérer votre plan d'étude personnalisé
+            Adjust your settings to regenerate your personalized study plan
           </DialogDescription>
         </DialogHeader>
         {loadingSettings ? (
           <div className="py-8 text-center">
-            <p className="text-muted-foreground">Chargement...</p>
+            <p className="text-muted-foreground">Loading...</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -201,15 +201,15 @@ export function StudyPlanSettings({
                 <div className="flex items-center gap-3">
                   <Loader2 className="h-5 w-5 animate-spin text-primary" />
                   <div>
-                    <p className="font-semibold">Régénération du plan d'étude</p>
-                    <p className="text-sm text-muted-foreground">Analyse et génération en cours…</p>
+                    <p className="font-semibold">Regenerating study plan</p>
+                    <p className="text-sm text-muted-foreground">Analysis and generation in progress...</p>
                   </div>
                 </div>
                 <Progress value={loadingProgress} />
                 <div className="grid gap-1 text-sm text-muted-foreground">
-                  <div className={loadingProgress > 20 ? "text-foreground" : undefined}>Analyse du programme</div>
-                  <div className={loadingProgress > 45 ? "text-foreground" : undefined}>Organisation des sessions</div>
-                  <div className={loadingProgress > 70 ? "text-foreground" : undefined}>Finalisation du plan</div>
+                  <div className={loadingProgress > 20 ? "text-foreground" : undefined}>Program analysis</div>
+                  <div className={loadingProgress > 45 ? "text-foreground" : undefined}>Session planning</div>
+                  <div className={loadingProgress > 70 ? "text-foreground" : undefined}>Finalizing plan</div>
                 </div>
               </div>
             )}
@@ -224,7 +224,7 @@ export function StudyPlanSettings({
               <Alert variant="default" className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                 <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                 <AlertDescription className="space-y-2">
-                  <p className="font-semibold text-yellow-800 dark:text-yellow-200">Avertissements:</p>
+                  <p className="font-semibold text-yellow-800 dark:text-yellow-200">Warnings:</p>
                   <ul className="list-disc list-inside space-y-1 text-yellow-700 dark:text-yellow-300">
                     {warnings.map((warning, index) => (
                       <li key={index}>{warning}</li>
@@ -236,7 +236,7 @@ export function StudyPlanSettings({
 
             {/* Exam Date */}
             <div className="space-y-2">
-              <Label htmlFor="examDate">Date d'examen *</Label>
+              <Label htmlFor="examDate">Exam date *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -248,9 +248,9 @@ export function StudyPlanSettings({
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {examDate ? (
-                      format(examDate, "PPP", { locale: fr })
+                      format(examDate, "PPP", { locale: enCA })
                     ) : (
-                      <span>Sélectionner une date</span>
+                      <span>Select a date</span>
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -268,7 +268,7 @@ export function StudyPlanSettings({
 
             {/* Study Hours Per Week */}
             <div className="space-y-2">
-              <Label htmlFor="studyHours">Heures d'étude par semaine *</Label>
+              <Label htmlFor="studyHours">Study hours per week *</Label>
               <Input
                 id="studyHours"
                 type="number"
@@ -279,13 +279,13 @@ export function StudyPlanSettings({
                 required
               />
               <p className="text-sm text-muted-foreground">
-                Recommandé: {recommendedStudyHoursMin}-{recommendedStudyHoursMax} heures par semaine pour une préparation optimale
+                Recommended: {recommendedStudyHoursMin}-{recommendedStudyHoursMax} hours per week for optimal preparation
               </p>
             </div>
 
             {/* Preferred Study Days */}
             <div className="space-y-2">
-              <Label>Jours d'étude préférés</Label>
+              <Label>Preferred study days</Label>
               <div className="flex gap-2 flex-wrap">
                 {dayLabels.map((label, index) => (
                   <Button
@@ -300,30 +300,30 @@ export function StudyPlanSettings({
                 ))}
               </div>
               <p className="text-sm text-muted-foreground">
-                Sélectionnez les jours où vous prévoyez étudier
+                Select the days you plan to study
               </p>
             </div>
 
             {/* Self Rating */}
             <div className="space-y-2">
-              <Label>Niveau d'expérience *</Label>
+              <Label>Experience level *</Label>
               <RadioGroup value={selfRating} onValueChange={(value) => setSelfRating(value as SelfRating)}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="NOVICE" id="novice" />
                   <Label htmlFor="novice" className="font-normal cursor-pointer">
-                    Débutant - Première fois que je prépare cet examen
+                    Beginner - First time preparing for this exam
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="INTERMEDIATE" id="intermediate" />
                   <Label htmlFor="intermediate" className="font-normal cursor-pointer">
-                    Intermédiaire - J'ai déjà étudié ce sujet
+                    Intermediate - I have already studied this subject
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="RETAKER" id="retaker" />
                   <Label htmlFor="retaker" className="font-normal cursor-pointer">
-                    Reprenant - Je repasse l'examen
+                    Retaker - I am taking the exam again
                   </Label>
                 </div>
               </RadioGroup>
@@ -339,7 +339,7 @@ export function StudyPlanSettings({
                 onClick={() => setOpen(false)}
                 disabled={loading}
               >
-                Annuler
+                Cancel
               </Button>
             </div>
           </form>
@@ -348,5 +348,4 @@ export function StudyPlanSettings({
     </Dialog>
   );
 }
-
 

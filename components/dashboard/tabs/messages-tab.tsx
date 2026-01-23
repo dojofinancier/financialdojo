@@ -8,7 +8,7 @@ import { getMessageThreadsAction } from "@/app/actions/messages";
 import { toast } from "sonner";
 import { Loader2, MessageSquare, Plus } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import Link from "next/link";
 
 type MessageThread = {
@@ -49,9 +49,9 @@ export function MessagesTab() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "OPEN":
-        return <Badge variant="default">Ouvert</Badge>;
+        return <Badge variant="default">Open</Badge>;
       case "CLOSED":
-        return <Badge variant="secondary">Fermé</Badge>;
+        return <Badge variant="secondary">Closed</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -71,13 +71,13 @@ export function MessagesTab() {
         <div>
           <h2 className="text-2xl font-bold mb-2">Messages</h2>
           <p className="text-muted-foreground">
-            Communiquez avec vos instructeurs
+            Communicate with your instructors
           </p>
         </div>
         <Link href="/dashboard/student/messages/new">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Poser une question
+            Ask a question
           </Button>
         </Link>
       </div>
@@ -86,14 +86,14 @@ export function MessagesTab() {
         <Card>
           <CardContent className="py-12 text-center">
             <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">Aucun message</h3>
+            <h3 className="text-lg font-semibold mb-2">No messages</h3>
             <p className="text-muted-foreground mb-4">
-              Posez une question à vos instructeurs
+              Ask a question to your instructors
             </p>
             <Link href="/dashboard/student/messages/new">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Poser une question
+                Ask a question
               </Button>
             </Link>
           </CardContent>
@@ -119,13 +119,13 @@ export function MessagesTab() {
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span>{thread._count.messages} message{thread._count.messages !== 1 ? "s" : ""}</span>
                         <span>
-                          {format(new Date(thread.updatedAt), "d MMM yyyy, HH:mm", { locale: fr })}
+                          {format(new Date(thread.updatedAt), "d MMM yyyy, HH:mm", { locale: enCA })}
                         </span>
                       </div>
                     </div>
                     <Link href={`/dashboard/student/messages/${thread.id}`}>
                       <Button variant="outline" size="sm">
-                        Voir
+                        View
                       </Button>
                     </Link>
                   </div>

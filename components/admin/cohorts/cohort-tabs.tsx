@@ -40,8 +40,8 @@ export function CohortTabs({ defaultTab = "list" }: CohortTabsProps) {
   return (
     <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
       <TabsList>
-        <TabsTrigger value="list">Liste des cohortes</TabsTrigger>
-        <TabsTrigger value="create">Créer une cohorte</TabsTrigger>
+        <TabsTrigger value="list">Cohort list</TabsTrigger>
+        <TabsTrigger value="create">Create cohort</TabsTrigger>
       </TabsList>
       <TabsContent value="list" className="mt-6">
         <CohortList />
@@ -52,4 +52,3 @@ export function CohortTabs({ defaultTab = "list" }: CohortTabsProps) {
     </Tabs>
   );
 }
-

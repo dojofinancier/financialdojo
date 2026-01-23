@@ -8,7 +8,7 @@ import { getAppointmentsAction } from "@/app/actions/appointments";
 import { toast } from "sonner";
 import { Loader2, Calendar, Plus } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { AppointmentBooking } from "./appointment-booking";
 import { RescheduleModal } from "./reschedule-modal";
 
@@ -75,13 +75,13 @@ export function AppointmentsTab() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "PENDING":
-        return <Badge variant="secondary">En attente</Badge>;
+        return <Badge variant="secondary">Pending</Badge>;
       case "CONFIRMED":
-        return <Badge className="bg-blue-500">Confirmé</Badge>;
+        return <Badge className="bg-blue-500">Confirmed</Badge>;
       case "COMPLETED":
-        return <Badge className="bg-green-500">Terminé</Badge>;
+        return <Badge className="bg-green-500">Completed</Badge>;
       case "CANCELLED":
-        return <Badge variant="destructive">Annulé</Badge>;
+        return <Badge variant="destructive">Cancelled</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -127,7 +127,7 @@ export function AppointmentsTab() {
       <div className="space-y-6">
         <div className="flex justify-end">
           <Button variant="outline" onClick={() => setShowBooking(false)}>
-            Retour
+            Back
           </Button>
         </div>
         <AppointmentBooking />
@@ -139,14 +139,14 @@ export function AppointmentsTab() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold mb-2">Mes rendez-vous</h2>
+          <h2 className="text-2xl font-bold mb-2">My appointments</h2>
           <p className="text-muted-foreground">
-            Gérez vos rendez-vous avec les instructeurs
+            Manage your appointments with instructors
           </p>
         </div>
         <Button onClick={() => setShowBooking(true)}>
           <Plus className="h-4 w-4 mr-2" />
-          Réserver
+          Book
         </Button>
       </div>
 
@@ -154,13 +154,13 @@ export function AppointmentsTab() {
         <Card>
           <CardContent className="py-12 text-center">
             <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">Aucun rendez-vous</h3>
+            <h3 className="text-lg font-semibold mb-2">No appointments</h3>
             <p className="text-muted-foreground mb-4">
-              Planifiez un rendez-vous avec un instructeur
+              Schedule an appointment with an instructor
             </p>
             <Button onClick={() => setShowBooking(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Réserver un rendez-vous
+              Book an appointment
             </Button>
           </CardContent>
         </Card>
@@ -168,7 +168,7 @@ export function AppointmentsTab() {
         <>
           {upcomingAppointments.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-4">Rendez-vous à venir</h3>
+              <h3 className="text-lg font-semibold mb-4">Upcoming appointments</h3>
               <div className="space-y-4">
                 {upcomingAppointments.map((appointment) => (
                   <Card key={appointment.id}>
@@ -177,7 +177,7 @@ export function AppointmentsTab() {
                         <div className="flex-1">
                           <CardTitle>
                             {format(new Date(appointment.scheduledAt), "d MMMM yyyy, HH:mm", {
-                              locale: fr,
+                              locale: enCA,
                             })}
                           </CardTitle>
                           {appointment.course && (
@@ -186,7 +186,7 @@ export function AppointmentsTab() {
                             </CardDescription>
                           )}
                           <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                            <span>Durée: {appointment.durationMinutes} min</span>
+                            <span>Duration: {appointment.durationMinutes} min</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -213,7 +213,7 @@ export function AppointmentsTab() {
 
           {pastAppointments.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-4">Historique</h3>
+              <h3 className="text-lg font-semibold mb-4">History</h3>
               <div className="space-y-4">
                 {pastAppointments.map((appointment) => (
                   <Card key={appointment.id} className="opacity-60">
@@ -222,7 +222,7 @@ export function AppointmentsTab() {
                         <div>
                           <CardTitle>
                             {format(new Date(appointment.scheduledAt), "d MMMM yyyy, HH:mm", {
-                              locale: fr,
+                              locale: enCA,
                             })}
                           </CardTitle>
                           {appointment.course && (
@@ -245,4 +245,3 @@ export function AppointmentsTab() {
     </div>
   );
 }
-

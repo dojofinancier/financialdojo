@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +42,7 @@ import {
   FileText,
 } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { getErrorLogsAction, resolveErrorAction } from "@/app/actions/error-logs";
 import { toast } from "sonner";
 
@@ -75,7 +75,7 @@ export function ErrorLogViewer() {
   });
   const [searchQuery, setSearchQuery] = useState("");
 
-  const loadErrorLogs = async () => {
+  const loadErrorLogs = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getErrorLogsAction({
@@ -92,11 +92,11 @@ export function ErrorLogViewer() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters.resolved, filters.severity]);
 
   useEffect(() => {
     loadErrorLogs();
-  }, [filters.resolved, filters.severity]);
+  }, [loadErrorLogs]);
 
   const handleResolve = async (errorId: string) => {
     try {
@@ -130,13 +130,13 @@ export function ErrorLogViewer() {
   const getSeverityLabel = (severity: string) => {
     switch (severity) {
       case "CRITICAL":
-        return "Critique";
+        return "Critical";
       case "HIGH":
         return "High";
       case "MEDIUM":
-        return "Moyenne";
+        return "Medium";
       case "LOW":
-        return "Faible";
+        return "Low";
       default:
         return severity;
     }
@@ -174,7 +174,7 @@ export function ErrorLogViewer() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Erreurs non résolues</CardDescription>
+            <CardDescription>Unresolved errors</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{unresolvedCount}</div>
@@ -182,7 +182,7 @@ export function ErrorLogViewer() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Erreurs critiques</CardDescription>
+            <CardDescription>Critical errors</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{criticalCount}</div>
@@ -190,7 +190,7 @@ export function ErrorLogViewer() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total des erreurs</CardDescription>
+            <CardDescription>Total errors</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{errorLogs.length}</div>
@@ -201,9 +201,9 @@ export function ErrorLogViewer() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Logs d'erreur</CardTitle>
+          <CardTitle>Error logs</CardTitle>
           <CardDescription>
-            Consultez et gérez les erreurs enregistrées dans le système
+            Review and manage logged errors in the system
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -230,12 +230,12 @@ export function ErrorLogViewer() {
             >
               <SelectTrigger className="w-full sm:w-[180px]">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Statut" />
+                <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les statuts</SelectItem>
-                <SelectItem value="unresolved">Non résolues</SelectItem>
-                <SelectItem value="resolved">Résolues</SelectItem>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="unresolved">Unresolved</SelectItem>
+                <SelectItem value="resolved">Resolved</SelectItem>
               </SelectContent>
             </Select>
             <Select
@@ -251,11 +251,11 @@ export function ErrorLogViewer() {
                 <SelectValue placeholder="Severity" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Toutes les sévérités</SelectItem>
-                <SelectItem value="CRITICAL">Critique</SelectItem>
-                <SelectItem value="HIGH">Élevée</SelectItem>
-                <SelectItem value="MEDIUM">Moyenne</SelectItem>
-                <SelectItem value="LOW">Faible</SelectItem>
+                <SelectItem value="all">All severities</SelectItem>
+                <SelectItem value="CRITICAL">Critical</SelectItem>
+                <SelectItem value="HIGH">High</SelectItem>
+                <SelectItem value="MEDIUM">Medium</SelectItem>
+                <SelectItem value="LOW">Low</SelectItem>
               </SelectContent>
             </Select>
             <Button onClick={loadErrorLogs} variant="outline" size="icon">
@@ -271,7 +271,7 @@ export function ErrorLogViewer() {
                   <TableRow>
                     <TableHead>Date</TableHead>
                     <TableHead>Type</TableHead>
-                    <TableHead>Sévérité</TableHead>
+                     <TableHead>Severity</TableHead>
                     <TableHead>Message</TableHead>
                     <TableHead>Utilisateur</TableHead>
                     <TableHead>Statut</TableHead>
@@ -282,7 +282,7 @@ export function ErrorLogViewer() {
                   {filteredLogs.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                        Aucune erreur trouvée
+                        No errors found
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -292,7 +292,7 @@ export function ErrorLogViewer() {
                           <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4 text-muted-foreground" />
                             <span className="text-sm">
-                              {format(new Date(log.createdAt), "d MMM yyyy HH:mm", { locale: fr })}
+                              {format(new Date(log.createdAt), "d MMM yyyy HH:mm", { locale: enCA })}
                             </span>
                           </div>
                         </TableCell>
@@ -325,19 +325,19 @@ export function ErrorLogViewer() {
                               </span>
                             </div>
                           ) : (
-                            <span className="text-muted-foreground text-sm">Anonyme</span>
+                            <span className="text-muted-foreground text-sm">Anonymous</span>
                           )}
                         </TableCell>
                         <TableCell>
                           {log.resolved ? (
                             <Badge variant="outline" className="bg-green-50 text-green-700">
                               <CheckCircle2 className="h-3 w-3 mr-1" />
-                              Résolue
+                              Resolved
                             </Badge>
                           ) : (
                             <Badge variant="outline" className="bg-orange-50 text-orange-700">
                               <XCircle className="h-3 w-3 mr-1" />
-                              Non résolue
+                              Unresolved
                             </Badge>
                           )}
                         </TableCell>
@@ -355,7 +355,7 @@ export function ErrorLogViewer() {
                               </DialogTrigger>
                               <DialogContent className="max-w-3xl max-h-[80vh]">
                                 <DialogHeader>
-                                  <DialogTitle>Détails de l'erreur</DialogTitle>
+                                  <DialogTitle>Error details</DialogTitle>
                                   <DialogDescription>ID: {log.errorId}</DialogDescription>
                                 </DialogHeader>
                                 <ScrollArea className="max-h-[60vh]">

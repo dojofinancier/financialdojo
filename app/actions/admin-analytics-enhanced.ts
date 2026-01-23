@@ -173,7 +173,7 @@ export async function getStudentUsagePatternsAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement des patterns d'utilisation: ${errorMessage}`,
+      error: `Error loading usage patterns: ${errorMessage}`,
     };
   }
 }
@@ -261,9 +261,9 @@ export async function getContentEngagementAction(
     videoProgress.forEach(pt => {
       const contentItem = modules.flatMap(m => m.contentItems).find(ci => ci.id === pt.contentItemId);
       if (contentItem?.video) {
-        const module = modules.find(m => m.contentItems.some(ci => ci.id === pt.contentItemId));
+        const moduleRecord = modules.find(m => m.contentItems.some(ci => ci.id === pt.contentItemId));
         if (!videoViews.has(pt.contentItemId)) {
-          videoViews.set(pt.contentItemId, { count: 0, timeSpent: 0, moduleTitle: module?.title || "" });
+          videoViews.set(pt.contentItemId, { count: 0, timeSpent: 0, moduleTitle: moduleRecord?.title || "" });
         }
         const stats = videoViews.get(pt.contentItemId)!;
         stats.count += 1;
@@ -313,7 +313,7 @@ export async function getContentEngagementAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement de l'engagement du contenu: ${errorMessage}`,
+      error: `Error loading content engagement: ${errorMessage}`,
     };
   }
 }
@@ -450,7 +450,7 @@ export async function getStudyPlanAnalyticsAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement des analytics du plan d'étude: ${errorMessage}`,
+      error: `Error loading study plan analytics: ${errorMessage}`,
     };
   }
 }
@@ -566,7 +566,7 @@ export async function getFeatureUsageAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement de l'utilisation des fonctionnalités: ${errorMessage}`,
+      error: `Error loading feature usage: ${errorMessage}`,
     };
   }
 }
@@ -664,16 +664,16 @@ export async function getDropOffAnalysisAction(
       .map(a => a.lastModule!);
     
     const moduleDropOffCounts = new Map<string, number>();
-    dropOffModules.forEach(module => {
-      const key = `${module.id}`;
+    dropOffModules.forEach(moduleItem => {
+      const key = `${moduleItem.id}`;
       moduleDropOffCounts.set(key, (moduleDropOffCounts.get(key) || 0) + 1);
     });
 
     const commonDropOffPoints = Array.from(moduleDropOffCounts.entries())
       .map(([moduleId, count]) => {
-        const module = dropOffModules.find(m => m.id === moduleId);
+        const moduleMatch = dropOffModules.find(m => m.id === moduleId);
         return {
-          module: module ? `Module ${module.order}: ${module.title}` : "Unknown",
+          module: moduleMatch ? `Module ${moduleMatch.order}: ${moduleMatch.title}` : "Unknown",
           count,
         };
       })
@@ -702,7 +702,7 @@ export async function getDropOffAnalysisAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement de l'analyse de décrochage: ${errorMessage}`,
+      error: `Error loading drop-off analysis: ${errorMessage}`,
     };
   }
 }
@@ -990,7 +990,7 @@ export async function getPerformanceInsightsAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement des insights de performance: ${errorMessage}`,
+      error: `Error loading performance insights: ${errorMessage}`,
     };
   }
 }

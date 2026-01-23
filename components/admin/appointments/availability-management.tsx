@@ -306,9 +306,9 @@ export function AvailabilityManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold mb-2">Gestion des disponibilités</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-2">Availability management</h2>
           <p className="text-sm sm:text-base text-muted-foreground">
-            Définissez vos heures de disponibilité récurrentes et vos exceptions
+            Define your recurring availability hours and exceptions
           </p>
         </div>
         <Button
@@ -325,10 +325,10 @@ export function AvailabilityManagement() {
           {saving ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Sauvegarde...
+              Saving...
             </>
           ) : (
-            "Sauvegarder"
+            "Save"
           )}
         </Button>
       </div>
@@ -342,9 +342,9 @@ export function AvailabilityManagement() {
       {/* Course Selection */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg sm:text-xl">Cours (optionnel)</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Course (optional)</CardTitle>
           <CardDescription className="text-xs sm:text-sm">
-            Sélectionnez un cours spécifique ou laissez "All courses" pour une disponibilité générale
+            Select a specific course or leave "All courses" for general availability
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -353,7 +353,7 @@ export function AvailabilityManagement() {
               <SelectValue placeholder="All courses" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none">Tous les cours</SelectItem>
+              <SelectItem value="none">All courses</SelectItem>
               {courses.map((course) => (
                 <SelectItem key={course.id} value={course.id}>
                   {course.title}
@@ -371,10 +371,10 @@ export function AvailabilityManagement() {
             <div>
               <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                 <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
-                Disponibilités récurrentes
+                Recurring availability
               </CardTitle>
               <CardDescription className="text-xs sm:text-sm">
-                Définissez vos heures de disponibilité pour chaque jour de la semaine
+                Set your availability hours for each day of the week
               </CardDescription>
             </div>
             <Badge variant="outline" className="text-xs sm:text-sm w-full sm:w-auto">
@@ -413,7 +413,7 @@ export function AvailabilityManagement() {
                       className="w-full sm:w-auto"
                     >
                       <Plus className="h-4 w-4 mr-1" />
-                      Ajouter
+                      Add
                     </Button>
                   )}
                 </div>
@@ -478,22 +478,22 @@ export function AvailabilityManagement() {
             <div>
               <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                 <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
-                Exceptions de dates
+                Date exceptions
               </CardTitle>
               <CardDescription className="text-xs sm:text-sm">
-                Ajoutez les dates où vos disponibilités changent de vos heures quotidiennes
+                Add dates where your availability differs from your daily hours
               </CardDescription>
             </div>
             <Button variant="outline" onClick={addException} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
-              Ajouter une exception
+              Add exception
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {exceptions.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground text-sm">
-              Aucune exception définie
+              No exceptions defined
             </div>
           ) : (
             <div className="space-y-3">
@@ -507,7 +507,7 @@ export function AvailabilityManagement() {
                       variant={exception.isUnavailable ? "destructive" : "default"}
                       className="w-full sm:w-auto justify-center sm:justify-start"
                     >
-                      {exception.isUnavailable ? "Indisponible" : "Disponible"}
+                      {exception.isUnavailable ? "Unavailable" : "Available"}
                     </Badge>
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       <Input

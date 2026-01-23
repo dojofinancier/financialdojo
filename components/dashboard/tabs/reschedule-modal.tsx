@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { rescheduleAppointmentAction } from "@/app/actions/appointments";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek, isToday, isPast } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { formatInTimeZone } from "date-fns-tz";
 import { EASTERN_TIMEZONE } from "@/lib/utils/timezone";
 import { Calendar, Clock, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
@@ -109,37 +109,37 @@ export function RescheduleModal({ appointment, onRescheduled }: RescheduleModalP
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          Reprogrammer
+          Reschedule
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-6xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Reprogrammer le rendez-vous
+            Reschedule appointment
           </DialogTitle>
           <CardDescription>
-            Choisissez une nouvelle date et heure
+            Choose a new date and time
           </CardDescription>
         </DialogHeader>
 
         {/* Current Appointment Details */}
         <div className="p-4 bg-muted rounded-lg mb-6">
           <h3 className="font-medium mb-2">
-            {appointment.course?.title || "Rendez-vous"}
+            {appointment.course?.title || "Appointment"}
           </h3>
           <p className="text-sm text-muted-foreground mb-1">
-            <strong>Actuel:</strong> {format(appointmentDate, "d MMMM yyyy, HH:mm", { locale: fr })}
+            <strong>Current:</strong> {format(appointmentDate, "d MMMM yyyy, HH:mm", { locale: enCA })}
           </p>
           <p className="text-sm text-muted-foreground">
-            Durée: {appointment.durationMinutes} minutes
+            Duration: {appointment.durationMinutes} minutes
           </p>
         </div>
 
         <div className="space-y-6">
           {/* Calendar Component - Modified AppointmentBooking for rescheduling */}
           <div className="space-y-2">
-            <Label>Créneaux disponibles *</Label>
+            <Label>Available time slots *</Label>
             {appointment.course && (
               <RescheduleBooking
                 courseId={appointment.course.id}
@@ -149,16 +149,16 @@ export function RescheduleModal({ appointment, onRescheduled }: RescheduleModalP
             )}
             {!selectedSlot && (
               <p className="text-sm text-muted-foreground mt-2">
-                Veuillez sélectionner un créneau dans le calendrier
+                Please select a slot in the calendar
               </p>
             )}
             {selectedSlot && (
               <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
                 <p className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-1">
-                  Créneau sélectionné:
+                  Selected slot:
                 </p>
                 <p className="text-sm text-blue-800 dark:text-blue-200">
-                  {format(new Date(selectedSlot.start), "d MMMM yyyy, HH:mm", { locale: fr })}
+                  {format(new Date(selectedSlot.start), "d MMMM yyyy, HH:mm", { locale: enCA })}
                 </p>
               </div>
             )}
@@ -166,16 +166,16 @@ export function RescheduleModal({ appointment, onRescheduled }: RescheduleModalP
 
           {/* Reason */}
           <div className="space-y-2">
-            <Label htmlFor="reason">Raison du changement *</Label>
+            <Label htmlFor="reason">Reason for change *</Label>
             <Input
               id="reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Expliquez pourquoi vous reprogrammez ce rendez-vous..."
+              placeholder="Explain why you are rescheduling this appointment..."
               disabled={isSubmitting}
             />
             <p className="text-xs text-muted-foreground">
-              Minimum 10 caractères requis
+              Minimum 10 characters required
             </p>
           </div>
 
@@ -184,12 +184,12 @@ export function RescheduleModal({ appointment, onRescheduled }: RescheduleModalP
             <div className="flex items-start gap-2">
               <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-blue-900 dark:text-blue-100">
-                <p className="font-medium mb-1">Important :</p>
+                <p className="font-medium mb-1">Important:</p>
                 <ul className="space-y-1 text-xs">
-                  <li>• Seuls les créneaux disponibles sont affichés</li>
-                  <li>• Même cours et même durée que le rendez-vous original ({appointment.durationMinutes} minutes)</li>
-                  <li>• Reprogrammation possible jusqu'à 2h avant le rendez-vous</li>
-                  <li>• Pour annuler et demander un remboursement, veuillez créer un ticket de support</li>
+                  <li>• Only available time slots are shown</li>
+                  <li>• Same course and duration as the original appointment ({appointment.durationMinutes} minutes)</li>
+                  <li>• Rescheduling is possible up to 2 hours before the appointment</li>
+                  <li>• To cancel and request a refund, please create a support ticket</li>
                 </ul>
               </div>
             </div>
@@ -207,7 +207,7 @@ export function RescheduleModal({ appointment, onRescheduled }: RescheduleModalP
               disabled={isSubmitting}
               className="flex-1"
             >
-              Annuler
+              Cancel
             </Button>
             <Button
               type="button"
@@ -218,10 +218,10 @@ export function RescheduleModal({ appointment, onRescheduled }: RescheduleModalP
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Reprogrammation...
+                  Rescheduling...
                 </>
               ) : (
-                "Confirmer"
+                "Confirm"
               )}
             </Button>
           </div>
@@ -254,19 +254,7 @@ function RescheduleBooking({
   const [selectedSlot, setSelectedSlot] = useState<{ start: string; end: string; duration: number; price: number } | null>(null);
   const [availabilityMap, setAvailabilityMap] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    if (courseId) {
-      loadMonthAvailability();
-    }
-  }, [courseId, currentMonth, selectedDuration]);
-
-  useEffect(() => {
-    if (selectedDate && courseId) {
-      loadAvailabilitiesForDate(selectedDate);
-    }
-  }, [selectedDate, selectedDuration, courseId]);
-
-  const loadMonthAvailability = async () => {
+  const loadMonthAvailability = useCallback(async () => {
     try {
       setLoading(true);
       const monthStart = startOfMonth(currentMonth);
@@ -298,9 +286,9 @@ function RescheduleBooking({
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId, currentMonth, selectedDuration]);
 
-  const loadAvailabilitiesForDate = async (date: Date) => {
+  const loadAvailabilitiesForDate = useCallback(async (date: Date) => {
     try {
       setLoading(true);
       const dateStr = formatInTimeZone(date, EASTERN_TIMEZONE, "yyyy-MM-dd");
@@ -329,7 +317,19 @@ function RescheduleBooking({
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId, selectedDuration]);
+
+  useEffect(() => {
+    if (courseId) {
+      loadMonthAvailability();
+    }
+  }, [courseId, currentMonth, selectedDuration, loadMonthAvailability]);
+
+  useEffect(() => {
+    if (selectedDate && courseId) {
+      loadAvailabilitiesForDate(selectedDate);
+    }
+  }, [selectedDate, selectedDuration, courseId, loadAvailabilitiesForDate]);
 
   const handleSlotClick = (slot: typeof availabilities[0]) => {
     if (!slot.available) return;
@@ -364,7 +364,7 @@ function RescheduleBooking({
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <h3 className="font-semibold">
-            {format(currentMonth, "MMMM yyyy", { locale: fr })}
+            {format(currentMonth, "MMMM yyyy", { locale: enCA })}
           </h3>
           <Button
             variant="outline"
@@ -376,7 +376,7 @@ function RescheduleBooking({
         </div>
 
         <div className="grid grid-cols-7 gap-1">
-          {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
             <div key={day} className="text-center text-sm font-medium text-muted-foreground p-2">
               {day}
             </div>
@@ -421,14 +421,14 @@ function RescheduleBooking({
       {/* Time Slots */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Créneaux disponibles</h3>
+          <h3 className="font-semibold">Available time slots</h3>
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
         </div>
         {selectedDate ? (
           <div className="space-y-2 max-h-[400px] overflow-y-auto">
             {availabilities.length === 0 && !loading ? (
               <p className="text-sm text-muted-foreground text-center py-8">
-                Aucun créneau disponible pour cette date
+                No available time slots for this date
               </p>
             ) : (
               availabilities
@@ -460,11 +460,10 @@ function RescheduleBooking({
           </div>
         ) : (
           <p className="text-sm text-muted-foreground text-center py-8">
-            Sélectionnez une date dans le calendrier
+            Select a date in the calendar
           </p>
         )}
       </div>
     </div>
   );
 }
-

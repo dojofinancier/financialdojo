@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,12 +40,7 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
   const modules = (modulesData || []) as Array<{ id: string; title: string }>;
   const loading = flashcardsLoading || modulesLoading;
 
-  useEffect(() => {
-    filterFlashcards();
-  }, [selectedModuleId, randomMode, allFlashcards]);
-
-
-  const filterFlashcards = () => {
+  const filterFlashcards = useCallback(() => {
     let filtered = [...allFlashcards];
 
     if (selectedModuleId) {
@@ -64,7 +59,11 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
     setFlashcards(filtered);
     setCurrentIndex(0);
     setIsFlipped(false);
-  };
+  }, [allFlashcards, randomMode, selectedModuleId]);
+
+  useEffect(() => {
+    filterFlashcards();
+  }, [filterFlashcards]);
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -169,10 +168,10 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
               }}
             >
               <SelectTrigger className="flex-1">
-                <SelectValue placeholder="Tous les modules" />
+                <SelectValue placeholder="All modules" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les modules</SelectItem>
+                <SelectItem value="all">All modules</SelectItem>
                 {modules.map((module) => (
                   <SelectItem key={module.id} value={module.id}>
                     {module.title}
@@ -191,7 +190,7 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
               className="flex items-center gap-2"
             >
               <Shuffle className="h-4 w-4" />
-              Aléatoire
+              Random
             </Button>
           </div>
         </CardHeader>
@@ -224,7 +223,7 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
                   <CardContent className="text-center p-6">
                     <p className="text-lg font-medium">{currentCard.front}</p>
                     <p className="text-sm text-muted-foreground mt-4">
-                      Cliquez pour retourner
+                      Click to flip
                     </p>
                   </CardContent>
                 </Card>
@@ -240,7 +239,7 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
                   <CardContent className="text-center p-6">
                     <p className="text-lg font-medium">{currentCard.back}</p>
                     <p className="text-sm opacity-80 mt-4">
-                      Cliquez pour retourner
+                      Click to flip
                     </p>
                   </CardContent>
                 </Card>
@@ -257,7 +256,7 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
               className="flex-1"
             >
               <ThumbsUp className="h-4 w-4 mr-2" />
-              Facile
+              Easy
             </Button>
             <Button
               variant="outline"
@@ -265,7 +264,7 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
               className="flex-1"
             >
               <ThumbsDown className="h-4 w-4 mr-2" />
-              Difficile
+              Hard
             </Button>
           </div>
         )}
@@ -278,7 +277,7 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
             disabled={currentIndex === 0}
             className="flex-1 sm:flex-initial"
           >
-            ← Précédent
+            ← Previous
           </Button>
           <Button 
             variant="outline" 
@@ -287,7 +286,7 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
             className="flex-1 sm:flex-initial"
           >
             <RotateCcw className="h-4 w-4 mr-2" />
-            Réinitialiser
+            Reset
           </Button>
           <Button
             variant="outline"
@@ -295,7 +294,7 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
             disabled={currentIndex === flashcards.length - 1}
             className="flex-1 sm:flex-initial"
           >
-            Suivant →
+            Next →
           </Button>
         </div>
       </CardContent>
@@ -303,4 +302,3 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
     </>
   );
 }
-

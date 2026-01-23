@@ -7,7 +7,7 @@ import { Clock, Target, FileText, Play, CheckCircle2 } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { useAvailableExams } from "@/lib/hooks/use-exams";
 
 interface ExamListProps {
@@ -53,7 +53,7 @@ export function ExamList({ courseId, onStartExam }: ExamListProps) {
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Aucun examen simulé disponible pour le moment.</p>
+          <p className="text-muted-foreground">No practice exams available yet.</p>
         </CardContent>
       </Card>
     );
@@ -78,11 +78,11 @@ export function ExamList({ courseId, onStartExam }: ExamListProps) {
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
-                    {exam.timeLimit ? `${Math.floor(exam.timeLimit / 60)} minutes` : "Sans limite"}
+                    {exam.timeLimit ? `${Math.floor(exam.timeLimit / 60)} minutes` : "No limit"}
                   </div>
                   <div className="flex items-center gap-1">
                     <Target className="h-4 w-4" />
-                    {exam.passingScore}% pour réussir
+                    {exam.passingScore}% to pass
                   </div>
                 </div>
                 {exam.latestAttempt && (
@@ -91,22 +91,22 @@ export function ExamList({ courseId, onStartExam }: ExamListProps) {
                       variant={exam.latestAttempt.score >= exam.passingScore ? "default" : "destructive"}
                       className="mr-2"
                     >
-                      Dernière tentative: {exam.latestAttempt.score}%
+                      Latest attempt: {exam.latestAttempt.score}%
                     </Badge>
                     <span className="text-xs text-muted-foreground">
-                      {format(new Date(exam.latestAttempt.completedAt), "d MMM yyyy", { locale: fr })}
+                      {format(new Date(exam.latestAttempt.completedAt), "d MMM yyyy", { locale: enCA })}
                     </span>
                   </div>
                 )}
                 {exam.attemptCount > 0 && (
                   <div className="mt-2 text-xs text-muted-foreground">
-                    {exam.attemptCount} tentative{exam.attemptCount > 1 ? "s" : ""} au total
+                    {exam.attemptCount} attempt{exam.attemptCount > 1 ? "s" : ""} total
                   </div>
                 )}
               </div>
               <Button className="w-full sm:w-auto" onClick={() => onStartExam(exam.id)}>
                 <Play className="h-4 w-4 mr-2" />
-                {exam.latestAttempt ? "Reprendre" : "Commencer"}
+                {exam.latestAttempt ? "Resume" : "Start"}
               </Button>
 
             </div>

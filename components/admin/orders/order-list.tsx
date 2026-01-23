@@ -26,7 +26,7 @@ import { exportOrdersToCSV } from "@/lib/utils/csv-export";
 import { toast } from "sonner";
 import { Loader2, Eye, Download } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import Link from "next/link";
 
 type OrderItem = {
@@ -113,17 +113,17 @@ export function OrderList() {
 
   const getStatusBadge = (order: OrderItem) => {
     if (order.refunded) {
-      return <Badge variant="destructive">Remboursé</Badge>;
+      return <Badge variant="destructive">Refunded</Badge>;
     }
     switch (order.paymentStatus) {
       case "succeeded":
-        return <Badge className="bg-primary">Complété</Badge>;
+        return <Badge className="bg-primary">Completed</Badge>;
       case "requires_payment_method":
       case "requires_confirmation":
-        return <Badge variant="secondary">En attente</Badge>;
+        return <Badge variant="secondary">Pending</Badge>;
       case "canceled":
       case "payment_failed":
-        return <Badge variant="destructive">Échoué</Badge>;
+        return <Badge variant="destructive">Failed</Badge>;
       default:
         return <Badge variant="outline">{order.paymentStatus}</Badge>;
     }
@@ -161,33 +161,33 @@ export function OrderList() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous les statuts</SelectItem>
-            <SelectItem value="completed">Complétés</SelectItem>
-            <SelectItem value="pending">En attente</SelectItem>
-            <SelectItem value="refunded">Remboursés</SelectItem>
-            <SelectItem value="failed">Échoués</SelectItem>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="refunded">Refunded</SelectItem>
+            <SelectItem value="failed">Failed</SelectItem>
           </SelectContent>
         </Select>
         <Input
           type="date"
-          placeholder="Du"
+          placeholder="From"
           value={dateFrom}
           onChange={(e) => setDateFrom(e.target.value)}
           className="w-[150px]"
         />
         <Input
           type="date"
-          placeholder="Au"
+          placeholder="To"
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
           className="w-[150px]"
         />
         <Button onClick={() => loadOrders()} variant="outline">
-          Filtrer
+          Filter
         </Button>
         <Button onClick={handleExportCSV} variant="outline">
           <Download className="h-4 w-4 mr-2" />
-          Exporter CSV
+          Export CSV
         </Button>
       </div>
 
@@ -197,7 +197,7 @@ export function OrderList() {
         </div>
       ) : filteredOrders.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
-          Aucune commande trouvée
+          No orders found
         </div>
       ) : (
         <>
@@ -205,12 +205,12 @@ export function OrderList() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID Commande</TableHead>
-                  <TableHead>Étudiant</TableHead>
-                  <TableHead>Cours</TableHead>
-                  <TableHead>Montant</TableHead>
+                  <TableHead>Order ID</TableHead>
+                  <TableHead>Student</TableHead>
+                  <TableHead>Course</TableHead>
+                  <TableHead>Amount</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Statut</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -227,7 +227,7 @@ export function OrderList() {
                           <div className="font-medium">
                             {order.user.firstName || order.user.lastName
                               ? `${order.user.firstName || ""} ${order.user.lastName || ""}`.trim()
-                              : "Sans nom"}
+                              : "No name"}
                           </div>
                           <div className="text-sm text-muted-foreground">{order.user.email}</div>
                         </div>
@@ -244,7 +244,7 @@ export function OrderList() {
                         </div>
                       </TableCell>
                       <TableCell className="text-sm">
-                        {format(new Date(order.purchaseDate), "d MMM yyyy, HH:mm", { locale: fr })}
+                        {format(new Date(order.purchaseDate), "d MMM yyyy, HH:mm", { locale: enCA })}
                       </TableCell>
                       <TableCell>{getStatusBadge(order)}</TableCell>
                       <TableCell className="text-right">
@@ -271,10 +271,10 @@ export function OrderList() {
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Chargement...
+                    Loading...
                   </>
                 ) : (
-                  "Charger plus"
+                  "Load more"
                 )}
               </Button>
             </div>

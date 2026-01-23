@@ -83,7 +83,7 @@ export function BrutalistUserMenu({ user }: BrutalistUserMenuProps) {
               {user.email}
             </p>
             <p className="text-xs leading-none text-muted-foreground font-mono uppercase">
-              Rôle: {getRoleLabel(user.role)}
+              Role: {getRoleLabel(user.role)}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -92,7 +92,7 @@ export function BrutalistUserMenu({ user }: BrutalistUserMenuProps) {
           onClick={handleSignOut} 
           className="text-xs sm:text-sm cursor-pointer font-black uppercase hover:bg-black hover:text-white"
         >
-          Se déconnecter
+          Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

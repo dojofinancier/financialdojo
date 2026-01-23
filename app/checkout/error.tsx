@@ -35,23 +35,21 @@ export default function CheckoutError({
         <CardHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="h-6 w-6 text-destructive" />
-            <CardTitle>Erreur lors du paiement</CardTitle>
+            <CardTitle>Payment error</CardTitle>
           </div>
           <CardDescription>
-            Une erreur s'est produite lors du processus de paiement. Votre paiement n'a pas été
-            traité.
+            An error occurred during the payment process. Your payment was not processed.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-sm text-muted-foreground">
             {error.digest && (
               <p className="mb-2 font-mono text-xs">
-                <strong>ID d'erreur:</strong> {error.digest}
+                <strong>Error ID:</strong> {error.digest}
               </p>
             )}
             <p>
-              Ne vous inquiétez pas, aucun montant n'a été débité. Veuillez réessayer ou contacter
-              le support si le problème persiste.
+              Do not worry, no charge was made. Please try again or contact support if the issue persists.
             </p>
           </div>
 
@@ -68,11 +66,11 @@ export default function CheckoutError({
           <div className="flex gap-2">
             <Button onClick={reset} className="flex-1" variant="default">
               <RefreshCw className="h-4 w-4 mr-2" />
-              Réessayer
+              Try again
             </Button>
             <Button onClick={() => router.push("/cart")} className="flex-1" variant="outline">
               <ShoppingCart className="h-4 w-4 mr-2" />
-              Retour au panier
+              Back to cart
             </Button>
           </div>
         </CardContent>

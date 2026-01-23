@@ -31,7 +31,7 @@ export async function BrutalistNavbar({ variant = "transparent" }: BrutalistNavb
       case 'STUDENT':
         return '/dashboard/student';
       case 'INSTRUCTOR':
-        return '/dashboard/instructeur';
+        return '/dashboard';
       default:
         return '/dashboard';
     }

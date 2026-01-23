@@ -35,7 +35,7 @@ import {
 import { toast } from "sonner";
 import { Loader2, Edit, Trash2, Eye, Copy, CheckCircle2, XCircle } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import type { Coupon } from "@prisma/client";
 
 interface CouponListProps {
@@ -117,25 +117,25 @@ export function CouponList({ onEdit }: CouponListProps) {
   const getStatusBadge = (coupon: Coupon) => {
     const now = new Date();
     if (!coupon.active) {
-      return <Badge variant="secondary">Inactif</Badge>;
+      return <Badge variant="secondary">Inactive</Badge>;
     }
     if (now < coupon.validFrom) {
-      return <Badge variant="outline">À venir</Badge>;
+      return <Badge variant="outline">Upcoming</Badge>;
     }
     if (now > coupon.validUntil) {
-      return <Badge variant="destructive">Expiré</Badge>;
+      return <Badge variant="destructive">Expired</Badge>;
     }
     if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
-      return <Badge variant="destructive">Limite atteinte</Badge>;
+      return <Badge variant="destructive">Limit reached</Badge>;
     }
-    return <Badge className="bg-primary">Actif</Badge>;
+    return <Badge className="bg-primary">Active</Badge>;
   };
 
   return (
     <div className="space-y-4">
       <div className="flex gap-4 items-center">
         <Input
-          placeholder="Rechercher un coupon..."
+          placeholder="Search a coupon..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
@@ -152,9 +152,9 @@ export function CouponList({ onEdit }: CouponListProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous</SelectItem>
-            <SelectItem value="active">Actifs</SelectItem>
-            <SelectItem value="inactive">Inactifs</SelectItem>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -165,7 +165,7 @@ export function CouponList({ onEdit }: CouponListProps) {
         </div>
       ) : filteredCoupons.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
-          Aucun coupon trouvé
+          No coupons found
         </div>
       ) : (
         <>
@@ -175,9 +175,9 @@ export function CouponList({ onEdit }: CouponListProps) {
                 <TableRow>
                   <TableHead>Code</TableHead>
                   <TableHead>Type</TableHead>
-                  <TableHead>Valeur</TableHead>
-                  <TableHead>Utilisations</TableHead>
-                  <TableHead>Validité</TableHead>
+                  <TableHead>Value</TableHead>
+                  <TableHead>Uses</TableHead>
+                  <TableHead>Validity</TableHead>
                   <TableHead>Statut</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -199,7 +199,7 @@ export function CouponList({ onEdit }: CouponListProps) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {coupon.discountType === "PERCENTAGE" ? "Pourcentage" : "Montant fixe"}
+                      {coupon.discountType === "PERCENTAGE" ? "Percentage" : "Fixed amount"}
                     </TableCell>
                     <TableCell>
                       {coupon.discountType === "PERCENTAGE"
@@ -210,8 +210,8 @@ export function CouponList({ onEdit }: CouponListProps) {
                       {coupon.usedCount} / {coupon.usageLimit || "∞"}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {format(new Date(coupon.validFrom), "d MMM yyyy", { locale: fr })} -{" "}
-                      {format(new Date(coupon.validUntil), "d MMM yyyy", { locale: fr })}
+                      {format(new Date(coupon.validFrom), "d MMM yyyy", { locale: enUS })} -{" "}
+                      {format(new Date(coupon.validUntil), "d MMM yyyy", { locale: enUS })}
                     </TableCell>
                     <TableCell>{getStatusBadge(coupon)}</TableCell>
                     <TableCell className="text-right">
@@ -265,10 +265,10 @@ export function CouponList({ onEdit }: CouponListProps) {
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Chargement...
+                    Loading...
                   </>
                 ) : (
-                  "Charger plus"
+                  "Load more"
                 )}
               </Button>
             </div>
@@ -279,17 +279,17 @@ export function CouponList({ onEdit }: CouponListProps) {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Supprimer le coupon</DialogTitle>
+            <DialogTitle>Delete coupon</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer le coupon "{selectedCoupon?.code}" ? Cette action est irréversible.
+              Are you sure you want to delete the coupon "{selectedCoupon?.code}"? This action is irreversible.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2 mt-4">
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Annuler
+              Cancel
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
-              Supprimer
+              Delete
             </Button>
           </div>
         </DialogContent>
@@ -336,9 +336,9 @@ function CouponStatsDialog({ couponId, open, onOpenChange }: CouponStatsDialogPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Statistiques d'utilisation</DialogTitle>
+          <DialogTitle>Usage statistics</DialogTitle>
           <DialogDescription>
-            Détails d'utilisation du coupon
+            Coupon usage details
           </DialogDescription>
         </DialogHeader>
         {loading ? (
@@ -349,29 +349,29 @@ function CouponStatsDialog({ couponId, open, onOpenChange }: CouponStatsDialogPr
           <div className="mt-4 space-y-6">
             <div className="grid gap-4 md:grid-cols-3">
               <div className="rounded-lg border p-4">
-                <p className="text-sm text-muted-foreground">Utilisations totales</p>
+                <p className="text-sm text-muted-foreground">Total uses</p>
                 <p className="text-2xl font-bold">{stats.totalUsage}</p>
               </div>
               <div className="rounded-lg border p-4">
-                <p className="text-sm text-muted-foreground">Réduction totale</p>
+                <p className="text-sm text-muted-foreground">Total discount</p>
                 <p className="text-2xl font-bold">${stats.totalDiscount.toFixed(2)}</p>
               </div>
               <div className="rounded-lg border p-4">
-                <p className="text-sm text-muted-foreground">Réduction moyenne</p>
+                <p className="text-sm text-muted-foreground">Average discount</p>
                 <p className="text-2xl font-bold">${stats.averageDiscount.toFixed(2)}</p>
               </div>
             </div>
 
             {stats.coupon.couponUsage.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold mb-4">Historique d'utilisation</h3>
+                <h3 className="text-lg font-semibold mb-4">Usage history</h3>
                 <div className="rounded-md border">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Étudiant</TableHead>
+                        <TableHead>Student</TableHead>
                         <TableHead>Cours</TableHead>
-                        <TableHead>Réduction</TableHead>
+                        <TableHead>Discount</TableHead>
                         <TableHead>Date</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -388,7 +388,7 @@ function CouponStatsDialog({ couponId, open, onOpenChange }: CouponStatsDialogPr
                           <TableCell>{usage.enrollment.course.title}</TableCell>
                           <TableCell>${Number(usage.discountAmount).toFixed(2)}</TableCell>
                           <TableCell>
-                            {format(new Date(usage.createdAt), "d MMM yyyy, HH:mm", { locale: fr })}
+                            {format(new Date(usage.createdAt), "d MMM yyyy, HH:mm", { locale: enUS })}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -401,7 +401,7 @@ function CouponStatsDialog({ couponId, open, onOpenChange }: CouponStatsDialogPr
         ) : (
           <div className="mt-4">
             <p className="text-sm text-muted-foreground">
-              Aucune statistique disponible
+              No statistics available
             </p>
           </div>
         )}
@@ -409,4 +409,3 @@ function CouponStatsDialog({ couponId, open, onOpenChange }: CouponStatsDialogPr
     </Dialog>
   );
 }
-

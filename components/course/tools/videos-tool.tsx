@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -37,16 +37,7 @@ export function VideosTool({ courseId, onBack }: VideosToolProps) {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadAllModules();
-  }, [courseId]);
-
-  useEffect(() => {
-    // Reset video index when module changes
-    setCurrentVideoIndex(0);
-  }, [selectedModuleId]);
-
-  const loadAllModules = async () => {
+  const loadAllModules = useCallback(async () => {
     try {
       setLoading(true);
       const courseModules = await getCourseModulesAction(courseId);
@@ -58,13 +49,13 @@ export function VideosTool({ courseId, onBack }: VideosToolProps) {
       const modulesWithVideos: ModuleData[] = [];
 
       if (batchResult.success && batchResult.data) {
-        for (const module of courseModules) {
-          const moduleContent = batchResult.data[module.id];
+        for (const moduleRecord of courseModules) {
+          const moduleContent = batchResult.data[moduleRecord.id];
           if (moduleContent && moduleContent.videos && moduleContent.videos.length > 0) {
             modulesWithVideos.push({
-              id: module.id,
-              title: module.title,
-              order: module.order,
+              id: moduleRecord.id,
+              title: moduleRecord.title,
+              order: moduleRecord.order,
               videos: moduleContent.videos.map((videoItem: any) => ({
                 id: videoItem.id,
                 order: videoItem.order,
@@ -89,7 +80,16 @@ export function VideosTool({ courseId, onBack }: VideosToolProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadAllModules();
+  }, [loadAllModules]);
+
+  useEffect(() => {
+    // Reset video index when module changes
+    setCurrentVideoIndex(0);
+  }, [selectedModuleId]);
 
   const getVimeoEmbedUrl = (vimeoUrl: string): string => {
     if (vimeoUrl.includes('player.vimeo.com')) {
@@ -167,11 +167,11 @@ export function VideosTool({ courseId, onBack }: VideosToolProps) {
       <div className="space-y-4">
         <Button variant="ghost" onClick={onBack}>
           <ChevronLeft className="h-4 w-4 mr-2" />
-          Retour
+          Back
         </Button>
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Aucune vidéo disponible pour ce cours.</p>
+            <p className="text-muted-foreground">No videos available for this course.</p>
           </CardContent>
         </Card>
       </div>
@@ -183,7 +183,7 @@ export function VideosTool({ courseId, onBack }: VideosToolProps) {
       <div className="flex items-center justify-between">
         <Button variant="ghost" onClick={onBack}>
           <ChevronLeft className="h-4 w-4 mr-2" />
-          Retour
+          Back
         </Button>
         <div className="flex items-center gap-4">
           <Select value={selectedModuleId || ""} onValueChange={setSelectedModuleId}>
@@ -191,9 +191,9 @@ export function VideosTool({ courseId, onBack }: VideosToolProps) {
               <SelectValue placeholder="Select a module" />
             </SelectTrigger>
             <SelectContent>
-              {modules.map((module) => (
-                <SelectItem key={module.id} value={module.id}>
-                  Module {module.order + 1}: {module.title} ({module.videos.length} vidéo{module.videos.length > 1 ? 's' : ''})
+              {modules.map((moduleRecord) => (
+                <SelectItem key={moduleRecord.id} value={moduleRecord.id}>
+                  Module {moduleRecord.order + 1}: {moduleRecord.title} ({moduleRecord.videos.length} video{moduleRecord.videos.length > 1 ? 's' : ''})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -208,7 +208,7 @@ export function VideosTool({ courseId, onBack }: VideosToolProps) {
               {selectedModule.title}
             </CardTitle>
             <div className="text-sm text-muted-foreground mt-2">
-              Vidéo {currentVideoIndex + 1} / {selectedModule.videos.length}
+              Video {currentVideoIndex + 1} / {selectedModule.videos.length}
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -219,7 +219,7 @@ export function VideosTool({ courseId, onBack }: VideosToolProps) {
                 allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                title={`${selectedModule.title} - Vidéo ${currentVideoIndex + 1}`}
+                title={`${selectedModule.title} - Video ${currentVideoIndex + 1}`}
               />
             </div>
 
@@ -237,14 +237,14 @@ export function VideosTool({ courseId, onBack }: VideosToolProps) {
                 disabled={!canGoPrevious}
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                Précédent
+                Previous
               </Button>
               <Button
                 variant="outline"
                 onClick={handleNextVideo}
                 disabled={!canGoNext}
               >
-                Suivant
+                Next
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             </div>

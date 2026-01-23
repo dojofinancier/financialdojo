@@ -34,7 +34,7 @@ export async function Navbar() {
       case 'STUDENT':
         return '/dashboard/student'
       case 'INSTRUCTOR':
-        return '/dashboard/instructeur' // Instructor dashboard not implemented yet
+        return '/dashboard/admin'
       default:
         return '/dashboard'
     }
@@ -75,4 +75,3 @@ export async function Navbar() {
     </nav>
   )
 }
-

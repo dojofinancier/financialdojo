@@ -43,7 +43,7 @@ export function SortingRankingActivity({
     } else if (items.length === 0 && content.items && Array.isArray(content.items)) {
       setItems([...content.items].sort(() => Math.random() - 0.5));
     }
-  }, [initialOrder, content.items]);
+  }, [initialOrder, content.items, items.length]);
 
   useEffect(() => {
     onAnswerChange(items);
@@ -84,7 +84,7 @@ export function SortingRankingActivity({
         </div>
       )}
       <div className="space-y-2">
-        <Label>Classez les éléments dans le bon ordre</Label>
+        <Label>Order the items correctly</Label>
         <div className="space-y-2">
           {items.map((item, index) => {
             const itemCorrect = checkItem(index);

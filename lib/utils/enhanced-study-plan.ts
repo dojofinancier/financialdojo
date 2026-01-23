@@ -83,8 +83,8 @@ export async function generateEnhancedStudyPlan(
     const deficit = minimumStudyTime - blocksAvailable;
     const additionalHours = Math.ceil(deficit / 2);
     warnings.push(
-      `Temps d'étude insuffisant. Minimum requis: ${minimumStudyTime} blocs, disponible: ${blocksAvailable} blocs. ` +
-      `Considérez augmenter votre temps d'étude de ${additionalHours} heures par semaine.`
+      `Insufficient study time. Minimum required: ${minimumStudyTime} blocks, available: ${blocksAvailable} blocks. ` +
+      `Consider increasing your study time by ${additionalHours} hours per week.`
     );
   }
 
@@ -94,8 +94,8 @@ export async function generateEnhancedStudyPlan(
 
   if (weeksForPhase1 > weeksUntilExam) {
     warnings.push(
-      `Attention: Le nombre de modules (${inventory.modules.length}) est trop élevé pour le temps disponible. ` +
-      `Le plan utilisera un rythme accéléré (${modulesPerWeek} modules/semaine).`
+      `Warning: The number of modules (${inventory.modules.length}) is too high for the available time. ` +
+      `The plan will use an accelerated pace (${modulesPerWeek} modules/week).`
     );
   }
 
@@ -231,15 +231,15 @@ async function generatePhase1Blocks(
     // Distribute module content across preferred days in this week
     let dayIndex = 0;
     for (const moduleContent of modulesThisWeek) {
-      const module = moduleContent.module;
+      const moduleRecord = moduleContent.module;
       let currentDayIndex = dayIndex;
       let blocksOnCurrentDay = 0;
 
-      console.log(`[Phase1] Week ${weekNumber}: Scheduling module ${module.order} (${module.title}) - ${moduleContent.contentItems.length} content items, ${moduleContent.quizzes.length} quizzes`);
+      console.log(`[Phase1] Week ${weekNumber}: Scheduling module ${moduleRecord.order} (${moduleRecord.title}) - ${moduleContent.contentItems.length} content items, ${moduleContent.quizzes.length} quizzes`);
 
       // Ensure we have at least one day to schedule on
       if (weekPreferredDays.length === 0) {
-        console.error(`[Phase1] Week ${weekNumber}: No preferred days available, cannot schedule module ${module.order}`);
+        console.error(`[Phase1] Week ${weekNumber}: No preferred days available, cannot schedule module ${moduleRecord.order}`);
         moduleIndex++;
         continue;
       }
@@ -257,7 +257,7 @@ async function generatePhase1Blocks(
           blocks.push({
             date: new Date(scheduleDate),
             taskType: TaskType.LEARN,
-            targetModuleId: module.id,
+            targetModuleId: moduleRecord.id,
             targetContentItemId: contentItem.id,
             estimatedBlocks: 2,
             order: 0, // Will be assigned later
@@ -267,7 +267,7 @@ async function generatePhase1Blocks(
           blocks.push({
             date: new Date(scheduleDate),
             taskType: TaskType.LEARN,
-            targetModuleId: module.id,
+            targetModuleId: moduleRecord.id,
             targetContentItemId: contentItem.id,
             estimatedBlocks: 1,
             order: 0,
@@ -289,7 +289,7 @@ async function generatePhase1Blocks(
           blocks.push({
             date: new Date(quizDate),
             taskType: TaskType.LEARN,
-            targetModuleId: module.id,
+          targetModuleId: moduleRecord.id,
             targetQuizId: quiz.id,
             estimatedBlocks: 1,
             order: 0,
@@ -299,7 +299,7 @@ async function generatePhase1Blocks(
 
       // CRITICAL: Always increment moduleIndex to move to next module
       moduleIndex++;
-      console.log(`[Phase1] Week ${weekNumber}: Completed module ${module.order}, moduleIndex now: ${moduleIndex}`);
+      console.log(`[Phase1] Week ${weekNumber}: Completed module ${moduleRecord.order}, moduleIndex now: ${moduleIndex}`);
       
       // Start next module on a different day to distribute load
       dayIndex = (dayIndex + 1) % weekPreferredDays.length;
@@ -346,14 +346,14 @@ async function generatePhase1Blocks(
         : new Date(startDate);
     fallbackDate.setDate(fallbackDate.getDate() + 1);
 
-    for (const module of missingModules) {
+    for (const moduleRecord of missingModules) {
       const nextDate = getNextPreferredDate(fallbackDate, preferredDays);
 
       blocks.push({
         date: new Date(nextDate),
         taskType: TaskType.LEARN,
-        targetModuleId: module.id,
-        estimatedBlocks: Math.max(module.estimatedBlocks || 4, 4),
+        targetModuleId: moduleRecord.id,
+        estimatedBlocks: Math.max(moduleRecord.estimatedBlocks || 4, 4),
         order: 0,
       });
 
@@ -418,15 +418,15 @@ async function generatePhase2Blocks(
 
   // For each module, schedule review sessions at spaced intervals
   // If module is already learned, use actual date; otherwise estimate
-  for (const module of inventory.modules) {
+  for (const moduleRecord of inventory.modules) {
     let learnedDate: Date;
     
-    if (learnedModulesMap.has(module.id)) {
+    if (learnedModulesMap.has(moduleRecord.id)) {
       // Use actual learned date
-      learnedDate = learnedModulesMap.get(module.id)!;
+      learnedDate = learnedModulesMap.get(moduleRecord.id)!;
     } else {
       // Estimate when module will be learned (based on Phase 1 pace)
-      const moduleOrder = module.order;
+      const moduleOrder = moduleRecord.order;
       const modulesPerWeek = calculatePhase1Pace(
         inventory.modules.length,
         getWeeksUntilExam(config.examDate, config.planCreatedAt)
@@ -446,14 +446,14 @@ async function generatePhase2Blocks(
         const flashcards = await prisma.flashcard.findMany({
           where: {
             courseId,
-            moduleId: module.id,
+            moduleId: moduleRecord.id,
           },
           select: { id: true },
         });
 
         const activities = await prisma.learningActivity.findMany({
           where: {
-            moduleId: module.id,
+            moduleId: moduleRecord.id,
           },
           select: { id: true },
         });
@@ -461,7 +461,7 @@ async function generatePhase2Blocks(
         // Get all learned modules up to this point for the review session
         const learnedModules = inventory.modules.filter((m) => {
           // Include if already learned or if order is less than current module
-          return learnedModulesMap.has(m.id) || m.order <= module.order;
+          return learnedModulesMap.has(m.id) || m.order <= moduleRecord.order;
         });
         
         const allFlashcardIds: string[] = [];
@@ -660,4 +660,3 @@ async function generatePhase3Blocks(
 
   return blocks;
 }
-

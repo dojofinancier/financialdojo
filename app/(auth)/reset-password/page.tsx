@@ -49,19 +49,19 @@ function ResetPasswordForm() {
       <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Email envoyé</CardTitle>
+            <CardTitle className="text-2xl font-bold">Email sent</CardTitle>
             <CardDescription>
-              Vérifiez votre boîte de réception pour réinitialiser votre mot de passe
+              Check your inbox to reset your password
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              Nous avons envoyé un lien de réinitialisation à <strong>{email}</strong>.
-              Cliquez sur le lien dans l&apos;email pour réinitialiser votre mot de passe.
+              We've sent a reset link to <strong>{email}</strong>.
+              Click the link in the email to reset your password.
             </p>
             <Link href="/login">
               <Button variant="outline" className="w-full">
-                Retour à la connexion
+                Back to login
               </Button>
             </Link>
           </CardContent>
@@ -74,15 +74,15 @@ function ResetPasswordForm() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Réinitialiser le mot de passe</CardTitle>
+          <CardTitle className="text-2xl font-bold">Reset password</CardTitle>
           <CardDescription>
-            Entrez votre adresse courriel pour recevoir un lien de réinitialisation
+            Enter your email address to receive a reset link
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Courriel</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -94,14 +94,14 @@ function ResetPasswordForm() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Envoi..." : "Send reset link"}
+              {isLoading ? "Sending..." : "Send reset link"}
             </Button>
             <div className="text-center">
               <Link
                 href="/login"
                 className="text-sm text-primary hover:underline"
               >
-                Retour à la connexion
+                Back to login
               </Link>
             </div>
           </form>
@@ -119,7 +119,7 @@ export default function ResetPasswordPage() {
           <Card className="w-full max-w-md">
             <CardContent className="pt-6">
               <div className="text-center text-muted-foreground">
-                Chargement...
+                Loading...
               </div>
             </CardContent>
           </Card>

@@ -26,8 +26,8 @@ export function CourseTabs({ defaultTab = "list" }: CourseTabsProps) {
   return (
     <Tabs value={defaultTab} onValueChange={handleTabChange} className="w-full">
       <TabsList>
-        <TabsTrigger value="list">Liste des cours</TabsTrigger>
-        <TabsTrigger value="create">Créer un cours</TabsTrigger>
+        <TabsTrigger value="list">Course list</TabsTrigger>
+        <TabsTrigger value="create">Create course</TabsTrigger>
       </TabsList>
       <TabsContent value="list" className="mt-6">
         <CourseList />

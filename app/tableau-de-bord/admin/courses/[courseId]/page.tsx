@@ -54,27 +54,27 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
         <Link href="/dashboard/admin?tab=courses">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour à la liste
+            Back to list
           </Button>
         </Link>
         <h1 className="text-3xl font-bold">{serializedCourse.title}</h1>
         <p className="text-muted-foreground mt-2">
-          Gérez les détails et le contenu de ce cours
+          Manage details and content for this course
         </p>
       </div>
 
       <Tabs defaultValue="details" className="w-full">
         <TabsList className="flex-wrap h-auto gap-1">
-          <TabsTrigger value="details">Détails</TabsTrigger>
-          <TabsTrigger value="about">À propos</TabsTrigger>
-          <TabsTrigger value="features">Fonctionnalités</TabsTrigger>
-          <TabsTrigger value="testimonials">Témoignages</TabsTrigger>
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="features">Features</TabsTrigger>
+          <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
           <TabsTrigger value="modules">Modules</TabsTrigger>
           <TabsTrigger value="flashcards">Flashcards</TabsTrigger>
-          <TabsTrigger value="activities">Activités</TabsTrigger>
-          <TabsTrigger value="exams">Examens</TabsTrigger>
+          <TabsTrigger value="activities">Activities</TabsTrigger>
+          <TabsTrigger value="exams">Exams</TabsTrigger>
           <TabsTrigger value="question-banks">Questions</TabsTrigger>
-          <TabsTrigger value="case-studies">Études de cas</TabsTrigger>
+          <TabsTrigger value="case-studies">Case studies</TabsTrigger>
           <TabsTrigger value="faqs">FAQ</TabsTrigger>
         </TabsList>
         <TabsContent value="details" className="mt-6">
@@ -143,4 +143,3 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
     </div>
   );
 }
-

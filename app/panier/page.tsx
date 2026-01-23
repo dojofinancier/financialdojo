@@ -116,12 +116,12 @@ export default function CartPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <ShoppingCart className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-            <h2 className="text-xl font-semibold mb-2">Votre panier est vide</h2>
+            <h2 className="text-xl font-semibold mb-2">Your cart is empty</h2>
             <p className="text-muted-foreground mb-4">
-              Parcourez nos formations pour ajouter des cours à votre panier
+              Browse our courses to add items to your cart
             </p>
             <Link href="/courses">
-              <Button>Voir le catalogue</Button>
+              <Button>View catalog</Button>
             </Link>
           </CardContent>
         </Card>
@@ -132,9 +132,9 @@ export default function CartPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Panier</h1>
+        <h1 className="text-3xl font-bold">Cart</h1>
         <p className="text-muted-foreground mt-2">
-          {cartItems.length} article{cartItems.length !== 1 ? "s" : ""} dans votre panier
+          {cartItems.length} item{cartItems.length !== 1 ? "s" : ""} in your cart
         </p>
       </div>
 
@@ -153,7 +153,7 @@ export default function CartPage() {
                         <GraduationCap className="h-5 w-5 text-primary" />
                       )}
                       <Badge variant="outline">
-                        {item.type === "course" ? "Formation" : "Cohorte"}
+                        {item.type === "course" ? "Course" : "Cohort"}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between gap-4">
@@ -177,21 +177,21 @@ export default function CartPage() {
           {/* Coupon Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Code de coupon</CardTitle>
-              <CardDescription>Entrez un code promo pour obtenir une réduction</CardDescription>
+              <CardTitle>Coupon code</CardTitle>
+              <CardDescription>Enter a promo code to get a discount</CardDescription>
             </CardHeader>
             <CardContent>
               {!appliedCoupon ? (
                 <form onSubmit={handleApplyCoupon} className="flex gap-2">
                   <Input
-                    placeholder="Entrez le code"
+                    placeholder="Enter code"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                     disabled={isValidating}
                     className="flex-1"
                   />
                   <Button type="submit" variant="outline" disabled={isValidating}>
-                    {isValidating ? "..." : "Appliquer"}
+                    {isValidating ? "..." : "Apply"}
                   </Button>
                 </form>
               ) : (
@@ -201,7 +201,7 @@ export default function CartPage() {
                       {appliedCoupon.code}
                     </p>
                     <p className="text-xs text-green-600 dark:text-green-500">
-                      Réduction: -{formatCurrency(appliedCoupon.discountAmount)}
+                      Discount: -{formatCurrency(appliedCoupon.discountAmount)}
                     </p>
                   </div>
                   <Button
@@ -210,7 +210,7 @@ export default function CartPage() {
                     size="sm"
                     onClick={handleRemoveCoupon}
                   >
-                    Retirer
+                    Remove
                   </Button>
                 </div>
               )}
@@ -222,17 +222,17 @@ export default function CartPage() {
         <div className="lg:col-span-1">
           <Card className="sticky top-6">
             <CardHeader>
-              <CardTitle>Résumé de la commande</CardTitle>
+              <CardTitle>Order summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Sous-total</span>
+                  <span className="text-muted-foreground">Subtotal</span>
                   <span>{formatCurrency(subtotal)}</span>
                 </div>
                 {appliedCoupon && (
                   <div className="flex justify-between text-sm text-green-600">
-                    <span>Réduction</span>
+                    <span>Discount</span>
                     <span>-{formatCurrency(discount)}</span>
                   </div>
                 )}
@@ -246,12 +246,12 @@ export default function CartPage() {
             </CardContent>
             <CardFooter className="flex flex-col gap-2">
               <Button onClick={handleCheckout} className="w-full" size="lg">
-                Passer à la caisse
+                Proceed to checkout
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
               <Link href="/courses" className="w-full">
                 <Button variant="outline" className="w-full">
-                  Continuer les achats
+                  Continue shopping
                 </Button>
               </Link>
             </CardFooter>
@@ -261,4 +261,3 @@ export default function CartPage() {
     </div>
   );
 }
-

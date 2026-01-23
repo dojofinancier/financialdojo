@@ -208,7 +208,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="title">Titre du cours *</Label>
+          <Label htmlFor="title">Course title *</Label>
           <Input
             id="title"
             {...register("title")}
@@ -222,7 +222,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="categoryId">Catégorie *</Label>
+          <Label htmlFor="categoryId">Category *</Label>
           <Select
             value={watch("categoryId")}
             onValueChange={(value) => setValue("categoryId", value)}
@@ -255,7 +255,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
 
       <div className="grid gap-4 md:grid-cols-4">
         <div className="space-y-2">
-          <Label htmlFor="price">Prix ($) *</Label>
+          <Label htmlFor="price">Price ($) *</Label>
           <Input
             id="price"
             type="number"
@@ -270,7 +270,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="accessDuration">Durée d'accès (jours) *</Label>
+          <Label htmlFor="accessDuration">Access duration (days) *</Label>
           <Input
             id="accessDuration"
             type="number"
@@ -286,7 +286,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="displayOrder">Ordre d'affichage</Label>
+          <Label htmlFor="displayOrder">Display order</Label>
           <Input
             id="displayOrder"
             type="number"
@@ -295,12 +295,12 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             placeholder="Optional (lower = displayed first)"
           />
           <p className="text-xs text-muted-foreground">
-            Numéro pour ordonner les cours sur la page /courses (optionnel, plus bas = affiché en premier)
+            Number to sort courses on the /courses page (optional, lower = shown first)
           </p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="appointmentHourlyRate">Tarif horaire pour rendez-vous ($)</Label>
+          <Label htmlFor="appointmentHourlyRate">Hourly rate for appointments ($)</Label>
           <Input
             id="appointmentHourlyRate"
             type="number"
@@ -310,14 +310,14 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             placeholder="0.00"
           />
           <p className="text-xs text-muted-foreground">
-            Tarif horaire pour les rendez-vous avec instructeur (optionnel)
+            Hourly rate for instructor appointments (optional)
           </p>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="recommendedStudyHoursMin">Heures d'étude recommandées (min)</Label>
+          <Label htmlFor="recommendedStudyHoursMin">Recommended study hours (min)</Label>
           <Input
             id="recommendedStudyHoursMin"
             type="number"
@@ -327,12 +327,12 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             placeholder="6"
           />
           <p className="text-xs text-muted-foreground">
-            Nombre minimum d'heures d'étude par semaine recommandé (pour cours professionnels)
+            Minimum recommended study hours per week (for professional courses)
           </p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="recommendedStudyHoursMax">Heures d'étude recommandées (max)</Label>
+          <Label htmlFor="recommendedStudyHoursMax">Recommended study hours (max)</Label>
           <Input
             id="recommendedStudyHoursMax"
             type="number"
@@ -342,12 +342,12 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             placeholder="10"
           />
           <p className="text-xs text-muted-foreground">
-            Nombre maximum d'heures d'étude par semaine recommandé (pour cours professionnels)
+            Maximum recommended study hours per week (for professional courses)
           </p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="paymentType">Type de paiement *</Label>
+          <Label htmlFor="paymentType">Payment type *</Label>
           <Select
             value={paymentType}
             onValueChange={(value: "ONE_TIME" | "SUBSCRIPTION") =>
@@ -358,8 +358,8 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ONE_TIME">Paiement unique</SelectItem>
-              <SelectItem value="SUBSCRIPTION">Abonnement</SelectItem>
+            <SelectItem value="ONE_TIME">One-time payment</SelectItem>
+            <SelectItem value="SUBSCRIPTION">Subscription</SelectItem>
             </SelectContent>
           </Select>
           {errors.paymentType && (
@@ -370,7 +370,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
 
       {/* Orientation Video URL (for Phase 0) */}
       <div className="space-y-2">
-        <Label htmlFor="orientationVideoUrl">URL de la vidéo d'orientation (Vimeo)</Label>
+        <Label htmlFor="orientationVideoUrl">Orientation video URL (Vimeo)</Label>
         <Input
           id="orientationVideoUrl"
           {...register("orientationVideoUrl")}
@@ -378,7 +378,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
           type="url"
         />
         <p className="text-xs text-muted-foreground">
-          URL Vimeo de la vidéo d'orientation (5-10 minutes) qui sera montrée aux étudiants lors de la Phase 0. Si aucune URL n'est fournie, le texte d'orientation ci-dessous sera affiché à la place.
+          Vimeo URL for the orientation video (5-10 minutes) shown to students during Phase 0. If no URL is provided, the orientation text below will be shown instead.
         </p>
         {errors.orientationVideoUrl && (
           <p className="text-sm text-destructive">{errors.orientationVideoUrl.message}</p>
@@ -387,20 +387,20 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
 
       {/* Orientation Text (for Phase 0 when no video) */}
       <div className="space-y-2">
-        <Label htmlFor="orientationText">Texte d'orientation (Phase 0)</Label>
+        <Label htmlFor="orientationText">Orientation text (Phase 0)</Label>
         <RichTextEditor
           content={orientationText}
           onChange={setOrientationText}
           placeholder="Explanatory text for Phase 0 (displayed if no video is provided)..."
         />
         <p className="text-xs text-muted-foreground">
-          Texte d'explication affiché aux étudiants lors de la Phase 0 si aucune vidéo d'orientation n'est fournie. Utilisez ce champ pour expliquer le format de l'examen, la note de passage, et comment utiliser la plateforme.
+          Explanatory text shown to students during Phase 0 if no orientation video is provided. Use this field to explain the exam format, passing score, and how to use the platform.
         </p>
       </div>
 
       {/* Hero Images */}
       <div className="space-y-2">
-        <Label htmlFor="heroImages">Images héro (URLs des captures d'écran)</Label>
+        <Label htmlFor="heroImages">Hero images (screenshot URLs)</Label>
         <Textarea
           id="heroImages"
           {...register("heroImages")}
@@ -409,7 +409,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
           className="font-mono text-sm"
         />
         <p className="text-xs text-muted-foreground">
-          Entrez les URLs des images (une par ligne ou séparées par des virgules). Exemple: /screenshots1.png ou https://example.com/image.png. La première image sera affichée sur la page produit.
+          Enter image URLs (one per line or separated by commas). Example: /screenshots1.png or https://example.com/image.png. The first image is shown on the product page.
         </p>
         {errors.heroImages && (
           <p className="text-sm text-destructive">{errors.heroImages.message}</p>
@@ -425,23 +425,23 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
           className="h-4 w-4 rounded border-gray-300"
         />
         <Label htmlFor="published" className="cursor-pointer">
-          Publier le cours
+          Publish course
         </Label>
       </div>
 
       {/* Component Visibility Settings */}
       <Card>
         <CardHeader>
-          <CardTitle>Visibilité des composants</CardTitle>
+          <CardTitle>Component visibility</CardTitle>
           <CardDescription>
-            Contrôlez quels composants sont visibles pour les étudiants dans ce cours
+            Control which components are visible to students in this course
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-videos" className="cursor-pointer">
-                Vidéos
+                Videos
               </Label>
               <Switch
                 id="visibility-videos"
@@ -453,7 +453,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-quizzes" className="cursor-pointer">
-                Quiz et examens
+                Quizzes and exams
               </Label>
               <Switch
                 id="visibility-quizzes"
@@ -489,7 +489,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-messaging" className="cursor-pointer">
-                Messagerie
+                Messaging
               </Label>
               <Switch
                 id="visibility-messaging"
@@ -501,7 +501,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-appointments" className="cursor-pointer">
-                Rendez-vous
+                Appointments
               </Label>
               <Switch
                 id="visibility-appointments"
@@ -513,7 +513,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-virtual-tutor" className="cursor-pointer">
-                Tuteur virtuel (v2)
+                Virtual tutor (v2)
               </Label>
               <Switch
                 id="visibility-virtual-tutor"
@@ -525,7 +525,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-case-studies" className="cursor-pointer">
-                Études de cas
+                Case studies
               </Label>
               <Switch
                 id="visibility-case-studies"
@@ -542,7 +542,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
       <div className="flex gap-4">
         <Button type="submit" disabled={loading}>
           {loading
-            ? "Enregistrement..."
+            ? "Saving..."
             : courseId
             ? "Update"
             : "Create course"}
@@ -552,10 +552,9 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
           variant="outline"
           onClick={() => router.push("/dashboard/admin?tab=courses")}
         >
-          Annuler
+          Cancel
         </Button>
       </div>
     </form>
   );
 }
-

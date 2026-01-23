@@ -73,7 +73,7 @@ export function ClassificationActivity({
         </div>
       )}
       <div className="space-y-4">
-        <Label>Classez chaque élément dans la bonne catégorie</Label>
+        <Label>Place each item in the correct category</Label>
         <div className="grid gap-4 md:grid-cols-2">
           {itemsList.map((item) => {
             const isCorrect = checkItem(item);

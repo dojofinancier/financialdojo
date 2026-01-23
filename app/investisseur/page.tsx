@@ -18,22 +18,22 @@ export default function InvestisseurLandingPage() {
 
   const helps = [
     "Identify how you make your investment decisions",
-    "Mettre le doigt sur ton principal point de friction",
+    "Identify your main point of friction",
     "Understand what deserves your attention now",
-    "Savoir quoi ignorer, au moins pour l’instant",
+    "Know what to ignore, at least for now",
   ];
 
-  const notThis = ["A personality quiz", "Un conseil d’investissement", "Une promesse de rendement"];
+  const notThis = ["A personality quiz", "Investment advice", "A promise of returns"];
 
   const forWho = [
     "Have already started investing",
     "Have a university education or an analytical mind",
-    "Veulent comprendre avant d’optimiser",
+    "Want to understand before optimizing",
     "Prefer rigor to promises",
     "Invest in Quebec or Canada",
   ];
 
-  const notForWho = ["Des “trucs rapides”", "Market predictions", "Des rendements garantis"];
+  const notForWho = ["Quick hacks", "Market predictions", "Guaranteed returns"];
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[#fbf7f2] text-neutral-900">
@@ -41,14 +41,14 @@ export default function InvestisseurLandingPage() {
       <header className="sticky top-0 z-10 border-b border-black/10 bg-[#fbf7f2]/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <Link href="/" className="font-black tracking-tight">
-            LE DOJO FINANCIER
+            FINANCIAL DOJO
           </Link>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" className="font-semibold">
-              <Link href="/courses">Formations</Link>
+              <Link href="/courses">Courses</Link>
             </Button>
             <Button asChild className="font-semibold">
-              <Link href="/investor/questionnaire">Faire le diagnostic</Link>
+              <Link href="/investor/questionnaire">Take the diagnostic</Link>
             </Button>
           </div>
         </div>
@@ -61,30 +61,30 @@ export default function InvestisseurLandingPage() {
             <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
               <div>
                 <p className="mb-4 inline-flex items-center rounded-full border border-black/10 bg-white/60 px-3 py-1 text-xs font-semibold tracking-wide">
-                  Diagnostic de clarté investisseur (≈ 5 minutes)
+                  Investor clarity diagnostic (≈ 5 minutes)
                 </p>
                 <h1 className="text-4xl font-black leading-tight tracking-tight sm:text-5xl">
-                  Tu n’as pas besoin de plus d’information pour investir mieux.
+                  You do not need more information to invest better.
                   <br />
-                  <span className="underline decoration-primary/60 decoration-4 underline-offset-4">Tu as besoin d’un cadre.</span>
+                  <span className="underline decoration-primary/60 decoration-4 underline-offset-4">You need a framework.</span>
                 </h1>
                 <p className="mt-6 max-w-xl text-lg leading-relaxed text-neutral-800">
-                  La majorité des investisseurs intelligents n’échouent pas par manque de connaissances, mais parce qu’ils
-                  optimisent trop tôt… sans structure claire.
+                  Most smart investors do not fail for lack of knowledge, but because they
+                  optimize too early... without a clear structure.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="font-semibold">
-                    <Link href="/investor/questionnaire">👉 Faire le Diagnostic Investisseur</Link>
+                    <Link href="/investor/questionnaire">👉 Take the Investor Diagnostic</Link>
                   </Button>
                   <Button asChild variant="outline" size="lg" className="border-black/15 bg-white/60 font-semibold">
-                    <Link href="#comment-ca-marche">Comment ça fonctionne</Link>
+                    <Link href="#how-it-works">How it works</Link>
                   </Button>
                 </div>
-                <p className="mt-3 text-sm text-neutral-700">Gratuit · éducatif seulement · aucune promesse</p>
+                <p className="mt-3 text-sm text-neutral-700">Free · educational only · no promises</p>
               </div>
 
               <div className="rounded-2xl border border-black/10 bg-white/70 p-6 shadow-sm sm:p-8">
-                <h2 className="text-xl font-bold tracking-tight">Ce que tu vas obtenir</h2>
+                <h2 className="text-xl font-bold tracking-tight">What you will get</h2>
                 <ul className="mt-4 space-y-3 text-neutral-800">
                   {helps.map((item) => (
                     <li key={item} className="flex gap-3">
@@ -94,13 +94,13 @@ export default function InvestisseurLandingPage() {
                   ))}
                 </ul>
                 <div className="mt-6 rounded-xl border border-black/10 bg-[#fbf7f2] p-4">
-                  <p className="font-semibold">Ce n’est pas :</p>
+                  <p className="font-semibold">This is not:</p>
                   <ul className="mt-2 space-y-1 text-sm text-neutral-800">
                     {notThis.map((item) => (
                       <li key={item}>- {item}</li>
                     ))}
                   </ul>
-                  <p className="mt-3 text-sm font-semibold text-neutral-900">C’est un outil de lucidité.</p>
+                  <p className="mt-3 text-sm font-semibold text-neutral-900">It is a clarity tool.</p>
                 </div>
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function InvestisseurLandingPage() {
         <section className="px-4 py-14 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-6xl">
             <div className="rounded-2xl border border-black/10 bg-white/70 p-6 sm:p-10">
-              <h2 className="text-2xl font-black tracking-tight">Si tu te reconnais ici, ce diagnostic est pour toi</h2>
+              <h2 className="text-2xl font-black tracking-tight">If you recognize yourself here, this diagnostic is for you</h2>
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {resonance.map((item) => (
                   <div key={item} className="rounded-xl border border-black/10 bg-white p-4">
@@ -120,47 +120,47 @@ export default function InvestisseurLandingPage() {
                 ))}
               </div>
               <div className="mt-8 rounded-xl bg-[#fbf7f2] p-5">
-                <p className="font-semibold">👉 Le problème n’est pas ton intelligence.</p>
-                <p className="font-semibold">👉 Le problème, c’est l’absence d’un cadre décisionnel clair.</p>
+                <p className="font-semibold">👉 The problem is not your intelligence.</p>
+                <p className="font-semibold">👉 The problem is the lack of a clear decision framework.</p>
               </div>
             </div>
           </div>
         </section>
 
         {/* HOW IT WORKS */}
-        <section id="comment-ca-marche" className="px-4 pb-14 sm:px-6 sm:pb-20">
+        <section id="how-it-works" className="px-4 pb-14 sm:px-6 sm:pb-20">
           <div className="mx-auto max-w-6xl">
             <div className="grid gap-6 lg:grid-cols-3">
               <div className="rounded-2xl border border-black/10 bg-white/70 p-6 sm:p-8">
-                <h3 className="text-lg font-black tracking-tight">Comment ça fonctionne</h3>
+                <h3 className="text-lg font-black tracking-tight">How it works</h3>
                 <ol className="mt-4 space-y-3 text-neutral-800">
                   <li className="flex gap-3">
                     <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                       1
                     </span>
-                    <span>Tu réponds à 6 questions simples</span>
+                    <span>You answer 6 simple questions</span>
                   </li>
                   <li className="flex gap-3">
                     <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                       2
                     </span>
-                    <span>On analyse ta manière de décider (pas tes produits)</span>
+                    <span>We analyze how you decide (not your products)</span>
                   </li>
                   <li className="flex gap-3">
                     <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                       3
                     </span>
-                    <span>Tu obtiens des recommandations claires et actionnables</span>
+                    <span>You get clear, actionable recommendations</span>
                   </li>
                 </ol>
-                <p className="mt-5 text-sm text-neutral-700">⏱ Temps requis : environ 5 minutes.</p>
+                <p className="mt-5 text-sm text-neutral-700">⏱ Time required: about 5 minutes.</p>
               </div>
 
               <div className="rounded-2xl border border-black/10 bg-white/70 p-6 sm:p-8 lg:col-span-2">
-                <h3 className="text-lg font-black tracking-tight">À qui ça s’adresse</h3>
+                <h3 className="text-lg font-black tracking-tight">Who it is for</h3>
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
                   <div className="rounded-xl border border-black/10 bg-white p-5">
-                    <p className="font-semibold">Idéal si tu :</p>
+                    <p className="font-semibold">Ideal if you:</p>
                     <ul className="mt-3 space-y-2 text-sm text-neutral-800">
                       {forWho.map((item) => (
                         <li key={item} className="flex gap-3">
@@ -171,7 +171,7 @@ export default function InvestisseurLandingPage() {
                     </ul>
                   </div>
                   <div className="rounded-xl border border-black/10 bg-white p-5">
-                    <p className="font-semibold">Si tu cherches :</p>
+                    <p className="font-semibold">If you are looking for:</p>
                     <ul className="mt-3 space-y-2 text-sm text-neutral-800">
                       {notForWho.map((item) => (
                         <li key={item} className="flex gap-3">
@@ -180,22 +180,22 @@ export default function InvestisseurLandingPage() {
                         </li>
                       ))}
                     </ul>
-                    <p className="mt-4 text-sm font-semibold text-neutral-900">👉 Ce diagnostic n’est probablement pas pour toi.</p>
+                    <p className="mt-4 text-sm font-semibold text-neutral-900">👉 This diagnostic is probably not for you.</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="mt-8 rounded-2xl border border-black/10 bg-white/70 p-6 sm:p-10">
-              <h3 className="text-lg font-black tracking-tight">Crédibilité (sans ego)</h3>
+              <h3 className="text-lg font-black tracking-tight">Credibility (without ego)</h3>
               <p className="mt-3 text-neutral-800">
-                Ce site est conçu par un formateur en finance spécialisé dans l’éducation financière rigoureuse, la prise de
-                décision en contexte d’incertitude, et la compréhension réelle du risque.
+                This site is designed by a finance instructor specialized in rigorous financial education, decision-making
+                under uncertainty, and real risk understanding.
               </p>
               <div className="mt-4 flex flex-wrap gap-3 text-sm text-neutral-800">
-                <span className="rounded-full border border-black/10 bg-white px-3 py-1">Aucune affiliation</span>
-                <span className="rounded-full border border-black/10 bg-white px-3 py-1">Aucune commission</span>
-                <span className="rounded-full border border-black/10 bg-white px-3 py-1">Aucun conflit d’intérêt</span>
+                <span className="rounded-full border border-black/10 bg-white px-3 py-1">No affiliation</span>
+                <span className="rounded-full border border-black/10 bg-white px-3 py-1">No commissions</span>
+                <span className="rounded-full border border-black/10 bg-white px-3 py-1">No conflict of interest</span>
               </div>
             </div>
           </div>
@@ -205,18 +205,18 @@ export default function InvestisseurLandingPage() {
         <section className="px-4 pb-16 sm:px-6 sm:pb-24">
           <div className="mx-auto max-w-6xl">
             <div className="rounded-2xl border border-black/10 bg-neutral-900 p-8 text-white sm:p-12">
-              <h2 className="text-3xl font-black tracking-tight">Avant d’optimiser tes placements, clarifie ta manière de décider.</h2>
+              <h2 className="text-3xl font-black tracking-tight">Before optimizing your investments, clarify how you decide.</h2>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Button asChild size="lg" className="font-semibold">
-                  <Link href="/investor/questionnaire">👉 Commencer le Diagnostic Investisseur</Link>
+                  <Link href="/investor/questionnaire">👉 Start the Investor Diagnostic</Link>
                 </Button>
-                <p className="text-sm text-white/70">(gratuit · éducatif · sans promesse)</p>
+                <p className="text-sm text-white/70">(free · educational · no promises)</p>
               </div>
               <div className="mt-8 rounded-xl bg-white/5 p-5 text-sm text-white/80">
                 <p className="font-semibold text-white">Important</p>
                 <p className="mt-2">
-                  Le Diagnostic Investisseur est un outil éducatif. Il ne constitue pas un conseil d’investissement, une
-                  recommandation personnalisée ou une opinion sur un titre, un produit ou une stratégie spécifique.
+                  The Investor Diagnostic is an educational tool. It does not constitute investment advice, a personalized
+                  recommendation, or an opinion on a security, product, or specific strategy.
                 </p>
               </div>
             </div>

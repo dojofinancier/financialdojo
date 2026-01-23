@@ -104,7 +104,7 @@ export function CourseList() {
 
   useEffect(() => {
     loadCourses(undefined, true);
-  }, [categoryFilter, publishedFilter, sortBy, sortOrder]);
+  }, [loadCourses, sortBy, sortOrder]);
 
   const handleLoadMore = () => {
     if (hasMore && !loading && nextCursor) {
@@ -214,7 +214,7 @@ export function CourseList() {
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Toutes les catégories</SelectItem>
+              <SelectItem value="all">All categories</SelectItem>
               {categories.map((cat) => (
                 <SelectItem key={cat.id} value={cat.id}>
                   {cat.name}
@@ -224,23 +224,23 @@ export function CourseList() {
           </Select>
           <Select value={publishedFilter} onValueChange={setPublishedFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Statut" />
+            <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tous les statuts</SelectItem>
-              <SelectItem value="true">Publié</SelectItem>
-              <SelectItem value="false">Non publié</SelectItem>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="true">Published</SelectItem>
+              <SelectItem value="false">Unpublished</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="flex gap-2">
           <Button onClick={handleExport} variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
-            Exporter CSV
+            Export CSV
           </Button>
           <Button onClick={() => router.push("/dashboard/admin/courses?tab=create")} size="sm">
             <Plus className="h-4 w-4 mr-2" />
-            Nouveau cours
+            New course
           </Button>
         </div>
       </div>
@@ -261,11 +261,11 @@ export function CourseList() {
                   }}
                   className="flex items-center gap-1 hover:text-primary"
                 >
-                  Titre
+                  Title
                   {sortBy === "title" && (sortOrder === "asc" ? "↑" : "↓")}
                 </button>
               </TableHead>
-              <TableHead>Catégorie</TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>
                 <button
                   onClick={() => {
@@ -278,13 +278,13 @@ export function CourseList() {
                   }}
                   className="flex items-center gap-1 hover:text-primary"
                 >
-                  Prix
+                  Price
                   {sortBy === "price" && (sortOrder === "asc" ? "↑" : "↓")}
                 </button>
               </TableHead>
               <TableHead>Type</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead>Étudiants</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Students</TableHead>
               <TableHead>Modules</TableHead>
               <TableHead>
                 <button
@@ -309,13 +309,13 @@ export function CourseList() {
             {loading && courses.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={9} className="text-center py-8">
-                  Chargement...
+                  Loading...
                 </TableCell>
               </TableRow>
             ) : sortedCourses.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
-                  Aucun cours trouvé
+                  No courses found
                 </TableCell>
               </TableRow>
             ) : (
@@ -328,12 +328,12 @@ export function CourseList() {
                   <TableCell>{Number(course.price).toFixed(2)} $</TableCell>
                   <TableCell>
                     <Badge variant="secondary">
-                      {course.paymentType === "ONE_TIME" ? "Unique" : "Abonnement"}
+                      {course.paymentType === "ONE_TIME" ? "One-time" : "Subscription"}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <Badge variant={course.published ? "default" : "secondary"}>
-                      {course.published ? "Published" : "Brouillon"}
+                      {course.published ? "Published" : "Draft"}
                     </Badge>
                   </TableCell>
                   <TableCell>{course._count.enrollments}</TableCell>
@@ -353,7 +353,7 @@ export function CourseList() {
                           onClick={() => router.push(`/dashboard/admin/courses/${course.id}/preview`)}
                         >
                           <Eye className="h-4 w-4 mr-2" />
-                          Voir (aperçu étudiant)
+                          View (student preview)
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => router.push(`/dashboard/admin/courses/${course.id}`)}
@@ -398,7 +398,7 @@ export function CourseList() {
           <DialogHeader>
             <DialogTitle>Supprimer le cours</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer ce cours ? Cette action est irréversible.
+              Are you sure you want to delete this course? This action is irreversible.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2 mt-4">
@@ -414,4 +414,3 @@ export function CourseList() {
     </div>
   );
 }
-

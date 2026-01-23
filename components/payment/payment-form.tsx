@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import type { StripeCardElementChangeEvent } from "@stripe/stripe-js";
-import { createCheckoutPaymentIntentAction } from "@/app/actions/payment";
+import { createCheckoutPaymentIntentAction } from "@/app/actions/checkout";
 import { createEnrollmentFromPaymentIntentAction } from "@/app/actions/payments";
 import { getCurrentUserInfoAction } from "@/app/actions/auth";
 import { clearCart } from "@/lib/utils/cart";
@@ -371,7 +371,7 @@ export function PaymentForm({
   if (isLoadingUser) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="text-muted-foreground">Chargement...</div>
+        <div className="text-muted-foreground">Loading...</div>
       </div>
     );
   }
@@ -382,11 +382,11 @@ export function PaymentForm({
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName">Prénom *</Label>
+            <Label htmlFor="firstName">First name *</Label>
             <Input
               id="firstName"
               type="text"
-              placeholder="Jean"
+              placeholder="Alex"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
@@ -394,11 +394,11 @@ export function PaymentForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lastName">Nom *</Label>
+            <Label htmlFor="lastName">Last name *</Label>
             <Input
               id="lastName"
               type="text"
-              placeholder="Dupont"
+              placeholder="Doe"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
@@ -408,7 +408,7 @@ export function PaymentForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Courriel *</Label>
+          <Label htmlFor="email">Email *</Label>
           <Input
             id="email"
             type="email"
@@ -421,7 +421,7 @@ export function PaymentForm({
           />
           {isLoggedIn && (
             <p className="text-xs text-muted-foreground">
-              Connecté avec ce courriel
+              Signed in with this email
             </p>
           )}
           {emailError && (
@@ -430,7 +430,7 @@ export function PaymentForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="phone">Téléphone</Label>
+          <Label htmlFor="phone">Phone</Label>
           <Input
             id="phone"
             type="tel"
@@ -445,7 +445,7 @@ export function PaymentForm({
         {!isLoggedIn && (
           <>
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe *</Label>
+              <Label htmlFor="password">Password *</Label>
               <Input
                 id="password"
                 type="password"
@@ -463,7 +463,7 @@ export function PaymentForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le mot de passe *</Label>
+              <Label htmlFor="confirmPassword">Confirm password *</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -485,7 +485,7 @@ export function PaymentForm({
 
       {/* Payment Card Element */}
       <div className="space-y-2">
-        <Label>Numéro de carte</Label>
+        <Label>Card number</Label>
         <div className="relative z-0 flex h-10 w-full items-center overflow-hidden rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 [&_.StripeElement]:h-full [&_.StripeElement_iframe]:h-full [&_.StripeElement_iframe]:min-h-0">
           <div className="flex-1 h-full">
             <CardElement
@@ -504,12 +504,12 @@ export function PaymentForm({
         {originalAmount && originalAmount !== amount && (
           <>
             <div className="flex justify-between text-sm text-muted-foreground">
-              <span>Prix original</span>
+              <span>Original price</span>
               <span>{originalAmount.toFixed(2)} $</span>
             </div>
             {discountAmount && discountAmount > 0 && (
               <div className="flex justify-between text-sm text-green-600">
-                <span>Réduction {couponCode && `(${couponCode})`}</span>
+                <span>Discount {couponCode && `(${couponCode})`}</span>
                 <span>-{discountAmount.toFixed(2)} $</span>
               </div>
             )}
@@ -527,9 +527,8 @@ export function PaymentForm({
           disabled={isProcessing || !stripe}
         >
 
-        {isProcessing ? "Traitement..." : `Payer ${amount.toFixed(2)} $`}
+        {isProcessing ? "Processing..." : `Pay ${amount.toFixed(2)} $`}
       </Button>
     </form>
   );
 }
-

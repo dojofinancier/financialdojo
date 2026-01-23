@@ -20,7 +20,7 @@ export function OverviewSection({ data }: OverviewSectionProps) {
   if (!data) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Aucune donnée disponible</p>
+        <p className="text-muted-foreground">No data available</p>
       </div>
     );
   }
@@ -40,7 +40,7 @@ export function OverviewSection({ data }: OverviewSectionProps) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Temps d'étude total</CardDescription>
+            <CardDescription>Total study time</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <Clock className="h-5 w-5 text-muted-foreground" />
               {formatTime(data.totalStudyTime)}
@@ -48,14 +48,14 @@ export function OverviewSection({ data }: OverviewSectionProps) {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              Temps passé sur le cours
+              Time spent on the course
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Taux de complétion</CardDescription>
+            <CardDescription>Completion rate</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <Target className="h-5 w-5 text-muted-foreground" />
               {data.completionRate.toFixed(1)}%
@@ -63,29 +63,29 @@ export function OverviewSection({ data }: OverviewSectionProps) {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              {data.modulesLearned} / {data.totalModules} modules complétés
+               {data.modulesLearned} / {data.totalModules} modules completed
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Série actuelle</CardDescription>
+            <CardDescription>Current streak</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-muted-foreground" />
-              {data.currentStreak} jours
+               {data.currentStreak} days
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              Meilleure série: {data.longestStreak} jours
+              Best streak: {data.longestStreak} days
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Blocs complétés</CardDescription>
+            <CardDescription>Blocks completed</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-muted-foreground" />
               {data.blocksCompleted}
@@ -93,7 +93,7 @@ export function OverviewSection({ data }: OverviewSectionProps) {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              {data.studyDaysThisWeek} jours d'étude cette semaine
+               {data.studyDaysThisWeek} study days this week
             </p>
           </CardContent>
         </Card>
@@ -102,14 +102,14 @@ export function OverviewSection({ data }: OverviewSectionProps) {
       {/* Progress Overview */}
       <Card>
         <CardHeader>
-          <CardTitle>Progression globale</CardTitle>
-          <CardDescription>Vue d'ensemble de votre progression dans le cours</CardDescription>
+          <CardTitle>Overall progress</CardTitle>
+          <CardDescription>Overview of your course progress</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div>
               <div className="flex justify-between text-sm mb-2">
-                <span>Modules complétés</span>
+                <span>Modules completed</span>
                 <span>{data.modulesLearned} / {data.totalModules}</span>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,7 @@ import { FileText, Play, CheckCircle2, Target } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { getCaseStudiesAction, getCaseStudyAttemptsAction } from "@/app/actions/case-studies";
 
 interface CaseStudyListProps {
@@ -39,11 +39,7 @@ export function CaseStudyList({ courseId, onStartCaseStudy }: CaseStudyListProps
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadCaseStudies();
-  }, [courseId]);
-
-  const loadCaseStudies = async () => {
+  const loadCaseStudies = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getCaseStudiesAction(courseId);
@@ -84,7 +80,11 @@ export function CaseStudyList({ courseId, onStartCaseStudy }: CaseStudyListProps
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadCaseStudies();
+  }, [loadCaseStudies]);
 
   if (loading) {
     return (
@@ -98,7 +98,7 @@ export function CaseStudyList({ courseId, onStartCaseStudy }: CaseStudyListProps
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Aucune étude de cas disponible pour le moment.</p>
+          <p className="text-muted-foreground">No case studies available yet.</p>
         </CardContent>
       </Card>
     );
@@ -123,7 +123,7 @@ export function CaseStudyList({ courseId, onStartCaseStudy }: CaseStudyListProps
                   </div>
                   <div className="flex items-center gap-1">
                     <Target className="h-4 w-4" />
-                    {caseStudy.passingScore}% pour réussir
+                    {caseStudy.passingScore}% to pass
                   </div>
                 </div>
                 {caseStudy.latestAttempt && (
@@ -132,22 +132,22 @@ export function CaseStudyList({ courseId, onStartCaseStudy }: CaseStudyListProps
                       variant={caseStudy.latestAttempt.passed ? "default" : "destructive"}
                       className="mr-2"
                     >
-                      Dernière tentative: {caseStudy.latestAttempt.score}%
+                      Latest attempt: {caseStudy.latestAttempt.score}%
                     </Badge>
                     <span className="text-xs text-muted-foreground">
-                      {format(caseStudy.latestAttempt.completedAt, "d MMM yyyy", { locale: fr })}
+                      {format(caseStudy.latestAttempt.completedAt, "d MMM yyyy", { locale: enCA })}
                     </span>
                   </div>
                 )}
                 {caseStudy.attemptCount > 0 && (
                   <div className="mt-2 text-xs text-muted-foreground">
-                    {caseStudy.attemptCount} tentative{caseStudy.attemptCount > 1 ? "s" : ""} au total
+                    {caseStudy.attemptCount} attempt{caseStudy.attemptCount > 1 ? "s" : ""} total
                   </div>
                 )}
               </div>
               <Button className="w-full sm:w-auto" onClick={() => onStartCaseStudy(caseStudy.id)}>
                 <Play className="h-4 w-4 mr-2" />
-                {caseStudy.latestAttempt ? "Reprendre" : "Commencer"}
+                {caseStudy.latestAttempt ? "Resume" : "Start"}
               </Button>
 
             </div>

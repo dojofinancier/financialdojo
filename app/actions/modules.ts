@@ -9,7 +9,7 @@ import { NoteType } from "@prisma/client";
 
 const moduleSchema = z.object({
   courseId: z.string().min(1, "Course ID is required"),
-  title: z.string().min(1, "Le titre est requis"),
+  title: z.string().min(1, "Title is required"),
   shortTitle: z.string().optional().nullable(), // Short title for sidebar display
   description: z.string().optional(),
   order: z.number().int().nonnegative(),
@@ -56,7 +56,7 @@ export async function createModuleAction(
       });
     }
 
-    const module = await prisma.module.create({
+    const moduleRecord = await prisma.module.create({
       data: validatedData,
       include: {
         course: true,
@@ -66,7 +66,7 @@ export async function createModuleAction(
       },
     });
 
-    return { success: true, data: module };
+    return { success: true, data: moduleRecord };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
@@ -102,12 +102,12 @@ export async function updateModuleAction(
 
     // If order is being changed, handle reordering
     if (validatedData.order !== undefined) {
-      const module = await prisma.module.findUnique({
+      const moduleRecord = await prisma.module.findUnique({
         where: { id: moduleId },
       });
 
-      if (module) {
-        const oldOrder = module.order;
+      if (moduleRecord) {
+        const oldOrder = moduleRecord.order;
         const newOrder = validatedData.order;
 
         if (oldOrder !== newOrder) {
@@ -115,7 +115,7 @@ export async function updateModuleAction(
           if (newOrder > oldOrder) {
             await prisma.module.updateMany({
               where: {
-                courseId: module.courseId,
+                courseId: moduleRecord.courseId,
                 order: { gt: oldOrder, lte: newOrder },
               },
               data: {
@@ -125,7 +125,7 @@ export async function updateModuleAction(
           } else {
             await prisma.module.updateMany({
               where: {
-                courseId: module.courseId,
+                courseId: moduleRecord.courseId,
                 order: { gte: newOrder, lt: oldOrder },
               },
               data: {
@@ -179,16 +179,16 @@ export async function deleteModuleAction(
   try {
     await requireAdmin();
 
-    const module = await prisma.module.findUnique({
+    const moduleRecord = await prisma.module.findUnique({
       where: { id: moduleId },
     });
 
-    if (module) {
+    if (moduleRecord) {
       // Shift remaining modules
       await prisma.module.updateMany({
         where: {
-          courseId: module.courseId,
-          order: { gt: module.order },
+          courseId: moduleRecord.courseId,
+          order: { gt: moduleRecord.order },
         },
         data: {
           order: { decrement: 1 },

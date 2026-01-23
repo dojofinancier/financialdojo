@@ -124,7 +124,7 @@ export function PaiementPageClient() {
 
   return (
     <div className="container mx-auto p-6 max-w-6xl">
-      <h1 className="text-3xl font-bold mb-6">Finaliser votre commande</h1>
+      <h1 className="text-3xl font-bold mb-6">Complete your order</h1>
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Payment Form */}
@@ -133,7 +133,7 @@ export function PaiementPageClient() {
             stripe={stripePromise}
             options={{
               appearance: { theme: "stripe" },
-              locale: "fr",
+              locale: "en",
             }}
           >
             <PaymentForm
@@ -156,8 +156,8 @@ export function PaiementPageClient() {
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>Résumé de la commande</CardTitle>
-              <CardDescription>Vérifiez les détails avant de procéder au paiement</CardDescription>
+              <CardTitle>Order summary</CardTitle>
+              <CardDescription>Review the details before proceeding to payment</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
@@ -174,7 +174,7 @@ export function PaiementPageClient() {
                           <GraduationCap className="h-4 w-4 text-primary" />
                         )}
                         <Badge variant="outline" className="text-xs">
-                          {item.type === "course" ? "Formation" : "Cohorte"}
+                          {item.type === "course" ? "Course" : "Cohort"}
                         </Badge>
                       </div>
                       <p className="font-medium text-sm">{item.title}</p>
@@ -186,12 +186,12 @@ export function PaiementPageClient() {
 
               <div className="space-y-2 border-t pt-4">
                 <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>Sous-total</span>
+                  <span>Subtotal</span>
                   <span>{formatCurrency(subtotal)}</span>
                 </div>
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-sm text-green-600">
-                    <span>Réduction {couponCode && `(${couponCode})`}</span>
+                    <span>Discount {couponCode && `(${couponCode})`}</span>
                     <span>-{formatCurrency(discountAmount)}</span>
                   </div>
                 )}
@@ -207,4 +207,3 @@ export function PaiementPageClient() {
     </div>
   );
 }
-

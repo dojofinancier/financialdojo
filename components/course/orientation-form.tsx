@@ -12,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Progress } from "@/components/ui/progress";
 import { CalendarIcon, AlertCircle, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { initializeCourseSettingsAction } from "@/app/actions/study-plan";
 import { toast } from "sonner";
@@ -169,7 +169,7 @@ export function OrientationForm({
     }
   };
 
-  const dayLabels = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+  const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   // If video should be shown (first creation completed), show video component
   if (showVideo) {
@@ -197,15 +197,15 @@ export function OrientationForm({
                 <div className="flex items-center gap-3">
                   <Loader2 className="h-5 w-5 animate-spin text-primary" />
                   <div>
-                    <p className="font-semibold">Création du plan d'étude</p>
-                    <p className="text-sm text-muted-foreground">Analyse et génération en cours…</p>
+                    <p className="font-semibold">Creating study plan</p>
+                    <p className="text-sm text-muted-foreground">Analysis and generation in progress...</p>
                   </div>
                 </div>
                 <Progress value={loadingProgress} />
                 <div className="grid gap-2 text-sm text-muted-foreground">
-                  <div className={loadingProgress > 20 ? "text-foreground" : undefined}>Analyse du programme</div>
-                  <div className={loadingProgress > 45 ? "text-foreground" : undefined}>Organisation des sessions</div>
-                  <div className={loadingProgress > 70 ? "text-foreground" : undefined}>Finalisation du plan</div>
+                  <div className={loadingProgress > 20 ? "text-foreground" : undefined}>Program analysis</div>
+                  <div className={loadingProgress > 45 ? "text-foreground" : undefined}>Session planning</div>
+                  <div className={loadingProgress > 70 ? "text-foreground" : undefined}>Finalizing plan</div>
                 </div>
               </CardContent>
             </Card>
@@ -217,7 +217,7 @@ export function OrientationForm({
               <CardTitle>Phase 0 - Orientation</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Chargement des paramètres...</p>
+              <p className="text-muted-foreground">Loading settings...</p>
             </CardContent>
           </Card>
         </div>
@@ -234,15 +234,15 @@ export function OrientationForm({
               <div className="flex items-center gap-3">
                 <Loader2 className="h-5 w-5 animate-spin text-primary" />
                 <div>
-                  <p className="font-semibold">Création du plan d'étude</p>
-                  <p className="text-sm text-muted-foreground">Analyse et génération en cours…</p>
+                   <p className="font-semibold">Creating study plan</p>
+                   <p className="text-sm text-muted-foreground">Analysis and generation in progress...</p>
                 </div>
               </div>
               <Progress value={loadingProgress} />
               <div className="grid gap-2 text-sm text-muted-foreground">
-                <div className={loadingProgress > 20 ? "text-foreground" : undefined}>Analyse du programme</div>
-                <div className={loadingProgress > 45 ? "text-foreground" : undefined}>Organisation des sessions</div>
-                <div className={loadingProgress > 70 ? "text-foreground" : undefined}>Finalisation du plan</div>
+                 <div className={loadingProgress > 20 ? "text-foreground" : undefined}>Program analysis</div>
+                 <div className={loadingProgress > 45 ? "text-foreground" : undefined}>Session planning</div>
+                 <div className={loadingProgress > 70 ? "text-foreground" : undefined}>Finalizing plan</div>
               </div>
             </CardContent>
           </Card>
@@ -253,7 +253,7 @@ export function OrientationForm({
           <CardHeader>
             <CardTitle>Phase 0 - Orientation</CardTitle>
             <CardDescription>
-              Configurez votre plan d'étude personnalisé pour {courseTitle}
+              Configure your personalized study plan for {courseTitle}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -269,7 +269,7 @@ export function OrientationForm({
               <Alert variant="default" className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                 <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                 <AlertDescription className="space-y-2">
-                  <p className="font-semibold text-yellow-800 dark:text-yellow-200">Avertissements:</p>
+                  <p className="font-semibold text-yellow-800 dark:text-yellow-200">Warnings:</p>
                   <ul className="list-disc list-inside space-y-1 text-yellow-700 dark:text-yellow-300">
                     {warnings.map((warning, index) => (
                       <li key={index}>{warning}</li>
@@ -281,7 +281,7 @@ export function OrientationForm({
 
             {/* Exam Date */}
             <div className="space-y-2">
-              <Label htmlFor="examDate">Date d'examen *</Label>
+              <Label htmlFor="examDate">Exam date *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -293,9 +293,9 @@ export function OrientationForm({
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {examDate ? (
-                      format(examDate, "PPP", { locale: fr })
+                      format(examDate, "PPP", { locale: enCA })
                     ) : (
-                      <span>Sélectionner une date</span>
+                      <span>Select a date</span>
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -313,7 +313,7 @@ export function OrientationForm({
 
             {/* Study Hours Per Week */}
             <div className="space-y-2">
-              <Label htmlFor="studyHours">Heures d'étude par semaine *</Label>
+              <Label htmlFor="studyHours">Study hours per week *</Label>
               <Input
                 id="studyHours"
                 type="number"
@@ -324,13 +324,13 @@ export function OrientationForm({
                 required
               />
               <p className="text-sm text-muted-foreground">
-                Recommandé: {recommendedStudyHoursMin}-{recommendedStudyHoursMax} heures par semaine pour une préparation optimale
+                Recommended: {recommendedStudyHoursMin}-{recommendedStudyHoursMax} hours per week for optimal preparation
               </p>
             </div>
 
             {/* Preferred Study Days */}
             <div className="space-y-2">
-              <Label>Jours d'étude préférés</Label>
+              <Label>Preferred study days</Label>
               <div className="flex gap-2 flex-wrap">
                 {dayLabels.map((label, index) => (
                   <Button
@@ -345,30 +345,30 @@ export function OrientationForm({
                 ))}
               </div>
               <p className="text-sm text-muted-foreground">
-                Sélectionnez les jours où vous prévoyez étudier
+                Select the days you plan to study
               </p>
             </div>
 
             {/* Self Rating */}
             <div className="space-y-2">
-              <Label>Niveau d'expérience *</Label>
+              <Label>Experience level *</Label>
               <RadioGroup value={selfRating} onValueChange={(value) => setSelfRating(value as SelfRating)}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="NOVICE" id="novice" />
                   <Label htmlFor="novice" className="font-normal cursor-pointer">
-                    Débutant - Première fois que je prépare cet examen
+                    Beginner - First time preparing for this exam
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="INTERMEDIATE" id="intermediate" />
                   <Label htmlFor="intermediate" className="font-normal cursor-pointer">
-                    Intermédiaire - J'ai déjà étudié ce sujet
+                    Intermediate - I have already studied this subject
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="RETAKER" id="retaker" />
                   <Label htmlFor="retaker" className="font-normal cursor-pointer">
-                    Reprenant - Je repasse l'examen
+                    Retaker - I am taking the exam again
                   </Label>
                 </div>
               </RadioGroup>
@@ -384,4 +384,3 @@ export function OrientationForm({
   </>
   );
 }
-

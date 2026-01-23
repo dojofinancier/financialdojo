@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CohortSidebar } from "./cohort-sidebar";
@@ -168,7 +168,7 @@ export function CohortLearningInterface({
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
   // Load unread message count
-  const loadUnreadCount = async () => {
+  const loadUnreadCount = useCallback(async () => {
     try {
       const result = await getCohortUnreadMessageCountAction(cohort.id);
       if (result.success && typeof result.count === "number") {
@@ -177,7 +177,7 @@ export function CohortLearningInterface({
     } catch (error) {
       // Silently fail
     }
-  };
+  }, [cohort.id]);
 
   // Check URL params for navigation
   useEffect(() => {
@@ -204,14 +204,14 @@ export function CohortLearningInterface({
     // Refresh unread count periodically (every 30 seconds)
     const interval = setInterval(loadUnreadCount, 30000);
     return () => clearInterval(interval);
-  }, [cohort.id]);
+  }, [loadUnreadCount]);
 
   // Refresh unread count when navigating to messages tab
   useEffect(() => {
     if (activeItem === "messages") {
       loadUnreadCount();
     }
-  }, [activeItem]);
+  }, [activeItem, loadUnreadCount]);
 
   // Get visibility settings (default to all visible if not set)
   const visibility = normalizeCohortVisibility(cohort.componentVisibility);
@@ -334,7 +334,7 @@ export function CohortLearningInterface({
           {/* Phase 1 - Apprendre (when no specific module is selected) */}
           {activeItem === "learn" && !selectedModuleId && (
             <div>
-              <h1 className="text-2xl font-bold mb-6">Phase 1 - Apprendre</h1>
+              <h1 className="text-2xl font-bold mb-6">Phase 1 - Learn</h1>
               <Suspense fallback={<PhaseSkeleton />}>
                 <Phase1Learn
                   courseId={contentCourseId}
@@ -352,10 +352,10 @@ export function CohortLearningInterface({
             </div>
           )}
 
-          {/* Phase 2 - Réviser */}
+          {/* Phase 2 - Review */}
           {activeItem === "review" && (
             <div>
-              <h1 className="text-2xl font-bold mb-6">Phase 2 - Réviser</h1>
+              <h1 className="text-2xl font-bold mb-6">Phase 2 - Review</h1>
               <Suspense fallback={<PhaseSkeleton />}>
                 <Phase2Review courseId={contentCourseId} course={courseData} settings={initialSettings} />
               </Suspense>
@@ -365,7 +365,7 @@ export function CohortLearningInterface({
           {/* Phase 3 - Pratiquer */}
           {activeItem === "practice" && (
             <div>
-              <h1 className="text-2xl font-bold mb-6">Phase 3 - Pratiquer</h1>
+              <h1 className="text-2xl font-bold mb-6">Phase 3 - Practice</h1>
               <Suspense fallback={<PhaseSkeleton />}>
                 <Phase3Practice courseId={contentCourseId} course={courseData} settings={initialSettings} />
               </Suspense>
@@ -375,7 +375,7 @@ export function CohortLearningInterface({
           {/* Syllabus */}
           {activeItem === "syllabus" && (
             <div>
-              <h1 className="text-2xl font-bold mb-6">Plan de cours</h1>
+              <h1 className="text-2xl font-bold mb-6">Course syllabus</h1>
               <Suspense fallback={<PhaseSkeleton />}>
                 <Syllabus courseId={contentCourseId} />
               </Suspense>
@@ -433,7 +433,7 @@ export function CohortLearningInterface({
                 </>
               ) : (
                 <>
-                  <h1 className="text-2xl font-bold mb-6">Outils d'apprentissage</h1>
+                  <h1 className="text-2xl font-bold mb-6">Learning tools</h1>
                   <LearningTools courseId={contentCourseId} onToolSelect={handleToolSelect} />
                 </>
               )}
@@ -443,7 +443,7 @@ export function CohortLearningInterface({
           {/* Progress */}
           {activeItem === "progress" && (
             <div>
-              <h1 className="text-2xl font-bold mb-6">Progrès et statistiques</h1>
+              <h1 className="text-2xl font-bold mb-6">Progress and stats</h1>
               <Suspense fallback={<PhaseSkeleton />}>
                 <StudentAnalyticsDashboard courseId={contentCourseId} />
               </Suspense>
@@ -461,4 +461,3 @@ export function CohortLearningInterface({
     </div>
   );
 }
-

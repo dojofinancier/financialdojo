@@ -37,12 +37,12 @@ export function CaseStudiesTool({ courseId, onBack, onStartCaseStudy }: CaseStud
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Retour
+          Back
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Études de cas</h1>
+          <h1 className="text-2xl font-bold">Case studies</h1>
           <p className="text-muted-foreground mt-1">
-            Analysez des scénarios réels et répondez à des questions basées sur le récit
+            Analyze real scenarios and answer questions based on the narrative
           </p>
         </div>
       </div>

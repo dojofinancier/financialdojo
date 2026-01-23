@@ -117,7 +117,7 @@ export async function getLearningActivitiesAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement des activités: ${errorMessage}`,
+      error: `Error loading activities: ${errorMessage}`,
       data: [],
     };
   }
@@ -193,7 +193,7 @@ export async function getStudentLearningActivitiesAction(
 
     return {
       success: false,
-      error: `Erreur lors du chargement des activités: ${errorMessage}`,
+      error: `Error loading activities: ${errorMessage}`,
       data: [],
     };
   }
@@ -288,7 +288,7 @@ export async function createLearningActivityAction(
       console.error("Validation errors:", errorDetails);
       return {
         success: false,
-        error: `Données invalides: ${errorDetails}`,
+        error: `Invalid data: ${errorDetails}`,
       };
     }
 
@@ -311,7 +311,7 @@ export async function createLearningActivityAction(
 
     return {
       success: false,
-      error: `Erreur lors de la création de l'activité: ${errorMessage}`,
+      error: `Error creating the activity: ${errorMessage}`,
     };
   }
 }
@@ -423,7 +423,7 @@ export async function updateLearningActivityAction(
 
     return {
       success: false,
-      error: `Erreur lors de la mise à jour de l'activité: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error updating the activity: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -491,4 +491,3 @@ export async function bulkDeleteLearningActivitiesAction(
     };
   }
 }
-

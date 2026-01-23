@@ -7,32 +7,32 @@ import { logServerError } from "@/lib/utils/error-logging";
 import { NoteType } from "@prisma/client";
 
 const contentItemSchema = z.object({
-  moduleId: z.string().min(1, "L'ID du module est requis"),
+  moduleId: z.string().min(1, "Module ID is required"),
   contentType: z.enum(["VIDEO", "QUIZ", "FLASHCARD", "NOTE", "LEARNING_ACTIVITY"]),
   order: z.number().int().nonnegative(),
   studyPhase: z.enum(["PHASE_1_LEARN", "PHASE_2_REVIEW", "PHASE_3_PRACTICE"]).optional().nullable(),
 });
 
 const videoSchema = z.object({
-  vimeoUrl: z.string().url("L'URL Vimeo est invalide"),
+  vimeoUrl: z.string().url("Vimeo URL is invalid"),
   duration: z.number().int().positive().optional(),
   transcript: z.string().optional(),
 });
 
 const quizSchema = z.object({
-  title: z.string().min(1, "Le titre est requis"),
+  title: z.string().min(1, "Title is required"),
   passingScore: z.number().int().min(0).max(100).default(70),
   timeLimit: z.number().int().positive().optional(),
 });
 
 const noteSchema = z.object({
-  content: z.string().min(1, "Le contenu est requis"),
+  content: z.string().min(1, "Content is required"),
 });
 
 const quizQuestionSchema = z.object({
   quizId: z.string(),
   type: z.enum(["MULTIPLE_CHOICE", "SHORT_ANSWER", "TRUE_FALSE"]),
-  question: z.string().min(1, "La question est requise"),
+  question: z.string().min(1, "Question is required"),
   // JSON field: represent "no options" as undefined (not null) for Prisma compatibility
   options: z.record(z.string(), z.string()).optional(),
   correctAnswer: z.string().min(1, "The correct answer is required"),
@@ -77,7 +77,7 @@ export async function createContentItemAction(
     if (validatedContentItem.contentType === "NOTE" && !note) {
       return {
         success: false,
-        error: "Le contenu de la note est requis",
+        error: "Note content is required",
       };
     }
 
@@ -183,17 +183,17 @@ export async function createContentItemAction(
     // Get courseId from module for nested creates (Quiz, Note)
     let courseIdForNested: string | undefined;
     if (validatedContentItem.contentType === "QUIZ" || validatedContentItem.contentType === "NOTE") {
-      const module = await prisma.module.findUnique({
+      const moduleRecord = await prisma.module.findUnique({
         where: { id: validatedContentItem.moduleId },
         select: { courseId: true },
       });
-      if (!module) {
+      if (!moduleRecord) {
         return {
           success: false,
-          error: "Module introuvable",
+          error: "Module not found",
         };
       }
-      courseIdForNested = module.courseId;
+      courseIdForNested = moduleRecord.courseId;
     }
 
     // Add nested relations only for specific content types
@@ -248,7 +248,7 @@ export async function createContentItemAction(
       console.error("Validation errors:", errorDetails);
       return {
         success: false,
-        error: `Données invalides: ${errorDetails}`,
+        error: `Invalid data: ${errorDetails}`,
       };
     }
 
@@ -259,7 +259,7 @@ export async function createContentItemAction(
     if (errorMessage.includes("Unknown arg") || errorMessage.includes("does not exist") || errorMessage.includes("Unknown field")) {
       return {
         success: false,
-        error: `Erreur de base de données: ${errorMessage}. Assurez-vous d'avoir exécuté la migration: npx prisma migrate dev`,
+        error: `Database error: ${errorMessage}. Make sure you ran the migration: npx prisma migrate dev`,
       };
     }
 
@@ -271,7 +271,7 @@ export async function createContentItemAction(
 
     return {
       success: false,
-      error: `Erreur lors de la création de l'élément de contenu: ${errorMessage}`,
+      error: `Error creating the content item: ${errorMessage}`,
     };
   }
 }
@@ -474,7 +474,7 @@ export async function deleteContentItemAction(
 
     return {
       success: false,
-      error: `Erreur lors de la suppression: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error during deletion: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -542,7 +542,7 @@ export async function createQuizQuestionAction(
 
     return {
       success: false,
-      error: `Erreur lors de la création de la question: ${errorMessage}`,
+      error: `Error creating the question: ${errorMessage}`,
     };
   }
 }
@@ -700,4 +700,3 @@ export async function reorderContentItemsAction(
     };
   }
 }
-

@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 import { createContentItemAction } from "./content-items";
 
 const examSchema = z.object({
-  title: z.string().min(1, "Le titre est requis"),
+  title: z.string().min(1, "Title is required"),
   passingScore: z.number().int().min(0).max(100).default(70),
   timeLimit: z.number().int().positive(), // in minutes
   examFormat: z.string().optional().nullable(),
@@ -174,7 +174,7 @@ export async function deleteExamAction(examId: string): Promise<ExamActionResult
     });
 
     if (!exam) {
-      return { success: false, error: "Examen introuvable" };
+      return { success: false, error: "Exam not found" };
     }
 
     await prisma.quiz.delete({
@@ -224,7 +224,7 @@ export async function uploadQuestionsToExamAction(
     });
 
     if (!exam) {
-      return { success: false, error: "Examen introuvable" };
+      return { success: false, error: "Exam not found" };
     }
 
     const lines = csvContent.split("\n").filter((line) => line.trim());
@@ -292,7 +292,7 @@ export async function uploadQuestionsToExamAction(
               },
             });
           } catch (err) {
-            errors.push(`Erreur lors de la création de la question ${currentQuestion.order}: ${err instanceof Error ? err.message : "Unknown error"}`);
+            errors.push(`Error creating question ${currentQuestion.order}: ${err instanceof Error ? err.message : "Unknown error"}`);
           }
         }
 
@@ -313,7 +313,7 @@ export async function uploadQuestionsToExamAction(
       // Check if it's an answer line
       else if (recordType === "answer") {
         if (!currentQuestion) {
-          errors.push(`Ligne ${i + 1}: Réponse sans question associée`);
+          errors.push(`Line ${i + 1}: Answer without an associated question`);
           continue;
         }
 
@@ -345,7 +345,7 @@ export async function uploadQuestionsToExamAction(
           },
         });
       } catch (err) {
-        errors.push(`Erreur lors de la création de la dernière question: ${err instanceof Error ? err.message : "Unknown error"}`);
+        errors.push(`Error creating the last question: ${err instanceof Error ? err.message : "Unknown error"}`);
       }
     }
 
@@ -366,7 +366,7 @@ export async function uploadQuestionsToExamAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error during upload: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -391,7 +391,7 @@ export async function cleanupEscapedQuotesAction(examId: string): Promise<ExamAc
     });
 
     if (!exam) {
-      return { success: false, error: "Examen introuvable" };
+      return { success: false, error: "Exam not found" };
     }
 
     let updatedCount = 0;
@@ -464,7 +464,7 @@ export async function cleanupEscapedQuotesAction(examId: string): Promise<ExamAc
 
     return {
       success: false,
-      error: `Erreur lors du nettoyage: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error during cleanup: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -526,7 +526,7 @@ export async function importPracticeExamFromCSVAction(
     if (!hasRequiredFields) {
       return { 
         success: false, 
-        error: `Format CSV invalide. En-têtes attendus: ${expectedHeader.join(", ")}` 
+        error: `Invalid CSV format. Expected headers: ${expectedHeader.join(", ")}` 
       };
     }
 
@@ -626,7 +626,7 @@ export async function importPracticeExamFromCSVAction(
       });
 
       if (!exam) {
-        return { success: false, error: "Examen introuvable" };
+        return { success: false, error: "Exam not found" };
       }
 
       contentItem = exam.contentItem;
@@ -668,7 +668,7 @@ export async function importPracticeExamFromCSVAction(
         data: {
           contentItemId: contentItem.id,
           courseId, // Direct course link for efficient queries
-          title: examTitle || `Examen pratique - ${new Date().toLocaleDateString()}`,
+          title: examTitle || `Practice exam - ${new Date().toLocaleDateString()}`,
           passingScore: 70,
           timeLimit: 120 * 60, // 120 minutes in seconds
           isMockExam: true,
@@ -707,7 +707,7 @@ export async function importPracticeExamFromCSVAction(
         });
         successCount++;
       } catch (err) {
-        errors.push(`Erreur lors de la création de la question: ${err instanceof Error ? err.message : "Unknown error"}`);
+        errors.push(`Error creating the question: ${err instanceof Error ? err.message : "Unknown error"}`);
       }
     }
 
@@ -731,9 +731,7 @@ export async function importPracticeExamFromCSVAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'importation: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error during import: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
-
-

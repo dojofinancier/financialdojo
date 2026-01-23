@@ -52,7 +52,7 @@ export function ExamResults({ result, exam, onRetake, onExit }: ExamResultsProps
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Résultats de l'examen</CardTitle>
+          <CardTitle className="text-2xl">Exam results</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Score Display */}
@@ -66,22 +66,22 @@ export function ExamResults({ result, exam, onRetake, onExit }: ExamResultsProps
                 {result.passed ? (
                   <>
                     <CheckCircle2 className="h-5 w-5 mr-2" />
-                    Réussi
+                    Passed
                   </>
                 ) : (
                   <>
                     <XCircle className="h-5 w-5 mr-2" />
-                    Échoué
+                    Failed
                   </>
                 )}
               </Badge>
             </div>
             <div className="text-muted-foreground">
-              {result.correctAnswers} / {result.totalQuestions} questions correctes
+              {result.correctAnswers} / {result.totalQuestions} correct questions
             </div>
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <Target className="h-4 w-4" />
-              Note de passage: {exam.passingScore}%
+              Passing score: {exam.passingScore}%
             </div>
           </div>
 
@@ -93,12 +93,11 @@ export function ExamResults({ result, exam, onRetake, onExit }: ExamResultsProps
                   <Target className="h-5 w-5 text-yellow-600 mt-0.5" />
                   <div>
                     <div className="font-semibold text-yellow-900 mb-1">
-                      Continuez à vous entraîner!
+                      Keep practicing!
                     </div>
                     <div className="text-sm text-yellow-800">
-                      Votre score est inférieur à {exam.passingScore}%. Nous vous encourageons à
-                      refaire l'examen pour améliorer votre compréhension avant de consulter les
-                      corrections.
+                      Your score is below {exam.passingScore}%. We encourage you to retake the exam
+                      to improve your understanding before reviewing the answers.
                     </div>
                   </div>
                 </div>
@@ -111,25 +110,25 @@ export function ExamResults({ result, exam, onRetake, onExit }: ExamResultsProps
             {shouldEncourageRetry ? (
               <Button size="lg" onClick={onRetake}>
                 <RotateCcw className="h-5 w-5 mr-2" />
-                Réessayer l'examen
+                Retry exam
               </Button>
             ) : (
               <>
                 {!showAnswers && (
                   <Button size="lg" onClick={() => setShowAnswers(true)}>
                     <CheckCircle2 className="h-5 w-5 mr-2" />
-                    Voir les corrections
+                    View answers
                   </Button>
                 )}
                 <Button size="lg" variant="outline" onClick={onRetake}>
                   <RotateCcw className="h-5 w-5 mr-2" />
-                  Refaire l'examen
+                  Retake exam
                 </Button>
               </>
             )}
             <Button size="lg" variant="outline" onClick={onExit}>
               <ArrowLeft className="h-5 w-5 mr-2" />
-              Retour aux examens
+              Back to exams
             </Button>
           </div>
         </CardContent>
@@ -139,7 +138,7 @@ export function ExamResults({ result, exam, onRetake, onExit }: ExamResultsProps
       {showAnswers && !shouldEncourageRetry && (
         <Card>
           <CardHeader>
-            <CardTitle>Corrections</CardTitle>
+            <CardTitle>Review</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {result.questions.map((question, index) => {
@@ -181,7 +180,7 @@ export function ExamResults({ result, exam, onRetake, onExit }: ExamResultsProps
                               <XCircle className="h-4 w-4 text-red-600 ml-auto" />
                             )}
                             {isUserAnswer && (
-                              <span className="text-xs text-muted-foreground ml-2">(Votre réponse)</span>
+                               <span className="text-xs text-muted-foreground ml-2">(Your answer)</span>
                             )}
                           </div>
                         </div>
@@ -190,7 +189,7 @@ export function ExamResults({ result, exam, onRetake, onExit }: ExamResultsProps
                   </div>
                   {question.explanation && (
                     <div className="mt-3 p-3 bg-muted rounded-lg">
-                      <div className="text-sm font-semibold mb-1">Explication:</div>
+                      <div className="text-sm font-semibold mb-1">Explanation:</div>
                       <div className="text-sm">{question.explanation}</div>
                     </div>
                   )}

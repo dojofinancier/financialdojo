@@ -35,22 +35,22 @@ export default function Error({
         <CardHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="h-6 w-6 text-destructive" />
-            <CardTitle>Une erreur est survenue</CardTitle>
+            <CardTitle>An error occurred</CardTitle>
           </div>
           <CardDescription>
-            Désolé, une erreur inattendue s'est produite. Notre équipe a été informée.
+            Sorry, an unexpected error occurred. Our team has been notified.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-sm text-muted-foreground">
             {error.digest && (
               <p className="mb-2 font-mono text-xs">
-                <strong>ID d'erreur:</strong> {error.digest}
+                <strong>Error ID:</strong> {error.digest}
               </p>
             )}
             <p>
-              Si ce problème persiste, veuillez contacter notre équipe de support avec les détails
-              de ce qui s'est passé.
+              If this problem persists, please contact our support team with the details
+              of what happened.
             </p>
           </div>
 
@@ -67,11 +67,11 @@ export default function Error({
           <div className="flex gap-2">
             <Button onClick={reset} className="flex-1" variant="default">
               <RefreshCw className="h-4 w-4 mr-2" />
-              Réessayer
+              Try again
             </Button>
             <Button onClick={() => router.push("/")} className="flex-1" variant="outline">
               <Home className="h-4 w-4 mr-2" />
-              Accueil
+              Home
             </Button>
           </div>
         </CardContent>

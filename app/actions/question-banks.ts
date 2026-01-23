@@ -329,7 +329,7 @@ export async function updateQuestionInBankAction(
       console.error("Zod validation error:", errorDetails);
       return {
         success: false,
-        error: `Données invalides: ${errorDetails}`,
+        error: `Invalid data: ${errorDetails}`,
       };
     }
 
@@ -346,7 +346,7 @@ export async function updateQuestionInBankAction(
 
     return {
       success: false,
-      error: `Erreur lors de la mise à jour de la question: ${errorMessage}`,
+      error: `Error updating the question: ${errorMessage}`,
     };
   }
 }
@@ -394,7 +394,7 @@ export async function uploadQuestionsFromCSVAction(
     if (lines.length === 0) {
       return {
         success: false,
-        error: "Le fichier CSV est vide",
+        error: "The CSV file is empty",
       };
     }
 
@@ -522,7 +522,7 @@ export async function uploadQuestionsFromCSVAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'importation des questions: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error importing questions: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -546,7 +546,7 @@ export async function uploadQuizCSVToModulesAction(
     if (lines.length === 0) {
       return {
         success: false,
-        error: "Le fichier CSV est vide",
+        error: "The CSV file is empty",
       };
     }
 
@@ -563,7 +563,7 @@ export async function uploadQuizCSVToModulesAction(
     if (!hasValidFormat) {
       return {
         success: false,
-        error: `Format CSV invalide. En-têtes attendus: ${expectedHeaders.join(", ")}`,
+        error: `Invalid CSV format. Expected headers: ${expectedHeaders.join(", ")}`,
       };
     }
 
@@ -607,19 +607,19 @@ export async function uploadQuizCSVToModulesAction(
         if (numMatch) {
           chapterNumber = parseInt(numMatch[1], 10);
         } else {
-          console.warn(`Impossible d'extraire le numéro de chapitre de: "${chapter}" à la ligne ${i + 1}`);
+          console.warn(`Unable to extract chapter number from: "${chapter}" on line ${i + 1}`);
           continue;
         }
       }
 
       if (isNaN(chapterNumber) || chapterNumber < 1) {
-        console.warn(`Numéro de chapitre invalide: ${chapterNumber} à la ligne ${i + 1}`);
+          console.warn(`Invalid chapter number: ${chapterNumber} on line ${i + 1}`);
         continue;
       }
 
       // Validate question and options
       if (!question || !optionA || !optionB) {
-        console.warn(`Question incomplète à la ligne ${i + 1}`);
+        console.warn(`Incomplete question on line ${i + 1}`);
         continue;
       }
 
@@ -634,7 +634,7 @@ export async function uploadQuizCSVToModulesAction(
       // Validate correct answer
       const correctAnswer = correctOption?.toUpperCase().trim();
       if (!correctAnswer || !options[correctAnswer]) {
-        console.warn(`Réponse correcte invalide à la ligne ${i + 1}: ${correctOption}`);
+        console.warn(`Invalid correct answer on line ${i + 1}: ${correctOption}`);
         continue;
       }
 
@@ -713,21 +713,21 @@ export async function uploadQuizCSVToModulesAction(
       // 1. Match by title (most reliable if titles contain "Chapitre X")
       // 2. Match by order (chapterNumber)
       // 3. Match by order (chapterNumber - 1) for 0-indexed
-      let module = moduleMapByTitle.get(chapterNumber);
+      let moduleRecord = moduleMapByTitle.get(chapterNumber);
       
-      if (!module) {
+      if (!moduleRecord) {
         // Try matching by order
-        module = moduleMapByOrder.get(chapterNumber);
+        moduleRecord = moduleMapByOrder.get(chapterNumber);
       }
       
-      if (!module) {
+      if (!moduleRecord) {
         // Try 0-indexed matching
-        module = moduleMapByOrder.get(chapterNumber - 1);
+        moduleRecord = moduleMapByOrder.get(chapterNumber - 1);
       }
       
-      if (!module) {
+      if (!moduleRecord) {
         console.warn(
-          `Module pour Chapitre ${chapterNumber} non trouvé. ` +
+          `Module for Chapter ${chapterNumber} not found. ` +
           `Modules disponibles: ${modules.map(m => `${m.title} (order: ${m.order})`).join(", ")}`
         );
         continue;
@@ -739,7 +739,7 @@ export async function uploadQuizCSVToModulesAction(
         const existingQuiz = await prisma.quiz.findFirst({
           where: {
             contentItem: {
-              moduleId: module.id,
+              moduleId: moduleRecord.id,
               contentType: "QUIZ",
               studyPhase: "PHASE_1_LEARN",
             },
@@ -765,7 +765,7 @@ export async function uploadQuizCSVToModulesAction(
           });
 
           if (!contentItemResult.success || !contentItemResult.data) {
-            console.warn(`Erreur lors de la création du ContentItem pour Chapitre ${chapterNumber}`);
+            console.warn(`Error creating ContentItem for Chapter ${chapterNumber}`);
             continue;
           }
 
@@ -776,7 +776,7 @@ export async function uploadQuizCSVToModulesAction(
             data: {
               contentItemId: contentItem.id,
               courseId, // Direct course link for efficient queries
-              title: `Quiz Chapitre ${chapterNumber}`,
+              title: `Chapter ${chapterNumber} Quiz`,
               passingScore: 70,
               timeLimit: 3600, // 60 minutes default
               isMockExam: false,
@@ -832,7 +832,7 @@ export async function uploadQuizCSVToModulesAction(
 
         results.push({
           chapterNumber,
-          moduleTitle: module.title,
+          moduleTitle: moduleRecord.title,
           quizId: quiz.id,
           questionCount: createdQuestions.length,
         });
@@ -842,9 +842,9 @@ export async function uploadQuizCSVToModulesAction(
         let questionBank = await prisma.questionBank.findFirst({
           where: {
             courseId,
-            moduleId: module.id,
+            moduleId: moduleRecord.id,
             title: {
-              contains: `Chapitre ${chapterNumber}`,
+              contains: `Chapter ${chapterNumber}`,
             },
           },
         });
@@ -853,9 +853,9 @@ export async function uploadQuizCSVToModulesAction(
           questionBank = await prisma.questionBank.create({
             data: {
               courseId,
-              moduleId: module.id,
-              title: `Questions Chapitre ${chapterNumber}`,
-              description: `Questions du ${module.title}`,
+              moduleId: moduleRecord.id,
+              title: `Chapter ${chapterNumber} Questions`,
+              description: `Questions for ${moduleRecord.title}`,
             },
           });
         }
@@ -887,7 +887,7 @@ export async function uploadQuizCSVToModulesAction(
 
         results.push({
           chapterNumber,
-          moduleTitle: module.title,
+          moduleTitle: moduleRecord.title,
           questionBankId: questionBank.id,
           questionCount: createdQuestions.length,
         });
@@ -913,7 +913,7 @@ export async function uploadQuizCSVToModulesAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'importation des questions: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error importing questions: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -1022,7 +1022,7 @@ export async function addQuestionBankToPhase1QuizAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'ajout des questions: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error adding questions: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -1135,7 +1135,7 @@ export async function addSelectedQuestionsToPhase1QuizAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'ajout des questions: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error adding questions: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -1250,4 +1250,3 @@ function parseCSVLine(line: string): string[] {
 
   return fields;
 }
-

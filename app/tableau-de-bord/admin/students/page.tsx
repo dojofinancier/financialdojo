@@ -7,9 +7,9 @@ export default async function AdminStudentsPage() {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Gestion des étudiants</h1>
+        <h1 className="text-3xl font-bold">Student management</h1>
         <p className="text-muted-foreground mt-2">
-          Gérez les comptes étudiants, leurs inscriptions et leur progression
+          Manage student accounts, enrollments, and progress
         </p>
       </div>
       <StudentList />

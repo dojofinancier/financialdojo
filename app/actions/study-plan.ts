@@ -513,7 +513,7 @@ export async function getUserCourseSettingsAction(courseId: string) {
  * Based on current week's tasks:
  * - Show one Phase 1 module (first not done)
  * - Show all Phase 2 tasks
- * - Format into 4 sections: Session courte (1 block), Session longue (2 blocks), Session courte supplémentaire (1 block), Session longue supplémentaire (2 blocks)
+ * - Format into 4 sections: Short session (1 block), Long session (2 blocks), Extra short session (1 block), Extra long session (2 blocks)
  * - Total: 6 blocks = 3 hours
  */
 export async function getTodaysPlanAction(courseId: string) {
@@ -575,7 +575,7 @@ function formatTodaysPlanSections(
   const usedTaskIds = new Set<string>();
   
   // Helper to mark task as used
-  const useTask = (task: typeof tasks[0] | null) => {
+  const markTaskUsed = (task: typeof tasks[0] | null) => {
     if (task) {
       usedTaskIds.add(task.id);
     }
@@ -587,7 +587,7 @@ function formatTodaysPlanSections(
   // Target distribution: 1 block, 2 blocks, 1 block, 2 blocks (total 6 blocks)
   // sessionCourteSupplementaire (3rd section) must be Phase 2
   
-  // IMPORTANT: Reserve a Phase 2 task for session courte supplémentaire FIRST
+  // IMPORTANT: Reserve a Phase 2 task for extra short session FIRST
   // This ensures it always gets a Phase 2 task even if Phase 2 tasks are used in earlier sections
   let reservedPhase2Task: typeof tasks[0] | null = null;
   
@@ -609,7 +609,7 @@ function formatTodaysPlanSections(
   }
   
   if (reservedPhase2Task) {
-    useTask(reservedPhase2Task);
+    markTaskUsed(reservedPhase2Task);
   }
   
   // Session courte (1 block) - prefer Phase 1, avoid using reserved Phase 2 task
@@ -620,7 +620,7 @@ function formatTodaysPlanSections(
                             getAvailable(tasks).find(t => t.id !== reservedPhase2Task?.id && t.estimatedBlocks === 1);
   if (sessionCourteTask) {
     sections.sessionCourte.push(sessionCourteTask);
-    useTask(sessionCourteTask);
+    markTaskUsed(sessionCourteTask);
   }
 
   // Session longue (2 blocks) - prefer Phase 1, avoid using reserved Phase 2 task
@@ -630,10 +630,10 @@ function formatTodaysPlanSections(
                             getAvailable(tasks).find(t => t.id !== reservedPhase2Task?.id && t.estimatedBlocks === 2);
   if (sessionLongueTask) {
     sections.sessionLongue.push(sessionLongueTask);
-    useTask(sessionLongueTask);
+    markTaskUsed(sessionLongueTask);
   }
 
-  // Session courte supplémentaire (1 block) - MUST be Phase 2 (use reserved task)
+  // Extra short session (1 block) - MUST be Phase 2 (use reserved task)
   if (reservedPhase2Task) {
     sections.sessionCourteSupplementaire.push(reservedPhase2Task);
   } else {
@@ -642,15 +642,15 @@ function formatTodaysPlanSections(
                            (phase2Tasks && phase2Tasks.length > 0 ? phase2Tasks.find(t => !usedTaskIds.has(t.id)) : null);
     if (fallbackPhase2) {
       sections.sessionCourteSupplementaire.push(fallbackPhase2);
-      useTask(fallbackPhase2);
+      markTaskUsed(fallbackPhase2);
     }
   }
 
-  // Session longue supplémentaire (2 blocks) - any remaining task
+  // Extra long session (2 blocks) - any remaining task
   const remainingTasks = getAvailable(tasks);
   if (remainingTasks.length > 0) {
     sections.sessionLongueSupplementaire.push(remainingTasks[0]);
-    useTask(remainingTasks[0]);
+    markTaskUsed(remainingTasks[0]);
   }
 
   console.log(`[formatTodaysPlanSections] Input: ${tasks.length} tasks (${phase1Tasks.length} Phase 1, ${phase2TasksInSelected.length} Phase 2 in selected)`);
@@ -663,13 +663,13 @@ function formatTodaysPlanSections(
     sessionLongueSupplementaire: sections.sessionLongueSupplementaire.length,
   });
   
-  // Ensure session courte supplémentaire always has a task (even if it's not Phase 2 as fallback)
+  // Ensure extra short session always has a task (even if it's not Phase 2 as fallback)
   if (sections.sessionCourteSupplementaire.length === 0 && phase2Tasks && phase2Tasks.length > 0) {
     console.warn(`[formatTodaysPlanSections] No Phase 2 task found for additional short session, using first available Phase 2 task`);
     const fallbackTask = phase2Tasks.find(t => !usedTaskIds.has(t.id)) || phase2Tasks[0];
     if (fallbackTask) {
       sections.sessionCourteSupplementaire.push(fallbackTask);
-      useTask(fallbackTask);
+      markTaskUsed(fallbackTask);
     }
   }
 
@@ -1012,9 +1012,9 @@ export async function checkBehindScheduleAction(courseId: string) {
       return {
         success: true,
         isBehind: true,
-        warning: `Temps d'étude insuffisant. Minimum requis: ${minimumStudyTime} blocs, disponible: ${blocksAvailable} blocs.`,
+        warning: `Insufficient study time. Minimum required: ${minimumStudyTime} blocks, available: ${blocksAvailable} blocks.`,
         suggestions: [
-          `Augmentez vos heures d'étude de ${additionalHours} heures par semaine`,
+          `Increase your study hours by ${additionalHours} hours per week`,
           "Change the scheduled exam date to allow more time",
         ],
       };
@@ -1038,7 +1038,7 @@ export async function checkBehindScheduleAction(courseId: string) {
       
       if (unlearnedModules > 0) {
         suggestions.push(
-          `Marquez ${unlearnedModules} module(s) comme terminé(s) si vous les avez déjà complétés`
+          `Mark ${unlearnedModules} module(s) as completed if you have already finished them`
         );
       }
       
@@ -1048,7 +1048,7 @@ export async function checkBehindScheduleAction(courseId: string) {
       return {
         success: true,
         isBehind: true,
-        warning: `Vous avez ${pendingToday} tâche(s) en attente aujourd'hui. Vous risquez de prendre du retard.`,
+        warning: `You have ${pendingToday} pending task(s) today. You risk falling behind.`,
         suggestions,
         unlearnedModules,
       };
@@ -1095,4 +1095,3 @@ export async function getModuleProgressAction(courseId: string) {
     return { success: false, error: "Error retrieving progress" };
   }
 }
-

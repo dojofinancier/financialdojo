@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { BookOpen, Clock, ArrowRight, CheckCircle2, GraduationCap, Users } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import Link from "next/link";
 import { isPast } from "date-fns";
 
@@ -64,12 +64,12 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
         <Card>
           <CardContent className="py-12 text-center">
             <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">Aucun cours inscrit</h3>
+            <h3 className="text-lg font-semibold mb-2">No enrolled courses</h3>
             <p className="text-muted-foreground mb-4">
-              Parcourez notre catalogue pour découvrir nos formations
+              Browse our catalog to discover our courses
             </p>
             <Link href="/courses" prefetch={true}>
-              <Button>Voir le catalogue</Button>
+              <Button>View catalog</Button>
             </Link>
           </CardContent>
         </Card>
@@ -77,7 +77,7 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
         <>
           {hasAnyActive && (
             <div>
-              <h2 className="text-xl font-semibold mb-4">Mes formations actives</h2>
+              <h2 className="text-xl font-semibold mb-4">My active courses</h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {/* Course Enrollments */}
                 {activeEnrollments.map((enrollment) => (
@@ -93,15 +93,15 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                       </div>
                       <CardTitle className="text-lg">{enrollment.course.title}</CardTitle>
                       <CardDescription>
-                        Inscrit le {format(new Date(enrollment.purchaseDate), "d MMMM yyyy", { locale: fr })}
+                        Enrolled on {format(new Date(enrollment.purchaseDate), "d MMMM yyyy", { locale: enUS })}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">Expire le</span>
+                          <span className="text-muted-foreground">Expires on</span>
                           <span className="font-medium">
-                            {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: fr })}
+                            {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: enUS })}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -111,14 +111,14 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                               (new Date(enrollment.expiresAt).getTime() - Date.now()) /
                                 (1000 * 60 * 60 * 24)
                             )}{" "}
-                            jours restants
+                            days remaining
                           </span>
                         </div>
                       </div>
                       {/* This route is heavy (loads full course content). Avoid auto-prefetch from dashboard. */}
                       <Link href={`/learn/${enrollment.course.slug || enrollment.course.id}`} prefetch={false}>
                         <Button className="w-full">
-                          Continuer l'apprentissage
+                          Continue learning
                           <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                       </Link>
@@ -132,20 +132,20 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                       <div className="flex items-start justify-between mb-2">
                         <Badge variant="outline" className="flex items-center gap-1">
                           <GraduationCap className="h-3 w-3" />
-                          Cohorte
+                          Cohort
                         </Badge>
                       </div>
                       <CardTitle className="text-lg">{enrollment.cohort.title}</CardTitle>
                       <CardDescription>
-                        Inscrit le {format(new Date(enrollment.purchaseDate), "d MMMM yyyy", { locale: fr })}
+                        Enrolled on {format(new Date(enrollment.purchaseDate), "d MMMM yyyy", { locale: enUS })}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">Expire le</span>
+                          <span className="text-muted-foreground">Expires on</span>
                           <span className="font-medium">
-                            {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: fr })}
+                            {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: enUS })}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -155,14 +155,14 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                               (new Date(enrollment.expiresAt).getTime() - Date.now()) /
                                 (1000 * 60 * 60 * 24)
                             )}{" "}
-                            jours restants
+                            days remaining
                           </span>
                         </div>
                         {enrollment.cohort.instructor && (
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Users className="h-4 w-4" />
                             <span>
-                              Instructeur:{" "}
+                              Instructor:{" "}
                               {enrollment.cohort.instructor.firstName || enrollment.cohort.instructor.lastName
                                 ? `${enrollment.cohort.instructor.firstName || ""} ${enrollment.cohort.instructor.lastName || ""}`.trim()
                                 : enrollment.cohort.instructor.email}
@@ -173,7 +173,7 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                       {/* Cohort learning route can also be heavy; avoid auto-prefetch from dashboard. */}
                       <Link href={`/cohorts/${enrollment.cohort.slug || enrollment.cohort.id}/learn`} prefetch={false}>
                         <Button className="w-full">
-                          Accéder à la cohorte
+                          Go to cohort
                           <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                       </Link>
@@ -186,7 +186,7 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
 
           {hasAnyExpired && (
             <div>
-              <h2 className="text-xl font-semibold mb-4">Formations expirées</h2>
+              <h2 className="text-xl font-semibold mb-4">Expired courses</h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {expiredEnrollments.map((enrollment) => (
                   <Card key={enrollment.id} className="opacity-60">
@@ -201,13 +201,13 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                       </div>
                       <CardTitle className="text-lg">{enrollment.course.title}</CardTitle>
                       <CardDescription>
-                        Expiré le {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: fr })}
+                        Expired on {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: enUS })}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <Link href={`/courses/${enrollment.course.slug || enrollment.course.id}`} prefetch={true}>
                         <Button variant="outline" className="w-full">
-                          Réinscrire
+                          Re-enroll
                         </Button>
                       </Link>
                     </CardContent>
@@ -220,18 +220,18 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                       <div className="flex items-start justify-between mb-2">
                         <Badge variant="outline" className="flex items-center gap-1">
                           <GraduationCap className="h-3 w-3" />
-                          Cohorte
+                          Cohort
                         </Badge>
                       </div>
                       <CardTitle className="text-lg">{enrollment.cohort.title}</CardTitle>
                       <CardDescription>
-                        Expiré le {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: fr })}
+                        Expired on {format(new Date(enrollment.expiresAt), "d MMMM yyyy", { locale: enUS })}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <Link href={`/cohorts/${enrollment.cohort.slug || enrollment.cohort.id}/learn`} prefetch={true}>
                         <Button variant="outline" className="w-full">
-                          Voir les détails
+                          View details
                         </Button>
                       </Link>
                     </CardContent>
@@ -245,4 +245,3 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
     </div>
   );
 }
-

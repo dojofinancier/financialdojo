@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Calendar, ChevronDown, ChevronRight } from "lucide-react";
 import { updatePlanEntryStatusAction } from "@/app/actions/study-plan";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { PlanEntryStatus } from "@prisma/client";
 import { toast } from "sonner";
 import { useWeeklyPlan, type WeekData } from "@/lib/hooks/use-weekly-plan";
@@ -27,7 +27,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
   const [isPending, startTransition] = useTransition(); // For non-blocking updates
   
   const { data: planData, isLoading: loading } = useWeeklyPlan(courseId, refreshKey);
-  const weeks = planData?.weeks || [];
+  const weeks = useMemo(() => planData?.weeks || [], [planData?.weeks]);
   const week1StartDate = planData?.week1StartDate || null;
   const examDate = planData?.examDate || null;
 
@@ -61,11 +61,11 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
   const getStatusBadge = (status: "PENDING" | "IN_PROGRESS" | "COMPLETED") => {
     switch (status) {
       case "COMPLETED":
-        return <Badge variant="default" className="bg-green-500 text-xs">Complété</Badge>;
+        return <Badge variant="default" className="bg-green-500 text-xs">Completed</Badge>;
       case "IN_PROGRESS":
-        return <Badge variant="default" className="bg-blue-500 text-xs">En cours</Badge>;
+        return <Badge variant="default" className="bg-blue-500 text-xs">In progress</Badge>;
       case "PENDING":
-        return <Badge variant="outline" className="text-xs">En attente</Badge>;
+        return <Badge variant="outline" className="text-xs">Pending</Badge>;
       default:
         return null;
     }
@@ -84,10 +84,10 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Plan d'étude</CardTitle>
+          <CardTitle>Study plan</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Chargement...</p>
+          <p className="text-muted-foreground">Loading...</p>
         </CardContent>
       </Card>
     );
@@ -99,9 +99,9 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Plan d'étude
+            Study plan
           </CardTitle>
-          <CardDescription>Aucun plan d'étude disponible</CardDescription>
+          <CardDescription>No study plan available</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -116,13 +116,13 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
         <div>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Plan d'étude
+            Study plan
           </CardTitle>
           <CardDescription>
             {week1StartDate && examDate && (
               <>
-                Du {format(week1StartDate, "d MMMM yyyy", { locale: fr })} au{" "}
-                {format(examDate, "d MMMM yyyy", { locale: fr })}
+                From {format(week1StartDate, "d MMMM yyyy", { locale: enCA })} to{" "}
+                {format(examDate, "d MMMM yyyy", { locale: enCA })}
               </>
             )}
           </CardDescription>
@@ -175,27 +175,27 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
                             <h3 className="font-semibold text-base sm:text-lg truncate">
-                              Semaine {week.weekNumber}
+                              Week {week.weekNumber}
                             </h3>
                             {isCurrentWeek && (
                               <Badge variant="secondary" className="text-xs flex-shrink-0">
-                                Cette semaine
+                                This week
                               </Badge>
                             )}
                             {week.weekNumber === weeks.length && (
                               <Badge variant="outline" className="text-xs flex-shrink-0">
-                                Semaine d'examen
+                                Exam week
                               </Badge>
                             )}
                           </div>
                           <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                            {format(weekStart, "d MMM", { locale: fr })} -{" "}
-                            {format(weekEnd, "d MMM yyyy", { locale: fr })}
+                            {format(weekStart, "d MMM", { locale: enCA })} -{" "}
+                            {format(weekEnd, "d MMM yyyy", { locale: enCA })}
                           </p>
                         </div>
                         <div className="flex w-full items-center justify-between text-xs sm:w-auto sm:flex-col sm:items-end sm:text-right sm:ml-2">
                           <div className="text-xs sm:text-sm font-medium whitespace-nowrap">
-                            {week.completedTasks} / {week.totalTasks} complété
+                            {week.completedTasks} / {week.totalTasks} completed
                           </div>
                           <div className="text-xs text-muted-foreground">
                             {completionPercentage}%
@@ -210,7 +210,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
                       {groupedTasks.LEARN.length > 0 && (
                         <div>
                           <h4 className="text-sm font-semibold mb-2">
-                            Phase 1 - Apprendre
+                            Phase 1 - Learn
                           </h4>
                           <div className="space-y-3 sm:space-y-2 ml-0 sm:ml-6">
                             {groupedTasks.LEARN.map((task, index) => (
@@ -332,7 +332,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
                       {groupedTasks.REVIEW.length > 0 && (
                         <div>
                           <h4 className="text-sm font-semibold mb-2">
-                            Phase 2 - Réviser
+                            Phase 2 - Review
                           </h4>
                           <div className="space-y-3 sm:space-y-2 ml-0 sm:ml-6">
                             {groupedTasks.REVIEW.map((task, index) => (
@@ -454,7 +454,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
                       {groupedTasks.PRACTICE.length > 0 && (
                         <div>
                           <h4 className="text-sm font-semibold mb-2">
-                            Phase 3 - Pratiquer
+                            Phase 3 - Practice
                           </h4>
                           <div className="space-y-3 sm:space-y-2 ml-0 sm:ml-6">
                             {groupedTasks.PRACTICE.map((task, index) => (
@@ -574,7 +574,7 @@ export function StudyPlan({ courseId, refreshKey }: StudyPlanProps) {
 
                       {week.totalTasks === 0 && (
                         <p className="text-sm text-muted-foreground text-center py-4">
-                          Aucune tâche planifiée pour cette semaine
+                          No tasks scheduled for this week
                         </p>
                       )}
                     </div>

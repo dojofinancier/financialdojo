@@ -52,7 +52,7 @@ export function CartSummary({ course, onCouponApplied }: CartSummaryProps) {
         onCouponApplied(couponCode.trim(), discountAmount, finalAmount);
         toast.success("Coupon applied successfully!");
       } else {
-        toast.error(result.error || "Code de coupon invalide");
+        toast.error(result.error || "Invalid coupon code");
       }
     } catch (error) {
       toast.error("Error validating coupon");
@@ -70,33 +70,33 @@ export function CartSummary({ course, onCouponApplied }: CartSummaryProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Résumé de la commande</CardTitle>
-        <CardDescription>Vérifiez les détails avant de procéder au paiement</CardDescription>
+        <CardTitle>Order summary</CardTitle>
+        <CardDescription>Review the details before proceeding to payment</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Course Info */}
         <div className="space-y-2">
           <h3 className="font-semibold">{course.title}</h3>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Prix</span>
+            <span className="text-muted-foreground">Price</span>
             <span className="font-medium">{course.price.toFixed(2)} $</span>
           </div>
         </div>
 
         {/* Coupon Section */}
         <div className="space-y-2 border-t pt-4">
-          <Label htmlFor="coupon">Code de coupon</Label>
+          <Label htmlFor="coupon">Coupon code</Label>
           {!appliedCoupon ? (
             <form onSubmit={handleApplyCoupon} className="flex gap-2">
               <Input
                 id="coupon"
-                placeholder="Entrez le code"
+                placeholder="Enter code"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                 disabled={isValidating}
               />
               <Button type="submit" variant="outline" disabled={isValidating}>
-                {isValidating ? "..." : "Appliquer"}
+                {isValidating ? "..." : "Apply"}
               </Button>
             </form>
           ) : (
@@ -106,7 +106,7 @@ export function CartSummary({ course, onCouponApplied }: CartSummaryProps) {
                   {appliedCoupon.code}
                 </p>
                 <p className="text-xs text-green-600 dark:text-green-500">
-                  Réduction: -{appliedCoupon.discountAmount.toFixed(2)} $
+                  Discount: -{appliedCoupon.discountAmount.toFixed(2)} $
                 </p>
               </div>
               <Button
@@ -115,7 +115,7 @@ export function CartSummary({ course, onCouponApplied }: CartSummaryProps) {
                 size="sm"
                 onClick={handleRemoveCoupon}
               >
-                Retirer
+                Remove
               </Button>
             </div>
           )}
@@ -126,11 +126,11 @@ export function CartSummary({ course, onCouponApplied }: CartSummaryProps) {
           {appliedCoupon && (
             <>
               <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Sous-total</span>
+                <span>Subtotal</span>
                 <span>{course.price.toFixed(2)} $</span>
               </div>
               <div className="flex justify-between text-sm text-green-600">
-                <span>Réduction</span>
+                <span>Discount</span>
                 <span>-{appliedCoupon.discountAmount.toFixed(2)} $</span>
               </div>
             </>

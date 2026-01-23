@@ -26,7 +26,7 @@ import {
 import { toast } from "sonner";
 import { Loader2, Eye, BarChart3 } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -117,13 +117,13 @@ export function SupportTicketList() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "OPEN":
-        return <Badge variant="default">Ouvert</Badge>;
+        return <Badge variant="default">Open</Badge>;
       case "IN_PROGRESS":
-        return <Badge className="bg-blue-500">En cours</Badge>;
+        return <Badge className="bg-blue-500">In progress</Badge>;
       case "RESOLVED":
-        return <Badge className="bg-green-500">Résolu</Badge>;
+        return <Badge className="bg-green-500">Resolved</Badge>;
       case "CLOSED":
-        return <Badge variant="secondary">Fermé</Badge>;
+        return <Badge variant="secondary">Closed</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -134,11 +134,11 @@ export function SupportTicketList() {
       case "URGENT":
         return <Badge variant="destructive">Urgent</Badge>;
       case "HIGH":
-        return <Badge className="bg-orange-500">Élevée</Badge>;
+        return <Badge className="bg-orange-500">High</Badge>;
       case "MEDIUM":
-        return <Badge className="bg-yellow-500">Moyenne</Badge>;
+        return <Badge className="bg-yellow-500">Medium</Badge>;
       case "LOW":
-        return <Badge variant="secondary">Basse</Badge>;
+        return <Badge variant="secondary">Low</Badge>;
       default:
         return <Badge variant="outline">{priority}</Badge>;
     }
@@ -159,11 +159,11 @@ export function SupportTicketList() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tous les statuts</SelectItem>
-              <SelectItem value="OPEN">Ouvert</SelectItem>
-              <SelectItem value="IN_PROGRESS">En cours</SelectItem>
-              <SelectItem value="RESOLVED">Résolu</SelectItem>
-              <SelectItem value="CLOSED">Fermé</SelectItem>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="OPEN">Open</SelectItem>
+              <SelectItem value="IN_PROGRESS">In progress</SelectItem>
+              <SelectItem value="RESOLVED">Resolved</SelectItem>
+              <SelectItem value="CLOSED">Closed</SelectItem>
             </SelectContent>
           </Select>
           <Select value={priorityFilter} onValueChange={setPriorityFilter}>
@@ -171,17 +171,17 @@ export function SupportTicketList() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Toutes les priorités</SelectItem>
+              <SelectItem value="all">All priorities</SelectItem>
               <SelectItem value="URGENT">Urgent</SelectItem>
-              <SelectItem value="HIGH">Élevée</SelectItem>
-              <SelectItem value="MEDIUM">Moyenne</SelectItem>
-              <SelectItem value="LOW">Basse</SelectItem>
+              <SelectItem value="HIGH">High</SelectItem>
+              <SelectItem value="MEDIUM">Medium</SelectItem>
+              <SelectItem value="LOW">Low</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <Button onClick={() => setShowStats(!showStats)} variant="outline">
           <BarChart3 className="h-4 w-4 mr-2" />
-          Statistiques
+          Stats
         </Button>
       </div>
 
@@ -195,19 +195,19 @@ export function SupportTicketList() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Ouverts</CardDescription>
+              <CardDescription>Open</CardDescription>
               <CardTitle className="text-2xl">{stats.openTickets}</CardTitle>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>En cours</CardDescription>
+              <CardDescription>In progress</CardDescription>
               <CardTitle className="text-2xl">{stats.inProgressTickets}</CardTitle>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Urgents</CardDescription>
+              <CardDescription>Urgent</CardDescription>
               <CardTitle className="text-2xl text-destructive">{stats.urgentTickets}</CardTitle>
             </CardHeader>
           </Card>
@@ -220,7 +220,7 @@ export function SupportTicketList() {
         </div>
       ) : tickets.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
-          Aucun ticket trouvé
+          No tickets found
         </div>
       ) : (
         <>
@@ -228,13 +228,13 @@ export function SupportTicketList() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Numéro</TableHead>
-                  <TableHead>Sujet</TableHead>
-                  <TableHead>Étudiant</TableHead>
-                  <TableHead>Priorité</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Assigné à</TableHead>
-                  <TableHead>Réponses</TableHead>
+                  <TableHead>Number</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead>Student</TableHead>
+                  <TableHead>Priority</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Assigned to</TableHead>
+                  <TableHead>Replies</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -254,7 +254,7 @@ export function SupportTicketList() {
                         <div className="font-medium">
                           {ticket.student.firstName || ticket.student.lastName
                             ? `${ticket.student.firstName || ""} ${ticket.student.lastName || ""}`.trim()
-                            : "Sans nom"}
+                            : "No name"}
                         </div>
                         <div className="text-sm text-muted-foreground">{ticket.student.email}</div>
                       </div>
@@ -271,12 +271,12 @@ export function SupportTicketList() {
                           </div>
                         </div>
                       ) : (
-                        <span className="text-muted-foreground">Non assigné</span>
+                        <span className="text-muted-foreground">Unassigned</span>
                       )}
                     </TableCell>
                     <TableCell>{ticket._count.replies}</TableCell>
                     <TableCell className="text-sm">
-                      {format(new Date(ticket.createdAt), "d MMM yyyy", { locale: fr })}
+                      {format(new Date(ticket.createdAt), "d MMM yyyy", { locale: enCA })}
                     </TableCell>
                     <TableCell className="text-right">
                       <Link href={`/dashboard/admin/support-tickets/${ticket.id}`}>

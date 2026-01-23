@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import { sendMessageAction, getThreadMessagesAction, getMessageThreadsAction } f
 import { toast } from "sonner";
 import { Send, Paperclip, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 
 interface MessagingDialogProps {
   open: boolean;
@@ -38,13 +38,7 @@ export function MessagingDialog({
   const [sending, setSending] = useState(false);
   const [attachments, setAttachments] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (open && threadId) {
-      loadMessages();
-    }
-  }, [open, threadId]);
-
-  const loadMessages = async () => {
+  const loadMessages = useCallback(async () => {
     if (!threadId) return;
     try {
       setLoading(true);
@@ -57,7 +51,13 @@ export function MessagingDialog({
     } finally {
       setLoading(false);
     }
-  };
+  }, [threadId]);
+
+  useEffect(() => {
+    if (open && threadId) {
+      loadMessages();
+    }
+  }, [open, threadId, loadMessages]);
 
   const handleSend = async () => {
     if (!message.trim()) {
@@ -102,9 +102,9 @@ export function MessagingDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Poser une question</DialogTitle>
+          <DialogTitle>Ask a question</DialogTitle>
           <DialogDescription>
-            Posez une question à votre instructeur concernant ce contenu
+            Ask your instructor a question about this content
           </DialogDescription>
         </DialogHeader>
 
@@ -115,8 +115,8 @@ export function MessagingDialog({
             </div>
           ) : messages.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              <p>Aucun message pour le moment</p>
-              <p className="text-sm mt-2">Envoyez votre première question ci-dessous</p>
+              <p>No messages yet</p>
+              <p className="text-sm mt-2">Send your first question below</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -137,7 +137,7 @@ export function MessagingDialog({
                       dangerouslySetInnerHTML={{ __html: msg.content }}
                     />
                     <p className="text-xs opacity-70 mt-2">
-                      {format(new Date(msg.createdAt), "d MMM yyyy, HH:mm", { locale: fr })}
+                      {format(new Date(msg.createdAt), "d MMM yyyy, HH:mm", { locale: enCA })}
                     </p>
                   </div>
                 </div>
@@ -151,7 +151,7 @@ export function MessagingDialog({
             <RichTextEditor
               content={message}
               onChange={setMessage}
-              placeholder="Tapez votre question ici..."
+              placeholder="Type your question here..."
             />
           </div>
 
@@ -160,12 +160,12 @@ export function MessagingDialog({
               folder={`messages/${contentItemId}`}
               onUploaded={(url) => handleFileUpload(url)}
               accept="*/*"
-              label="Joindre un fichier"
+               label="Attach a file"
             />
 
             {attachments.length > 0 && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>{attachments.length} fichier(s) joint(s)</span>
+                 <span>{attachments.length} file(s) attached</span>
               </div>
             )}
 
@@ -177,12 +177,12 @@ export function MessagingDialog({
               {sending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Envoi...
+                  Sending...
                 </>
               ) : (
                 <>
                   <Send className="h-4 w-4 mr-2" />
-                  Envoyer
+                  Send
                 </>
               )}
             </Button>

@@ -26,7 +26,7 @@ async function StudentDetailContent({ params }: StudentDetailPageProps) {
         <Link href="/dashboard/admin/students">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour à la liste
+            Back to list
           </Button>
         </Link>
         <h1 className="text-3xl font-bold">
@@ -46,7 +46,7 @@ export default function StudentDetailPage({ params }: StudentDetailPageProps) {
     <Suspense
       fallback={
         <div className="container mx-auto p-6">
-          <div className="text-muted-foreground">Chargement de l'étudiant...</div>
+          <div className="text-muted-foreground">Loading student...</div>
         </div>
       }
     >

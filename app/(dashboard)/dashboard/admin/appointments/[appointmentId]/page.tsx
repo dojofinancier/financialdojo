@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { AppointmentDetails } from "@/components/admin/appointments/appointment-details";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import { Suspense } from "react";
 
 interface AppointmentDetailPageProps {
@@ -28,12 +28,12 @@ async function AppointmentDetailContent({ params }: AppointmentDetailPageProps) 
         <Link href="/dashboard/admin/appointments">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour à la liste
+            Back to list
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Détails du rendez-vous</h1>
+        <h1 className="text-3xl font-bold">Appointment details</h1>
         <p className="text-muted-foreground mt-2">
-          {format(new Date(appointment.scheduledAt), "d MMMM yyyy, HH:mm", { locale: fr })}
+          {format(new Date(appointment.scheduledAt), "d MMMM yyyy, HH:mm", { locale: enUS })}
         </p>
       </div>
       <AppointmentDetails appointment={appointment} />
@@ -46,7 +46,7 @@ export default function AppointmentDetailPage(props: AppointmentDetailPageProps)
     <Suspense
       fallback={
         <div className="container mx-auto p-6">
-          <div className="text-muted-foreground">Chargement du rendez-vous...</div>
+          <div className="text-muted-foreground">Loading appointment...</div>
         </div>
       }
     >

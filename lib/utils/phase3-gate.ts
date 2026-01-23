@@ -60,7 +60,7 @@ export async function checkPhase3Access(
     const moduleList = unlearnedModules
       .map((m) => `Module ${m.order}: ${m.title}`)
       .join(", ");
-    message = `Vous devez marquer tous les modules comme terminés pour accéder à la Phase 3. Modules restants: ${moduleList}`;
+    message = `You must mark all modules as completed to access Phase 3. Remaining modules: ${moduleList}`;
   }
 
   return {

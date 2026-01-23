@@ -57,7 +57,7 @@ export async function uploadQuizCSVAction(
     settingsFields.push(currentField.trim());
     
     if (settingsFields.length < 9 || settingsFields[0] !== "settings") {
-      return { success: false, error: "Format de fichier invalide: ligne settings manquante ou incorrecte" };
+      return { success: false, error: "Invalid file format: missing or incorrect settings line" };
     }
 
     // Parse settings: settings,"Title","",0,minutes,1,10,60,50
@@ -173,7 +173,7 @@ export async function uploadQuizCSVAction(
               },
             });
           } catch (err) {
-            errors.push(`Erreur lors de la création de la question ${currentQuestion.order}: ${err instanceof Error ? err.message : "Unknown error"}`);
+            errors.push(`Error creating question ${currentQuestion.order}: ${err instanceof Error ? err.message : "Unknown error"}`);
           }
         }
 
@@ -195,7 +195,7 @@ export async function uploadQuizCSVAction(
       // Check if it's an answer line
       else if (recordType === "answer") {
         if (!currentQuestion) {
-          errors.push(`Ligne ${i + 1}: Réponse sans question associée`);
+          errors.push(`Line ${i + 1}: Answer without an associated question`);
           continue;
         }
 
@@ -228,7 +228,7 @@ export async function uploadQuizCSVAction(
           },
         });
       } catch (err) {
-        errors.push(`Erreur lors de la création de la dernière question: ${err instanceof Error ? err.message : "Unknown error"}`);
+        errors.push(`Error creating the last question: ${err instanceof Error ? err.message : "Unknown error"}`);
       }
     }
 
@@ -249,7 +249,7 @@ export async function uploadQuizCSVAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error during upload: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -279,7 +279,7 @@ export async function uploadFlashcardCSVAction(
     const chapterIndex = header.indexOf("Chapter");
 
     if (questionIndex === -1 || answerIndex === -1) {
-      return { success: false, error: "Le fichier CSV doit contenir les colonnes 'Question' et 'Answer'" };
+      return { success: false, error: "The CSV file must contain the 'Question' and 'Answer' columns" };
     }
 
     // Get modules to map chapters
@@ -353,7 +353,7 @@ export async function uploadFlashcardCSVAction(
       const chapter = chapterIndex !== -1 ? parseInt(fields[chapterIndex] || "0") : null;
 
       if (!question || !answer) {
-        errors.push(`Ligne ${i + 1}: Question ou réponse manquante`);
+        errors.push(`Line ${i + 1}: Question or answer missing`);
         continue;
       }
 
@@ -399,8 +399,7 @@ export async function uploadFlashcardCSVAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'upload: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error during upload: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
-

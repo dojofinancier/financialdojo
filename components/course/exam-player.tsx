@@ -79,6 +79,9 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
   const answersRef = useRef<Record<string, string>>({});
   const timeRemainingRef = useRef<number | null>(null);
   const currentQuestionIndexRef = useRef<number>(0);
+  const examRef = useRef<Exam | null>(null);
+  const submittedRef = useRef(false);
+  const handleTimeUpRef = useRef<() => void>(() => {});
 
   const storageKey = `${STORAGE_KEY_PREFIX}${examId}`;
 
@@ -95,21 +98,83 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
     currentQuestionIndexRef.current = currentQuestionIndex;
   }, [currentQuestionIndex]);
 
-  // Load exam and restore state
   useEffect(() => {
-    loadExam();
-    return () => {
-      // Cleanup intervals
-      if (autoSaveIntervalRef.current) {
-        clearInterval(autoSaveIntervalRef.current);
-      }
-      if (timerIntervalRef.current) {
-        clearInterval(timerIntervalRef.current);
-      }
-    };
-  }, [examId]);
+    examRef.current = exam;
+  }, [exam]);
 
-  const loadExam = async () => {
+  useEffect(() => {
+    submittedRef.current = submitted;
+  }, [submitted]);
+
+  const startTimer = useCallback((initialTime: number) => {
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+    }
+
+    timeRemainingRef.current = initialTime;
+
+    timerIntervalRef.current = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev === null || prev <= 0) {
+          if (timerIntervalRef.current) {
+            clearInterval(timerIntervalRef.current);
+          }
+          timeRemainingRef.current = 0;
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify({
+              answers: answersRef.current,
+              timeRemaining: 0,
+              currentQuestionIndex: currentQuestionIndexRef.current,
+            })
+          );
+          handleTimeUpRef.current();
+          return 0;
+        }
+
+        const newTime = prev - 1;
+        timeRemainingRef.current = newTime;
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            answers: answersRef.current,
+            timeRemaining: newTime,
+            currentQuestionIndex: currentQuestionIndexRef.current,
+          })
+        );
+        return newTime;
+      });
+    }, 1000);
+  }, [storageKey]);
+
+  const startAutoSave = useCallback((examId: string, initialAnswers: Record<string, string>) => {
+    if (autoSaveIntervalRef.current) {
+      clearInterval(autoSaveIntervalRef.current);
+    }
+
+    autoSaveIntervalRef.current = setInterval(async () => {
+      const currentExam = examRef.current;
+      if (currentExam && !submittedRef.current) {
+        const timeSpent = currentExam.timeLimit
+          ? currentExam.timeLimit - (timeRemainingRef.current || 0)
+          : undefined;
+
+        await saveExamAnswersAction(examId, answersRef.current, timeSpent || 0);
+
+        // Also save to localStorage (including current question index)
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            answers: answersRef.current,
+            timeRemaining: timeRemainingRef.current,
+            currentQuestionIndex: currentQuestionIndexRef.current,
+          })
+        );
+      }
+    }, AUTO_SAVE_INTERVAL);
+  }, [storageKey]);
+
+  const loadExam = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getExamForTakingAction(examId);
@@ -194,89 +259,23 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [examId, storageKey, onExit, startAutoSave, startTimer]);
 
-  const startTimer = (initialTime: number) => {
-    if (timerIntervalRef.current) {
-      clearInterval(timerIntervalRef.current);
-    }
-
-    timerIntervalRef.current = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev === null || prev <= 0) {
-          if (timerIntervalRef.current) {
-            clearInterval(timerIntervalRef.current);
-          }
-          handleTimeUp();
-          return 0;
-        }
-
-        const newTime = prev - 1;
-        timeRemainingRef.current = newTime;
-        // Save to localStorage (including current question index)
-        localStorage.setItem(
-          storageKey,
-          JSON.stringify({
-            answers: answersRef.current,
-            timeRemaining: newTime,
-            currentQuestionIndex: currentQuestionIndexRef.current,
-          })
-        );
-        return newTime;
-      });
-    }, 1000);
-  };
-
-  const startAutoSave = (examId: string, initialAnswers: Record<string, string>) => {
-    if (autoSaveIntervalRef.current) {
-      clearInterval(autoSaveIntervalRef.current);
-    }
-
-    autoSaveIntervalRef.current = setInterval(async () => {
-      if (exam && !submitted) {
-        const timeSpent = exam.timeLimit
-          ? exam.timeLimit - (timeRemainingRef.current || 0)
-          : undefined;
-
-        await saveExamAnswersAction(examId, answersRef.current, timeSpent || 0);
-        
-        // Also save to localStorage (including current question index)
-        localStorage.setItem(
-          storageKey,
-          JSON.stringify({
-            answers: answersRef.current,
-            timeRemaining: timeRemainingRef.current,
-            currentQuestionIndex: currentQuestionIndexRef.current,
-          })
-        );
+  // Load exam and restore state
+  useEffect(() => {
+    loadExam();
+    return () => {
+      // Cleanup intervals
+      if (autoSaveIntervalRef.current) {
+        clearInterval(autoSaveIntervalRef.current);
       }
-    }, AUTO_SAVE_INTERVAL);
-  };
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    };
+  }, [loadExam]);
 
-  const handleTimeUp = async () => {
-    if (submitted || submitting) return;
-
-    toast.warning("Time is up. The exam is being submitted...");
-    await handleSubmit(true);
-  };
-
-  const handleAnswerChange = (questionId: string, answer: string) => {
-    const newAnswers = { ...answers, [questionId]: answer };
-    setAnswers(newAnswers);
-    answersRef.current = newAnswers;
-
-    // Save to localStorage immediately (including current question index)
-    localStorage.setItem(
-      storageKey,
-      JSON.stringify({
-        answers: newAnswers,
-        timeRemaining: timeRemainingRef.current,
-        currentQuestionIndex: currentQuestionIndexRef.current,
-      })
-    );
-  };
-
-  const handleSubmit = async (isTimeUp: boolean = false) => {
+  const handleSubmit = useCallback(async (isTimeUp: boolean = false) => {
     if (submitting || submitted) return;
 
     setSubmitting(true);
@@ -315,6 +314,33 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
     } finally {
       setSubmitting(false);
     }
+  }, [answers, exam, examId, storageKey, submitted, submitting, timeRemaining]);
+
+  const handleTimeUp = useCallback(async () => {
+    if (submitted || submitting) return;
+
+    toast.warning("Time is up. The exam is being submitted...");
+    await handleSubmit(true);
+  }, [handleSubmit, submitted, submitting]);
+
+  useEffect(() => {
+    handleTimeUpRef.current = handleTimeUp;
+  }, [handleTimeUp]);
+
+  const handleAnswerChange = (questionId: string, answer: string) => {
+    const newAnswers = { ...answers, [questionId]: answer };
+    setAnswers(newAnswers);
+    answersRef.current = newAnswers;
+
+    // Save to localStorage immediately (including current question index)
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify({
+        answers: newAnswers,
+        timeRemaining: timeRemainingRef.current,
+        currentQuestionIndex: currentQuestionIndexRef.current,
+      })
+    );
   };
 
   const formatTime = (seconds: number) => {
@@ -383,13 +409,13 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
         <CardContent className="py-4">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-muted-foreground">Examen en cours</div>
+              <div className="text-sm text-muted-foreground">Exam in progress</div>
               <div className="text-lg font-semibold">{exam.title}</div>
             </div>
             <div className="flex items-center gap-6">
               {exam.timeLimit && timeRemaining !== null && (
                 <div className="text-right">
-                  <div className="text-sm text-muted-foreground">Temps restant</div>
+                  <div className="text-sm text-muted-foreground">Time remaining</div>
                   <div
                     className={`text-lg font-semibold flex items-center gap-2 ${
                       timeRemaining < 300 ? "text-red-600" : ""
@@ -401,13 +427,13 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
                 </div>
               )}
               <div className="text-right">
-                <div className="text-sm text-muted-foreground">Progression</div>
+                 <div className="text-sm text-muted-foreground">Progress</div>
                 <div className="text-lg font-semibold">
                   {currentQuestionIndex + 1} / {exam.questions.length}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-sm text-muted-foreground">Répondues</div>
+                 <div className="text-sm text-muted-foreground">Answered</div>
                 <div className="text-lg font-semibold">
                   {answeredCount} / {exam.questions.length}
                 </div>
@@ -422,7 +448,7 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            Question {currentQuestionIndex + 1} sur {exam.questions.length}
+            Question {currentQuestionIndex + 1} of {exam.questions.length}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -469,12 +495,12 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
               disabled={currentQuestionIndex === 0}
             >
               <ChevronLeft className="h-4 w-4 mr-2" />
-              Précédent
+              Previous
             </Button>
 
             <div className="flex gap-2">
               <Button variant="outline" onClick={onExit}>
-                Quitter
+                Exit
               </Button>
               {currentQuestionIndex < exam.questions.length - 1 ? (
                 <Button
@@ -493,7 +519,7 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
                     );
                   }}
                 >
-                  Suivant
+                  Next
                   <ChevronRight className="h-4 w-4 ml-2" />
                 </Button>
               ) : (
@@ -501,10 +527,10 @@ export function ExamPlayer({ examId, onExit }: ExamPlayerProps) {
                   {submitting ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Soumission...
+                      Submitting...
                     </>
                   ) : (
-                    "Soumettre l'examen"
+                    "Submit exam"
                   )}
                 </Button>
               )}

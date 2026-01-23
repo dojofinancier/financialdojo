@@ -55,7 +55,7 @@ export default async function ArticleListingPage({ searchParams }: ArticlePagePr
         <header className="mb-12">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">Articles</h1>
           <p className="text-xl text-gray-600 max-w-3xl">
-            Explorez nos articles sur la finance, l'investissement et la gestion financière.
+            Explore our articles on finance, investing, and financial management.
           </p>
         </header>
 

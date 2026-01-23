@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -140,11 +140,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
     explanation: "",
   });
 
-  useEffect(() => {
-    loadCaseStudies();
-  }, [courseId]);
-
-  const loadCaseStudies = async () => {
+  const loadCaseStudies = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getCaseStudiesAction(courseId);
@@ -164,7 +160,11 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadCaseStudies();
+  }, [loadCaseStudies]);
 
   const loadFullCaseStudy = async (caseStudyId: string) => {
     try {
@@ -451,7 +451,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
     return (
       <div className="flex items-center justify-center py-12 text-muted-foreground gap-2">
         <Loader2 className="h-5 w-5 animate-spin" />
-        Chargement des études de cas...
+        Loading case studies...
       </div>
     );
   }
@@ -460,29 +460,29 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold">Études de cas</h2>
+          <h2 className="text-2xl font-semibold">Case studies</h2>
           <p className="text-sm text-muted-foreground">
-            Gérez les études de cas pour la Phase 3 (Pratique). Chaque cas contient un récit et 10 questions à choix multiples.
+            Manage case studies for Phase 3 (Practice). Each case contains a narrative and 10 multiple-choice questions.
           </p>
         </div>
         <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Upload className="h-4 w-4 mr-2" />
-              Importer une étude de cas
+              Import a case study
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Importer une étude de cas</DialogTitle>
+              <DialogTitle>Import a case study</DialogTitle>
               <DialogDescription>
-                Importez une étude de cas depuis deux fichiers JSON : le récit (narrative) et les questions (MCQ).
-                Les fichiers doivent avoir le même case_id.
+                Import a case study from two JSON files: the narrative and the MCQ questions.
+                The files must share the same case_id.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="narrative-file">Fichier Narrative JSON *</Label>
+                <Label htmlFor="narrative-file">Narrative JSON file *</Label>
                 <Input
                   id="narrative-file"
                   type="file"
@@ -491,7 +491,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="mcq-file">Fichier MCQ JSON *</Label>
+                <Label htmlFor="mcq-file">MCQ JSON file *</Label>
                 <Input
                   id="mcq-file"
                   type="file"
@@ -502,7 +502,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
               {importing && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Importation en cours...
+                  Importing...
                 </div>
               )}
               <div className="flex justify-end gap-2 pt-4">
@@ -511,16 +511,16 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                   onClick={() => setImportDialogOpen(false)}
                   disabled={importing}
                 >
-                  Annuler
+                  Cancel
                 </Button>
                 <Button onClick={handleImport} disabled={importing}>
                   {importing ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Importation...
+                      Importing...
                     </>
                   ) : (
-                    "Importer"
+                    "Import"
                   )}
                 </Button>
               </div>
@@ -534,11 +534,11 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
           <CardContent className="py-12 text-center">
             <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-muted-foreground mb-4">
-              Aucune étude de cas pour le moment.
+              No case studies yet.
             </p>
             <Button onClick={() => setImportDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Importer une étude de cas
+              Import a case study
             </Button>
           </CardContent>
         </Card>
@@ -547,9 +547,9 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Numéro</TableHead>
+                <TableHead>Number</TableHead>
                 <TableHead>Titre</TableHead>
-                <TableHead>Thème</TableHead>
+                <TableHead>Theme</TableHead>
                 <TableHead>Questions</TableHead>
                 <TableHead>Tentatives</TableHead>
                 <TableHead className="w-[200px]">Actions</TableHead>
@@ -559,7 +559,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
               {caseStudies.map((caseStudy) => (
                 <TableRow key={caseStudy.id}>
                   <TableCell>
-                    <Badge variant="outline">Cas {caseStudy.caseNumber}</Badge>
+                    <Badge variant="outline">Case {caseStudy.caseNumber}</Badge>
                   </TableCell>
                   <TableCell className="font-medium">{caseStudy.title}</TableCell>
                   <TableCell>{caseStudy.theme || "-"}</TableCell>
@@ -604,15 +604,15 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
           <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0">
-            <DialogTitle>Modifier l'étude de cas</DialogTitle>
+            <DialogTitle>Edit case study</DialogTitle>
             <DialogDescription>
-              Modifiez les informations de l'étude de cas et le récit.
+              Edit case study details and narrative.
             </DialogDescription>
           </DialogHeader>
           <div className="flex-1 min-h-0 overflow-y-auto px-6">
             <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-title">Titre *</Label>
+              <Label htmlFor="edit-title">Title *</Label>
               <Input
                 id="edit-title"
                 value={caseStudyFormState.title}
@@ -622,7 +622,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-theme">Thème</Label>
+              <Label htmlFor="edit-theme">Theme</Label>
               <Input
                 id="edit-theme"
                 value={caseStudyFormState.theme}
@@ -632,7 +632,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-passing-score">Note de passage (%)</Label>
+              <Label htmlFor="edit-passing-score">Passing score (%)</Label>
               <Input
                 id="edit-passing-score"
                 type="number"
@@ -648,11 +648,11 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
               />
             </div>
             <div className="space-y-4">
-              <Label>Récit *</Label>
+              <Label>Narrative *</Label>
               
               {/* Introduction Box */}
               <div className="space-y-2">
-                <Label htmlFor="edit-intro">Boîte d'introduction</Label>
+                <Label htmlFor="edit-intro">Introduction box</Label>
                 <Textarea
                   id="edit-intro"
                   rows={4}
@@ -663,7 +663,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                       introductionBox: e.target.value,
                     })
                   }
-                  placeholder="Texte d'introduction du cas..."
+                  placeholder="Case introduction text..."
                 />
               </div>
 
@@ -678,7 +678,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                     onClick={addSection}
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Ajouter une section
+                    Add section
                   </Button>
                 </div>
                 <div className="space-y-4">
@@ -701,29 +701,29 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <div className="space-y-2">
-                            <Label>Titre de la section</Label>
+                            <Label>Section title</Label>
                             <Input
                               value={section.title}
                               onChange={(e) =>
                                 updateSection(sectionIndex, "title", e.target.value)
                               }
-                              placeholder="Titre de la section..."
+                              placeholder="Section title..."
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label>Contenu</Label>
+                            <Label>Content</Label>
                             <Textarea
                               rows={6}
                               value={section.content}
                               onChange={(e) =>
                                 updateSection(sectionIndex, "content", e.target.value)
                               }
-                              placeholder="Contenu de la section..."
+                              placeholder="Section content..."
                             />
                           </div>
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                              <Label>Tableaux</Label>
+                                <Label>Tables</Label>
                               <Button
                                 type="button"
                                 variant="outline"
@@ -731,7 +731,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                                 onClick={() => addTable(sectionIndex)}
                               >
                                 <Plus className="h-4 w-4 mr-2" />
-                                Ajouter un tableau
+                                  Add table
                               </Button>
                             </div>
                             {section.tables.map((table, tableIndex) => (
@@ -739,7 +739,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                                 <CardHeader className="pb-3">
                                   <div className="flex items-center justify-between">
                                     <CardTitle className="text-sm">
-                                      Tableau {tableIndex + 1}
+                                      Table {tableIndex + 1}
                                     </CardTitle>
                                     <Button
                                       type="button"
@@ -753,7 +753,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                                 </CardHeader>
                                 <CardContent className="space-y-2">
                                   <div className="space-y-2">
-                                    <Label>Titre du tableau</Label>
+                                    <Label>Table title</Label>
                                     <Input
                                       value={table.title}
                                       onChange={(e) =>
@@ -763,7 +763,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                                     />
                                   </div>
                                   <div className="space-y-2">
-                                    <Label>Contenu Markdown</Label>
+                                    <Label>Markdown content</Label>
                                     <Textarea
                                       rows={4}
                                       className="font-mono text-sm"
@@ -774,7 +774,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                                       placeholder="Table in Markdown format..."
                                     />
                                     <p className="text-xs text-muted-foreground">
-                                      Utilisez la syntaxe Markdown pour les tableaux
+                                      Use Markdown table syntax
                                     </p>
                                   </div>
                                 </CardContent>
@@ -800,7 +800,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                       closing: e.target.value,
                     })
                   }
-                  placeholder="Texte de conclusion..."
+                  placeholder="Closing text..."
                 />
               </div>
             </div>
@@ -808,10 +808,10 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
           </div>
           <div className="flex justify-end gap-2 px-6 py-4 border-t flex-shrink-0">
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-              Annuler
+              Cancel
             </Button>
             <Button onClick={handleUpdateCaseStudy}>
-              Enregistrer
+              Save
             </Button>
           </div>
         </DialogContent>
@@ -825,7 +825,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
               Questions - {editingCaseStudy?.title}
             </DialogTitle>
             <DialogDescription>
-              Gérez les questions de cette étude de cas. Chaque cas doit contenir exactement 10 questions.
+              Manage questions for this case study. Each case must contain exactly 10 questions.
             </DialogDescription>
           </DialogHeader>
           <div className="flex-1 min-h-0 mt-4">
@@ -879,7 +879,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                         </div>
                         {question.explanation && (
                           <div className="mt-2 p-2 bg-muted rounded text-sm">
-                            <span className="font-semibold">Explication:</span> {question.explanation}
+                            <span className="font-semibold">Explanation:</span> {question.explanation}
                           </div>
                         )}
                       </CardContent>
@@ -891,7 +891,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
           </div>
           <div className="flex justify-end gap-2 pt-4 border-t flex-shrink-0">
             <Button variant="outline" onClick={() => setQuestionsDialogOpen(false)}>
-              Fermer
+              Close
             </Button>
           </div>
         </DialogContent>
@@ -901,9 +901,9 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
       <Dialog open={questionEditDialogOpen} onOpenChange={setQuestionEditDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Modifier la question</DialogTitle>
+            <DialogTitle>Edit question</DialogTitle>
             <DialogDescription>
-              Modifiez les détails de la question.
+              Edit question details.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
@@ -961,7 +961,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-correct-answer">Réponse correcte *</Label>
+              <Label htmlFor="edit-correct-answer">Correct answer *</Label>
               <Select
                 value={questionFormState.correctAnswer}
                 onValueChange={(value) =>
@@ -980,7 +980,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-explanation">Explication</Label>
+              <Label htmlFor="edit-explanation">Explanation</Label>
               <Textarea
                 id="edit-explanation"
                 value={questionFormState.explanation}
@@ -992,10 +992,10 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={() => setQuestionEditDialogOpen(false)}>
-                Annuler
+                Cancel
               </Button>
               <Button onClick={handleUpdateQuestion}>
-                Enregistrer
+                Save
               </Button>
             </div>
           </div>
@@ -1006,14 +1006,14 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Supprimer l'étude de cas</DialogTitle>
+            <DialogTitle>Delete case study</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer cette étude de cas ? Toutes les questions et tentatives associées seront également supprimées.
+              Are you sure you want to delete this case study? All associated questions and attempts will also be deleted.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2 mt-4">
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Annuler
+              Cancel
             </Button>
             <Button
               variant="destructive"
@@ -1025,7 +1025,7 @@ export function CaseStudyManager({ courseId }: CaseStudyManagerProps) {
                 }
               }}
             >
-              Supprimer
+              Delete
             </Button>
           </div>
         </DialogContent>

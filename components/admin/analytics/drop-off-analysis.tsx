@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 
 interface DropOffAnalysisProps {
   courseId: string;
@@ -64,14 +64,14 @@ export function DropOffAnalysis({ courseId }: DropOffAnalysisProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Analyse de décrochage</h2>
+          <h2 className="text-2xl font-bold">Drop-off analysis</h2>
           <p className="text-muted-foreground">
-            Points de décrochage communs et étudiants à risque
+            Common drop-off points and at-risk students
           </p>
         </div>
         <Button onClick={loadData} variant="outline" size="sm">
           <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
+          Refresh
         </Button>
       </div>
 
@@ -79,7 +79,7 @@ export function DropOffAnalysis({ courseId }: DropOffAnalysisProps) {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Étudiants à risque</CardDescription>
+            <CardDescription>At-risk students</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-yellow-500" />
               {analysisData?.atRiskStudents || 0}
@@ -87,14 +87,14 @@ export function DropOffAnalysis({ courseId }: DropOffAnalysisProps) {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              Inactifs depuis plus de 14 jours
+              Inactive for more than 14 days
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Temps moyen jusqu'à décrochage</CardDescription>
+            <CardDescription>Average time to drop-off</CardDescription>
             <CardTitle className="text-2xl">
               {analysisData?.averageTimeToDropOff
                 ? Math.round(analysisData.averageTimeToDropOff)
@@ -102,17 +102,17 @@ export function DropOffAnalysis({ courseId }: DropOffAnalysisProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Jours</p>
+            <p className="text-xs text-muted-foreground">Days</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total étudiants</CardDescription>
+            <CardDescription>Total students</CardDescription>
             <CardTitle className="text-2xl">{analysisData?.totalStudents || 0}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Dans ce cours</p>
+            <p className="text-xs text-muted-foreground">In this course</p>
           </CardContent>
         </Card>
       </div>
@@ -123,10 +123,10 @@ export function DropOffAnalysis({ courseId }: DropOffAnalysisProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingDown className="h-5 w-5" />
-              Points de décrochage communs
+              Common drop-off points
             </CardTitle>
             <CardDescription>
-              Modules où les étudiants arrêtent le plus souvent
+              Modules where students stop most often
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -146,7 +146,7 @@ export function DropOffAnalysis({ courseId }: DropOffAnalysisProps) {
                   </div>
                   <div className="text-right">
                     <p className="font-bold">{point.count}</p>
-                    <p className="text-xs text-muted-foreground">Étudiants</p>
+                    <p className="text-xs text-muted-foreground">Students</p>
                   </div>
                 </div>
               ))}
@@ -161,10 +161,10 @@ export function DropOffAnalysis({ courseId }: DropOffAnalysisProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
-              Étudiants à risque
+              At-risk students
             </CardTitle>
             <CardDescription>
-              Étudiants inactifs depuis plus de 14 jours
+              Students inactive for more than 14 days
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -172,11 +172,11 @@ export function DropOffAnalysis({ courseId }: DropOffAnalysisProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Étudiant</TableHead>
-                    <TableHead>Dernière activité</TableHead>
-                    <TableHead>Jours d'inactivité</TableHead>
-                    <TableHead>Dernier module</TableHead>
-                    <TableHead>Progression</TableHead>
+                    <TableHead>Student</TableHead>
+                    <TableHead>Last activity</TableHead>
+                    <TableHead>Days inactive</TableHead>
+                    <TableHead>Last module</TableHead>
+                    <TableHead>Progress</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -185,12 +185,12 @@ export function DropOffAnalysis({ courseId }: DropOffAnalysisProps) {
                       <TableCell className="font-medium">{student.userEmail}</TableCell>
                       <TableCell>
                         {student.lastActivity
-                          ? format(new Date(student.lastActivity), "d MMM yyyy", { locale: fr })
-                          : "Jamais"}
+                          ? format(new Date(student.lastActivity), "d MMM yyyy", { locale: enUS })
+                          : "Never"}
                       </TableCell>
                       <TableCell>
                         <Badge variant="destructive">
-                          {student.daysSinceLastActivity} jours
+                          {student.daysSinceLastActivity} days
                         </Badge>
                       </TableCell>
                       <TableCell>

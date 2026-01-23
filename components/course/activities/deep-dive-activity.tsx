@@ -49,18 +49,18 @@ export function DeepDiveActivity({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Info className="h-5 w-5" />
-            Approfondissement
+            Deep dive
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Cette activité ne sera pas notée automatiquement. Votre instructeur examinera vos réponses et vous fournira des commentaires.
+            This activity will not be graded automatically. Your instructor will review your responses and provide feedback.
           </p>
         </CardContent>
       </Card>
 
       <div>
-        <Label className="text-base font-semibold">Sujet</Label>
+        <Label className="text-base font-semibold">Topic</Label>
         <p className="text-lg mt-2 font-semibold">{content.topic}</p>
       </div>
 
@@ -86,7 +86,7 @@ export function DeepDiveActivity({
         <Card className="border-green-200 bg-green-50">
           <CardContent className="pt-6">
             <p className="text-sm text-green-800">
-              ✓ Votre réponse a été soumise. L'instructeur vous fournira des commentaires sous peu.
+              ✓ Your response has been submitted. The instructor will provide feedback shortly.
             </p>
           </CardContent>
         </Card>

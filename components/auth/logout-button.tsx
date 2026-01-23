@@ -16,7 +16,7 @@ export function LogoutButton() {
 
   return (
     <Button variant="outline" onClick={handleLogout}>
-      Se déconnecter
+      Sign out
     </Button>
   );
 }

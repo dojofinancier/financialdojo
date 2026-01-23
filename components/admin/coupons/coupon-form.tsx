@@ -142,7 +142,7 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-4xl">
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="code">Code du coupon *</Label>
+          <Label htmlFor="code">Coupon code *</Label>
           <Input
             id="code"
             {...register("code")}
@@ -158,7 +158,7 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="discountType">Type de réduction *</Label>
+          <Label htmlFor="discountType">Discount type *</Label>
           <Select
             value={discountType}
             onValueChange={(value: "PERCENTAGE" | "FIXED") =>
@@ -169,8 +169,8 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="PERCENTAGE">Pourcentage</SelectItem>
-              <SelectItem value="FIXED">Montant fixe ($)</SelectItem>
+              <SelectItem value="PERCENTAGE">Percentage</SelectItem>
+              <SelectItem value="FIXED">Fixed amount ($)</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -179,7 +179,7 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="discountValue">
-            {discountType === "PERCENTAGE" ? "Pourcentage (%) *" : "Montant ($) *"}
+            {discountType === "PERCENTAGE" ? "Percentage (%) *" : "Amount ($) *"}
           </Label>
           <Input
             id="discountValue"
@@ -198,7 +198,7 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="usageLimit">Limite d'utilisation</Label>
+          <Label htmlFor="usageLimit">Usage limit</Label>
           <Input
             id="usageLimit"
             type="number"
@@ -207,14 +207,14 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
             placeholder="Unlimited if empty"
           />
           <p className="text-xs text-muted-foreground">
-            Laissez vide pour un usage illimité
+            Leave empty for unlimited use
           </p>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="validFrom">Valide du *</Label>
+          <Label htmlFor="validFrom">Valid from *</Label>
           <Input
             id="validFrom"
             type="date"
@@ -228,7 +228,7 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="validUntil">Valide jusqu'au *</Label>
+          <Label htmlFor="validUntil">Valid until *</Label>
           <Input
             id="validUntil"
             type="date"
@@ -255,17 +255,17 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
             }}
           />
           <Label htmlFor="applyToAll" className="cursor-pointer">
-            Applicable à tous les cours
+            Applies to all courses
           </Label>
         </div>
 
         {!applyToAllCourses && (
           <div className="space-y-2">
-            <Label>Cours applicables</Label>
+            <Label>Applicable courses</Label>
             <div className="border rounded-md p-4 max-h-60 overflow-y-auto">
               {courses.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  Aucun cours disponible
+                  No courses available
                 </p>
               ) : (
                 <div className="space-y-2">
@@ -307,7 +307,7 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
           className="h-4 w-4 rounded border-gray-300"
         />
         <Label htmlFor="active" className="cursor-pointer">
-          Coupon actif
+          Active coupon
         </Label>
       </div>
 
@@ -316,7 +316,7 @@ export function CouponForm({ couponId, initialData, onSuccess }: CouponFormProps
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Enregistrement...
+              Saving...
             </>
           ) : couponId ? (
             "Update"

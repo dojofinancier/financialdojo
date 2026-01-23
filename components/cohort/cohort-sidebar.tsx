@@ -219,7 +219,7 @@ export function CohortSidebar({
             </Button>
           )}
 
-          {/* Phase 2 - Réviser */}
+          {/* Phase 2 - Review */}
           <Button
             variant={activeItem === "review" ? "default" : "ghost"}
             className={cn(
@@ -286,7 +286,7 @@ export function CohortSidebar({
             {!isCollapsed && "Outils d'apprentissage"}
           </Button>
 
-          {/* Progrès et statistiques */}
+          {/* Progress and stats */}
           <Button
             variant={activeItem === "progress" ? "default" : "ghost"}
             className={cn(
@@ -324,7 +324,6 @@ export function CohortSidebar({
     </aside>
   );
 }
-
 
 
 

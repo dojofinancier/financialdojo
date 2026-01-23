@@ -89,13 +89,13 @@ export function UserMenu({ user }: UserMenuProps) {
               {user.email}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              Rôle: {getRoleLabel(user.role)}
+              Role: {getRoleLabel(user.role)}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="text-xs sm:text-sm cursor-pointer">
-          Se déconnecter
+          Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

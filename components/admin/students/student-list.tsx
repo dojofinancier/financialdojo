@@ -27,7 +27,7 @@ import {
 import { toast } from "sonner";
 import { Loader2, Eye, Ban, CheckCircle2, Mail, Phone } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import Link from "next/link";
 import type { User } from "@prisma/client";
 
@@ -118,12 +118,12 @@ export function StudentList() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tous</SelectItem>
-            <SelectItem value="active">Actifs</SelectItem>
-            <SelectItem value="suspended">Suspendus</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="suspended">Suspended</SelectItem>
           </SelectContent>
         </Select>
         <Button onClick={() => loadStudents()} variant="outline">
-          Rechercher
+          Search
         </Button>
       </div>
 
@@ -133,7 +133,7 @@ export function StudentList() {
         </div>
       ) : students.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
-          Aucun étudiant trouvé
+          No students found
         </div>
       ) : (
         <>
@@ -141,12 +141,12 @@ export function StudentList() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Étudiant</TableHead>
+                  <TableHead>Student</TableHead>
                   <TableHead>Contact</TableHead>
-                  <TableHead>Inscriptions</TableHead>
-                  <TableHead>Progression</TableHead>
-                  <TableHead>Date d'inscription</TableHead>
-                  <TableHead>Statut</TableHead>
+                  <TableHead>Enrollments</TableHead>
+                  <TableHead>Progress</TableHead>
+                  <TableHead>Signup date</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -158,7 +158,7 @@ export function StudentList() {
                         <div className="font-medium">
                           {student.firstName || student.lastName
                             ? `${student.firstName || ""} ${student.lastName || ""}`.trim()
-                            : "Sans nom"}
+                            : "No name"}
                         </div>
                         <div className="text-sm text-muted-foreground">{student.email}</div>
                       </div>
@@ -181,16 +181,16 @@ export function StudentList() {
                       <Badge variant="outline">{student._count.enrollments}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary">{student._count.progressTracking} éléments</Badge>
+                      <Badge variant="secondary">{student._count.progressTracking} items</Badge>
                     </TableCell>
                     <TableCell className="text-sm">
-                      {format(new Date(student.createdAt), "d MMM yyyy", { locale: fr })}
+                      {format(new Date(student.createdAt), "d MMM yyyy", { locale: enCA })}
                     </TableCell>
                     <TableCell>
                       {student.suspendedAt ? (
-                        <Badge variant="destructive">Suspendu</Badge>
+                        <Badge variant="destructive">Suspended</Badge>
                       ) : (
-                        <Badge className="bg-primary">Actif</Badge>
+                        <Badge className="bg-primary">Active</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">

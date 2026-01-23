@@ -28,7 +28,7 @@ export function CohortCatalog({ initialCohorts }: CohortCatalogProps) {
   const router = useRouter();
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("fr-FR", {
+    return new Date(date).toLocaleDateString("en-CA", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -51,10 +51,10 @@ export function CohortCatalog({ initialCohorts }: CohortCatalogProps) {
       {openCohorts.length === 0 ? (
         <div className="border-4 border-black p-10 text-center">
           <div className="font-mono text-xs uppercase tracking-[0.3em] text-black/60 mb-3">
-            [0 résultat]
+            [0 results]
           </div>
           <div className="text-2xl font-black uppercase tracking-tight">
-            Aucune cohorte disponible
+            No cohorts available
           </div>
         </div>
       ) : (
@@ -88,16 +88,16 @@ export function CohortCatalog({ initialCohorts }: CohortCatalogProps) {
                     <div className="flex items-center gap-2 mb-2">
                       <GraduationCap className="h-4 w-4 text-primary" />
                       <div className="font-mono text-xs uppercase tracking-[0.25em] text-black/60">
-                        Cohorte professionnelle
+                        Professional cohort
                       </div>
                     </div>
                     {spots > 0 ? (
                       <div className="mt-2 inline-block border-2 border-black px-2 py-1 font-mono text-xs uppercase tracking-wider bg-primary text-black">
-                        {spots} place{spots !== 1 ? "s" : ""} disponible{spots !== 1 ? "s" : ""}
+                        {spots} spot{spots !== 1 ? "s" : ""} available
                       </div>
                     ) : (
                       <div className="mt-2 inline-block border-2 border-black px-2 py-1 font-mono text-xs uppercase tracking-wider bg-black text-white">
-                        Complet
+                        Full
                       </div>
                     )}
                   </div>
@@ -111,7 +111,7 @@ export function CohortCatalog({ initialCohorts }: CohortCatalogProps) {
                 </h3>
 
                 <p className="mt-4 text-base leading-relaxed opacity-80 line-clamp-4">
-                  {cohort.description ? stripHtmlAndDecode(cohort.description) : "Aucune description disponible"}
+                  {cohort.description ? stripHtmlAndDecode(cohort.description) : "No description available"}
                 </p>
 
                 <div className="mt-8 border-t-4 border-black pt-6 flex items-end justify-between gap-6">
@@ -120,13 +120,13 @@ export function CohortCatalog({ initialCohorts }: CohortCatalogProps) {
                       {formatCurrency(Number(cohort.price))}
                     </div>
                     <div className="font-mono text-xs uppercase tracking-[0.25em] text-black/60 mt-2">
-                      Clôture: {formatDate(cohort.enrollmentClosingDate)} ·{" "}
-                      {cohort.accessDuration} jour{cohort.accessDuration !== 1 ? "s" : ""} d'accès
+                      Closes: {formatDate(cohort.enrollmentClosingDate)} ·{" "}
+                      {cohort.accessDuration} day{cohort.accessDuration !== 1 ? "s" : ""} of access
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 font-black uppercase tracking-wider group-hover:gap-4 transition-all">
-                    Détails <span className="text-2xl">→</span>
+                    Details <span className="text-2xl">→</span>
                   </div>
                 </div>
               </Link>

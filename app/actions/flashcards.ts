@@ -8,8 +8,8 @@ import { z } from "zod";
 const flashcardSchema = z.object({
   courseId: z.string().min(1, "Course ID is required"),
   moduleId: z.string().optional().nullable(),
-  front: z.string().min(1, "Le recto est requis"),
-  back: z.string().min(1, "Le verso est requis"),
+  front: z.string().min(1, "Front is required"),
+  back: z.string().min(1, "Back is required"),
 });
 
 export type FlashcardActionResult = {
@@ -58,7 +58,7 @@ export async function getFlashcardsAction(courseId: string, moduleId?: string | 
 
     return { 
       success: false, 
-      error: `Erreur lors du chargement des flashcards: ${errorMessage}`, 
+      error: `Error loading flashcards: ${errorMessage}`,
       data: [] 
     };
   }
@@ -188,7 +188,7 @@ export async function updateFlashcardAction(
 
     return {
       success: false,
-      error: `Erreur lors de la mise à jour de la flashcard: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error updating the flashcard: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -215,4 +215,3 @@ export async function deleteFlashcardAction(flashcardId: string): Promise<Flashc
     };
   }
 }
-

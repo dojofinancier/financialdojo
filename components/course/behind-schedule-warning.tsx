@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Clock, BookOpen, Settings } from "lucide-react";
@@ -18,11 +18,7 @@ export function BehindScheduleWarning({ courseId }: BehindScheduleWarningProps) 
   const [unlearnedModules, setUnlearnedModules] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkSchedule();
-  }, [courseId]);
-
-  const checkSchedule = async () => {
+  const checkSchedule = useCallback(async () => {
     try {
       setLoading(true);
       const result = await checkBehindScheduleAction(courseId);
@@ -43,7 +39,11 @@ export function BehindScheduleWarning({ courseId }: BehindScheduleWarningProps) 
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    checkSchedule();
+  }, [checkSchedule]);
 
   if (loading || !isBehind || !warning) {
     return null;
@@ -54,7 +54,7 @@ export function BehindScheduleWarning({ courseId }: BehindScheduleWarningProps) 
       <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
       <AlertTitle className="text-orange-800 dark:text-orange-200 flex items-center gap-2">
         <Clock className="h-4 w-4" />
-        Vous êtes en retard sur votre plan d'étude
+        You are behind on your study plan
       </AlertTitle>
       <AlertDescription className="space-y-3 mt-2">
         <p className="text-orange-700 dark:text-orange-300">{warning}</p>
@@ -83,7 +83,7 @@ export function BehindScheduleWarning({ courseId }: BehindScheduleWarningProps) 
             }}
           >
             <BookOpen className="h-3 w-3 mr-1" />
-            Marquer les modules terminés
+            Mark modules as completed
           </Button>
           <Button
             variant="outline"
@@ -95,11 +95,10 @@ export function BehindScheduleWarning({ courseId }: BehindScheduleWarningProps) 
             }}
           >
             <Settings className="h-3 w-3 mr-1" />
-            Modifier les paramètres
+            Edit settings
           </Button>
         </div>
       </AlertDescription>
     </Alert>
   );
 }
-

@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Clock, Calendar, BookOpen, Target } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 
 interface ProgressSectionProps {
   data: {
@@ -48,7 +48,7 @@ export function ProgressSection({ data }: ProgressSectionProps) {
   if (!data) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Aucune donnée disponible</p>
+        <p className="text-muted-foreground">No data available</p>
       </div>
     );
   }
@@ -65,11 +65,11 @@ export function ProgressSection({ data }: ProgressSectionProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "LEARNED":
-        return <Badge variant="default" className="bg-green-500">Complété</Badge>;
+        return <Badge variant="default" className="bg-green-500">Completed</Badge>;
       case "IN_PROGRESS":
-        return <Badge variant="secondary">En cours</Badge>;
+        return <Badge variant="secondary">In progress</Badge>;
       default:
-        return <Badge variant="outline">Non commencé</Badge>;
+        return <Badge variant="outline">Not started</Badge>;
     }
   };
 
@@ -81,18 +81,18 @@ export function ProgressSection({ data }: ProgressSectionProps) {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
-              Phase 1 - Apprentissage
+              Phase 1 - Learning
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Modules complétés</span>
+                <span>Modules completed</span>
                 <span>{data.phase1.completed} / {data.phase1.total}</span>
               </div>
               <Progress value={data.phase1.percentage} />
               <p className="text-xs text-muted-foreground">
-                {data.phase1.percentage.toFixed(1)}% complété
+                {data.phase1.percentage.toFixed(1)}% completed
               </p>
             </div>
           </CardContent>
@@ -102,14 +102,14 @@ export function ProgressSection({ data }: ProgressSectionProps) {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4" />
-              Phase 2 - Révision
+              Phase 2 - Review
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <p className="text-2xl font-bold">{data.phase2.totalItemsReviewed}</p>
               <p className="text-xs text-muted-foreground">
-                Items révisés
+                Items reviewed
               </p>
             </div>
           </CardContent>
@@ -119,18 +119,18 @@ export function ProgressSection({ data }: ProgressSectionProps) {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Target className="h-4 w-4" />
-              Phase 3 - Pratique
+              Phase 3 - Practice
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Examens blancs</span>
+                <span>Practice exams</span>
                 <span>{data.phase3.completed} / {data.phase3.total}</span>
               </div>
               <Progress value={data.phase3.percentage} />
               <p className="text-xs text-muted-foreground">
-                {data.phase3.percentage.toFixed(1)}% complété
+                {data.phase3.percentage.toFixed(1)}% completed
               </p>
             </div>
           </CardContent>
@@ -140,8 +140,8 @@ export function ProgressSection({ data }: ProgressSectionProps) {
       {/* Module Progress */}
       <Card>
         <CardHeader>
-          <CardTitle>Progression par module</CardTitle>
-          <CardDescription>État de complétion de chaque module</CardDescription>
+          <CardTitle>Progress by module</CardTitle>
+          <CardDescription>Completion status of each module</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -154,7 +154,7 @@ export function ProgressSection({ data }: ProgressSectionProps) {
                   </div>
                   {module.lastLearnedAt && (
                     <p className="text-xs text-muted-foreground">
-                      Complété le {format(new Date(module.lastLearnedAt), "d MMMM yyyy", { locale: fr })}
+                      Completed on {format(new Date(module.lastLearnedAt), "d MMMM yyyy", { locale: enCA })}
                     </p>
                   )}
                 </div>
@@ -170,19 +170,19 @@ export function ProgressSection({ data }: ProgressSectionProps) {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Dernière activité
+              Latest activity
             </CardTitle>
           </CardHeader>
           <CardContent>
             {data.lastActivity ? (
               <p className="text-sm">
-                {format(new Date(data.lastActivity), "d MMMM yyyy 'at' HH:mm", { locale: fr })}
+                {format(new Date(data.lastActivity), "d MMMM yyyy 'at' HH:mm", { locale: enCA })}
               </p>
             ) : (
-              <p className="text-sm text-muted-foreground">Aucune activité récente</p>
+              <p className="text-sm text-muted-foreground">No recent activity</p>
             )}
             <p className="text-xs text-muted-foreground mt-2">
-              Temps total: {formatTime(data.timeSpent)}
+              Total time: {formatTime(data.timeSpent)}
             </p>
           </CardContent>
         </Card>
@@ -191,7 +191,7 @@ export function ProgressSection({ data }: ProgressSectionProps) {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              Prochaines tâches
+              Upcoming tasks
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -200,7 +200,7 @@ export function ProgressSection({ data }: ProgressSectionProps) {
                 {data.upcomingTasks.slice(0, 3).map((task) => (
                   <div key={task.id} className="text-sm">
                     <p className="font-medium">
-                      {format(new Date(task.date), "d MMM", { locale: fr })} - {task.moduleTitle || "Task"}
+                      {format(new Date(task.date), "d MMM", { locale: enCA })} - {task.moduleTitle || "Task"}
                     </p>
                     <p className="text-xs text-muted-foreground capitalize">
                       {task.taskType.toLowerCase()}
@@ -209,7 +209,7 @@ export function ProgressSection({ data }: ProgressSectionProps) {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">Aucune tâche à venir</p>
+              <p className="text-sm text-muted-foreground">No upcoming tasks</p>
             )}
           </CardContent>
         </Card>

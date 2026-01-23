@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
+import { getSupabasePublishableKey, getSupabaseUrl } from "@/lib/supabase/public-env";
 
 /**
  * Auth callback handler.
@@ -25,8 +26,8 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    getSupabaseUrl(),
+    getSupabasePublishableKey(),
     {
       cookies: {
         getAll() {

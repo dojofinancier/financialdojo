@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   DndContext,
   closestCenter,
@@ -131,7 +131,7 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
     })
   );
 
-  const loadCohortModules = async () => {
+  const loadCohortModules = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getCohortAction(cohortId);
@@ -144,18 +144,18 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
     } finally {
       setLoading(false);
     }
-  };
+  }, [cohortId]);
 
-  const loadCourses = async () => {
+  const loadCourses = useCallback(async () => {
     try {
       const result = await getCoursesAction({ limit: 1000 });
       setAllCourses(result.items.map((course: any) => ({ id: course.id, title: course.title })));
     } catch (error) {
       toast.error("Error loading courses");
     }
-  };
+  }, []);
 
-  const loadModulesForCourse = async (courseId: string) => {
+  const loadModulesForCourse = useCallback(async (courseId: string) => {
     try {
       const modules = await getModulesAction(courseId);
       const course = allCourses.find((c) => c.id === courseId);
@@ -172,12 +172,12 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
       toast.error("Error loading modules");
       setAvailableModules([]);
     }
-  };
+  }, [allCourses]);
 
   useEffect(() => {
     loadCohortModules();
     loadCourses();
-  }, [cohortId]);
+  }, [loadCohortModules, loadCourses]);
 
   useEffect(() => {
     if (selectedCourseId) {
@@ -186,7 +186,7 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
       setAvailableModules([]);
       setSelectedModuleId("");
     }
-  }, [selectedCourseId]);
+  }, [selectedCourseId, loadModulesForCourse]);
 
   const handleAddModule = async () => {
     if (!selectedModuleId) {
@@ -269,28 +269,28 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Modules de la cohorte</h3>
+          <h3 className="text-lg font-semibold">Cohort modules</h3>
           <p className="text-sm text-muted-foreground">
-            Ajoutez des modules existants depuis vos cours à cette cohorte
+            Add existing modules from your courses to this cohort
           </p>
         </div>
         <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Ajouter un module
+              Add a module
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Ajouter un module à la cohorte</DialogTitle>
+              <DialogTitle>Add a module to the cohort</DialogTitle>
               <DialogDescription>
-                Sélectionnez un cours puis un module à ajouter à cette cohorte
+                Select a course and then a module to add to this cohort
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Cours</label>
+                <label className="text-sm font-medium">Course</label>
                 <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a course" />
@@ -327,10 +327,10 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
               )}
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setAddDialogOpen(false)}>
-                  Annuler
+                  Cancel
                 </Button>
                 <Button onClick={handleAddModule} disabled={!selectedModuleId}>
-                  Ajouter
+                  Add
                 </Button>
               </div>
             </div>
@@ -339,13 +339,13 @@ export function CohortModuleManagement({ cohortId }: CohortModuleManagementProps
       </div>
 
       {loading ? (
-        <div className="text-center py-8">Chargement...</div>
+        <div className="text-center py-8">Loading...</div>
       ) : cohortModules.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
             <Layers className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Aucun module dans cette cohorte</p>
-            <p className="text-sm mt-2">Cliquez sur "Ajouter un module" pour commencer</p>
+            <p>No modules in this cohort</p>
+            <p className="text-sm mt-2">Click "Add a module" to get started</p>
           </CardContent>
         </Card>
       ) : (

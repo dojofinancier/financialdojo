@@ -43,15 +43,15 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Connexion</CardTitle>
+          <CardTitle className="text-2xl font-bold">Login</CardTitle>
           <CardDescription>
-            Connectez-vous à votre compte pour accéder à votre tableau de bord
+            Sign in to your account to access your dashboard
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Courriel</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -66,12 +66,12 @@ export default function LoginPage() {
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Mot de passe</Label>
+                <Label htmlFor="password">Password</Label>
                 <Link
                   href="/reset-password"
                   className="text-sm text-primary hover:underline"
                 >
-                  Mot de passe oublié?
+                  Forgot password?
                 </Link>
               </div>
               <Input
@@ -87,7 +87,7 @@ export default function LoginPage() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Connexion..." : "Se connecter"}
+              {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
         </CardContent>

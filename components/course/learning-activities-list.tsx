@@ -308,7 +308,7 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
       <Card>
         <CardContent className="py-8 text-center text-muted-foreground">
           <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>Aucune activité disponible pour le moment.</p>
+          <p>No activities available at the moment.</p>
           {(selectedModuleId || selectedActivityType) && (
             <Button
               variant="outline"
@@ -318,7 +318,7 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
                 setSelectedActivityType(null);
               }}
             >
-              Réinitialiser les filtres
+              Reset filters
             </Button>
           )}
         </CardContent>
@@ -333,7 +333,7 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
       <Card>
         <CardContent className="py-8 text-center text-muted-foreground">
           <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>Aucune activité disponible.</p>
+          <p>No activities available.</p>
         </CardContent>
       </Card>
     );
@@ -349,10 +349,10 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
             onValueChange={(value) => setSelectedModuleId(value === "all" ? null : value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Filtrer par module" />
+              <SelectValue placeholder="Filter by module" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tous les modules</SelectItem>
+              <SelectItem value="all">All modules</SelectItem>
               {(modules ?? []).map((module) => (
                 <SelectItem key={module.id} value={module.id}>
                   {module.title}
@@ -367,10 +367,10 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
             onValueChange={(value) => setSelectedActivityType(value === "all" ? null : value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Filtrer par type" />
+              <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tous les types</SelectItem>
+              <SelectItem value="all">All types</SelectItem>
               {availableActivityTypes.map((type) => (
                 <SelectItem key={type} value={type}>
                   {ACTIVITY_TYPE_LABELS[type] || type}
@@ -392,14 +392,14 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
           }}
           title="Reset all answers"
         >
-          Réinitialiser tout
+          Reset all
         </Button>
       </div>
 
       {/* Activity Counter */}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <div>
-          Activité {currentIndex + 1} sur {activities.length}
+          Activity {currentIndex + 1} of {activities.length}
         </div>
         {currentActivity.module && (
           <Badge variant="secondary">{currentActivity.module.title}</Badge>
@@ -429,7 +429,7 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
           disabled={currentIndex === 0}
         >
           <ChevronLeft className="h-4 w-4 mr-2" />
-          Précédent
+          Previous
         </Button>
         <div className="text-sm text-muted-foreground">
           {currentIndex + 1} / {activities.length}
@@ -439,7 +439,7 @@ export function LearningActivitiesList({ courseId }: LearningActivitiesListProps
           onClick={handleNext}
           disabled={currentIndex === activities.length - 1}
         >
-          Suivant
+          Next
           <ChevronRight className="h-4 w-4 ml-2" />
         </Button>
       </div>

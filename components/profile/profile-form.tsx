@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale/fr";
+import { enCA } from "date-fns/locale";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
@@ -112,7 +112,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-CA", {
+    return new Intl.NumberFormat("en-CA", {
       style: "currency",
       currency: "CAD",
     }).format(amount);
@@ -128,16 +128,16 @@ export function ProfileForm({ user }: ProfileFormProps) {
         {/* Profile Information */}
         <Card>
           <CardHeader>
-            <CardTitle>Informations personnelles</CardTitle>
+            <CardTitle>Personal information</CardTitle>
             <CardDescription>
-              Mettez à jour vos informations personnelles
+              Update your personal information
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleProfileSubmit} className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Prénom</Label>
+                  <Label htmlFor="firstName">First name</Label>
                   <Input
                     id="firstName"
                     value={profileData.firstName}
@@ -148,7 +148,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Nom</Label>
+                  <Label htmlFor="lastName">Last name</Label>
                   <Input
                     id="lastName"
                     value={profileData.lastName}
@@ -160,7 +160,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Courriel</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -170,9 +170,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Date d&apos;inscription</Label>
+                <Label>Signup date</Label>
                 <p className="text-sm text-muted-foreground">
-                  {format(user.signupDate, "d MMMM yyyy", { locale: fr })}
+                  {format(user.signupDate, "d MMMM yyyy", { locale: enCA })}
                 </p>
               </div>
               <Button type="submit" disabled={isLoadingProfile}>
@@ -185,15 +185,15 @@ export function ProfileForm({ user }: ProfileFormProps) {
         {/* Password Change */}
         <Card>
           <CardHeader>
-            <CardTitle>Changer le mot de passe</CardTitle>
+            <CardTitle>Change password</CardTitle>
             <CardDescription>
-              Mettez à jour votre mot de passe pour sécuriser votre compte
+              Update your password to secure your account
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="currentPassword">Mot de passe actuel</Label>
+                <Label htmlFor="currentPassword">Current password</Label>
                 <Input
                   id="currentPassword"
                   type="password"
@@ -209,7 +209,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="newPassword">Nouveau mot de passe</Label>
+                <Label htmlFor="newPassword">New password</Label>
                 <Input
                   id="newPassword"
                   type="password"
@@ -226,7 +226,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmer le nouveau mot de passe</Label>
+                <Label htmlFor="confirmPassword">Confirm new password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -253,30 +253,30 @@ export function ProfileForm({ user }: ProfileFormProps) {
       {/* Purchase History */}
       <Card>
         <CardHeader>
-          <CardTitle>Historique des achats</CardTitle>
+          <CardTitle>Purchase history</CardTitle>
           <CardDescription>
-            Consultez vos achats et dates d&apos;expiration
+            View your purchases and expiration dates
           </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoadingPurchases ? (
             <div className="text-center py-8 text-muted-foreground">
-              Chargement...
+              Loading...
             </div>
           ) : purchases.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              Aucun achat pour le moment
+              No purchases yet
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Produit</TableHead>
-                    <TableHead>Date d&apos;achat</TableHead>
-                    <TableHead>Montant</TableHead>
-                    <TableHead>Date d&apos;expiration</TableHead>
-                    <TableHead>Statut</TableHead>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Purchase date</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Expiration date</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -286,24 +286,24 @@ export function ProfileForm({ user }: ProfileFormProps) {
                         <div className="flex items-center gap-2">
                           {purchase.productName}
                           <Badge variant="outline" className="text-xs">
-                            {purchase.type === "course" ? "Cours" : "Cohorte"}
+                            {purchase.type === "course" ? "Course" : "Cohort"}
                           </Badge>
                         </div>
                       </TableCell>
                       <TableCell>
-                        {format(purchase.purchaseDate, "d MMM yyyy", { locale: fr })}
+                        {format(purchase.purchaseDate, "d MMM yyyy", { locale: enCA })}
                       </TableCell>
                       <TableCell className="font-medium">
                         {formatCurrency(purchase.amount)}
                       </TableCell>
                       <TableCell>
-                        {format(purchase.expiresAt, "d MMM yyyy", { locale: fr })}
+                        {format(purchase.expiresAt, "d MMM yyyy", { locale: enCA })}
                       </TableCell>
                       <TableCell>
                         {isExpired(purchase.expiresAt) ? (
-                          <Badge variant="destructive">Expiré</Badge>
+                          <Badge variant="destructive">Expired</Badge>
                         ) : (
-                          <Badge variant="default">Actif</Badge>
+                          <Badge variant="default">Active</Badge>
                         )}
                       </TableCell>
                     </TableRow>

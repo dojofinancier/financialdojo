@@ -302,7 +302,7 @@ export function ArticleList({
                   </ul>
                 ) : (
                   <div className="p-4 text-center text-sm text-gray-500">
-                    Aucun résultat trouvé
+                    No results found
                   </div>
                 )}
               </div>
@@ -317,7 +317,7 @@ export function ArticleList({
             <SelectValue placeholder="All categories" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Toutes les catégories</SelectItem>
+            <SelectItem value="all">All categories</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category} value={category}>
                 {category}
@@ -330,14 +330,14 @@ export function ArticleList({
       {/* Results count */}
       {initialTotal > 0 && (
         <p className="text-sm text-gray-600">
-          {initialTotal} article{initialTotal > 1 ? "s" : ""} trouvé{initialTotal > 1 ? "s" : ""}
+          {initialTotal} article{initialTotal > 1 ? "s" : ""} found
         </p>
       )}
 
       {/* Articles Grid */}
       {articles.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 text-lg">Aucun article trouvé.</p>
+          <p className="text-gray-600 text-lg">No articles found.</p>
         </div>
       ) : (
         <>
@@ -381,7 +381,7 @@ export function ArticleList({
               {loading && (
                 <div className="flex items-center gap-2 text-gray-600">
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  <span className="text-sm">Chargement...</span>
+                  <span className="text-sm">Loading...</span>
                 </div>
               )}
             </div>
@@ -389,7 +389,7 @@ export function ArticleList({
 
           {!hasMore && articles.length > 0 && (
             <div className="text-center py-8">
-              <p className="text-sm text-gray-500">Tous les articles ont été chargés.</p>
+              <p className="text-sm text-gray-500">All articles have been loaded.</p>
             </div>
           )}
         </>

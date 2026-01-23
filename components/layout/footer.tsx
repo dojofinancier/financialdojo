@@ -29,7 +29,7 @@ export function Footer() {
               prefetch={true}
               className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
             >
-              À propos
+              About
             </Link>
             <span className="text-muted-foreground/50">•</span>
             <Link 
@@ -45,7 +45,7 @@ export function Footer() {
               prefetch={true}
               className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
             >
-              Politique de confidentialité
+              Privacy policy
             </Link>
             <span className="text-muted-foreground/50">•</span>
             <Link 
@@ -53,15 +53,14 @@ export function Footer() {
               prefetch={true}
               className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
             >
-              Termes et conditions
+              Terms and conditions
             </Link>
           </div>
           <p className="text-center text-sm text-muted-foreground">
-            © {currentYear} Le Dojo Financier. Tous droits réservés.
+            © {currentYear} Financial Dojo. All rights reserved.
           </p>
         </div>
       </div>
     </footer>
   );
 }
-

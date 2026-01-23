@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -44,19 +44,15 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
   const [submittingQuiz, setSubmittingQuiz] = useState<string | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<Record<string, number>>({});
 
-  useEffect(() => {
-    loadAllQuizzes();
-  }, [courseId]);
-
-  const loadAllQuizzes = async () => {
+  const loadAllQuizzes = useCallback(async () => {
     try {
       setLoading(true);
       const modules = await getCourseModulesAction(courseId);
       const allQuizzes: QuizItem[] = [];
 
-      for (const module of modules) {
+      for (const moduleRecord of modules) {
         try {
-          const result = await getModuleContentAction(module.id);
+          const result = await getModuleContentAction(moduleRecord.id);
           if (result.success && result.data && result.data.quizzes) {
             for (const quizItem of result.data.quizzes) {
               allQuizzes.push({
@@ -74,7 +70,7 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
             }
           }
         } catch (error) {
-          console.error(`Error loading quizzes for module ${module.id}:`, error);
+          console.error(`Error loading quizzes for module ${moduleRecord.id}:`, error);
         }
       }
 
@@ -92,7 +88,11 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadAllQuizzes();
+  }, [loadAllQuizzes]);
 
   const getOptionLetter = (key: string, index: number): string => {
     if (/^[A-Z]$/i.test(key)) {
@@ -138,7 +138,7 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
       <div className="space-y-4">
         <Button variant="ghost" onClick={onBack}>
           <ChevronLeft className="h-4 w-4 mr-2" />
-          Retour
+          Back
         </Button>
         <Card>
           <CardContent className="py-12 text-center">
@@ -175,7 +175,7 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
             {currentQuiz.moduleTitle} - {currentQuiz.quiz.title || `Quiz ${currentQuiz.order}`}
           </CardTitle>
           <div className="text-sm text-muted-foreground mt-2">
-            Question {questionIndex + 1} / {totalQuestions} • Répondues: {answeredCount} / {totalQuestions}
+            Question {questionIndex + 1} / {totalQuestions} • Answered: {answeredCount} / {totalQuestions}
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -226,7 +226,7 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
                     disabled={questionIndex === 0}
                   >
                     <ChevronLeft className="h-4 w-4 mr-2" />
-                    Précédent
+                    Previous
                   </Button>
                   {questionIndex === totalQuestions - 1 ? (
                     <Button
@@ -236,10 +236,10 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
                       {submittingQuiz === currentQuiz.id ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Soumission...
+                          Submitting...
                         </>
                       ) : (
-                        "Soumettre le quiz"
+                        "Submit quiz"
                       )}
                     </Button>
                   ) : (
@@ -252,7 +252,7 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
                         }));
                       }}
                     >
-                      Suivant
+                      Next
                       <ChevronRight className="h-4 w-4 ml-2" />
                     </Button>
                   )}
@@ -261,9 +261,9 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
             </>
           ) : (
             <div className="text-center py-8">
-              <p className="text-lg font-semibold mb-2">Quiz soumis</p>
+              <p className="text-lg font-semibold mb-2">Quiz submitted</p>
               <p className="text-muted-foreground mb-4">
-                Vous avez répondu à {answeredCount} question{answeredCount > 1 ? "s" : ""} sur {totalQuestions}
+                You answered {answeredCount} question{answeredCount > 1 ? "s" : ""} out of {totalQuestions}
               </p>
               <Button
                 variant="outline"
@@ -279,7 +279,7 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
                   }));
                 }}
               >
-                Réessayer
+                Try again
               </Button>
             </div>
           )}
@@ -291,14 +291,14 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
               disabled={currentIndex === 0}
             >
               <ChevronLeft className="h-4 w-4 mr-2" />
-              Quiz précédent
+              Previous quiz
             </Button>
             <Button
               variant="outline"
               onClick={() => setCurrentIndex(Math.min(quizzes.length - 1, currentIndex + 1))}
               disabled={currentIndex === quizzes.length - 1}
             >
-              Quiz suivant
+              Next quiz
               <ChevronRight className="h-4 w-4 ml-2" />
             </Button>
           </div>

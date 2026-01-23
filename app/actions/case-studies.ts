@@ -72,7 +72,7 @@ export async function importCaseStudyAction(
 
     const caseId = narrativeData.case_id;
     const caseNumber = narrativeData.case_number || parseInt(narrativeData.narrative?.case_narrative?.title?.match(/cas\s+(\d+)/i)?.[1] || "1", 10);
-    const title = narrativeData.narrative?.case_narrative?.title || `Étude de cas ${caseNumber}`;
+    const title = narrativeData.narrative?.case_narrative?.title || `Case study ${caseNumber}`;
     const theme = narrativeData.narrative?.case_narrative?.theme || null;
     const chapters = narrativeData.chapters || [];
     const narrative = narrativeData.narrative || narrativeData;
@@ -81,7 +81,7 @@ export async function importCaseStudyAction(
     if (questions.length !== 10) {
       return {
         success: false,
-        error: `Un cas doit contenir exactement 10 questions. Trouvé: ${questions.length}`,
+        error: `A case must contain exactly 10 questions. Found: ${questions.length}`,
       };
     }
 
@@ -93,7 +93,7 @@ export async function importCaseStudyAction(
     if (existing) {
       return {
         success: false,
-        error: `Un cas avec l'ID ${caseId} existe déjà`,
+        error: `A case with ID ${caseId} already exists`,
       };
     }
 
@@ -159,7 +159,7 @@ export async function importCaseStudyAction(
 
     return {
       success: false,
-      error: `Erreur lors de l'importation: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error during import: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }
@@ -223,7 +223,7 @@ export async function getCaseStudiesAction(courseId: string): Promise<CaseStudyA
     
     return {
       success: false,
-      error: `Erreur lors du chargement des études de cas: ${errorMessage}`,
+      error: `Error loading case studies: ${errorMessage}`,
     };
   }
 }
@@ -542,7 +542,7 @@ export async function submitCaseStudyAction(
 
     return {
       success: false,
-      error: `Erreur lors de la soumission: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Error during submission: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }

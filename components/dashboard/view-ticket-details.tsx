@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale/fr";
+import { enCA } from "date-fns/locale";
 
 type Ticket = {
   id: string;
@@ -62,13 +62,13 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "OPEN":
-        return <Badge variant="default">Ouvert</Badge>;
+        return <Badge variant="default">Open</Badge>;
       case "IN_PROGRESS":
-        return <Badge className="bg-blue-500">En cours</Badge>;
+        return <Badge className="bg-blue-500">In progress</Badge>;
       case "RESOLVED":
-        return <Badge className="bg-green-500">Résolu</Badge>;
+        return <Badge className="bg-green-500">Resolved</Badge>;
       case "CLOSED":
-        return <Badge variant="secondary">Fermé</Badge>;
+        return <Badge variant="secondary">Closed</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -79,11 +79,11 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
       case "URGENT":
         return <Badge variant="destructive">Urgent</Badge>;
       case "HIGH":
-        return <Badge className="bg-orange-500">Élevée</Badge>;
+        return <Badge className="bg-orange-500">High</Badge>;
       case "MEDIUM":
-        return <Badge className="bg-yellow-500">Moyenne</Badge>;
+        return <Badge className="bg-yellow-500">Medium</Badge>;
       case "LOW":
-        return <Badge variant="secondary">Basse</Badge>;
+        return <Badge variant="secondary">Low</Badge>;
       default:
         return <Badge variant="outline">{priority}</Badge>;
     }
@@ -123,7 +123,7 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
             <div>
               <CardTitle>{ticket.subject}</CardTitle>
               <CardDescription className="mt-2">
-                Créé le {format(new Date(ticket.createdAt), "d MMMM yyyy 'at' HH:mm", { locale: fr })}
+                Created on {format(new Date(ticket.createdAt), "d MMMM yyyy 'at' HH:mm", { locale: enCA })}
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -140,13 +140,13 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
             </div>
             {ticket.category && (
               <div>
-                <span className="text-sm text-muted-foreground">Catégorie: </span>
+                <span className="text-sm text-muted-foreground">Category: </span>
                 <Badge variant="outline">{ticket.category}</Badge>
               </div>
             )}
             {ticket.assignedAdmin && (
               <div>
-                <span className="text-sm text-muted-foreground">Assigné à: </span>
+                <span className="text-sm text-muted-foreground">Assigned to: </span>
                 <span className="font-medium">
                   {ticket.assignedAdmin.firstName} {ticket.assignedAdmin.lastName} (
                   {ticket.assignedAdmin.email})
@@ -173,10 +173,10 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
                 <span className="font-semibold">
                   {ticket.student.firstName} {ticket.student.lastName}
                 </span>
-                <Badge variant="outline">Étudiant</Badge>
+                <Badge variant="outline">Student</Badge>
               </div>
               <span className="text-xs text-muted-foreground">
-                {format(new Date(ticket.createdAt), "d MMM yyyy 'at' HH:mm", { locale: fr })}
+                {format(new Date(ticket.createdAt), "d MMM yyyy 'at' HH:mm", { locale: enCA })}
               </span>
             </div>
             <p className="text-muted-foreground whitespace-pre-wrap">{ticket.description}</p>
@@ -196,11 +196,11 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
                     {reply.author.firstName} {reply.author.lastName}
                   </span>
                   <Badge variant={reply.authorRole === "ADMIN" ? "default" : "outline"}>
-                    {reply.authorRole === "ADMIN" ? "Administrateur" : "Student"}
+                    {reply.authorRole === "ADMIN" ? "Admin" : "Student"}
                   </Badge>
                 </div>
                 <span className="text-xs text-muted-foreground">
-                  {format(new Date(reply.createdAt), "d MMM yyyy 'at' HH:mm", { locale: fr })}
+                  {format(new Date(reply.createdAt), "d MMM yyyy 'at' HH:mm", { locale: enCA })}
                 </span>
               </div>
               <p className="text-muted-foreground whitespace-pre-wrap">{reply.message}</p>
@@ -211,7 +211,7 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
           {ticket.status !== "CLOSED" && (
             <form onSubmit={handleReply} className="pt-4 border-t">
               <div className="space-y-2">
-                <Label htmlFor="reply">Ajouter une réponse</Label>
+                <Label htmlFor="reply">Add a reply</Label>
                 <Textarea
                   id="reply"
                   value={replyMessage}
@@ -225,12 +225,12 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Envoi...
+                    Sending...
                   </>
                 ) : (
                   <>
                     <Send className="h-4 w-4 mr-2" />
-                    Envoyer
+                    Send
                   </>
                 )}
               </Button>

@@ -41,8 +41,8 @@ export function CourseMetricsTable({ data }: CourseMetricsTableProps) {
             <TableHead>Cours</TableHead>
             <TableHead>Inscriptions</TableHead>
             <TableHead>Contenu total</TableHead>
-            <TableHead>Complétés</TableHead>
-            <TableHead>Taux de complétion</TableHead>
+            <TableHead>Completed</TableHead>
+            <TableHead>Completion rate</TableHead>
             <TableHead>Temps total</TableHead>
             <TableHead>Temps moyen</TableHead>
           </TableRow>
@@ -51,7 +51,7 @@ export function CourseMetricsTable({ data }: CourseMetricsTableProps) {
           {data.length === 0 ? (
             <TableRow>
               <TableCell colSpan={7} className="text-center text-muted-foreground">
-                Aucune donnée disponible
+                No data available
               </TableCell>
             </TableRow>
           ) : (

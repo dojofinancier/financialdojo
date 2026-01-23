@@ -9,15 +9,15 @@ export default async function AdminAppointmentsPage() {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Gestion des rendez-vous</h1>
+        <h1 className="text-3xl font-bold">Appointment management</h1>
         <p className="text-muted-foreground mt-2">
-          Consultez et gérez tous les rendez-vous avec les étudiants
+          Review and manage all appointments with students
         </p>
       </div>
       <Tabs defaultValue="appointments" className="w-full">
         <TabsList>
-          <TabsTrigger value="appointments">Rendez-vous</TabsTrigger>
-          <TabsTrigger value="availability">Disponibilités</TabsTrigger>
+          <TabsTrigger value="appointments">Appointments</TabsTrigger>
+          <TabsTrigger value="availability">Availability</TabsTrigger>
         </TabsList>
         <TabsContent value="appointments">
           <AppointmentList />

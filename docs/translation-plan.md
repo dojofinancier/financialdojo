@@ -128,8 +128,8 @@ Search pattern: `toast.success(`, `toast.error(`
 Create `.env.english` or update `.env` (clean database, no user data migration):
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://[new-project].supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=[new-anon-key]
-SUPABASE_SERVICE_ROLE_KEY=[new-service-key]
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[new-publishable-key]
+SUPABASE_SECRET_KEY=[new-secret-key]
 DATABASE_URL=postgresql://postgres.[project]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true
 DIRECT_URL=postgresql://postgres.[project]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres
 STRIPE_SECRET_KEY=[new-stripe-secret]

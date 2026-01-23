@@ -10,7 +10,7 @@ async function AdminCouponsContent() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Gestion des coupons</h1>
         <p className="text-muted-foreground mt-2">
-          Créez et gérez les codes promotionnels
+          Create and manage promo codes
         </p>
       </div>
       <CouponTabs />

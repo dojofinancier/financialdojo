@@ -29,7 +29,7 @@ interface SyllabusProps {
 export function Syllabus({ courseId }: SyllabusProps) {
   // Use React Query for modules
   const { data: modulesData, isLoading: modulesLoading } = useCourseModules(courseId);
-  const modules = (modulesData || []) as Module[];
+  const modules = useMemo(() => (modulesData || []) as Module[], [modulesData]);
 
   // Get module IDs for batch content loading
   const moduleIds = useMemo(() => modules.map((m) => m.id), [modules]);
@@ -72,7 +72,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Plan de cours</CardTitle>
+          <CardTitle>Course syllabus</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Mobile Card Layout */}
@@ -90,7 +90,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground min-w-[50px]">Vidéos</span>
+                      <span className="text-xs text-muted-foreground min-w-[50px]">Videos</span>
                       {hasVideos ? (
                         <Button
                           variant="ghost"
@@ -99,7 +99,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
                           onClick={() => {
                             window.location.href = `/learn/${courseId}?module=${module.id}&tab=videos`;
                           }}
-                          title={`${content.videos.length} vidéo${content.videos.length > 1 ? 's' : ''}`}
+                          title={`${content.videos.length} video${content.videos.length > 1 ? 's' : ''}`}
                         >
                           <Video className="h-4 w-4 text-primary" />
                         </Button>
@@ -145,7 +145,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
                     </div>
                     {module.examWeight !== null && (
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground min-w-[50px]">Pondération</span>
+                        <span className="text-xs text-muted-foreground min-w-[50px]">Weight</span>
                         <Badge variant="outline" className="text-xs">
                           {(module.examWeight * 100).toFixed(1)}%
                         </Badge>
@@ -163,10 +163,10 @@ export function Syllabus({ courseId }: SyllabusProps) {
               <TableHeader>
                 <TableRow>
                   <TableHead>Module</TableHead>
-                  <TableHead className="text-center">Vidéos</TableHead>
+                  <TableHead className="text-center">Videos</TableHead>
                   <TableHead className="text-center">Notes</TableHead>
                   <TableHead className="text-center">Quiz</TableHead>
-                  <TableHead className="text-center">Pondération</TableHead>
+                  <TableHead className="text-center">Weight</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -190,7 +190,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
                             onClick={() => {
                               window.location.href = `/learn/${courseId}?module=${module.id}&tab=videos`;
                             }}
-                            title={`${content.videos.length} vidéo${content.videos.length > 1 ? 's' : ''}`}
+                            title={`${content.videos.length} video${content.videos.length > 1 ? 's' : ''}`}
                           >
                             <Video className="h-4 w-4 text-primary" />
                           </Button>
@@ -252,4 +252,3 @@ export function Syllabus({ courseId }: SyllabusProps) {
     </div>
   );
 }
-

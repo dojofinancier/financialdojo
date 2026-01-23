@@ -81,7 +81,7 @@ export function StickyBottomCTA({
                   onClick={onAddToCart}
                   className="w-full sm:w-auto bg-white text-black font-black uppercase tracking-wider px-8 py-4 border-4 border-white hover:bg-primary hover:border-primary hover:text-black transition-colors"
                 >
-                  S'inscrire maintenant →
+                  Enroll now →
                 </button>
               )}
             </div>
@@ -93,7 +93,7 @@ export function StickyBottomCTA({
                   {formatCurrency(price)}
                 </p>
                 <p className="font-mono text-xs uppercase tracking-[0.25em] text-white/70">
-                  pour 12 mois d'accès illimité
+                  for 12 months of unlimited access
                 </p>
               </div>
             )}
@@ -103,4 +103,3 @@ export function StickyBottomCTA({
     </div>
   );
 }
-

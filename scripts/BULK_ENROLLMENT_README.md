@@ -181,7 +181,7 @@ Row 4 (bob@example.com): Course not found: invalid-course
 
 Make sure you have these environment variables set:
 - `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
-- `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key (for admin operations)
+- `SUPABASE_SECRET_KEY` - Your Supabase secret key (for admin operations)
 
 ## Error Handling
 

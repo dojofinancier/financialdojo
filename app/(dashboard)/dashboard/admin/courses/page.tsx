@@ -16,7 +16,7 @@ async function AdminCoursesContent({ searchParams }: AdminCoursesPageProps) {
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Gestion des cours</h1>
         <p className="text-muted-foreground mt-2">
-          Créez, modifiez et gérez vos cours
+          Create, edit, and manage your courses
         </p>
       </div>
 

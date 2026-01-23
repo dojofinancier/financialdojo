@@ -45,14 +45,14 @@ export function CourseAboutManagement({
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Description courte</CardTitle>
+          <CardTitle>Short description</CardTitle>
           <CardDescription>
-            Cette description apparaîtra dans la section héro de la page du cours (2-3 phrases)
+            This description will appear in the hero section of the course page (2-3 sentences)
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="shortDescription">Description courte</Label>
+            <Label htmlFor="shortDescription">Short description</Label>
             <Input
               id="shortDescription"
               value={shortDescription}
@@ -66,9 +66,9 @@ export function CourseAboutManagement({
 
       <Card>
         <CardHeader>
-          <CardTitle>À propos de la formation</CardTitle>
+          <CardTitle>About the course</CardTitle>
           <CardDescription>
-            Texte détaillé qui apparaîtra dans la section "À propos" de la page du cours
+            Detailed text that appears in the "About" section of the course page
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -83,7 +83,7 @@ export function CourseAboutManagement({
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
-          {saving ? "Enregistrement..." : "Enregistrer"}
+          {saving ? "Saving..." : "Save"}
         </Button>
       </div>
     </div>

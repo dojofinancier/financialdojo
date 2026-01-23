@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { useState, useEffect, useRef, lazy, Suspense, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageSquare, Plus, Search, Edit, Trash2, Pin, Paperclip, X } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import {
   getCohortMessagesAction,
   createCohortMessageAction,
@@ -84,7 +84,7 @@ export function CohortMessageBoard({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const loadMessages = async () => {
+  const loadMessages = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getCohortMessagesAction({ cohortId });
@@ -101,9 +101,9 @@ export function CohortMessageBoard({
     } finally {
       setLoading(false);
     }
-  };
+  }, [cohortId]);
 
-  const loadUnreadCount = async () => {
+  const loadUnreadCount = useCallback(async () => {
     try {
       const result = await getCohortUnreadMessageCountAction(cohortId);
       if (result.success && typeof result.count === "number") {
@@ -113,12 +113,12 @@ export function CohortMessageBoard({
     } catch (error) {
       // Silently fail
     }
-  };
+  }, [cohortId, onUnreadCountChange]);
 
   useEffect(() => {
     loadMessages();
     loadUnreadCount();
-  }, [cohortId]);
+  }, [loadMessages, loadUnreadCount]);
 
   // Auto-scroll to top when messages change (newest messages are at top)
   useEffect(() => {
@@ -303,12 +303,12 @@ export function CohortMessageBoard({
         const newNames = successfulUploads.map((r) => r.fileName!);
         setAttachments([...attachments, ...newUrls]);
         setAttachmentNames([...attachmentNames, ...newNames]);
-        toast.success(`${successfulUploads.length} fichier(s) téléversé(s) avec succès`);
+        toast.success(`${successfulUploads.length} file(s) uploaded successfully`);
       }
 
       if (failedUploads.length > 0) {
         toast.error(
-          `${failedUploads.length} fichier(s) n'ont pas pu être téléversés: ${failedUploads[0]?.error || "Unknown error"}`
+          `${failedUploads.length} file(s) could not be uploaded: ${failedUploads[0]?.error || "Unknown error"}`
         );
       }
     } catch (error) {
@@ -358,7 +358,7 @@ export function CohortMessageBoard({
         // Remove timestamp prefix if present
         return fileName.replace(/^\d+-/, "");
       } catch {
-        return `Fichier ${message.attachments?.indexOf(url) || 0 + 1}`;
+        return `File ${message.attachments?.indexOf(url) || 0 + 1}`;
       }
     });
     setAttachmentNames(names);
@@ -369,16 +369,16 @@ export function CohortMessageBoard({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Tableau de messages</h2>
+          <h2 className="text-2xl font-semibold mb-2">Message board</h2>
           <p className="text-muted-foreground">
-            Échangez avec les membres de votre cohorte
+            Connect with members of your cohort
           </p>
         </div>
         <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Nouveau message
+              New message
               {unreadCount > 0 && (
                 <Badge variant="destructive" className="ml-2">
                   {unreadCount}
@@ -388,14 +388,14 @@ export function CohortMessageBoard({
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Nouveau message</DialogTitle>
+              <DialogTitle>New message</DialogTitle>
               <DialogDescription>
-                Partagez vos pensées, questions ou ressources avec la cohorte
+                Share your thoughts, questions, or resources with the cohort
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Contenu</label>
+                <label className="text-sm font-medium mb-2 block">Content</label>
                 <Suspense fallback={<Skeleton className="h-32 w-full" />}>
                   <RichTextEditor
                     content={content}
@@ -405,7 +405,7 @@ export function CohortMessageBoard({
                 </Suspense>
               </div>
               <div>
-                <label className="text-sm font-medium mb-2 block">Pièces jointes (max 32MB par fichier)</label>
+                <label className="text-sm font-medium mb-2 block">Attachments (max 32MB per file)</label>
                 <div className="flex items-center gap-2">
                   <Input
                     ref={fileInputRef}
@@ -436,7 +436,7 @@ export function CohortMessageBoard({
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:underline flex-1"
                         >
-                          {attachmentNames[index] || `Fichier ${index + 1}`}
+                          {attachmentNames[index] || `File ${index + 1}`}
                         </a>
                         <Button
                           type="button"
@@ -453,9 +453,9 @@ export function CohortMessageBoard({
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
-                  Annuler
+                  Cancel
                 </Button>
-                <Button onClick={handleCreateMessage}>Publier</Button>
+                <Button onClick={handleCreateMessage}>Post</Button>
               </div>
             </div>
           </DialogContent>
@@ -466,7 +466,7 @@ export function CohortMessageBoard({
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Rechercher dans les messages..."
+          placeholder="Search messages..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
@@ -475,12 +475,12 @@ export function CohortMessageBoard({
 
       {/* Messages */}
       {loading ? (
-        <div className="text-center py-8">Chargement...</div>
+        <div className="text-center py-8">Loading...</div>
       ) : filteredMessages.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">Aucun message</h3>
+            <h3 className="text-lg font-semibold mb-2">No messages</h3>
             <p className="text-muted-foreground">
               {searchQuery ? "No results for your search" : "Be the first to post a message"}
             </p>
@@ -494,7 +494,7 @@ export function CohortMessageBoard({
               <>
                 <div className="flex items-center gap-2 py-2">
                   <Pin className="h-4 w-4 text-yellow-600" />
-                  <h4 className="text-sm font-semibold text-yellow-600">Messages épinglés</h4>
+                  <h4 className="text-sm font-semibold text-yellow-600">Pinned messages</h4>
                   <div className="flex-1 border-t border-yellow-300"></div>
                 </div>
                 {filteredMessages
@@ -518,17 +518,17 @@ export function CohortMessageBoard({
                                 </CardTitle>
                                 <Badge variant="default" className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white">
                                   <Pin className="h-3 w-3 fill-current" />
-                                  Épinglé
+                                  Pinned
                                 </Badge>
                                 {message.author.role === "ADMIN" && (
                                   <Badge variant="default">Admin</Badge>
                                 )}
                                 {message.author.role === "INSTRUCTOR" && (
-                                  <Badge variant="secondary">Instructeur</Badge>
+                                  <Badge variant="secondary">Instructor</Badge>
                                 )}
                               </div>
                               <CardDescription>
-                                {format(new Date(message.createdAt), "d MMMM yyyy 'at' HH:mm", { locale: fr })}
+                                {format(new Date(message.createdAt), "d MMMM yyyy 'at' HH:mm", { locale: enCA })}
                                 {message.updatedAt.getTime() !== message.createdAt.getTime() && " (modified)"}
                               </CardDescription>
                             </div>
@@ -575,7 +575,7 @@ export function CohortMessageBoard({
                           />
                           {message.attachments && message.attachments.length > 0 && (
                             <div className="mt-4 space-y-2">
-                              <p className="text-sm font-medium">Pièces jointes:</p>
+                              <p className="text-sm font-medium">Attachments:</p>
                               <div className="flex flex-wrap gap-2">
                                 {message.attachments.map((url, index) => (
                                   <Button
@@ -586,7 +586,7 @@ export function CohortMessageBoard({
                                   >
                                     <a href={url} target="_blank" rel="noopener noreferrer">
                                       <Paperclip className="h-3 w-3 mr-1" />
-                                      Fichier {index + 1}
+                                       File {index + 1}
                                     </a>
                                   </Button>
                                 ))}
@@ -599,7 +599,7 @@ export function CohortMessageBoard({
                   })}
                 <div className="flex items-center gap-2 py-2 mt-4">
                   <div className="flex-1 border-t border-gray-300"></div>
-                  <h4 className="text-sm font-semibold text-muted-foreground">Autres messages</h4>
+                  <h4 className="text-sm font-semibold text-muted-foreground">Other messages</h4>
                   <div className="flex-1 border-t border-gray-300"></div>
                 </div>
               </>
@@ -624,11 +624,11 @@ export function CohortMessageBoard({
                             <Badge variant="default">Admin</Badge>
                           )}
                           {message.author.role === "INSTRUCTOR" && (
-                            <Badge variant="secondary">Instructeur</Badge>
+                            <Badge variant="secondary">Instructor</Badge>
                           )}
                         </div>
                         <CardDescription>
-                          {format(new Date(message.createdAt), "d MMMM yyyy 'at' HH:mm", { locale: fr })}
+                          {format(new Date(message.createdAt), "d MMMM yyyy 'at' HH:mm", { locale: enCA })}
                           {message.updatedAt.getTime() !== message.createdAt.getTime() && " (modified)"}
                         </CardDescription>
                       </div>
@@ -674,7 +674,7 @@ export function CohortMessageBoard({
                     />
                     {message.attachments && message.attachments.length > 0 && (
                       <div className="mt-4 space-y-2">
-                        <p className="text-sm font-medium">Pièces jointes:</p>
+                        <p className="text-sm font-medium">Attachments:</p>
                         <div className="flex flex-wrap gap-2">
                           {message.attachments.map((url, index) => (
                             <Button
@@ -685,7 +685,7 @@ export function CohortMessageBoard({
                             >
                               <a href={url} target="_blank" rel="noopener noreferrer">
                                 <Paperclip className="h-3 w-3 mr-1" />
-                                Fichier {index + 1}
+                                 File {index + 1}
                               </a>
                             </Button>
                           ))}
@@ -704,11 +704,11 @@ export function CohortMessageBoard({
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Modifier le message</DialogTitle>
+            <DialogTitle>Edit message</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">Contenu</label>
+              <label className="text-sm font-medium mb-2 block">Content</label>
               <Suspense fallback={<Skeleton className="h-32 w-full" />}>
                 <RichTextEditor
                   content={content}
@@ -719,9 +719,9 @@ export function CohortMessageBoard({
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-                Annuler
+                Cancel
               </Button>
-              <Button onClick={handleEditMessage}>Enregistrer</Button>
+              <Button onClick={handleEditMessage}>Save</Button>
             </div>
           </div>
         </DialogContent>
@@ -729,4 +729,3 @@ export function CohortMessageBoard({
     </div>
   );
 }
-

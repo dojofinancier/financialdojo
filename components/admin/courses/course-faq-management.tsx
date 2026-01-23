@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,11 +44,7 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ question: "", answer: "" });
 
-  useEffect(() => {
-    loadFAQs();
-  }, [courseId]);
-
-  const loadFAQs = async () => {
+  const loadFAQs = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getCourseFAQsAction(courseId);
@@ -61,7 +57,11 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadFAQs();
+  }, [loadFAQs]);
 
   const handleCreate = async () => {
     if (!formData.question.trim() || !formData.answer.trim()) {
@@ -140,16 +140,16 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
   };
 
   if (loading) {
-    return <div className="text-muted-foreground">Chargement des FAQ...</div>;
+    return <div className="text-muted-foreground">Loading FAQs...</div>;
   }
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Questions fréquentes (FAQ)</CardTitle>
+          <CardTitle>Frequently asked questions (FAQ)</CardTitle>
           <CardDescription>
-            Ajoutez et gérez les questions fréquentes pour cette formation
+            Add and manage frequently asked questions for this course
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -167,7 +167,7 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="answer">Réponse</Label>
+              <Label htmlFor="answer">Answer</Label>
               <Textarea
                 id="answer"
                 value={formData.answer}
@@ -186,7 +186,7 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
                     size="sm"
                   >
                     <Edit2 className="h-4 w-4 mr-2" />
-                    Mettre à jour
+                    Update
                   </Button>
                   <Button
                     onClick={cancelEdit}
@@ -194,13 +194,13 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
                     size="sm"
                   >
                     <X className="h-4 w-4 mr-2" />
-                    Annuler
+                    Cancel
                   </Button>
                 </>
               ) : (
                 <Button onClick={handleCreate} size="sm">
                   <Plus className="h-4 w-4 mr-2" />
-                  Ajouter une FAQ
+                  Add an FAQ
                 </Button>
               )}
             </div>
@@ -210,7 +210,7 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
           <div className="space-y-3">
             {faqs.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-8">
-                Aucune FAQ pour le moment. Ajoutez-en une ci-dessus.
+                No FAQs yet. Add one above.
               </p>
             ) : (
               faqs.map((faq) => (
@@ -255,18 +255,18 @@ export function CourseFAQManagement({ courseId }: CourseFAQManagementProps) {
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer la FAQ</AlertDialogTitle>
+            <AlertDialogTitle>Delete FAQ</AlertDialogTitle>
             <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer cette FAQ ? Cette action est irréversible.
+              Are you sure you want to delete this FAQ? This action is irreversible.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteId && handleDelete(deleteId)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Supprimer
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

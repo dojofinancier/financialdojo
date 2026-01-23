@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { INVESTISSEUR_QUESTIONS, computeInvestisseurResult } from "@/lib/constants/investor-diagnostic";
-import { submitInvestisseurDiagnosticAction } from "@/app/actions/investor-diagnostic";
+import { submitInvestisseurDiagnosticAction } from "@/app/actions/investisseur-diagnostic";
 import { toast } from "sonner";
 
 function clamp(n: number, min: number, max: number) {
@@ -49,11 +49,11 @@ export function QuestionnaireClient() {
         <div className="mx-auto max-w-4xl px-4 py-4 sm:px-6">
           <Progress value={progressValue} className="h-2 bg-neutral-200" />
           <div className="mt-5 text-center">
-            <p className="text-sm font-semibold text-neutral-700">Diagnostic de clarté investisseur</p>
+            <p className="text-sm font-semibold text-neutral-700">Investor clarity diagnostic</p>
             <h1 className="mt-1 text-2xl font-black tracking-tight">Questionnaire</h1>
             {!isDone && (
               <p className="mt-2 text-sm text-neutral-600">
-                Question {stepIdx + 1} sur {total}
+                Question {stepIdx + 1} of {total}
               </p>
             )}
           </div>
@@ -64,10 +64,10 @@ export function QuestionnaireClient() {
         {/* Standalone nav row */}
         <div className="mb-6 flex items-center justify-between">
           <Link href="/investor" className="text-sm font-semibold text-neutral-700 hover:underline underline-offset-4">
-            ← Retour à la page
+            ← Back to page
           </Link>
           <Link href="/" className="text-sm font-black tracking-tight">
-            LE DOJO FINANCIER
+            FINANCIAL DOJO
           </Link>
         </div>
 
@@ -108,55 +108,55 @@ export function QuestionnaireClient() {
 
               <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <Button variant="outline" className="border-black/15 bg-white/70" onClick={goBack} disabled={stepIdx === 0}>
-                  Retour
+                  Back
                 </Button>
                 <Button onClick={goNext} disabled={!canGoNext} className="font-semibold">
-                  Suivant →
+                  Next →
                 </Button>
               </div>
             </div>
           </div>
         ) : (
           <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm sm:p-8">
-            <p className="text-sm font-semibold text-neutral-700">Résultat</p>
-            <h2 className="mt-1 text-3xl font-black tracking-tight">Ton archétype investisseur</h2>
+            <p className="text-sm font-semibold text-neutral-700">Result</p>
+            <h2 className="mt-1 text-3xl font-black tracking-tight">Your investor archetype</h2>
             {result ? (
               <>
                 <div className="mt-5 rounded-xl border border-black/10 bg-[#fbf7f2] p-5">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-neutral-700">Profil principal</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-neutral-700">Primary profile</p>
                   <p className="mt-1 text-2xl font-black tracking-tight">{result.primary.name}</p>
                   <p className="mt-2 text-neutral-800">{result.primary.one_liner}</p>
 
                   {result.secondary && (
                     <div className="mt-4 border-t border-black/10 pt-4">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-neutral-700">Profil secondaire</p>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-neutral-700">Secondary profile</p>
                       <p className="mt-1 text-lg font-black tracking-tight">{result.secondary.name}</p>
                       <p className="mt-1 text-neutral-800">{result.secondary.one_liner}</p>
                     </div>
                   )}
 
                   <p className="mt-4 text-xs text-neutral-600">
-                    Confiance:{" "}
+                    Confidence:{" "}
                     <span className="font-semibold">
-                      {result.confidence === "high" ? "high" : result.confidence === "medium" ? "moyenne" : "faible"}
+                      {result.confidence === "high" ? "high" : result.confidence === "medium" ? "medium" : "low"}
                     </span>
                   </p>
                 </div>
 
                 <p className="mt-5 text-neutral-700">
-                  Si tu veux recevoir la suite (rapport personnalisé), laisse ton prénom et ton email.
+                  If you want the next step (personalized report), leave your first name and email.
                 </p>
               </>
             ) : (
               <p className="mt-3 text-neutral-700">
-                Résultat indisponible pour l’instant — il manque des données de scoring.
+                Result unavailable for now — scoring data is missing.
               </p>
             )}
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="firstName" className="font-semibold">
-                  Prénom
+                  First name
                 </Label>
                 <Input
                   id="firstName"
@@ -187,7 +187,7 @@ export function QuestionnaireClient() {
                 className="border-black/15 bg-white/70"
                 onClick={() => setStepIdx(Math.max(0, questions.length - 1))}
               >
-                Modifier mes réponses
+                Edit my answers
               </Button>
               <Button
                 className="font-semibold"
@@ -217,19 +217,19 @@ export function QuestionnaireClient() {
                 }}
                 disabled={isSubmitting || !lead.firstName.trim() || !lead.email.trim() || !result}
               >
-                {isSubmitting ? "Envoi..." : "Recevoir mon rapport →"}
+                {isSubmitting ? "Sending..." : "Get my report →"}
               </Button>
             </div>
 
             {hasSubmitted && (
               <div className="mt-5 rounded-xl border border-black/10 bg-[#fbf7f2] p-4 text-sm text-neutral-800">
-                On vient de t’envoyer un email à <span className="font-semibold">{lead.email}</span>. Si tu ne le vois pas,
-                vérifie tes spams.
+                We just sent an email to <span className="font-semibold">{lead.email}</span>. If you do not see it,
+                check your spam folder.
               </div>
             )}
 
             <p className="mt-6 text-xs text-neutral-600">
-              Éducation seulement. Aucun conseil d’investissement personnalisé.
+              Educational only. No personalized investment advice.
             </p>
           </div>
         )}
@@ -237,4 +237,3 @@ export function QuestionnaireClient() {
     </div>
   );
 }
-

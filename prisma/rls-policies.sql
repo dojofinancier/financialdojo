@@ -1,31 +1,23 @@
 -- ============================================================================
--- Le Dojo Financier - Row Level Security (RLS) Policies
+-- Financial Dojo - Row Level Security (RLS) Policies (Basic)
 -- ============================================================================
--- Purpose: Enable RLS and create security policies for all tables
--- This ensures data security at the database level
--- ============================================================================
--- 
--- IMPORTANT: This migration enables RLS on all tables and creates policies
--- based on user roles (ADMIN, INSTRUCTOR, STUDENT) and data ownership.
--- 
--- Access Patterns:
--- - ADMIN: Full access to all data
--- - INSTRUCTOR: Access to their cohorts and related data
--- - STUDENT: Access to their own data and enrolled courses/cohorts
--- - Public: Published courses, blog articles, course categories
+-- Purpose: Enable RLS and define baseline policies for all tables.
+-- Access patterns:
+-- - ADMIN: full access
+-- - INSTRUCTOR: access to their cohorts and related data
+-- - STUDENT: access to their own data and enrolled courses/cohorts
+-- - Public: published catalog content and scheduling windows
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------
--- STEP 1: Create Helper Functions
+-- Helper functions
 -- ----------------------------------------------------------------------------
 
--- Get current user's Supabase ID mapped to Prisma user ID
 CREATE OR REPLACE FUNCTION get_current_user_id()
 RETURNS TEXT AS $$
   SELECT id FROM users WHERE supabase_id = auth.uid()::TEXT LIMIT 1;
 $$ LANGUAGE SQL SECURITY DEFINER STABLE;
 
--- Check if current user is admin
 CREATE OR REPLACE FUNCTION is_admin()
 RETURNS BOOLEAN AS $$
   SELECT COALESCE(
@@ -34,7 +26,6 @@ RETURNS BOOLEAN AS $$
   );
 $$ LANGUAGE SQL SECURITY DEFINER STABLE;
 
--- Check if current user is instructor
 CREATE OR REPLACE FUNCTION is_instructor()
 RETURNS BOOLEAN AS $$
   SELECT COALESCE(
@@ -43,7 +34,6 @@ RETURNS BOOLEAN AS $$
   );
 $$ LANGUAGE SQL SECURITY DEFINER STABLE;
 
--- Check if current user is admin or instructor
 CREATE OR REPLACE FUNCTION is_admin_or_instructor()
 RETURNS BOOLEAN AS $$
   SELECT COALESCE(
@@ -52,7 +42,6 @@ RETURNS BOOLEAN AS $$
   );
 $$ LANGUAGE SQL SECURITY DEFINER STABLE;
 
--- Check if user is enrolled in a course
 CREATE OR REPLACE FUNCTION is_enrolled_in_course(course_id_param TEXT)
 RETURNS BOOLEAN AS $$
   SELECT EXISTS(
@@ -63,7 +52,6 @@ RETURNS BOOLEAN AS $$
   );
 $$ LANGUAGE SQL SECURITY DEFINER STABLE;
 
--- Check if user is enrolled in a cohort
 CREATE OR REPLACE FUNCTION is_enrolled_in_cohort(cohort_id_param TEXT)
 RETURNS BOOLEAN AS $$
   SELECT EXISTS(
@@ -74,7 +62,6 @@ RETURNS BOOLEAN AS $$
   );
 $$ LANGUAGE SQL SECURITY DEFINER STABLE;
 
--- Check if user is instructor of a cohort
 CREATE OR REPLACE FUNCTION is_cohort_instructor(cohort_id_param TEXT)
 RETURNS BOOLEAN AS $$
   SELECT EXISTS(
@@ -85,7 +72,7 @@ RETURNS BOOLEAN AS $$
 $$ LANGUAGE SQL SECURITY DEFINER STABLE;
 
 -- ----------------------------------------------------------------------------
--- STEP 2: Enable RLS on All Tables
+-- Enable RLS on all tables
 -- ----------------------------------------------------------------------------
 
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
@@ -97,6 +84,14 @@ ALTER TABLE videos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quizzes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quiz_questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quiz_attempts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE case_studies ENABLE ROW LEVEL SECURITY;
+ALTER TABLE case_study_questions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE case_study_attempts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE learning_activities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE learning_activity_attempts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE question_banks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE question_bank_questions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE question_bank_attempts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE flashcards ENABLE ROW LEVEL SECURITY;
 ALTER TABLE flashcard_study_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
@@ -110,7 +105,7 @@ ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE appointment_availability ENABLE ROW LEVEL SECURITY;
 ALTER TABLE availability_rules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE availability_exceptions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE blog_articles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE seo_articles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE coupons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE coupon_usage ENABLE ROW LEVEL SECURITY;
 ALTER TABLE support_tickets ENABLE ROW LEVEL SECURITY;
@@ -122,65 +117,71 @@ ALTER TABLE cohort_enrollments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE group_coaching_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cohort_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cohort_message_reads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_course_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE module_progress ENABLE ROW LEVEL SECURITY;
+ALTER TABLE smart_review_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE smart_review_progress ENABLE ROW LEVEL SECURITY;
+ALTER TABLE assessment_results ENABLE ROW LEVEL SECURITY;
+ALTER TABLE investor_leads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE investor_assessments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE investor_report_instances ENABLE ROW LEVEL SECURITY;
+ALTER TABLE daily_plan_entries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE course_faqs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cohort_faqs ENABLE ROW LEVEL SECURITY;
 
 -- ----------------------------------------------------------------------------
--- STEP 3: USERS Table Policies
+-- Users
 -- ----------------------------------------------------------------------------
 
--- Admin can view all users
-CREATE POLICY "admin_select_all_users" ON users
+DROP POLICY IF EXISTS admin_select_all_users ON users;
+CREATE POLICY admin_select_all_users ON users
   FOR SELECT
   USING (is_admin());
 
--- Users can view their own profile
-CREATE POLICY "users_select_own_profile" ON users
+DROP POLICY IF EXISTS users_select_own_profile ON users;
+CREATE POLICY users_select_own_profile ON users
   FOR SELECT
   USING (get_current_user_id() = id);
 
--- Users can update their own profile
--- Note: Role and suspended_at changes should be prevented at application level
-CREATE POLICY "users_update_own_profile" ON users
+DROP POLICY IF EXISTS users_update_own_profile ON users;
+CREATE POLICY users_update_own_profile ON users
   FOR UPDATE
   USING (get_current_user_id() = id)
   WITH CHECK (get_current_user_id() = id);
 
--- Admin can update any user
-CREATE POLICY "admin_update_all_users" ON users
+DROP POLICY IF EXISTS admin_update_all_users ON users;
+CREATE POLICY admin_update_all_users ON users
   FOR UPDATE
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- Admin can insert users (for user creation)
-CREATE POLICY "admin_insert_users" ON users
+DROP POLICY IF EXISTS admin_insert_users ON users;
+CREATE POLICY admin_insert_users ON users
   FOR INSERT
   WITH CHECK (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 4: COURSE_CATEGORIES Table Policies
+-- Course catalog
 -- ----------------------------------------------------------------------------
 
--- Public read access (for course catalog)
-CREATE POLICY "public_select_course_categories" ON course_categories
+DROP POLICY IF EXISTS public_select_course_categories ON course_categories;
+CREATE POLICY public_select_course_categories ON course_categories
   FOR SELECT
   USING (true);
 
--- Admin can manage categories
-CREATE POLICY "admin_manage_course_categories" ON course_categories
+DROP POLICY IF EXISTS admin_manage_course_categories ON course_categories;
+CREATE POLICY admin_manage_course_categories ON course_categories
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 5: COURSES Table Policies
--- ----------------------------------------------------------------------------
-
--- Public can view published courses
-CREATE POLICY "public_select_published_courses" ON courses
+DROP POLICY IF EXISTS public_select_published_courses ON courses;
+CREATE POLICY public_select_published_courses ON courses
   FOR SELECT
   USING (published = true);
 
--- Students can view courses they're enrolled in (even if not published)
-CREATE POLICY "students_select_enrolled_courses" ON courses
+DROP POLICY IF EXISTS students_select_enrolled_courses ON courses;
+CREATE POLICY students_select_enrolled_courses ON courses
   FOR SELECT
   USING (
     EXISTS(
@@ -191,18 +192,18 @@ CREATE POLICY "students_select_enrolled_courses" ON courses
     )
   );
 
--- Admin can manage all courses
-CREATE POLICY "admin_manage_courses" ON courses
+DROP POLICY IF EXISTS admin_manage_courses ON courses;
+CREATE POLICY admin_manage_courses ON courses
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 6: MODULES Table Policies
+-- Course content (modules, items, media)
 -- ----------------------------------------------------------------------------
 
--- Public can view modules of published courses
-CREATE POLICY "public_select_modules_published_courses" ON modules
+DROP POLICY IF EXISTS public_select_modules_published_courses ON modules;
+CREATE POLICY public_select_modules_published_courses ON modules
   FOR SELECT
   USING (
     EXISTS(
@@ -212,23 +213,19 @@ CREATE POLICY "public_select_modules_published_courses" ON modules
     )
   );
 
--- Students can view modules of enrolled courses
-CREATE POLICY "students_select_modules_enrolled_courses" ON modules
+DROP POLICY IF EXISTS students_select_modules_enrolled_courses ON modules;
+CREATE POLICY students_select_modules_enrolled_courses ON modules
   FOR SELECT
   USING (is_enrolled_in_course(course_id));
 
--- Admin can manage all modules
-CREATE POLICY "admin_manage_modules" ON modules
+DROP POLICY IF EXISTS admin_manage_modules ON modules;
+CREATE POLICY admin_manage_modules ON modules
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 7: CONTENT_ITEMS Table Policies
--- ----------------------------------------------------------------------------
-
--- Public can view content items of published courses
-CREATE POLICY "public_select_content_items_published" ON content_items
+DROP POLICY IF EXISTS public_select_content_items_published ON content_items;
+CREATE POLICY public_select_content_items_published ON content_items
   FOR SELECT
   USING (
     EXISTS(
@@ -239,8 +236,8 @@ CREATE POLICY "public_select_content_items_published" ON content_items
     )
   );
 
--- Students can view content items of enrolled courses
-CREATE POLICY "students_select_content_items_enrolled" ON content_items
+DROP POLICY IF EXISTS students_select_content_items_enrolled ON content_items;
+CREATE POLICY students_select_content_items_enrolled ON content_items
   FOR SELECT
   USING (
     EXISTS(
@@ -250,18 +247,14 @@ CREATE POLICY "students_select_content_items_enrolled" ON content_items
     )
   );
 
--- Admin can manage all content items
-CREATE POLICY "admin_manage_content_items" ON content_items
+DROP POLICY IF EXISTS admin_manage_content_items ON content_items;
+CREATE POLICY admin_manage_content_items ON content_items
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 8: VIDEOS Table Policies
--- ----------------------------------------------------------------------------
-
--- Follow content_items access (through content_item_id)
-CREATE POLICY "public_select_videos_published" ON videos
+DROP POLICY IF EXISTS public_select_videos_published ON videos;
+CREATE POLICY public_select_videos_published ON videos
   FOR SELECT
   USING (
     EXISTS(
@@ -273,7 +266,8 @@ CREATE POLICY "public_select_videos_published" ON videos
     )
   );
 
-CREATE POLICY "students_select_videos_enrolled" ON videos
+DROP POLICY IF EXISTS students_select_videos_enrolled ON videos;
+CREATE POLICY students_select_videos_enrolled ON videos
   FOR SELECT
   USING (
     EXISTS(
@@ -284,17 +278,14 @@ CREATE POLICY "students_select_videos_enrolled" ON videos
     )
   );
 
-CREATE POLICY "admin_manage_videos" ON videos
+DROP POLICY IF EXISTS admin_manage_videos ON videos;
+CREATE POLICY admin_manage_videos ON videos
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 9: QUIZZES Table Policies
--- ----------------------------------------------------------------------------
-
--- Follow content_items access
-CREATE POLICY "public_select_quizzes_published" ON quizzes
+DROP POLICY IF EXISTS public_select_quizzes_published ON quizzes;
+CREATE POLICY public_select_quizzes_published ON quizzes
   FOR SELECT
   USING (
     EXISTS(
@@ -306,7 +297,8 @@ CREATE POLICY "public_select_quizzes_published" ON quizzes
     )
   );
 
-CREATE POLICY "students_select_quizzes_enrolled" ON quizzes
+DROP POLICY IF EXISTS students_select_quizzes_enrolled ON quizzes;
+CREATE POLICY students_select_quizzes_enrolled ON quizzes
   FOR SELECT
   USING (
     EXISTS(
@@ -317,17 +309,14 @@ CREATE POLICY "students_select_quizzes_enrolled" ON quizzes
     )
   );
 
-CREATE POLICY "admin_manage_quizzes" ON quizzes
+DROP POLICY IF EXISTS admin_manage_quizzes ON quizzes;
+CREATE POLICY admin_manage_quizzes ON quizzes
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 10: QUIZ_QUESTIONS Table Policies
--- ----------------------------------------------------------------------------
-
--- Follow quizzes access
-CREATE POLICY "public_select_quiz_questions_published" ON quiz_questions
+DROP POLICY IF EXISTS public_select_quiz_questions_published ON quiz_questions;
+CREATE POLICY public_select_quiz_questions_published ON quiz_questions
   FOR SELECT
   USING (
     EXISTS(
@@ -340,7 +329,8 @@ CREATE POLICY "public_select_quiz_questions_published" ON quiz_questions
     )
   );
 
-CREATE POLICY "students_select_quiz_questions_enrolled" ON quiz_questions
+DROP POLICY IF EXISTS students_select_quiz_questions_enrolled ON quiz_questions;
+CREATE POLICY students_select_quiz_questions_enrolled ON quiz_questions
   FOR SELECT
   USING (
     EXISTS(
@@ -352,32 +342,29 @@ CREATE POLICY "students_select_quiz_questions_enrolled" ON quiz_questions
     )
   );
 
-CREATE POLICY "admin_manage_quiz_questions" ON quiz_questions
+DROP POLICY IF EXISTS admin_manage_quiz_questions ON quiz_questions;
+CREATE POLICY admin_manage_quiz_questions ON quiz_questions
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 11: QUIZ_ATTEMPTS Table Policies
--- ----------------------------------------------------------------------------
-
--- Students can view and create their own quiz attempts
-CREATE POLICY "students_manage_own_quiz_attempts" ON quiz_attempts
+DROP POLICY IF EXISTS students_manage_own_quiz_attempts ON quiz_attempts;
+CREATE POLICY students_manage_own_quiz_attempts ON quiz_attempts
   FOR ALL
   USING (get_current_user_id() = user_id)
   WITH CHECK (get_current_user_id() = user_id);
 
--- Admin can view all quiz attempts
-CREATE POLICY "admin_select_all_quiz_attempts" ON quiz_attempts
+DROP POLICY IF EXISTS admin_select_all_quiz_attempts ON quiz_attempts;
+CREATE POLICY admin_select_all_quiz_attempts ON quiz_attempts
   FOR SELECT
   USING (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 12: FLASHCARDS Table Policies
+-- Practice content (flashcards, question banks, case studies, activities)
 -- ----------------------------------------------------------------------------
 
--- Public can view flashcards of published courses
-CREATE POLICY "public_select_flashcards_published" ON flashcards
+DROP POLICY IF EXISTS public_select_flashcards_published ON flashcards;
+CREATE POLICY public_select_flashcards_published ON flashcards
   FOR SELECT
   USING (
     EXISTS(
@@ -387,38 +374,134 @@ CREATE POLICY "public_select_flashcards_published" ON flashcards
     )
   );
 
--- Students can view flashcards of enrolled courses
-CREATE POLICY "students_select_flashcards_enrolled" ON flashcards
+DROP POLICY IF EXISTS students_select_flashcards_enrolled ON flashcards;
+CREATE POLICY students_select_flashcards_enrolled ON flashcards
   FOR SELECT
   USING (is_enrolled_in_course(course_id));
 
--- Admin can manage all flashcards
-CREATE POLICY "admin_manage_flashcards" ON flashcards
+DROP POLICY IF EXISTS admin_manage_flashcards ON flashcards;
+CREATE POLICY admin_manage_flashcards ON flashcards
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 13: FLASHCARD_STUDY_SESSIONS Table Policies
--- ----------------------------------------------------------------------------
-
--- Students can manage their own study sessions
-CREATE POLICY "students_manage_own_study_sessions" ON flashcard_study_sessions
+DROP POLICY IF EXISTS students_manage_own_study_sessions ON flashcard_study_sessions;
+CREATE POLICY students_manage_own_study_sessions ON flashcard_study_sessions
   FOR ALL
   USING (get_current_user_id() = user_id)
   WITH CHECK (get_current_user_id() = user_id);
 
--- Admin can view all study sessions
-CREATE POLICY "admin_select_all_study_sessions" ON flashcard_study_sessions
+DROP POLICY IF EXISTS admin_select_all_study_sessions ON flashcard_study_sessions;
+CREATE POLICY admin_select_all_study_sessions ON flashcard_study_sessions
+  FOR SELECT
+  USING (is_admin());
+
+DROP POLICY IF EXISTS students_select_case_studies_enrolled ON case_studies;
+CREATE POLICY students_select_case_studies_enrolled ON case_studies
+  FOR SELECT
+  USING (is_enrolled_in_course(course_id));
+
+DROP POLICY IF EXISTS admin_manage_case_studies ON case_studies;
+CREATE POLICY admin_manage_case_studies ON case_studies
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS students_select_case_study_questions_enrolled ON case_study_questions;
+CREATE POLICY students_select_case_study_questions_enrolled ON case_study_questions
+  FOR SELECT
+  USING (
+    EXISTS(
+      SELECT 1 FROM case_studies
+      WHERE case_studies.id = case_study_questions.case_study_id
+        AND is_enrolled_in_course(case_studies.course_id)
+    )
+  );
+
+DROP POLICY IF EXISTS admin_manage_case_study_questions ON case_study_questions;
+CREATE POLICY admin_manage_case_study_questions ON case_study_questions
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS students_manage_own_case_study_attempts ON case_study_attempts;
+CREATE POLICY students_manage_own_case_study_attempts ON case_study_attempts
+  FOR ALL
+  USING (get_current_user_id() = user_id)
+  WITH CHECK (get_current_user_id() = user_id);
+
+DROP POLICY IF EXISTS admin_select_case_study_attempts ON case_study_attempts;
+CREATE POLICY admin_select_case_study_attempts ON case_study_attempts
+  FOR SELECT
+  USING (is_admin());
+
+DROP POLICY IF EXISTS students_select_learning_activities_enrolled ON learning_activities;
+CREATE POLICY students_select_learning_activities_enrolled ON learning_activities
+  FOR SELECT
+  USING (is_enrolled_in_course(course_id));
+
+DROP POLICY IF EXISTS admin_manage_learning_activities ON learning_activities;
+CREATE POLICY admin_manage_learning_activities ON learning_activities
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS students_manage_own_learning_activity_attempts ON learning_activity_attempts;
+CREATE POLICY students_manage_own_learning_activity_attempts ON learning_activity_attempts
+  FOR ALL
+  USING (get_current_user_id() = user_id)
+  WITH CHECK (get_current_user_id() = user_id);
+
+DROP POLICY IF EXISTS admin_select_learning_activity_attempts ON learning_activity_attempts;
+CREATE POLICY admin_select_learning_activity_attempts ON learning_activity_attempts
+  FOR SELECT
+  USING (is_admin());
+
+DROP POLICY IF EXISTS students_select_question_banks_enrolled ON question_banks;
+CREATE POLICY students_select_question_banks_enrolled ON question_banks
+  FOR SELECT
+  USING (is_enrolled_in_course(course_id));
+
+DROP POLICY IF EXISTS admin_manage_question_banks ON question_banks;
+CREATE POLICY admin_manage_question_banks ON question_banks
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS students_select_question_bank_questions_enrolled ON question_bank_questions;
+CREATE POLICY students_select_question_bank_questions_enrolled ON question_bank_questions
+  FOR SELECT
+  USING (
+    EXISTS(
+      SELECT 1 FROM question_banks
+      WHERE question_banks.id = question_bank_questions.question_bank_id
+        AND is_enrolled_in_course(question_banks.course_id)
+    )
+  );
+
+DROP POLICY IF EXISTS admin_manage_question_bank_questions ON question_bank_questions;
+CREATE POLICY admin_manage_question_bank_questions ON question_bank_questions
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS students_manage_own_question_bank_attempts ON question_bank_attempts;
+CREATE POLICY students_manage_own_question_bank_attempts ON question_bank_attempts
+  FOR ALL
+  USING (get_current_user_id() = user_id)
+  WITH CHECK (get_current_user_id() = user_id);
+
+DROP POLICY IF EXISTS admin_select_question_bank_attempts ON question_bank_attempts;
+CREATE POLICY admin_select_question_bank_attempts ON question_bank_attempts
   FOR SELECT
   USING (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 14: NOTES Table Policies
+-- Notes
 -- ----------------------------------------------------------------------------
 
--- Admin notes: Admin can manage, students can view if enrolled
-CREATE POLICY "admin_manage_admin_notes" ON notes
+DROP POLICY IF EXISTS admin_manage_admin_notes ON notes;
+CREATE POLICY admin_manage_admin_notes ON notes
   FOR ALL
   USING (
     type = 'ADMIN'::"NoteType" AND is_admin()
@@ -427,7 +510,8 @@ CREATE POLICY "admin_manage_admin_notes" ON notes
     type = 'ADMIN'::"NoteType" AND is_admin()
   );
 
-CREATE POLICY "students_select_admin_notes_enrolled" ON notes
+DROP POLICY IF EXISTS students_select_admin_notes_enrolled ON notes;
+CREATE POLICY students_select_admin_notes_enrolled ON notes
   FOR SELECT
   USING (
     type = 'ADMIN'::"NoteType" AND
@@ -440,8 +524,8 @@ CREATE POLICY "students_select_admin_notes_enrolled" ON notes
     )
   );
 
--- Student notes: Students can manage their own
-CREATE POLICY "students_manage_own_notes" ON notes
+DROP POLICY IF EXISTS students_manage_own_notes ON notes;
+CREATE POLICY students_manage_own_notes ON notes
   FOR ALL
   USING (
     type = 'STUDENT'::"NoteType" AND
@@ -452,75 +536,130 @@ CREATE POLICY "students_manage_own_notes" ON notes
     get_current_user_id() = user_id
   );
 
--- Admin can view all notes
-CREATE POLICY "admin_select_all_notes" ON notes
+DROP POLICY IF EXISTS admin_select_all_notes ON notes;
+CREATE POLICY admin_select_all_notes ON notes
   FOR SELECT
   USING (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 15: ENROLLMENTS Table Policies
+-- Enrollments and subscriptions
 -- ----------------------------------------------------------------------------
 
--- Students can view their own enrollments
-CREATE POLICY "students_select_own_enrollments" ON enrollments
+DROP POLICY IF EXISTS students_select_own_enrollments ON enrollments;
+CREATE POLICY students_select_own_enrollments ON enrollments
   FOR SELECT
   USING (get_current_user_id() = user_id);
 
--- Admin can manage all enrollments
-CREATE POLICY "admin_manage_enrollments" ON enrollments
+DROP POLICY IF EXISTS admin_manage_enrollments ON enrollments;
+CREATE POLICY admin_manage_enrollments ON enrollments
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- Service role can insert enrollments (for webhook processing)
--- Note: This requires service_role key, not handled by RLS
-
--- ----------------------------------------------------------------------------
--- STEP 16: SUBSCRIPTIONS Table Policies
--- ----------------------------------------------------------------------------
-
--- Students can view their own subscriptions
-CREATE POLICY "students_select_own_subscriptions" ON subscriptions
+DROP POLICY IF EXISTS students_select_own_subscriptions ON subscriptions;
+CREATE POLICY students_select_own_subscriptions ON subscriptions
   FOR SELECT
   USING (get_current_user_id() = user_id);
 
--- Admin can manage all subscriptions
-CREATE POLICY "admin_manage_subscriptions" ON subscriptions
+DROP POLICY IF EXISTS admin_manage_subscriptions ON subscriptions;
+CREATE POLICY admin_manage_subscriptions ON subscriptions
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 17: PROGRESS_TRACKING Table Policies
+-- Progress, study plans, and assessments
 -- ----------------------------------------------------------------------------
 
--- Students can manage their own progress
-CREATE POLICY "students_manage_own_progress" ON progress_tracking
+DROP POLICY IF EXISTS students_manage_own_progress ON progress_tracking;
+CREATE POLICY students_manage_own_progress ON progress_tracking
   FOR ALL
   USING (get_current_user_id() = user_id)
   WITH CHECK (get_current_user_id() = user_id);
 
--- Admin can view all progress
-CREATE POLICY "admin_select_all_progress" ON progress_tracking
+DROP POLICY IF EXISTS admin_select_all_progress ON progress_tracking;
+CREATE POLICY admin_select_all_progress ON progress_tracking
   FOR SELECT
   USING (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 18: ANALYTICS Table Policies
--- ----------------------------------------------------------------------------
+DROP POLICY IF EXISTS students_manage_own_course_settings ON user_course_settings;
+CREATE POLICY students_manage_own_course_settings ON user_course_settings
+  FOR ALL
+  USING (get_current_user_id() = user_id)
+  WITH CHECK (get_current_user_id() = user_id);
 
--- Admin only access
-CREATE POLICY "admin_manage_analytics" ON analytics
+DROP POLICY IF EXISTS admin_select_course_settings ON user_course_settings;
+CREATE POLICY admin_select_course_settings ON user_course_settings
+  FOR SELECT
+  USING (is_admin());
+
+DROP POLICY IF EXISTS students_manage_own_module_progress ON module_progress;
+CREATE POLICY students_manage_own_module_progress ON module_progress
+  FOR ALL
+  USING (get_current_user_id() = user_id)
+  WITH CHECK (get_current_user_id() = user_id);
+
+DROP POLICY IF EXISTS admin_select_module_progress ON module_progress;
+CREATE POLICY admin_select_module_progress ON module_progress
+  FOR SELECT
+  USING (is_admin());
+
+DROP POLICY IF EXISTS students_manage_own_smart_review_items ON smart_review_items;
+CREATE POLICY students_manage_own_smart_review_items ON smart_review_items
+  FOR ALL
+  USING (get_current_user_id() = user_id)
+  WITH CHECK (get_current_user_id() = user_id);
+
+DROP POLICY IF EXISTS admin_select_smart_review_items ON smart_review_items;
+CREATE POLICY admin_select_smart_review_items ON smart_review_items
+  FOR SELECT
+  USING (is_admin());
+
+DROP POLICY IF EXISTS students_manage_own_smart_review_progress ON smart_review_progress;
+CREATE POLICY students_manage_own_smart_review_progress ON smart_review_progress
+  FOR ALL
+  USING (get_current_user_id() = user_id)
+  WITH CHECK (get_current_user_id() = user_id);
+
+DROP POLICY IF EXISTS admin_select_smart_review_progress ON smart_review_progress;
+CREATE POLICY admin_select_smart_review_progress ON smart_review_progress
+  FOR SELECT
+  USING (is_admin());
+
+DROP POLICY IF EXISTS students_manage_own_assessment_results ON assessment_results;
+CREATE POLICY students_manage_own_assessment_results ON assessment_results
+  FOR ALL
+  USING (get_current_user_id() = user_id)
+  WITH CHECK (get_current_user_id() = user_id);
+
+DROP POLICY IF EXISTS admin_select_assessment_results ON assessment_results;
+CREATE POLICY admin_select_assessment_results ON assessment_results
+  FOR SELECT
+  USING (is_admin());
+
+DROP POLICY IF EXISTS students_manage_own_daily_plan_entries ON daily_plan_entries;
+CREATE POLICY students_manage_own_daily_plan_entries ON daily_plan_entries
+  FOR ALL
+  USING (get_current_user_id() = user_id)
+  WITH CHECK (get_current_user_id() = user_id);
+
+DROP POLICY IF EXISTS admin_select_daily_plan_entries ON daily_plan_entries;
+CREATE POLICY admin_select_daily_plan_entries ON daily_plan_entries
+  FOR SELECT
+  USING (is_admin());
+
+DROP POLICY IF EXISTS admin_manage_analytics ON analytics;
+CREATE POLICY admin_manage_analytics ON analytics
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 19: MESSAGES Table Policies
+-- Messaging
 -- ----------------------------------------------------------------------------
 
--- Students can view messages in their own threads
-CREATE POLICY "students_select_own_messages" ON messages
+DROP POLICY IF EXISTS students_select_own_messages ON messages;
+CREATE POLICY students_select_own_messages ON messages
   FOR SELECT
   USING (
     EXISTS(
@@ -530,8 +669,8 @@ CREATE POLICY "students_select_own_messages" ON messages
     )
   );
 
--- Students can create messages in their own threads
-CREATE POLICY "students_insert_own_messages" ON messages
+DROP POLICY IF EXISTS students_insert_own_messages ON messages;
+CREATE POLICY students_insert_own_messages ON messages
   FOR INSERT
   WITH CHECK (
     get_current_user_id() = user_id AND
@@ -542,114 +681,94 @@ CREATE POLICY "students_insert_own_messages" ON messages
     )
   );
 
--- Admin can view all messages
-CREATE POLICY "admin_select_all_messages" ON messages
+DROP POLICY IF EXISTS admin_select_all_messages ON messages;
+CREATE POLICY admin_select_all_messages ON messages
   FOR SELECT
   USING (is_admin());
 
--- Admin can insert messages (for replies)
-CREATE POLICY "admin_insert_messages" ON messages
+DROP POLICY IF EXISTS admin_insert_messages ON messages;
+CREATE POLICY admin_insert_messages ON messages
   FOR INSERT
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 20: MESSAGE_THREADS Table Policies
--- ----------------------------------------------------------------------------
-
--- Students can manage their own threads
-CREATE POLICY "students_manage_own_threads" ON message_threads
+DROP POLICY IF EXISTS students_manage_own_threads ON message_threads;
+CREATE POLICY students_manage_own_threads ON message_threads
   FOR ALL
   USING (get_current_user_id() = user_id)
   WITH CHECK (get_current_user_id() = user_id);
 
--- Admin can view all threads
-CREATE POLICY "admin_select_all_threads" ON message_threads
+DROP POLICY IF EXISTS admin_select_all_threads ON message_threads;
+CREATE POLICY admin_select_all_threads ON message_threads
   FOR SELECT
   USING (is_admin());
 
--- Admin can update threads (for status changes)
-CREATE POLICY "admin_update_threads" ON message_threads
+DROP POLICY IF EXISTS admin_update_threads ON message_threads;
+CREATE POLICY admin_update_threads ON message_threads
   FOR UPDATE
   USING (is_admin())
   WITH CHECK (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 21: APPOINTMENTS Table Policies
+-- Appointments
 -- ----------------------------------------------------------------------------
 
--- Students can view and create their own appointments
-CREATE POLICY "students_manage_own_appointments" ON appointments
+DROP POLICY IF EXISTS students_manage_own_appointments ON appointments;
+CREATE POLICY students_manage_own_appointments ON appointments
   FOR ALL
   USING (get_current_user_id() = user_id)
   WITH CHECK (get_current_user_id() = user_id);
 
--- Admin can manage all appointments
-CREATE POLICY "admin_manage_appointments" ON appointments
+DROP POLICY IF EXISTS admin_manage_appointments ON appointments;
+CREATE POLICY admin_manage_appointments ON appointments
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 22: APPOINTMENT_AVAILABILITY Table Policies (DEPRECATED)
--- ----------------------------------------------------------------------------
-
--- Admin only
-CREATE POLICY "admin_manage_appointment_availability" ON appointment_availability
+DROP POLICY IF EXISTS admin_manage_appointment_availability ON appointment_availability;
+CREATE POLICY admin_manage_appointment_availability ON appointment_availability
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 23: AVAILABILITY_RULES Table Policies
--- ----------------------------------------------------------------------------
-
--- Admin can manage all availability rules
-CREATE POLICY "admin_manage_availability_rules" ON availability_rules
+DROP POLICY IF EXISTS admin_manage_availability_rules ON availability_rules;
+CREATE POLICY admin_manage_availability_rules ON availability_rules
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- Public can view availability rules (for booking interface)
-CREATE POLICY "public_select_availability_rules" ON availability_rules
+DROP POLICY IF EXISTS public_select_availability_rules ON availability_rules;
+CREATE POLICY public_select_availability_rules ON availability_rules
+  FOR SELECT
+  USING (true);
+
+DROP POLICY IF EXISTS admin_manage_availability_exceptions ON availability_exceptions;
+CREATE POLICY admin_manage_availability_exceptions ON availability_exceptions
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS public_select_availability_exceptions ON availability_exceptions;
+CREATE POLICY public_select_availability_exceptions ON availability_exceptions
   FOR SELECT
   USING (true);
 
 -- ----------------------------------------------------------------------------
--- STEP 24: AVAILABILITY_EXCEPTIONS Table Policies
+-- Articles and coupons
 -- ----------------------------------------------------------------------------
 
--- Admin can manage all availability exceptions
-CREATE POLICY "admin_manage_availability_exceptions" ON availability_exceptions
+DROP POLICY IF EXISTS public_select_published_articles ON seo_articles;
+CREATE POLICY public_select_published_articles ON seo_articles
+  FOR SELECT
+  USING (published = true);
+
+DROP POLICY IF EXISTS admin_manage_articles ON seo_articles;
+CREATE POLICY admin_manage_articles ON seo_articles
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- Public can view availability exceptions (for booking interface)
-CREATE POLICY "public_select_availability_exceptions" ON availability_exceptions
-  FOR SELECT
-  USING (true);
-
--- ----------------------------------------------------------------------------
--- STEP 25: BLOG_ARTICLES Table Policies
--- ----------------------------------------------------------------------------
-
--- Public can view published blog articles
-CREATE POLICY "public_select_published_blog_articles" ON blog_articles
-  FOR SELECT
-  USING (status = 'PUBLISHED'::"BlogStatus");
-
--- Admin can manage all blog articles
-CREATE POLICY "admin_manage_blog_articles" ON blog_articles
-  FOR ALL
-  USING (is_admin())
-  WITH CHECK (is_admin());
-
--- ----------------------------------------------------------------------------
--- STEP 26: COUPONS Table Policies
--- ----------------------------------------------------------------------------
-
--- Public can view active coupons (for validation)
-CREATE POLICY "public_select_active_coupons" ON coupons
+DROP POLICY IF EXISTS public_select_active_coupons ON coupons;
+CREATE POLICY public_select_active_coupons ON coupons
   FOR SELECT
   USING (
     active = true
@@ -657,18 +776,14 @@ CREATE POLICY "public_select_active_coupons" ON coupons
     AND NOW() <= valid_until
   );
 
--- Admin can manage all coupons
-CREATE POLICY "admin_manage_coupons" ON coupons
+DROP POLICY IF EXISTS admin_manage_coupons ON coupons;
+CREATE POLICY admin_manage_coupons ON coupons
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 27: COUPON_USAGE Table Policies
--- ----------------------------------------------------------------------------
-
--- Students can view their own coupon usage (through enrollments)
-CREATE POLICY "students_select_own_coupon_usage" ON coupon_usage
+DROP POLICY IF EXISTS students_select_own_coupon_usage ON coupon_usage;
+CREATE POLICY students_select_own_coupon_usage ON coupon_usage
   FOR SELECT
   USING (
     EXISTS(
@@ -678,18 +793,18 @@ CREATE POLICY "students_select_own_coupon_usage" ON coupon_usage
     )
   );
 
--- Admin can manage all coupon usage
-CREATE POLICY "admin_manage_coupon_usage" ON coupon_usage
+DROP POLICY IF EXISTS admin_manage_coupon_usage ON coupon_usage;
+CREATE POLICY admin_manage_coupon_usage ON coupon_usage
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 28: SUPPORT_TICKETS Table Policies
+-- Support tickets
 -- ----------------------------------------------------------------------------
 
--- Students can view and create their own tickets
-CREATE POLICY "students_manage_own_tickets" ON support_tickets
+DROP POLICY IF EXISTS students_manage_own_tickets ON support_tickets;
+CREATE POLICY students_manage_own_tickets ON support_tickets
   FOR ALL
   USING (
     get_current_user_id() = student_id AND
@@ -708,18 +823,14 @@ CREATE POLICY "students_manage_own_tickets" ON support_tickets
     )
   );
 
--- Admin can manage all tickets
-CREATE POLICY "admin_manage_tickets" ON support_tickets
+DROP POLICY IF EXISTS admin_manage_tickets ON support_tickets;
+CREATE POLICY admin_manage_tickets ON support_tickets
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 29: SUPPORT_TICKET_REPLIES Table Policies
--- ----------------------------------------------------------------------------
-
--- Students can view replies to their own tickets
-CREATE POLICY "students_select_own_ticket_replies" ON support_ticket_replies
+DROP POLICY IF EXISTS students_select_own_ticket_replies ON support_ticket_replies;
+CREATE POLICY students_select_own_ticket_replies ON support_ticket_replies
   FOR SELECT
   USING (
     EXISTS(
@@ -729,8 +840,8 @@ CREATE POLICY "students_select_own_ticket_replies" ON support_ticket_replies
     )
   );
 
--- Students can create replies to their own tickets
-CREATE POLICY "students_insert_own_ticket_replies" ON support_ticket_replies
+DROP POLICY IF EXISTS students_insert_own_ticket_replies ON support_ticket_replies;
+CREATE POLICY students_insert_own_ticket_replies ON support_ticket_replies
   FOR INSERT
   WITH CHECK (
     get_current_user_id() = author_id AND
@@ -742,24 +853,24 @@ CREATE POLICY "students_insert_own_ticket_replies" ON support_ticket_replies
     )
   );
 
--- Admin can manage all replies
-CREATE POLICY "admin_manage_ticket_replies" ON support_ticket_replies
+DROP POLICY IF EXISTS admin_manage_ticket_replies ON support_ticket_replies;
+CREATE POLICY admin_manage_ticket_replies ON support_ticket_replies
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 30: ERROR_LOGS Table Policies
+-- Error logs
 -- ----------------------------------------------------------------------------
 
--- Admin only access
-CREATE POLICY "admin_manage_error_logs" ON error_logs
+DROP POLICY IF EXISTS admin_manage_error_logs ON error_logs;
+CREATE POLICY admin_manage_error_logs ON error_logs
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- Allow users to insert their own error logs (for client-side error logging)
-CREATE POLICY "users_insert_own_error_logs" ON error_logs
+DROP POLICY IF EXISTS users_insert_own_error_logs ON error_logs;
+CREATE POLICY users_insert_own_error_logs ON error_logs
   FOR INSERT
   WITH CHECK (
     user_id IS NULL OR
@@ -767,21 +878,21 @@ CREATE POLICY "users_insert_own_error_logs" ON error_logs
   );
 
 -- ----------------------------------------------------------------------------
--- STEP 31: COHORTS Table Policies
+-- Cohorts and group coaching
 -- ----------------------------------------------------------------------------
 
--- Public can view published cohorts
-CREATE POLICY "public_select_published_cohorts" ON cohorts
+DROP POLICY IF EXISTS public_select_published_cohorts ON cohorts;
+CREATE POLICY public_select_published_cohorts ON cohorts
   FOR SELECT
   USING (published = true);
 
--- Students can view cohorts they're enrolled in
-CREATE POLICY "students_select_enrolled_cohorts" ON cohorts
+DROP POLICY IF EXISTS students_select_enrolled_cohorts ON cohorts;
+CREATE POLICY students_select_enrolled_cohorts ON cohorts
   FOR SELECT
   USING (is_enrolled_in_cohort(id));
 
--- Instructors can view and manage their own cohorts
-CREATE POLICY "instructors_manage_own_cohorts" ON cohorts
+DROP POLICY IF EXISTS instructors_manage_own_cohorts ON cohorts;
+CREATE POLICY instructors_manage_own_cohorts ON cohorts
   FOR ALL
   USING (
     is_instructor() AND
@@ -792,18 +903,14 @@ CREATE POLICY "instructors_manage_own_cohorts" ON cohorts
     instructor_id = get_current_user_id()
   );
 
--- Admin can manage all cohorts
-CREATE POLICY "admin_manage_cohorts" ON cohorts
+DROP POLICY IF EXISTS admin_manage_cohorts ON cohorts;
+CREATE POLICY admin_manage_cohorts ON cohorts
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 32: COHORT_MODULES Table Policies
--- ----------------------------------------------------------------------------
-
--- Follow cohorts access
-CREATE POLICY "public_select_cohort_modules_published" ON cohort_modules
+DROP POLICY IF EXISTS public_select_cohort_modules_published ON cohort_modules;
+CREATE POLICY public_select_cohort_modules_published ON cohort_modules
   FOR SELECT
   USING (
     EXISTS(
@@ -813,11 +920,13 @@ CREATE POLICY "public_select_cohort_modules_published" ON cohort_modules
     )
   );
 
-CREATE POLICY "students_select_cohort_modules_enrolled" ON cohort_modules
+DROP POLICY IF EXISTS students_select_cohort_modules_enrolled ON cohort_modules;
+CREATE POLICY students_select_cohort_modules_enrolled ON cohort_modules
   FOR SELECT
   USING (is_enrolled_in_cohort(cohort_id));
 
-CREATE POLICY "instructors_manage_cohort_modules" ON cohort_modules
+DROP POLICY IF EXISTS instructors_manage_cohort_modules ON cohort_modules;
+CREATE POLICY instructors_manage_cohort_modules ON cohort_modules
   FOR ALL
   USING (
     is_instructor() AND
@@ -828,22 +937,19 @@ CREATE POLICY "instructors_manage_cohort_modules" ON cohort_modules
     is_cohort_instructor(cohort_id)
   );
 
-CREATE POLICY "admin_manage_cohort_modules" ON cohort_modules
+DROP POLICY IF EXISTS admin_manage_cohort_modules ON cohort_modules;
+CREATE POLICY admin_manage_cohort_modules ON cohort_modules
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 33: COHORT_ENROLLMENTS Table Policies
--- ----------------------------------------------------------------------------
-
--- Students can view their own cohort enrollments
-CREATE POLICY "students_select_own_cohort_enrollments" ON cohort_enrollments
+DROP POLICY IF EXISTS students_select_own_cohort_enrollments ON cohort_enrollments;
+CREATE POLICY students_select_own_cohort_enrollments ON cohort_enrollments
   FOR SELECT
   USING (get_current_user_id() = user_id);
 
--- Admin and instructors can manage enrollments for their cohorts
-CREATE POLICY "instructors_manage_cohort_enrollments" ON cohort_enrollments
+DROP POLICY IF EXISTS instructors_manage_cohort_enrollments ON cohort_enrollments;
+CREATE POLICY instructors_manage_cohort_enrollments ON cohort_enrollments
   FOR ALL
   USING (
     is_instructor() AND
@@ -854,22 +960,19 @@ CREATE POLICY "instructors_manage_cohort_enrollments" ON cohort_enrollments
     is_cohort_instructor(cohort_id)
   );
 
-CREATE POLICY "admin_manage_cohort_enrollments" ON cohort_enrollments
+DROP POLICY IF EXISTS admin_manage_cohort_enrollments ON cohort_enrollments;
+CREATE POLICY admin_manage_cohort_enrollments ON cohort_enrollments
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 34: GROUP_COACHING_SESSIONS Table Policies
--- ----------------------------------------------------------------------------
-
--- Students can view sessions for enrolled cohorts
-CREATE POLICY "students_select_cohort_sessions" ON group_coaching_sessions
+DROP POLICY IF EXISTS students_select_cohort_sessions ON group_coaching_sessions;
+CREATE POLICY students_select_cohort_sessions ON group_coaching_sessions
   FOR SELECT
   USING (is_enrolled_in_cohort(cohort_id));
 
--- Instructors can manage sessions for their cohorts
-CREATE POLICY "instructors_manage_cohort_sessions" ON group_coaching_sessions
+DROP POLICY IF EXISTS instructors_manage_cohort_sessions ON group_coaching_sessions;
+CREATE POLICY instructors_manage_cohort_sessions ON group_coaching_sessions
   FOR ALL
   USING (
     is_instructor() AND
@@ -880,18 +983,14 @@ CREATE POLICY "instructors_manage_cohort_sessions" ON group_coaching_sessions
     is_cohort_instructor(cohort_id)
   );
 
--- Admin can manage all sessions
-CREATE POLICY "admin_manage_cohort_sessions" ON group_coaching_sessions
+DROP POLICY IF EXISTS admin_manage_cohort_sessions ON group_coaching_sessions;
+CREATE POLICY admin_manage_cohort_sessions ON group_coaching_sessions
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
--- ----------------------------------------------------------------------------
--- STEP 35: COHORT_MESSAGES Table Policies
--- ----------------------------------------------------------------------------
-
--- Students can view and create messages in enrolled cohorts
-CREATE POLICY "students_manage_cohort_messages" ON cohort_messages
+DROP POLICY IF EXISTS students_manage_cohort_messages ON cohort_messages;
+CREATE POLICY students_manage_cohort_messages ON cohort_messages
   FOR ALL
   USING (
     is_enrolled_in_cohort(cohort_id) AND
@@ -902,8 +1001,8 @@ CREATE POLICY "students_manage_cohort_messages" ON cohort_messages
     get_current_user_id() = author_id
   );
 
--- Instructors can manage messages in their cohorts (including pinning)
-CREATE POLICY "instructors_manage_cohort_messages" ON cohort_messages
+DROP POLICY IF EXISTS instructors_manage_cohort_messages ON cohort_messages;
+CREATE POLICY instructors_manage_cohort_messages ON cohort_messages
   FOR ALL
   USING (
     is_instructor() AND
@@ -914,39 +1013,102 @@ CREATE POLICY "instructors_manage_cohort_messages" ON cohort_messages
     is_cohort_instructor(cohort_id)
   );
 
--- Admin can manage all messages
-CREATE POLICY "admin_manage_cohort_messages" ON cohort_messages
+DROP POLICY IF EXISTS admin_manage_cohort_messages ON cohort_messages;
+CREATE POLICY admin_manage_cohort_messages ON cohort_messages
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS students_manage_own_message_reads ON cohort_message_reads;
+CREATE POLICY students_manage_own_message_reads ON cohort_message_reads
+  FOR ALL
+  USING (get_current_user_id() = user_id)
+  WITH CHECK (get_current_user_id() = user_id);
+
+DROP POLICY IF EXISTS admin_select_message_reads ON cohort_message_reads;
+CREATE POLICY admin_select_message_reads ON cohort_message_reads
+  FOR SELECT
+  USING (is_admin());
+
+DROP POLICY IF EXISTS public_select_cohort_faqs_published ON cohort_faqs;
+CREATE POLICY public_select_cohort_faqs_published ON cohort_faqs
+  FOR SELECT
+  USING (
+    EXISTS(
+      SELECT 1 FROM cohorts
+      WHERE cohorts.id = cohort_faqs.cohort_id
+        AND cohorts.published = true
+    )
+  );
+
+DROP POLICY IF EXISTS students_select_cohort_faqs_enrolled ON cohort_faqs;
+CREATE POLICY students_select_cohort_faqs_enrolled ON cohort_faqs
+  FOR SELECT
+  USING (is_enrolled_in_cohort(cohort_id));
+
+DROP POLICY IF EXISTS instructors_manage_cohort_faqs ON cohort_faqs;
+CREATE POLICY instructors_manage_cohort_faqs ON cohort_faqs
+  FOR ALL
+  USING (
+    is_instructor() AND
+    is_cohort_instructor(cohort_id)
+  )
+  WITH CHECK (
+    is_instructor() AND
+    is_cohort_instructor(cohort_id)
+  );
+
+DROP POLICY IF EXISTS admin_manage_cohort_faqs ON cohort_faqs;
+CREATE POLICY admin_manage_cohort_faqs ON cohort_faqs
   FOR ALL
   USING (is_admin())
   WITH CHECK (is_admin());
 
 -- ----------------------------------------------------------------------------
--- STEP 36: COHORT_MESSAGE_READS Table Policies
+-- Course FAQs
 -- ----------------------------------------------------------------------------
 
--- Students can manage their own read status
-CREATE POLICY "students_manage_own_message_reads" ON cohort_message_reads
-  FOR ALL
-  USING (get_current_user_id() = user_id)
-  WITH CHECK (get_current_user_id() = user_id);
-
--- Admin can view all read statuses
-CREATE POLICY "admin_select_message_reads" ON cohort_message_reads
+DROP POLICY IF EXISTS public_select_course_faqs_published ON course_faqs;
+CREATE POLICY public_select_course_faqs_published ON course_faqs
   FOR SELECT
-  USING (is_admin());
+  USING (
+    EXISTS(
+      SELECT 1 FROM courses
+      WHERE courses.id = course_faqs.course_id
+        AND courses.published = true
+    )
+  );
 
--- ============================================================================
--- END OF RLS POLICIES
--- ============================================================================
--- 
--- Notes:
--- 1. All policies use helper functions for performance and consistency
--- 2. Service role operations (webhooks) bypass RLS automatically
--- 3. Policies are designed to allow:
---    - Public access to published content
---    - Student access to enrolled content
---    - Instructor access to their cohorts
---    - Admin access to everything
--- 4. Test thoroughly after applying these policies!
--- ============================================================================
+DROP POLICY IF EXISTS students_select_course_faqs_enrolled ON course_faqs;
+CREATE POLICY students_select_course_faqs_enrolled ON course_faqs
+  FOR SELECT
+  USING (is_enrolled_in_course(course_id));
+
+DROP POLICY IF EXISTS admin_manage_course_faqs ON course_faqs;
+CREATE POLICY admin_manage_course_faqs ON course_faqs
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
+
+-- ----------------------------------------------------------------------------
+-- Investor diagnostic tables (admin only by default)
+-- ----------------------------------------------------------------------------
+
+DROP POLICY IF EXISTS admin_manage_investor_leads ON investor_leads;
+CREATE POLICY admin_manage_investor_leads ON investor_leads
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS admin_manage_investor_assessments ON investor_assessments;
+CREATE POLICY admin_manage_investor_assessments ON investor_assessments
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS admin_manage_investor_report_instances ON investor_report_instances;
+CREATE POLICY admin_manage_investor_report_instances ON investor_report_instances
+  FOR ALL
+  USING (is_admin())
+  WITH CHECK (is_admin());
 

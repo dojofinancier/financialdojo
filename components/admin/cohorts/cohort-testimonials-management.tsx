@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -124,9 +125,9 @@ export function CohortTestimonialsManagement({ cohortId, initialTestimonials }: 
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Témoignages</CardTitle>
+          <CardTitle>Testimonials</CardTitle>
           <CardDescription>
-            Témoignages des participants à afficher dans la section dédiée de la page de la cohorte
+            Participant testimonials to display in the dedicated cohort page section
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -142,7 +143,13 @@ export function CohortTestimonialsManagement({ cohortId, initialTestimonials }: 
                     <Avatar className="h-10 w-10">
                       <AvatarFallback>
                         {testimonial.avatar ? (
-                          <img src={testimonial.avatar} alt={testimonial.name} />
+                          <Image
+                            src={testimonial.avatar}
+                            alt={testimonial.name}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                          />
                         ) : (
                           getInitials(testimonial.name)
                         )}
@@ -180,26 +187,26 @@ export function CohortTestimonialsManagement({ cohortId, initialTestimonials }: 
             <div className="border-t pt-4 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor="testimonialName">Nom *</Label>
+                  <Label htmlFor="testimonialName">Name *</Label>
                   <Input
                     id="testimonialName"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Ex: Jean Dupont"
+                    placeholder="e.g., Jamie Smith"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="testimonialRole">Rôle</Label>
+                  <Label htmlFor="testimonialRole">Role</Label>
                   <Input
                     id="testimonialRole"
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    placeholder="Ex: Analyste financier"
+                    placeholder="e.g., Financial analyst"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="testimonialText">Témoignage *</Label>
+                <Label htmlFor="testimonialText">Testimonial *</Label>
                 <Textarea
                   id="testimonialText"
                   value={formData.text}
@@ -209,7 +216,7 @@ export function CohortTestimonialsManagement({ cohortId, initialTestimonials }: 
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="testimonialAvatar">URL de l'avatar (optionnel)</Label>
+                <Label htmlFor="testimonialAvatar">Avatar URL (optional)</Label>
                 <Input
                   id="testimonialAvatar"
                   value={formData.avatar}
@@ -221,17 +228,17 @@ export function CohortTestimonialsManagement({ cohortId, initialTestimonials }: 
                 {editingId ? (
                   <>
                     <Button onClick={handleUpdate} variant="default">
-                      Mettre à jour
+                      Update
                     </Button>
                     <Button onClick={handleCancel} variant="outline">
                       <X className="h-4 w-4 mr-2" />
-                      Annuler
+                      Cancel
                     </Button>
                   </>
                 ) : (
                   <Button onClick={handleAdd} variant="outline" className="w-full">
                     <Plus className="h-4 w-4 mr-2" />
-                    Ajouter un témoignage
+                    Add a testimonial
                   </Button>
                 )}
               </div>
@@ -243,7 +250,7 @@ export function CohortTestimonialsManagement({ cohortId, initialTestimonials }: 
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
-          {saving ? "Enregistrement..." : "Enregistrer"}
+          {saving ? "Saving..." : "Save"}
         </Button>
       </div>
     </div>

@@ -90,14 +90,14 @@ export function StudentUsagePatterns({ courseId }: StudentUsagePatternsProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Utilisation des étudiants</h2>
+          <h2 className="text-2xl font-bold">Student usage</h2>
           <p className="text-muted-foreground">
-            Patterns d'activité et engagement par fonctionnalité
+            Activity patterns and engagement by feature
           </p>
         </div>
         <Button onClick={loadData} variant="outline" size="sm">
           <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
+          Refresh
         </Button>
       </div>
 
@@ -107,16 +107,16 @@ export function StudentUsagePatterns({ courseId }: StudentUsagePatternsProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Activity className="h-5 w-5" />
-              Utilisation des fonctionnalités
+              Feature usage
             </CardTitle>
             <CardDescription>
-              Pourcentage d'étudiants utilisant chaque fonctionnalité
+              Percentage of students using each feature
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="text-sm text-muted-foreground">
-                Total d'étudiants inscrits: {featureData.totalEnrolled || 0}
+                Total enrolled students: {featureData.totalEnrolled || 0}
               </div>
               {featureUsageData.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
@@ -126,12 +126,12 @@ export function StudentUsagePatterns({ courseId }: StudentUsagePatternsProps) {
                     <YAxis domain={[0, 100]} />
                     <Tooltip formatter={(value) => `${Number(value).toFixed(1)}%`} />
                     <Legend />
-                    <Bar dataKey="percentage" fill="#8884d8" name="% d'utilisation" />
+                    <Bar dataKey="percentage" fill="#8884d8" name="% usage" />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-8">
-                  Aucune donnée disponible
+                  No data available
                 </p>
               )}
             </div>
@@ -145,10 +145,10 @@ export function StudentUsagePatterns({ courseId }: StudentUsagePatternsProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
-              Scores d'engagement
+              Engagement scores
             </CardTitle>
             <CardDescription>
-              Top 10 étudiants par score d'engagement (basé sur activité, temps, complétion)
+              Top 10 students by engagement score (based on activity, time, completion)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -165,8 +165,8 @@ export function StudentUsagePatterns({ courseId }: StudentUsagePatternsProps) {
                     <div>
                       <p className="font-medium">{student.userEmail}</p>
                       <p className="text-xs text-muted-foreground">
-                        {student.loginCount} jours actifs •{" "}
-                        {Math.round(student.studyTime / 3600)}h d'étude
+                        {student.loginCount} active days •{" "}
+                        {Math.round(student.studyTime / 3600)}h study time
                       </p>
                     </div>
                   </div>

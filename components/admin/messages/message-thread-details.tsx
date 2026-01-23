@@ -19,7 +19,7 @@ import {
 } from "@/app/actions/messages";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { MessageSquare, Send, Settings } from "lucide-react";
 import Link from "next/link";
 
@@ -126,7 +126,7 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
                         : message.user.email}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {format(new Date(message.createdAt), "d MMMM yyyy, HH:mm", { locale: fr })}
+                      {format(new Date(message.createdAt), "d MMMM yyyy, HH:mm", { locale: enCA })}
                     </div>
                   </div>
                   <Badge variant={message.isFromStudent ? "outline" : "default"}>
@@ -142,7 +142,7 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
 
             <div className="border-t pt-4 space-y-4">
               <div>
-                <Label htmlFor="reply">Répondre</Label>
+                <Label htmlFor="reply">Reply</Label>
                 <Textarea
                   id="reply"
                   value={replyMessage}
@@ -156,12 +156,12 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
                 {sendingReply ? (
                   <>
                     <Send className="h-4 w-4 mr-2 animate-spin" />
-                    Envoi...
+                    Sending...
                   </>
                 ) : (
                   <>
                     <Send className="h-4 w-4 mr-2" />
-                    Envoyer
+                    Send
                   </>
                 )}
               </Button>
@@ -173,12 +173,12 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              Paramètres
+              Settings
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Statut</Label>
+              <Label>Status</Label>
               <Select
                 value={threadData.thread.status}
                 onValueChange={handleStatusChange}
@@ -187,21 +187,21 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="OPEN">Ouvert</SelectItem>
-                  <SelectItem value="CLOSED">Fermé</SelectItem>
+                  <SelectItem value="OPEN">Open</SelectItem>
+                  <SelectItem value="CLOSED">Closed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="border-t pt-4">
-              <Label className="text-muted-foreground">Informations étudiant</Label>
+              <Label className="text-muted-foreground">Student information</Label>
               <div className="mt-2 space-y-1">
                 <div className="text-sm">
                   <span className="font-medium">Email:</span> {threadData.thread.user.email}
                 </div>
                 <Link href={`/dashboard/admin/students/${threadData.thread.user.id}`}>
                   <Button variant="link" size="sm" className="p-0 h-auto">
-                    Voir le profil
+                    View profile
                   </Button>
                 </Link>
               </div>
@@ -209,7 +209,7 @@ export function MessageThreadDetails({ threadData: initialThreadData }: MessageT
 
             {threadData.thread.course && (
               <div className="border-t pt-4">
-                <Label className="text-muted-foreground">Cours</Label>
+                <Label className="text-muted-foreground">Course</Label>
                 <div className="mt-2">
                   <div className="text-sm font-medium">{threadData.thread.course.title}</div>
                 </div>

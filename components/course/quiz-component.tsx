@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -43,28 +43,11 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
   const [loading, setLoading] = useState(false);
   const [startTime] = useState(Date.now());
 
-  // Timer for timed quizzes/exams
-  useEffect(() => {
-    if (!quiz.timeLimit || submitted) return;
-
-    const interval = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev === null || prev <= 1) {
-          handleSubmit(true); // Auto-submit when time runs out
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [quiz.timeLimit, submitted]);
-
   const handleAnswerChange = (questionId: string, answer: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: answer }));
   };
 
-  const handleSubmit = async (autoSubmit = false) => {
+  const handleSubmit = useCallback(async (autoSubmit = false) => {
     if (!autoSubmit && Object.keys(answers).length < quiz.questions.length) {
       toast.error("Please answer all questions");
       return;
@@ -85,8 +68,8 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
         setResult(result.data);
         toast.success(
           result.data.passed
-            ? `Félicitations! Vous avez réussi avec ${result.data.score}%`
-            : `Score: ${result.data.score}%. Score de passage: ${result.data.passingScore}%`
+            ? `Congratulations! You passed with ${result.data.score}%`
+            : `Score: ${result.data.score}%. Passing score: ${result.data.passingScore}%`
         );
       } else {
         toast.error(result.error || "Error during submission");
@@ -96,7 +79,24 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [answers, quiz.id, quiz.questions.length, startTime]);
+
+  // Timer for timed quizzes/exams
+  useEffect(() => {
+    if (!quiz.timeLimit || submitted) return;
+
+    const interval = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev === null || prev <= 1) {
+          handleSubmit(true); // Auto-submit when time runs out
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [quiz.timeLimit, submitted, handleSubmit]);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -115,9 +115,9 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
             <CardTitle>{quiz.title}</CardTitle>
             <div className="flex items-center gap-2 mt-2">
               {isQuiz && <Badge variant="outline">Quiz</Badge>}
-              {isExam && <Badge variant="destructive">Examen</Badge>}
+              {isExam && <Badge variant="destructive">Exam</Badge>}
               <Badge variant="secondary">
-                Score de passage: {quiz.passingScore}%
+                Passing score: {quiz.passingScore}%
               </Badge>
             </div>
           </div>
@@ -140,13 +140,13 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
               )}
               <AlertDescription>
                 <div className="font-semibold">
-                  Score: {result.score}% ({result.correctAnswers}/{result.totalQuestions} bonnes réponses)
+                  Score: {result.score}% ({result.correctAnswers}/{result.totalQuestions} correct answers)
                 </div>
                 {result.passed ? (
-                  <div className="text-green-600 mt-1">Félicitations! Vous avez réussi.</div>
+                  <div className="text-green-600 mt-1">Congratulations! You passed.</div>
                 ) : (
                   <div className="text-red-600 mt-1">
-                    Score de passage requis: {result.passingScore}%
+                    Passing score required: {result.passingScore}%
                   </div>
                 )}
               </AlertDescription>
@@ -222,7 +222,7 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
                               : ""
                           }`}
                         >
-                          Vrai
+                          True
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -237,7 +237,7 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
                               : ""
                           }`}
                         >
-                          Faux
+                          False
                         </Label>
                       </div>
                     </RadioGroup>
@@ -263,7 +263,7 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
                       ) : (
                         <div className="text-red-600 flex items-center gap-1">
                           <XCircle className="h-4 w-4" />
-                          Incorrect. Réponse correcte: {question.correctAnswer}
+                          Incorrect. Correct answer: {question.correctAnswer}
                         </div>
                       )}
                     </div>
@@ -277,7 +277,7 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
         {!submitted && (
           <div className="flex justify-end pt-4 border-t">
             <Button onClick={() => handleSubmit(false)} disabled={loading} size="lg">
-              {loading ? "Soumission..." : "Soumettre"}
+              {loading ? "Submitting..." : "Submit"}
             </Button>
           </div>
         )}

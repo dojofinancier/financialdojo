@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar, Video, Edit, Trash2, Plus, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import {
   getGroupCoachingSessionsAction,
   createGroupCoachingSessionAction,
@@ -71,7 +71,7 @@ export function GroupCoachingSessionManagement({
     status: "UPCOMING" as "UPCOMING" | "COMPLETED",
   });
 
-  const loadSessions = async () => {
+  const loadSessions = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getGroupCoachingSessionsAction(cohortId);
@@ -83,11 +83,11 @@ export function GroupCoachingSessionManagement({
     } finally {
       setLoading(false);
     }
-  };
+  }, [cohortId]);
 
   useEffect(() => {
     loadSessions();
-  }, [cohortId]);
+  }, [loadSessions]);
 
   const resetForm = () => {
     setFormData({
@@ -215,28 +215,28 @@ export function GroupCoachingSessionManagement({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Sessions de coaching de groupe</h3>
+          <h3 className="text-lg font-semibold">Group coaching sessions</h3>
           <p className="text-sm text-muted-foreground">
-            Gérez les sessions de coaching pour cette cohorte
+            Manage coaching sessions for this cohort
           </p>
         </div>
         <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={openCreateDialog}>
               <Plus className="h-4 w-4 mr-2" />
-              Nouvelle session
+              New session
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Nouvelle session de coaching</DialogTitle>
+              <DialogTitle>New coaching session</DialogTitle>
               <DialogDescription>
-                Planifiez une nouvelle session de coaching pour cette cohorte
+                Schedule a new coaching session for this cohort
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Titre *</Label>
+                <Label>Title *</Label>
                 <Input
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -261,7 +261,7 @@ export function GroupCoachingSessionManagement({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Heure *</Label>
+                  <Label>Time *</Label>
                   <Input
                     type="time"
                     value={formData.scheduledTime}
@@ -270,7 +270,7 @@ export function GroupCoachingSessionManagement({
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Lien Zoom</Label>
+                <Label>Zoom link</Label>
                 <Input
                   value={formData.zoomLink}
                   onChange={(e) => setFormData({ ...formData, zoomLink: e.target.value })}
@@ -278,7 +278,7 @@ export function GroupCoachingSessionManagement({
                 />
               </div>
               <div className="space-y-2">
-                <Label>Lien Teams</Label>
+                <Label>Teams link</Label>
                 <Input
                   value={formData.teamsLink}
                   onChange={(e) => setFormData({ ...formData, teamsLink: e.target.value })}
@@ -286,7 +286,7 @@ export function GroupCoachingSessionManagement({
                 />
               </div>
               <div className="space-y-2">
-                <Label>URL d'enregistrement Vimeo</Label>
+                <Label>Vimeo recording URL</Label>
                 <Input
                   value={formData.recordingVimeoUrl}
                   onChange={(e) => setFormData({ ...formData, recordingVimeoUrl: e.target.value })}
@@ -294,15 +294,15 @@ export function GroupCoachingSessionManagement({
                 />
               </div>
               <div className="space-y-2">
-                <Label>Notes de l'administrateur</Label>
+                <Label>Admin notes</Label>
                 <RichTextEditor
                   content={formData.adminNotes}
                   onChange={(value) => setFormData({ ...formData, adminNotes: value })}
-                  placeholder="Notes internes (optionnel)..."
+                  placeholder="Internal notes (optional)..."
                 />
               </div>
               <div className="space-y-2">
-                <Label>Statut</Label>
+                <Label>Status</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value: "UPCOMING" | "COMPLETED") =>
@@ -313,16 +313,16 @@ export function GroupCoachingSessionManagement({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="UPCOMING">À venir</SelectItem>
-                    <SelectItem value="COMPLETED">Terminée</SelectItem>
+                    <SelectItem value="UPCOMING">Upcoming</SelectItem>
+                    <SelectItem value="COMPLETED">Completed</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
-                  Annuler
+                  Cancel
                 </Button>
-                <Button onClick={handleCreate}>Créer</Button>
+                <Button onClick={handleCreate}>Create</Button>
               </div>
             </div>
           </DialogContent>
@@ -330,13 +330,13 @@ export function GroupCoachingSessionManagement({
       </div>
 
       {loading ? (
-        <div className="text-center py-8">Chargement...</div>
+        <div className="text-center py-8">Loading...</div>
       ) : (
         <div className="space-y-6">
           {/* Upcoming Sessions */}
           {upcomingSessions.length > 0 && (
             <div>
-              <h4 className="text-md font-semibold mb-3">Sessions à venir</h4>
+              <h4 className="text-md font-semibold mb-3">Upcoming sessions</h4>
               <div className="grid gap-4 md:grid-cols-2">
                 {upcomingSessions.map((session) => (
                   <Card key={session.id} className="border-l-4 border-l-blue-500">
@@ -346,7 +346,7 @@ export function GroupCoachingSessionManagement({
                           <CardTitle className="text-base">{session.title}</CardTitle>
                           <CardDescription className="mt-1">
                             {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'at' HH:mm", {
-                              locale: fr,
+                              locale: enUS,
                             })}
                           </CardDescription>
                         </div>
@@ -403,7 +403,7 @@ export function GroupCoachingSessionManagement({
           {/* Completed Sessions */}
           {completedSessions.length > 0 && (
             <div>
-              <h4 className="text-md font-semibold mb-3">Sessions terminées</h4>
+              <h4 className="text-md font-semibold mb-3">Completed sessions</h4>
               <div className="grid gap-4 md:grid-cols-2">
                 {completedSessions.map((session) => (
                   <Card key={session.id}>
@@ -413,7 +413,7 @@ export function GroupCoachingSessionManagement({
                           <CardTitle className="text-base">{session.title}</CardTitle>
                           <CardDescription className="mt-1">
                             {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'at' HH:mm", {
-                              locale: fr,
+                              locale: enUS,
                             })}
                           </CardDescription>
                         </div>
@@ -438,7 +438,7 @@ export function GroupCoachingSessionManagement({
                     <CardContent className="space-y-2">
                       {session.recordingVimeoUrl && (
                         <div className="text-sm text-muted-foreground">
-                          Enregistrement disponible
+                          Recording available
                         </div>
                       )}
                       {session.adminNotes && (
@@ -458,9 +458,9 @@ export function GroupCoachingSessionManagement({
             <Card>
               <CardContent className="py-12 text-center">
                 <Video className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">Aucune session</h3>
+                <h3 className="text-lg font-semibold mb-2">No sessions</h3>
                 <p className="text-muted-foreground">
-                  Créez votre première session de coaching
+                  Create your first coaching session
                 </p>
               </CardContent>
             </Card>
@@ -472,11 +472,11 @@ export function GroupCoachingSessionManagement({
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Modifier la session</DialogTitle>
+            <DialogTitle>Edit session</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Titre *</Label>
+              <Label>Title *</Label>
               <Input
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -500,7 +500,7 @@ export function GroupCoachingSessionManagement({
                 />
               </div>
               <div className="space-y-2">
-                <Label>Heure *</Label>
+                <Label>Time *</Label>
                 <Input
                   type="time"
                   value={formData.scheduledTime}
@@ -509,36 +509,36 @@ export function GroupCoachingSessionManagement({
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Lien Zoom</Label>
+              <Label>Zoom link</Label>
               <Input
                 value={formData.zoomLink}
                 onChange={(e) => setFormData({ ...formData, zoomLink: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label>Lien Teams</Label>
+              <Label>Teams link</Label>
               <Input
                 value={formData.teamsLink}
                 onChange={(e) => setFormData({ ...formData, teamsLink: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label>URL d'enregistrement Vimeo</Label>
+              <Label>Vimeo recording URL</Label>
               <Input
                 value={formData.recordingVimeoUrl}
                 onChange={(e) => setFormData({ ...formData, recordingVimeoUrl: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label>Notes de l'administrateur</Label>
+              <Label>Admin notes</Label>
               <RichTextEditor
                 content={formData.adminNotes}
                 onChange={(value) => setFormData({ ...formData, adminNotes: value })}
-                placeholder="Notes internes (optionnel)..."
+                placeholder="Internal notes (optional)..."
               />
             </div>
             <div className="space-y-2">
-              <Label>Statut</Label>
+              <Label>Status</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value: "UPCOMING" | "COMPLETED") =>
@@ -549,16 +549,16 @@ export function GroupCoachingSessionManagement({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="UPCOMING">À venir</SelectItem>
-                  <SelectItem value="COMPLETED">Terminée</SelectItem>
+                  <SelectItem value="UPCOMING">Upcoming</SelectItem>
+                  <SelectItem value="COMPLETED">Completed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-                Annuler
+                Cancel
               </Button>
-              <Button onClick={handleUpdate}>Enregistrer</Button>
+              <Button onClick={handleUpdate}>Save</Button>
             </div>
           </div>
         </DialogContent>

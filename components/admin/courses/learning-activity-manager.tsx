@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -93,7 +93,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
     tolerance: null as number | null,
   });
 
-  const loadActivities = async () => {
+  const loadActivities = useCallback(async () => {
     if (!isMountedRef.current) return;
     setLoading(true);
     try {
@@ -118,7 +118,16 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
         setLoading(false);
       }
     }
-  };
+  }, [courseId]);
+
+  const loadModules = useCallback(async () => {
+    try {
+      const modulesData = await getModulesAction(courseId);
+      setModules(modulesData.map((m: any) => ({ id: m.id, title: m.title })));
+    } catch (error) {
+      console.error("Error loading modules:", error);
+    }
+  }, [courseId]);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -128,16 +137,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
     return () => {
       isMountedRef.current = false;
     };
-  }, [courseId]);
-
-  const loadModules = async () => {
-    try {
-      const modulesData = await getModulesAction(courseId);
-      setModules(modulesData.map((m: any) => ({ id: m.id, title: m.title })));
-    } catch (error) {
-      console.error("Error loading modules:", error);
-    }
-  };
+  }, [loadActivities, loadModules]);
 
   const openCreateDialog = () => {
     setEditingActivity(null);
@@ -281,7 +281,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
     }
 
     const count = selectedActivities.size;
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer ${count} activité${count > 1 ? "s" : ""}?`)) {
+    if (!confirm(`Are you sure you want to delete ${count} activit${count > 1 ? "ies" : "y"}?`)) {
       return;
     }
 
@@ -289,7 +289,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
     try {
       const result = await bulkDeleteLearningActivitiesAction(Array.from(selectedActivities));
       if (result.success) {
-        toast.success(`${result.deletedCount || count} activité${(result.deletedCount || count) > 1 ? "s" : ""} supprimée${(result.deletedCount || count) > 1 ? "s" : ""}`);
+        toast.success(`${result.deletedCount || count} activit${(result.deletedCount || count) > 1 ? "ies" : "y"} deleted`);
         setSelectedActivities(new Set());
         loadActivities();
       } else {
@@ -339,7 +339,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               />
             </div>
             <div className="space-y-2">
-              <Label>Réponses acceptables (une par ligne)</Label>
+              <Label>Accepted answers (one per line)</Label>
               <Textarea
                 value={
                   Array.isArray(formState.correctAnswers)
@@ -356,7 +356,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                 rows={3}
               />
               <p className="text-xs text-muted-foreground">
-                Entrez 2-3 réponses acceptables. La casse et les accents seront normalisés.
+                Enter 2-3 accepted answers. Case and accents will be normalized.
               </p>
             </div>
           </div>
@@ -366,7 +366,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
         return (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Texte avec trous (utilisez ___ pour les blancs)</Label>
+              <Label>Text with blanks (use ___ for blanks)</Label>
               <Textarea
                 value={formState.content.text || ""}
                 onChange={(e) =>
@@ -380,7 +380,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               />
             </div>
             <div className="space-y-2">
-              <Label>Réponses correctes (une par trou, dans l'ordre)</Label>
+              <Label>Correct answers (one per blank, in order)</Label>
               <Textarea
                 value={
                   Array.isArray(formState.correctAnswers)
@@ -418,7 +418,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               />
             </div>
             <div className="space-y-2">
-              <Label>Éléments à trier (un par ligne, dans l'ordre correct)</Label>
+              <Label>Items to sort (one per line, in correct order)</Label>
               <Textarea
                 value={
                   Array.isArray(formState.content.items)
@@ -459,7 +459,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               />
             </div>
             <div className="space-y-2">
-              <Label>Catégories (une par ligne)</Label>
+              <Label>Categories (one per line)</Label>
               <Textarea
                 value={
                   Array.isArray(formState.content.categories)
@@ -480,7 +480,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               />
             </div>
             <div className="space-y-2">
-              <Label>Éléments à classer (format: élément|catégorie, un par ligne)</Label>
+              <Label>Items to classify (format: item|category, one per line)</Label>
               <Textarea
                 key={`classification-items-${formState.activityType}`}
                 value={
@@ -568,7 +568,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                 rows={6}
               />
               <p className="text-xs text-muted-foreground">
-                Format: chaque ligne doit contenir "élément|catégorie". Exemple: RRSP|Registered
+                Format: each line must contain "item|category". Example: RRSP|Registered
               </p>
             </div>
           </div>
@@ -578,7 +578,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
         return (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Question / Problème</Label>
+              <Label>Question / Problem</Label>
               <Textarea
                 value={formState.content.question || ""}
                 onChange={(e) =>
@@ -593,7 +593,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Réponse correcte</Label>
+                <Label>Correct answer</Label>
                 <Input
                   type="number"
                   step="any"
@@ -608,7 +608,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                 />
               </div>
               <div className="space-y-2">
-                <Label>Tolérance (±)</Label>
+                <Label>Tolerance (±)</Label>
                 <Input
                   type="number"
                   step="any"
@@ -622,7 +622,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                   placeholder="0.01 ou 1 (pour %)"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Tolérance absolue (ex: 0.01) ou relative en % (ex: 1)
+                  Absolute tolerance (e.g., 0.01) or relative in % (e.g., 1)
                 </p>
               </div>
             </div>
@@ -647,7 +647,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               />
             </div>
             <div className="space-y-2">
-              <Label>Structure du tableau (JSON)</Label>
+              <Label>Table structure (JSON)</Label>
               <Textarea
                 value={JSON.stringify(formState.content.table || {}, null, 2)}
                 onChange={(e) => {
@@ -665,11 +665,11 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                 rows={8}
               />
               <p className="text-xs text-muted-foreground">
-                Format JSON avec headers et rows. Utilisez null pour les cellules à compléter.
+                JSON format with headers and rows. Use null for cells to complete.
               </p>
             </div>
             <div className="space-y-2">
-              <Label>Réponses correctes (JSON)</Label>
+              <Label>Correct answers (JSON)</Label>
               <Textarea
                 value={JSON.stringify(formState.correctAnswers || {}, null, 2)}
                 onChange={(e) => {
@@ -694,7 +694,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
         return (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Solution avec erreur</Label>
+              <Label>Solution with error</Label>
               <Textarea
                 value={formState.content.incorrectSolution || ""}
                 onChange={(e) =>
@@ -722,7 +722,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               />
             </div>
             <div className="space-y-2">
-              <Label>Réponse correcte (description de l'erreur)</Label>
+              <Label>Correct answer (error description)</Label>
               <Textarea
                 value={formState.correctAnswers || ""}
                 onChange={(e) =>
@@ -742,7 +742,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
         return (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Sujet</Label>
+              <Label>Topic</Label>
               <Input
                 value={formState.content.topic || ""}
                 onChange={(e) =>
@@ -755,7 +755,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               />
             </div>
             <div className="space-y-2">
-              <Label>Questions de recherche (une par ligne)</Label>
+              <Label>Research questions (one per line)</Label>
               <Textarea
                 value={
                   Array.isArray(formState.content.questions)
@@ -775,7 +775,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                 rows={6}
               />
               <p className="text-xs text-muted-foreground">
-                Ces activités ne seront pas notées automatiquement. L'instructeur les examinera et commentera.
+                These activities are not automatically graded. The instructor will review and comment.
               </p>
             </div>
           </div>
@@ -790,9 +790,9 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold">Activités d'apprentissage</h2>
+          <h2 className="text-2xl font-semibold">Learning activities</h2>
           <p className="text-sm text-muted-foreground">
-            Créez des activités interactives pour la Phase 2 (Révision). Taggez-les par chapitre/module.
+            Create interactive activities for Phase 2 (Review). Tag them by chapter/module.
           </p>
         </div>
         <div className="flex gap-2">
@@ -800,20 +800,20 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
             <DialogTrigger asChild>
               <Button variant="outline">
                 <Upload className="h-4 w-4 mr-2" />
-                Importer CSV
+                Import CSV
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Importer des activités depuis un CSV</DialogTitle>
+                <DialogTitle>Import activities from CSV</DialogTitle>
                 <DialogDescription>
-                  Téléversez un fichier CSV contenant des activités d'apprentissage. 
+                  Upload a CSV file containing learning activities.
                   Les templates sont disponibles dans le dossier templates/learning-activities/
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="csv-file">Fichier CSV</Label>
+                  <Label htmlFor="csv-file">CSV file</Label>
                   <Input
                     id="csv-file"
                     type="file"
@@ -839,11 +839,11 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                           
                           if (errors.length > 0) {
                             toast.warning(
-                              `${created} activité(s) créée(s), mais ${errors.length} erreur(s) détectée(s)`
+                              `${created} activit${created > 1 ? "ies" : "y"} created, but ${errors.length} error(s) detected`
                             );
                             console.error("Erreurs d'upload:", errors);
                           } else {
-                            toast.success(`${created} activité(s) importée(s) avec succès`);
+                            toast.success(`${created} activit${created > 1 ? "ies" : "y"} imported successfully`);
                           }
                           
                           // Close dialog and reload activities
@@ -873,12 +873,12 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                   {uploading && (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Import en cours...
+                      Importing...
                     </div>
                   )}
                 </div>
                 <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-sm font-semibold mb-2">Formats CSV supportés:</p>
+                  <p className="text-sm font-semibold mb-2">Supported CSV formats:</p>
                   <ul className="text-xs space-y-1 text-muted-foreground list-disc list-inside">
                     <li>SHORT_ANSWER: ActivityType, Module, Instructions, Question, CorrectAnswer1, CorrectAnswer2, CorrectAnswer3</li>
                     <li>FILL_IN_BLANK: ActivityType, Module, Instructions, Text, CorrectAnswer</li>
@@ -897,7 +897,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
             <DialogTrigger asChild>
               <Button onClick={openCreateDialog}>
                 <Plus className="h-4 w-4 mr-2" />
-                Nouvelle activité
+                New activity
               </Button>
             </DialogTrigger>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -906,12 +906,12 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                 {editingActivity ? "Edit activity" : "Create a learning activity"}
               </DialogTitle>
               <DialogDescription>
-                Choisissez le type d'activité et configurez-la selon vos besoins.
+                Choose the activity type and configure it to your needs.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label>Type d'activité *</Label>
+                <Label>Activity type *</Label>
                 <Select
                   value={formState.activityType}
                   onValueChange={(value) => {
@@ -947,7 +947,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               </div>
 
               <div className="space-y-2">
-                <Label>Module / Chapitre *</Label>
+                <Label>Module / Chapter *</Label>
                 <Select
                   value={formState.moduleId || ""}
                   onValueChange={(value) => setFormState({ ...formState, moduleId: value })}
@@ -966,7 +966,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               </div>
 
               <div className="space-y-2">
-                <Label>Instructions (optionnel)</Label>
+                <Label>Instructions (optional)</Label>
                 <Textarea
                   value={formState.instructions}
                   onChange={(e) => setFormState({ ...formState, instructions: e.target.value })}
@@ -986,10 +986,10 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
 
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                  Annuler
+                  Cancel
                 </Button>
                 <Button onClick={handleSubmit}>
-                  {editingActivity ? "Enregistrer" : "Create"}
+                  {editingActivity ? "Save" : "Create"}
                 </Button>
               </div>
             </div>
@@ -1001,12 +1001,12 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
       {loading ? (
         <div className="flex items-center justify-center py-12 text-muted-foreground gap-2">
           <Loader2 className="h-5 w-5 animate-spin" />
-          Chargement des activités...
+          Loading activities...
         </div>
       ) : activities.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
-            Aucune activité d'apprentissage pour le moment.
+            No learning activities yet.
           </CardContent>
         </Card>
       ) : (
@@ -1016,7 +1016,7 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
               <CardContent className="py-4">
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
-                    {selectedActivities.size} activité{selectedActivities.size > 1 ? "s" : ""} sélectionnée{selectedActivities.size > 1 ? "s" : ""}
+                    {selectedActivities.size} activit{selectedActivities.size > 1 ? "ies" : "y"} selected
                   </p>
                   <Button
                     variant="destructive"
@@ -1026,12 +1026,12 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
                     {bulkDeleting ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Suppression...
+                        Deleting...
                       </>
                     ) : (
                       <>
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Supprimer la sélection
+                        Delete selection
                       </>
                     )}
                   </Button>
@@ -1098,4 +1098,3 @@ export function LearningActivityManager({ courseId }: LearningActivityManagerPro
     </div>
   );
 }
-

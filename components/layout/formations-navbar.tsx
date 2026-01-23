@@ -25,7 +25,7 @@ export async function FormationsNavbar() {
       case 'STUDENT':
         return '/dashboard/student'
       case 'INSTRUCTOR':
-        return '/dashboard/instructeur'
+        return '/dashboard/admin'
       default:
         return '/dashboard'
     }

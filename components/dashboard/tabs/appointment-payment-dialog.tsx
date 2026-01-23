@@ -179,7 +179,7 @@ function PaymentForm({
         <div className="flex items-center justify-center py-8">
           <div className="text-center space-y-2">
             <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Chargement de Stripe...</p>
+            <p className="text-sm text-muted-foreground">Loading Stripe...</p>
           </div>
         </div>
         {stripeError && (
@@ -192,7 +192,7 @@ function PaymentForm({
               className="mt-2"
               onClick={() => window.location.reload()}
             >
-              Rafraîchir la page
+              Refresh page
             </Button>
           </div>
         )}
@@ -204,7 +204,7 @@ function PaymentForm({
     <form onSubmit={handleSubmit} className="space-y-4 relative">
       {/* Cardholder Name */}
       <div className="space-y-2">
-        <Label htmlFor="cardholderName">Nom du titulaire</Label>
+        <Label htmlFor="cardholderName">Cardholder name</Label>
         <Input
           id="cardholderName"
           type="text"
@@ -217,7 +217,7 @@ function PaymentForm({
 
       {/* Card Element - matching checkout styling */}
       <div className="space-y-2 relative z-0">
-        <Label>Numéro de carte</Label>
+        <Label>Card number</Label>
         <div className="flex h-10 w-full items-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 overflow-hidden [&_.StripeElement]:h-full [&_.StripeElement_iframe]:h-full [&_.StripeElement_iframe]:min-h-0 [&_.StripeElement]:max-h-[40px] [&_.StripeElement_iframe]:max-h-[40px]">
           <div className="flex-1 h-full max-h-[40px] overflow-hidden">
             <CardElement
@@ -243,12 +243,12 @@ function PaymentForm({
         {isProcessing ? (
           <>
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            Traitement...
+            Processing...
           </>
         ) : amount ? (
-          `Payer ${amount.toFixed(2)} $`
+          `Pay ${amount.toFixed(2)} $`
         ) : (
-          "Payer et confirmer"
+          "Pay and confirm"
         )}
       </Button>
     </form>
@@ -266,7 +266,7 @@ export function AppointmentPaymentDialog({
     const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
     if (!key) {
       console.error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set");
-      toast.error("Configuration Stripe manquante");
+      toast.error("Stripe configuration missing");
     }
     return getStripeClient();
   }, []);
@@ -280,9 +280,9 @@ export function AppointmentPaymentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Paiement du rendez-vous</DialogTitle>
+          <DialogTitle>Appointment payment</DialogTitle>
           <DialogDescription>
-            Complétez le paiement pour confirmer votre rendez-vous
+            Complete payment to confirm your appointment
           </DialogDescription>
         </DialogHeader>
 
@@ -291,7 +291,7 @@ export function AppointmentPaymentDialog({
             stripe={stripePromise}
             options={{
               appearance: { theme: "stripe" },
-              locale: "fr",
+              locale: "en",
             }}
           >
             <PaymentForm
@@ -305,7 +305,7 @@ export function AppointmentPaymentDialog({
           <div className="flex items-center justify-center py-8">
             <div className="text-center space-y-2">
               <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Initialisation du paiement...</p>
+              <p className="text-sm text-muted-foreground">Initializing payment...</p>
             </div>
           </div>
         )}

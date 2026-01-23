@@ -233,10 +233,10 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
         <Input
           id="slug"
           {...register("slug")}
-          placeholder="cohorte-finance-avancee-janvier-2025"
+          placeholder="advanced-finance-cohort-january-2025"
         />
         <p className="text-xs text-muted-foreground">
-          Laissez vide pour générer automatiquement à partir du titre. Utilisé dans l'URL: /cohorts/[slug]
+          Leave blank to auto-generate from the title. Used in the URL: /cohorts/[slug]
         </p>
         {errors.slug && (
           <p className="text-sm text-destructive">{errors.slug.message}</p>
@@ -253,7 +253,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="heroImages">Images héro (URLs des captures d'écran)</Label>
+        <Label htmlFor="heroImages">Hero images (screenshot URLs)</Label>
         <Textarea
           id="heroImages"
           {...register("heroImages")}
@@ -262,7 +262,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
           className="font-mono text-sm"
         />
         <p className="text-xs text-muted-foreground">
-          Entrez les URLs des images (une par ligne ou séparées par des virgules). Exemple: /screenshots1.png ou https://example.com/image.png. La première image sera affichée sur la page produit.
+          Enter image URLs (one per line or comma-separated). Example: /screenshots1.png or https://example.com/image.png. The first image will appear on the product page.
         </p>
         {errors.heroImages && (
           <p className="text-sm text-destructive">{errors.heroImages.message}</p>
@@ -271,7 +271,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="price">Prix ($) *</Label>
+          <Label htmlFor="price">Price ($) *</Label>
           <Input
             id="price"
             type="number"
@@ -286,7 +286,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="maxStudents">Nombre maximum d'étudiants *</Label>
+          <Label htmlFor="maxStudents">Maximum students *</Label>
           <Input
             id="maxStudents"
             type="number"
@@ -300,7 +300,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="enrollmentClosingDate">Date limite d'inscription *</Label>
+          <Label htmlFor="enrollmentClosingDate">Enrollment deadline *</Label>
           <Input
             id="enrollmentClosingDate"
             type="date"
@@ -314,7 +314,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="accessDuration">Durée d'accès (jours) *</Label>
+          <Label htmlFor="accessDuration">Access duration (days) *</Label>
           <Input
             id="accessDuration"
             type="number"
@@ -330,7 +330,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="instructorId">Instructeur</Label>
+          <Label htmlFor="instructorId">Instructor</Label>
           <Select
             value={watch("instructorId") || "none"}
             onValueChange={(value) => setValue("instructorId", value === "none" ? null : value)}
@@ -339,7 +339,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
               <SelectValue placeholder="Select an instructor (optional)" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none">Aucun instructeur</SelectItem>
+              <SelectItem value="none">No instructor</SelectItem>
               {instructors.map((instructor) => (
                 <SelectItem key={instructor.id} value={instructor.id}>
                   {instructor.firstName || instructor.lastName
@@ -352,7 +352,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="courseId">Formation de base (optionnel)</Label>
+          <Label htmlFor="courseId">Base course (optional)</Label>
           <Select
             value={watch("courseId") || "none"}
             onValueChange={(value) => setValue("courseId", value === "none" ? null : value)}
@@ -361,10 +361,10 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
               <SelectValue placeholder="Select a course (optional)" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none">Aucune formation</SelectItem>
+              <SelectItem value="none">No course</SelectItem>
               {courses.length === 0 ? (
                 <SelectItem value="loading" disabled>
-                  Chargement des formations...
+                  Loading courses...
                 </SelectItem>
               ) : (
                 courses.map((course) => (
@@ -376,8 +376,8 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
-            Si sélectionné, tous les modules de cette formation seront automatiquement ajoutés à la cohorte
-            {courses.length > 0 && ` (${courses.length} formation${courses.length > 1 ? 's' : ''} disponible${courses.length > 1 ? 's' : ''})`}
+            If selected, all modules from this course will be automatically added to the cohort
+            {courses.length > 0 && ` (${courses.length} course${courses.length > 1 ? 's' : ''} available${courses.length > 1 ? 's' : ''})`}
           </p>
         </div>
       </div>
@@ -391,23 +391,23 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
           className="h-4 w-4 rounded border-gray-300"
         />
         <Label htmlFor="published" className="cursor-pointer">
-          Publier la cohorte
+          Publish cohort
         </Label>
       </div>
 
       {/* Component Visibility Settings */}
       <Card>
         <CardHeader>
-          <CardTitle>Visibilité des composants</CardTitle>
+          <CardTitle>Component visibility</CardTitle>
           <CardDescription>
-            Contrôlez quels composants sont visibles pour les étudiants dans cette cohorte
+            Control which components are visible to students in this cohort
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-videos" className="cursor-pointer">
-                Vidéos
+                Videos
               </Label>
               <Switch
                 id="visibility-videos"
@@ -419,7 +419,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-quizzes" className="cursor-pointer">
-                Quiz et examens
+                Quizzes and exams
               </Label>
               <Switch
                 id="visibility-quizzes"
@@ -455,7 +455,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-messaging" className="cursor-pointer">
-                Messagerie
+                Messaging
               </Label>
               <Switch
                 id="visibility-messaging"
@@ -467,7 +467,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-appointments" className="cursor-pointer">
-                Rendez-vous
+                Appointments
               </Label>
               <Switch
                 id="visibility-appointments"
@@ -479,7 +479,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-group-coaching" className="cursor-pointer">
-                Coachings de groupe
+                Group coaching
               </Label>
               <Switch
                 id="visibility-group-coaching"
@@ -491,7 +491,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-message-board" className="cursor-pointer">
-                Tableau de messages
+                Message board
               </Label>
               <Switch
                 id="visibility-message-board"
@@ -503,7 +503,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="visibility-virtual-tutor" className="cursor-pointer">
-                Tuteur virtuel (v2)
+                Virtual tutor (v2)
               </Label>
               <Switch
                 id="visibility-virtual-tutor"
@@ -520,7 +520,7 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
       <div className="flex gap-4">
         <Button type="submit" disabled={loading}>
           {loading
-            ? "Enregistrement..."
+            ? "Saving..."
             : cohortId
             ? "Update"
             : "Create cohort"}
@@ -536,10 +536,9 @@ export function CohortForm({ cohortId, initialData }: CohortFormProps) {
             }
           }}
         >
-          Annuler
+          Cancel
         </Button>
       </div>
     </form>
   );
 }
-

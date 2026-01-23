@@ -112,9 +112,9 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Témoignages</CardTitle>
+        <CardTitle>Testimonials</CardTitle>
         <CardDescription>
-          Ajoutez les témoignages d'anciens étudiants (8 recommandé pour le carrousel)
+          Add testimonials from former students (8 recommended for the carousel)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -122,24 +122,24 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
         <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Nom *</Label>
+              <Label>Name *</Label>
               <Input
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Ex: Marie Dupont"
+                placeholder="e.g., Marie Dupont"
               />
             </div>
             <div className="space-y-2">
-              <Label>Rôle / Titre</Label>
+              <Label>Role / Title</Label>
               <Input
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                placeholder="Ex: Analyste financier"
+                placeholder="e.g., Financial analyst"
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Témoignage *</Label>
+            <Label>Testimonial *</Label>
             <Textarea
               value={formData.text}
               onChange={(e) => setFormData({ ...formData, text: e.target.value })}
@@ -152,17 +152,17 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
               <>
                 <Button onClick={handleUpdate} size="sm">
                   <Edit2 className="h-4 w-4 mr-2" />
-                  Mettre à jour
+                  Update
                 </Button>
                 <Button onClick={cancelEdit} variant="outline" size="sm">
                   <X className="h-4 w-4 mr-2" />
-                  Annuler
+                  Cancel
                 </Button>
               </>
             ) : (
               <Button onClick={handleAdd} size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Ajouter un témoignage
+                Add testimonial
               </Button>
             )}
           </div>
@@ -172,7 +172,7 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
         <div className="space-y-3">
           {testimonials.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
-              Aucun témoignage ajouté. Ajoutez-en un ci-dessus.
+              No testimonials yet. Add one above.
             </p>
           ) : (
             testimonials.map((testimonial) => (

@@ -259,11 +259,11 @@ export function generateInvestorReport(input: GenerateInvestorReportInput): Gene
   lines.push("");
   lines.push(`- **Profil principal**: ${getArchetypeName(primaryId)} (${input.result.primary.score} pts)`);
   if (secondaryId) {
-    lines.push(`- **Profil secondaire**: ${getArchetypeName(secondaryId)} (${input.result.secondary?.score ?? 0} pts)`);
+    lines.push(`- **Secondary profile**: ${getArchetypeName(secondaryId)} (${input.result.secondary?.score ?? 0} pts)`);
   } else {
     lines.push(`- **Secondary profile**: None (according to the assessment eligibility rules)`);
   }
-  lines.push(`- **Confiance**: ${confidenceLabel(input.result.confidence)}`);
+  lines.push(`- **Confidence**: ${confidenceLabel(input.result.confidence)}`);
   lines.push("");
 
   if (answersSummary.length) {
@@ -283,10 +283,10 @@ export function generateInvestorReport(input: GenerateInvestorReportInput): Gene
   lines.push("");
 
   if (secondaryId && secondaryContent) {
-    lines.push("### Comment tes 2 profils se combinent");
+    lines.push("### How your two profiles combine");
     lines.push("");
     lines.push(
-      `Ton profil secondaire (${getArchetypeName(secondaryId)}) colore ton style principal : ça peut être une force si c’est cadré, ou une source de friction si tu n’as pas de règles simples.`
+      `Your secondary profile (${getArchetypeName(secondaryId)}) colors your main style: it can be a strength if it is structured, or a source of friction if you lack simple rules.`
     );
     lines.push("");
   }
@@ -305,7 +305,7 @@ export function generateInvestorReport(input: GenerateInvestorReportInput): Gene
   lines.push(primaryContent?.blindSpot ?? "A behavioral risk can harm your results if you don't have a framework.");
   lines.push("");
 
-  lines.push("## 5) Tes 3 erreurs les plus probables (et comment les corriger)");
+  lines.push("## 5) Your three most likely mistakes (and how to fix them)");
   lines.push("");
   if (primaryContent) {
     primaryContent.topMistakes.forEach((m, idx) => {
@@ -319,12 +319,12 @@ export function generateInvestorReport(input: GenerateInvestorReportInput): Gene
     lines.push("");
   }
 
-  lines.push("## 6) Plan simple sur 7 jours");
+  lines.push("## 6) Simple 7-day plan");
   lines.push("");
   if (primaryContent) {
     for (const step of primaryContent.next7Days) lines.push(`- [ ] ${step}`);
   } else {
-    lines.push("- [ ] Écris ton objectif et ton horizon.\n- [ ] Choisis une allocation simple.\n- [ ] Automatise tes apports.");
+    lines.push("- [ ] Write your goal and time horizon.\n- [ ] Choose a simple allocation.\n- [ ] Automate your contributions.");
   }
   lines.push("");
 
@@ -336,7 +336,7 @@ export function generateInvestorReport(input: GenerateInvestorReportInput): Gene
   lines.push("");
 
   lines.push("---");
-  lines.push(`Version du rapport: ${input.reportVersion}`);
+  lines.push(`Report version: ${input.reportVersion}`);
   lines.push("");
 
   return {

@@ -46,10 +46,10 @@ export function NotFoundClient() {
           <div className="max-w-2xl mx-auto mb-12">
             <div className="border-l-4 border-primary pl-6 py-2 text-left">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4">
-                PAGE INTROUVABLE
+                PAGE NOT FOUND
               </h2>
               <p className="text-xl sm:text-2xl font-light leading-relaxed opacity-80">
-                La page que vous recherchez n'existe pas ou a été déplacée.
+                The page you are looking for does not exist or has been moved.
               </p>
             </div>
           </div>
@@ -60,13 +60,13 @@ export function NotFoundClient() {
               href="/"
               className="inline-block bg-white text-black font-black uppercase text-lg tracking-wider px-10 py-5 border-4 border-white hover:bg-primary hover:border-primary hover:text-black transition-colors shadow-[8px_8px_0_0_hsl(var(--primary))]"
             >
-              Retour à l'accueil →
+              Back to home →
             </Link>
             <Link 
               href="/courses"
               className="inline-block bg-transparent text-white font-black uppercase text-lg tracking-wider px-10 py-5 border-4 border-white hover:bg-white hover:text-black transition-colors"
             >
-              Voir les formations
+              View courses
             </Link>
           </div>
         </div>

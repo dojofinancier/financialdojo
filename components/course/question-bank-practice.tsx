@@ -217,11 +217,11 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
       submitted: false,
       isCorrect: null,
     };
-  }, [questionStates, currentQuestion?.id]);
+  }, [questionStates, currentQuestion]);
   const optionKeys = useMemo(() => {
     if (!currentQuestion?.options) return [];
     return Object.keys(currentQuestion.options).sort();
-  }, [currentQuestion?.options]);
+  }, [currentQuestion]);
 
   if (loading) {
     return (
@@ -264,7 +264,7 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="grid gap-3 sm:flex sm:items-center sm:gap-6">
               <div className="rounded-lg border border-border/60 bg-muted/30 p-3 sm:border-0 sm:bg-transparent sm:p-0">
-                <div className="text-sm text-muted-foreground">Questions répondues</div>
+                <div className="text-sm text-muted-foreground">Questions answered</div>
                 <div className="text-lg font-semibold">
                   {answeredCount} / {questions.length}
                 </div>
@@ -274,7 +274,7 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
                 <div className="text-lg font-semibold">{stats.score}%</div>
               </div>
               <div className="rounded-lg border border-border/60 bg-muted/30 p-3 sm:border-0 sm:bg-transparent sm:p-0">
-                <div className="text-sm text-muted-foreground">Réponses correctes</div>
+                <div className="text-sm text-muted-foreground">Correct answers</div>
                 <div className="text-lg font-semibold text-green-600">
                   {stats.correctAnswers} / {stats.totalAttempts}
                 </div>
@@ -282,7 +282,7 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
             </div>
             <Button className="w-full sm:w-auto" variant="outline" onClick={handleReset}>
               <RotateCcw className="h-4 w-4 mr-2" />
-              Réinitialiser tout
+              Reset all
             </Button>
           </div>
         </CardContent>
@@ -373,7 +373,7 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
               disabled={currentIndex === 0}
             >
               <ChevronLeft className="h-4 w-4 mr-2" />
-              Précédent
+              Previous
             </Button>
 
             {!currentState.submitted ? (
@@ -399,4 +399,3 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
     </div>
   );
 }
-

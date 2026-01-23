@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { updateTimeSpentAction, trackContentCompletionAction } from "@/app/actions/progress";
@@ -27,6 +27,7 @@ export function VideoPlayer({ video, contentItemId }: VideoPlayerProps) {
   const playerRef = useRef<HTMLDivElement>(null);
   const timeTrackingRef = useRef<NodeJS.Timeout | null>(null);
   const lastTrackedTimeRef = useRef(0);
+  const currentTimeRef = useRef(0);
 
   // Extract Vimeo video ID from URL
   const getVimeoId = (url: string): string | null => {
@@ -35,6 +36,30 @@ export function VideoPlayer({ video, contentItemId }: VideoPlayerProps) {
   };
 
   const vimeoId = getVimeoId(video.vimeoUrl);
+
+  const startTimeTracking = useCallback(() => {
+    if (timeTrackingRef.current) return;
+
+    timeTrackingRef.current = setInterval(async () => {
+      const timeSpent = currentTimeRef.current - lastTrackedTimeRef.current;
+      if (timeSpent > 5) {
+        // Track every 5 seconds
+        await updateTimeSpentAction(contentItemId, Math.floor(timeSpent));
+        lastTrackedTimeRef.current = currentTimeRef.current;
+      }
+    }, 5000);
+  }, [contentItemId]);
+
+  const stopTimeTracking = useCallback(() => {
+    if (timeTrackingRef.current) {
+      clearInterval(timeTrackingRef.current);
+      timeTrackingRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    currentTimeRef.current = currentTime;
+  }, [currentTime]);
 
   useEffect(() => {
     if (!vimeoId || !window.Vimeo) return;
@@ -70,27 +95,8 @@ export function VideoPlayer({ video, contentItemId }: VideoPlayerProps) {
       }
       vimeoPlayer.destroy();
     };
-  }, [vimeoId]);
+  }, [vimeoId, startTimeTracking, stopTimeTracking]);
 
-  const startTimeTracking = () => {
-    if (timeTrackingRef.current) return;
-
-    timeTrackingRef.current = setInterval(async () => {
-      const timeSpent = currentTime - lastTrackedTimeRef.current;
-      if (timeSpent > 5) {
-        // Track every 5 seconds
-        await updateTimeSpentAction(contentItemId, Math.floor(timeSpent));
-        lastTrackedTimeRef.current = currentTime;
-      }
-    }, 5000);
-  };
-
-  const stopTimeTracking = () => {
-    if (timeTrackingRef.current) {
-      clearInterval(timeTrackingRef.current);
-      timeTrackingRef.current = null;
-    }
-  };
 
   const handlePlayPause = async () => {
     if (!player) return;
@@ -144,13 +150,13 @@ export function VideoPlayer({ video, contentItemId }: VideoPlayerProps) {
                   {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                 </Button>
                 <Button onClick={handleComplete} size="sm">
-                  Marquer comme terminé
+                  Mark as completed
                 </Button>
               </div>
             </div>
             {video.transcript && (
               <div className="mt-4 p-4 bg-muted rounded-md">
-                <h3 className="font-semibold mb-2">Transcription</h3>
+                <h3 className="font-semibold mb-2">Transcript</h3>
                 <p className="text-sm whitespace-pre-wrap">{video.transcript}</p>
               </div>
             )}

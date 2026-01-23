@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Video, ExternalLink, Clock, FileText } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enCA } from "date-fns/locale";
 import { getGroupCoachingSessionsAction } from "@/app/actions/group-coaching-sessions";
 import { toast } from "sonner";
 import { RichTextEditor } from "@/components/admin/courses/rich-text-editor";
@@ -32,7 +32,7 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
   const [sessions, setSessions] = useState<GroupCoachingSession[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadSessions = async () => {
+  const loadSessions = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getGroupCoachingSessionsAction(cohortId);
@@ -44,11 +44,11 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
     } finally {
       setLoading(false);
     }
-  };
+  }, [cohortId]);
 
   useEffect(() => {
     loadSessions();
-  }, [cohortId]);
+  }, [loadSessions]);
 
   const upcomingSessions = sessions.filter((s) => s.status === "UPCOMING");
   const completedSessions = sessions.filter((s) => s.status === "COMPLETED");
@@ -68,22 +68,22 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
   };
 
   if (loading) {
-    return <div className="text-center py-8">Chargement...</div>;
+    return <div className="text-center py-8">Loading...</div>;
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-2">Sessions de coaching de groupe</h2>
+        <h2 className="text-2xl font-semibold mb-2">Group coaching sessions</h2>
         <p className="text-muted-foreground">
-          Accédez aux sessions en direct et aux enregistrements
+          Access live sessions and recordings
         </p>
       </div>
 
       {/* Upcoming Sessions */}
       {upcomingSessions.length > 0 && (
         <div>
-          <h3 className="text-xl font-semibold mb-4">Sessions à venir</h3>
+          <h3 className="text-xl font-semibold mb-4">Upcoming sessions</h3>
           <div className="grid gap-4 md:grid-cols-2">
             {upcomingSessions.map((session) => (
               <Card key={session.id} className="border-l-4 border-l-blue-500">
@@ -95,12 +95,12 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
                           {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'at' HH:mm", {
-                            locale: fr,
+                            locale: enCA,
                           })}
                         </div>
                       </CardDescription>
                     </div>
-                    <Badge variant="outline">À venir</Badge>
+                    <Badge variant="outline">Upcoming</Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -115,7 +115,7 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
                       <Button asChild variant="default">
                         <a href={session.zoomLink} target="_blank" rel="noopener noreferrer">
                           <Video className="h-4 w-4 mr-2" />
-                          Rejoindre Zoom
+                          Join Zoom
                           <ExternalLink className="h-3 w-3 ml-2" />
                         </a>
                       </Button>
@@ -124,7 +124,7 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
                       <Button asChild variant="default">
                         <a href={session.teamsLink} target="_blank" rel="noopener noreferrer">
                           <Video className="h-4 w-4 mr-2" />
-                          Rejoindre Teams
+                          Join Teams
                           <ExternalLink className="h-3 w-3 ml-2" />
                         </a>
                       </Button>
@@ -140,7 +140,7 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
       {/* Completed Sessions */}
       {completedSessions.length > 0 && (
         <div>
-          <h3 className="text-xl font-semibold mb-4">Sessions terminées</h3>
+          <h3 className="text-xl font-semibold mb-4">Completed sessions</h3>
           <div className="grid gap-4 md:grid-cols-2">
             {completedSessions.map((session) => (
               <Card key={session.id}>
@@ -152,12 +152,12 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
                           {format(new Date(session.scheduledAt), "EEEE d MMMM yyyy 'at' HH:mm", {
-                            locale: fr,
+                            locale: enCA,
                           })}
                         </div>
                       </CardDescription>
                     </div>
-                    <Badge variant="secondary">Terminée</Badge>
+                    <Badge variant="secondary">Completed</Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -169,7 +169,7 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
                   )}
                   {session.recordingVimeoUrl ? (
                     <div className="space-y-2">
-                      <h4 className="font-medium">Enregistrement</h4>
+                      <h4 className="font-medium">Recording</h4>
                       <div className="aspect-video w-full">
                         <iframe
                           src={embedVimeoVideo(session.recordingVimeoUrl)}
@@ -181,14 +181,14 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
-                      L'enregistrement sera disponible prochainement
+                      The recording will be available soon
                     </p>
                   )}
                   {session.adminNotes && (
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4" />
-                        <h4 className="font-medium">Notes de l'instructeur</h4>
+                        <h4 className="font-medium">Instructor notes</h4>
                       </div>
                       <div
                         className="prose prose-sm max-w-none bg-muted p-4 rounded-md"
@@ -207,9 +207,9 @@ export function GroupCoachingSessions({ cohortId }: GroupCoachingSessionsProps) 
         <Card>
           <CardContent className="py-12 text-center">
             <Video className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">Aucune session planifiée</h3>
+            <h3 className="text-lg font-semibold mb-2">No sessions scheduled</h3>
             <p className="text-muted-foreground">
-              Les sessions de coaching seront affichées ici lorsqu'elles seront planifiées
+              Coaching sessions will appear here once they are scheduled
             </p>
           </CardContent>
         </Card>

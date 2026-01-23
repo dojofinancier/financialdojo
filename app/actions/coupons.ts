@@ -8,7 +8,7 @@ import type { PaginatedResult } from "@/lib/utils/pagination";
 import { getEasternNow, toEasternTime } from "@/lib/utils/timezone";
 
 const couponSchema = z.object({
-  code: z.string().min(1, "Le code est requis"),
+  code: z.string().min(1, "Code is required"),
   discountType: z.enum(["PERCENTAGE", "FIXED"]),
   discountValue: z.number().positive("The discount value must be positive"),
   applicableCourses: z.array(z.string()).optional().nullable(),
@@ -101,7 +101,7 @@ export async function validateCouponAction(
     if (!coupon) {
       return {
         success: false,
-        error: "Code de coupon invalide",
+        error: "Invalid coupon code",
       };
     }
 
@@ -500,4 +500,3 @@ export async function getCouponUsageStatsAction(couponId: string) {
     };
   }
 }
-

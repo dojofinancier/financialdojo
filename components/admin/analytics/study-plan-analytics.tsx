@@ -61,14 +61,14 @@ export function StudyPlanAnalytics({ courseId }: StudyPlanAnalyticsProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Analytics du plan d'étude</h2>
+          <h2 className="text-2xl font-bold">Study plan analytics</h2>
           <p className="text-muted-foreground">
-            Taux d'adhésion et complétion par phase
+            Adherence and completion rates by phase
           </p>
         </div>
         <Button onClick={loadData} variant="outline" size="sm">
           <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
+          Refresh
         </Button>
       </div>
 
@@ -77,14 +77,14 @@ export function StudyPlanAnalytics({ courseId }: StudyPlanAnalyticsProps) {
         <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Étudiants avec plan</CardDescription>
+              <CardDescription>Students with a plan</CardDescription>
               <CardTitle className="text-2xl">{aggregate.totalStudents}</CardTitle>
             </CardHeader>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Taux d'adhésion moyen</CardDescription>
+              <CardDescription>Average adherence rate</CardDescription>
               <CardTitle className="text-2xl">
                 {aggregate.averageAdherence.toFixed(1)}%
               </CardTitle>
@@ -96,7 +96,7 @@ export function StudyPlanAnalytics({ courseId }: StudyPlanAnalyticsProps) {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Phase 1 complétion moyenne</CardDescription>
+              <CardDescription>Average Phase 1 completion</CardDescription>
               <CardTitle className="text-2xl">
                 {aggregate.averagePhase1Complete.toFixed(1)}%
               </CardTitle>
@@ -108,7 +108,7 @@ export function StudyPlanAnalytics({ courseId }: StudyPlanAnalyticsProps) {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Phase 3 complétion moyenne</CardDescription>
+              <CardDescription>Average Phase 3 completion</CardDescription>
               <CardTitle className="text-2xl">
                 {aggregate.averagePhase3Complete.toFixed(1)}%
               </CardTitle>
@@ -126,10 +126,10 @@ export function StudyPlanAnalytics({ courseId }: StudyPlanAnalyticsProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />
-              Performance individuelle
+              Individual performance
             </CardTitle>
             <CardDescription>
-              Détails par étudiant sur l'adhésion au plan et la complétion
+              Per-student adherence and completion details
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -137,12 +137,12 @@ export function StudyPlanAnalytics({ courseId }: StudyPlanAnalyticsProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Étudiant</TableHead>
-                    <TableHead>Taux d'adhésion</TableHead>
+                    <TableHead>Student</TableHead>
+                    <TableHead>Adherence rate</TableHead>
                     <TableHead>Phase 1</TableHead>
-                    <TableHead>Sessions révision</TableHead>
+                    <TableHead>Review sessions</TableHead>
                     <TableHead>Phase 3</TableHead>
-                    <TableHead>Statut</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -155,8 +155,8 @@ export function StudyPlanAnalytics({ courseId }: StudyPlanAnalyticsProps) {
                           <span className="text-sm">{student.adherenceRate.toFixed(1)}%</span>
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">
-                          {student.tasksCompletedOnTime} à temps, {student.tasksCompletedLate}{" "}
-                          en retard, {student.tasksSkipped} ignorées
+                          {student.tasksCompletedOnTime} on time, {student.tasksCompletedLate}{" "}
+                          late, {student.tasksSkipped} skipped
                         </div>
                       </TableCell>
                       <TableCell>
@@ -181,12 +181,12 @@ export function StudyPlanAnalytics({ courseId }: StudyPlanAnalyticsProps) {
                         ) : student.adherenceRate >= 60 ? (
                           <span className="flex items-center gap-1 text-yellow-600">
                             <Clock className="h-4 w-4" />
-                            Bon
+                            Good
                           </span>
                         ) : (
                           <span className="flex items-center gap-1 text-red-600">
                             <AlertTriangle className="h-4 w-4" />
-                            À améliorer
+                            Needs improvement
                           </span>
                         )}
                       </TableCell>

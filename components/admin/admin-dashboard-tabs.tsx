@@ -70,25 +70,25 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
                   {activeTab === "overview" && (
                     <>
                       <BarChart3 className="h-4 w-4" />
-                      Vue d'ensemble
+                      Overview
                     </>
                   )}
                   {activeTab === "courses" && (
                     <>
                       <BookOpen className="h-4 w-4" />
-                      Cours
+                      Courses
                     </>
                   )}
                   {activeTab === "students" && (
                     <>
                       <Users className="h-4 w-4" />
-                      Étudiants
+                      Students
                     </>
                   )}
                   {activeTab === "orders" && (
                     <>
                       <ShoppingCart className="h-4 w-4" />
-                      Commandes
+                      Orders
                     </>
                   )}
                   {activeTab === "coupons" && (
@@ -100,7 +100,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
                   {activeTab === "appointments" && (
                     <>
                       <Calendar className="h-4 w-4" />
-                      Rendez-vous
+                      Appointments
                     </>
                   )}
                   {activeTab === "messages" && (
@@ -118,13 +118,13 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
                   {activeTab === "cohorts" && (
                     <>
                       <GraduationCap className="h-4 w-4" />
-                      Cohortes
+                      Cohorts
                     </>
                   )}
                   {activeTab === "errors" && (
                     <>
                       <AlertCircle className="h-4 w-4" />
-                      Logs d'erreur
+                      Error logs
                     </>
                   )}
                   {activeTab === "analytics" && (
@@ -136,7 +136,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
                   {activeTab === "account" && (
                     <>
                       <Settings className="h-4 w-4" />
-                      Compte
+                      Account
                     </>
                   )}
                 </span>
@@ -149,28 +149,28 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
                 className={activeTab === "overview" ? "bg-accent" : ""}
               >
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Vue d'ensemble
+                Overview
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleTabChange("courses")}
                 className={activeTab === "courses" ? "bg-accent" : ""}
               >
                 <BookOpen className="h-4 w-4 mr-2" />
-                Cours
+                Courses
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleTabChange("students")}
                 className={activeTab === "students" ? "bg-accent" : ""}
               >
                 <Users className="h-4 w-4 mr-2" />
-                Étudiants
+                Students
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleTabChange("orders")}
                 className={activeTab === "orders" ? "bg-accent" : ""}
               >
                 <ShoppingCart className="h-4 w-4 mr-2" />
-                Commandes
+                Orders
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleTabChange("coupons")}
@@ -184,7 +184,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
                 className={activeTab === "appointments" ? "bg-accent" : ""}
               >
                 <Calendar className="h-4 w-4 mr-2" />
-                Rendez-vous
+                Appointments
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleTabChange("messages")}
@@ -205,14 +205,14 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
                 className={activeTab === "cohorts" ? "bg-accent" : ""}
               >
                 <GraduationCap className="h-4 w-4 mr-2" />
-                Cohortes
+                Cohorts
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleTabChange("errors")}
                 className={activeTab === "errors" ? "bg-accent" : ""}
               >
                 <AlertCircle className="h-4 w-4 mr-2" />
-                Logs d'erreur
+                Error logs
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleTabChange("analytics")}
@@ -226,7 +226,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
                 className={activeTab === "account" ? "bg-accent" : ""}
               >
                 <Settings className="h-4 w-4 mr-2" />
-                Compte
+                Account
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -256,7 +256,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <Users className="h-4 w-4" />
-            Étudiants
+                      Students
           </Button>
           <Button
             variant={activeTab === "orders" ? "default" : "outline"}
@@ -296,7 +296,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <Ticket className="h-4 w-4" />
-            Tickets de support
+            Support tickets
           </Button>
           <Button
             variant={activeTab === "cohorts" ? "default" : "outline"}
@@ -343,8 +343,8 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
         <div className="space-y-6">
           <Tabs defaultValue="appointments" className="w-full">
             <TabsList>
-              <TabsTrigger value="appointments">Rendez-vous</TabsTrigger>
-              <TabsTrigger value="availability">Disponibilités</TabsTrigger>
+              <TabsTrigger value="appointments">Appointments</TabsTrigger>
+              <TabsTrigger value="availability">Availability</TabsTrigger>
             </TabsList>
             <TabsContent value="appointments" className="mt-4">
               <AppointmentList />
@@ -364,4 +364,3 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
     </div>
   );
 }
-

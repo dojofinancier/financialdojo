@@ -71,11 +71,11 @@ export function NumericEntryActivity({
   return (
     <div className="space-y-4">
       <div>
-        <Label className="text-base font-semibold">Question / Problème</Label>
+        <Label className="text-base font-semibold">Question / Problem</Label>
         <p className="text-lg mt-2 whitespace-pre-wrap">{content.question}</p>
       </div>
       <div className="space-y-2">
-        <Label>Votre réponse (nombre)</Label>
+        <Label>Your answer (number)</Label>
         <div className="relative">
           <Input
             type="number"
@@ -106,14 +106,14 @@ export function NumericEntryActivity({
         </div>
         {tolerance !== null && (
           <p className="text-xs text-muted-foreground">
-            Tolérance: {tolerance >= 1 ? `±${tolerance}%` : `±${tolerance}`}
+            Tolerance: {tolerance >= 1 ? `±${tolerance}%` : `±${tolerance}`}
           </p>
         )}
       </div>
       {showAnswers && (
         <div className="p-3 bg-muted rounded-md">
           <p className="text-sm">
-            <span className="font-semibold">Réponse correcte:</span> {correctAnswers}
+            <span className="font-semibold">Correct answer:</span> {correctAnswers}
           </p>
         </div>
       )}

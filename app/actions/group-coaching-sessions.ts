@@ -7,7 +7,7 @@ import { logServerError } from "@/lib/utils/error-logging";
 
 const groupCoachingSessionSchema = z.object({
   cohortId: z.string().min(1),
-  title: z.string().min(1, "Le titre est requis"),
+  title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   scheduledAt: z.date(),
   zoomLink: z.string().url().optional().nullable(),

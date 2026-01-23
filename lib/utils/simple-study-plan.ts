@@ -86,8 +86,8 @@ export async function generateSimpleStudyPlan(
     const deficit = minimumStudyTime - blocksAvailable;
     const additionalHours = Math.ceil(deficit / 2);
     warnings.push(
-      `Temps d'étude insuffisant. Minimum requis: ${minimumStudyTime} blocs, disponible: ${blocksAvailable} blocs. ` +
-      `Considérez augmenter votre temps d'étude de ${additionalHours} heures par semaine.`
+      `Insufficient study time. Minimum required: ${minimumStudyTime} blocks, available: ${blocksAvailable} blocks. ` +
+      `Consider increasing your study time by ${additionalHours} hours per week.`
     );
   }
 
@@ -117,7 +117,7 @@ export async function generateSimpleStudyPlan(
     const modulesThisWeek = Math.min(modulesPerWeek, modules.length - moduleIndex);
 
     for (let m = 0; m < modulesThisWeek && moduleIndex < modules.length; m++) {
-      const module = modules[moduleIndex];
+      const moduleRecord = modules[moduleIndex];
       
       // Find a preferred day for this module
       const dayOffset = preferredDays[m % preferredDays.length] || 1;
@@ -133,12 +133,12 @@ export async function generateSimpleStudyPlan(
       blocks.push({
         date: new Date(moduleDate),
         taskType: TaskType.LEARN,
-        targetModuleId: module.id,
+        targetModuleId: moduleRecord.id,
         estimatedBlocks: 4, // Standard 4 blocks per module
         order: blockOrder++,
       });
 
-      console.log(`[SimpleStudyPlan] Week ${week}: Scheduled module ${moduleIndex} (${module.title}) on ${moduleDate.toISOString().split('T')[0]}`);
+      console.log(`[SimpleStudyPlan] Week ${week}: Scheduled module ${moduleIndex} (${moduleRecord.title}) on ${moduleDate.toISOString().split('T')[0]}`);
       moduleIndex++;
     }
   }

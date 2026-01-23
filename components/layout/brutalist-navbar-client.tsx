@@ -65,7 +65,7 @@ export function BrutalistNavbarClient({ user, variant = "transparent", dashboard
             <Link href="/" className="flex items-center hover:opacity-70 transition-opacity">
               <Image
                 src="/logo_light.png"
-                alt="Le Dojo Financier"
+                alt="Financial Dojo"
                 width={200}
                 height={50}
                 className="h-auto w-auto max-h-12"
@@ -126,7 +126,7 @@ export function BrutalistNavbarClient({ user, variant = "transparent", dashboard
                   className="bg-white text-black font-black uppercase text-sm tracking-wider px-4 py-2 border-4 border-white hover:bg-black hover:text-white transition-colors flex items-center gap-2"
                 >
                   <LayoutDashboard className="h-4 w-4" />
-                  <span className="hidden sm:inline">Tableau de bord</span>
+                  <span className="hidden sm:inline">Dashboard</span>
                 </Link>
                 <BrutalistUserMenu user={user} />
               </>
@@ -135,7 +135,7 @@ export function BrutalistNavbarClient({ user, variant = "transparent", dashboard
                 href="/login" 
                 className="bg-white text-black font-black uppercase text-sm tracking-wider px-6 py-3 border-4 border-white hover:bg-black hover:text-white transition-colors"
               >
-                Connexion
+                Sign in
               </Link>
             )}
           </div>
@@ -144,4 +144,3 @@ export function BrutalistNavbarClient({ user, variant = "transparent", dashboard
     </div>
   );
 }
-

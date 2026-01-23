@@ -21,7 +21,7 @@ const componentVisibilitySchema = z.object({
 });
 
 const cohortSchema = z.object({
-  title: z.string().min(1, "Le titre est requis"),
+  title: z.string().min(1, "Title is required"),
   slug: z.string().optional().nullable(),
   shortDescription: z.string().optional().nullable(),
   description: z.string().optional(),
@@ -231,7 +231,7 @@ export async function createCohortAction(
 
     return {
       success: false,
-      error: `Erreur lors de la création de la cohorte: ${errorMessage}`,
+      error: `Error creating the cohort: ${errorMessage}`,
     };
   }
 }
@@ -394,7 +394,7 @@ export async function updateCohortAction(
 
     return {
       success: false,
-      error: `Erreur lors de la mise à jour de la cohorte: ${errorMessage}`,
+      error: `Error updating the cohort: ${errorMessage}`,
     };
   }
 }
@@ -1169,14 +1169,14 @@ export async function addModuleToCohortAction(
     }
 
     // Check if module exists
-    const module = await prisma.module.findUnique({
+    const moduleRecord = await prisma.module.findUnique({
       where: { id: moduleId },
     });
 
-    if (!module) {
+    if (!moduleRecord) {
       return {
         success: false,
-        error: "Module introuvable",
+        error: "Module not found",
       };
     }
 
@@ -1505,4 +1505,3 @@ export async function updateCohortTestimonialsAction(
     };
   }
 }
-

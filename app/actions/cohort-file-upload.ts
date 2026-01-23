@@ -27,7 +27,7 @@ export async function uploadCohortFileAction(
     if (!file) {
       return {
         success: false,
-        error: "Aucun fichier fourni",
+        error: "No file provided",
       };
     }
 
@@ -35,7 +35,7 @@ export async function uploadCohortFileAction(
     if (file.size > MAX_FILE_SIZE) {
       return {
         success: false,
-        error: `Le fichier dépasse la limite de ${MAX_FILE_SIZE / (1024 * 1024)}MB`,
+        error: `File exceeds the ${MAX_FILE_SIZE / (1024 * 1024)}MB limit`,
       };
     }
 
@@ -116,7 +116,7 @@ export async function deleteCohortFileAction(
     if (bucketIndex === -1 || bucketIndex === pathParts.length - 1) {
       return {
         success: false,
-        error: "URL de fichier invalide",
+        error: "Invalid file URL",
       };
     }
 
@@ -141,4 +141,3 @@ export async function deleteCohortFileAction(
     };
   }
 }
-

@@ -111,7 +111,7 @@ export function LearningActivityPlayer({
         setScore(result.data.score);
         toast.success(
           result.data.isGraded
-            ? `Activité terminée! Score: ${result.data.score}%`
+            ? `Activity completed! Score: ${result.data.score}%`
             : "Activity submitted! It will be reviewed by the instructor."
         );
         if (onComplete) {
@@ -175,7 +175,7 @@ export function LearningActivityPlayer({
 
     // Use key prop based on activity ID and reset key to force remount when:
     // 1. Activity changes (different activity.id)
-    // 2. User clicks "Réessayer" (resetKey increments)
+    // 2. User clicks "Try again" (resetKey increments)
     // This preserves the submitted answer until user navigates away or resets
     const componentKey = `${activity.id}-${resetKey}`;
 
@@ -203,19 +203,19 @@ export function LearningActivityPlayer({
       case "DEEP_DIVE":
         return <DeepDiveActivity key={componentKey} {...commonProps} initialAnswers={passInitialAnswers && typeof passInitialAnswers === "object" && !Array.isArray(passInitialAnswers) ? passInitialAnswers : undefined} />;
       default:
-        return <div key={componentKey}>Type d'activité non reconnu</div>;
+        return <div key={componentKey}>Unknown activity type</div>;
     }
   };
 
   const ACTIVITY_TYPE_LABELS: Record<string, string> = {
     SHORT_ANSWER: "Short answer",
     FILL_IN_BLANK: "Fill-in-the-blank",
-    SORTING_RANKING: "Tri / Classement",
+    SORTING_RANKING: "Sorting / Ranking",
     CLASSIFICATION: "Classification",
     NUMERIC_ENTRY: "Numeric calculation",
     TABLE_COMPLETION: "Table to complete",
     ERROR_SPOTTING: "Error detection",
-    DEEP_DIVE: "Approfondissement",
+    DEEP_DIVE: "Deep dive",
   };
 
   return (
@@ -229,7 +229,7 @@ export function LearningActivityPlayer({
               </Badge>
               {attemptNumber > 0 && (
                 <Badge variant="outline">
-                  Tentative #{attemptNumber}
+                  Attempt #{attemptNumber}
                 </Badge>
               )}
               {activity.module && (
@@ -258,10 +258,10 @@ export function LearningActivityPlayer({
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Soumission...
+                  Submitting...
                 </>
               ) : (
-                "Soumettre"
+                "Submit"
               )}
             </Button>
           </div>
@@ -290,7 +290,7 @@ export function LearningActivityPlayer({
                     toast.info("Answers have been reset. You can try again.");
                   }}
                 >
-                  Réessayer
+                  Try again
                 </Button>
                 <Button
                   variant="default"
@@ -301,7 +301,7 @@ export function LearningActivityPlayer({
                     }
                   }}
                 >
-                  Révéler les réponses
+                  Reveal answers
                 </Button>
               </div>
             )}
@@ -326,10 +326,10 @@ export function LearningActivityPlayer({
                     toast.info("Answers have been reset. You can try again.");
                   }}
                 >
-                  Réessayer
+                  Try again
                 </Button>
                 {onNext && (
-                  <Button onClick={onNext}>Suivant</Button>
+                  <Button onClick={onNext}>Next</Button>
                 )}
               </div>
             )}

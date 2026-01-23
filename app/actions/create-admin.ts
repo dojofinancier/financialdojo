@@ -3,6 +3,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { prisma } from "@/lib/prisma";
 import { logServerError } from "@/lib/utils/error-logging";
+import { getSupabaseSecretKey, getSupabaseUrl } from "@/lib/supabase/server-env";
 
 /**
  * Create admin user (one-time setup)
@@ -10,15 +11,8 @@ import { logServerError } from "@/lib/utils/error-logging";
  */
 export async function createAdminUserAction() {
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-      return {
-        success: false,
-        error: "Missing Supabase environment variables (NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)",
-      };
-    }
+    const supabaseUrl = getSupabaseUrl();
+    const supabaseServiceKey = getSupabaseSecretKey();
 
     const email = "admin@dojofinancier.com";
     const password = "passeport";

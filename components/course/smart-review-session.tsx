@@ -92,7 +92,7 @@ export function SmartReviewSession({
                 ) : (
                   <>
                     <BookOpen className="h-3 w-3 mr-1" />
-                    Activité
+                    Activity
                   </>
                 )}
               </Badge>
@@ -133,12 +133,12 @@ export function SmartReviewSession({
                       size="lg"
                       onClick={() => setShowAnswer(true)}
                     >
-                      Voir la réponse
+                      View answer
                     </Button>
                   </div>
                 ) : (
                   <div className="border-t pt-6 text-center">
-                    <p className="text-sm text-muted-foreground mb-2">Réponse</p>
+                    <p className="text-sm text-muted-foreground mb-2">Answer</p>
                     <p className="text-lg">{currentItem.flashcard.back}</p>
                   </div>
                 )}
@@ -158,7 +158,7 @@ export function SmartReviewSession({
           {(showAnswer || !isFlashcard) && (
             <div className="space-y-4 border-t pt-6 bg-gradient-to-b from-muted/30 to-transparent -mx-6 px-6 pb-2">
               <p className="text-base font-semibold text-center">
-                Comment c'était ? <span className="text-muted-foreground font-normal text-sm">(cliquez pour continuer)</span>
+                How was it? <span className="text-muted-foreground font-normal text-sm">(click to continue)</span>
               </p>
               <div className="grid grid-cols-3 gap-3">
                 <Button
@@ -167,7 +167,7 @@ export function SmartReviewSession({
                   disabled={isSubmitting}
                   className="h-16 bg-green-500 hover:bg-green-600 text-white border-0 shadow-lg hover:shadow-xl transition-all text-xl font-bold"
                 >
-                  Facile
+                  Easy
                 </Button>
                 <Button
                   size="lg"
@@ -175,7 +175,7 @@ export function SmartReviewSession({
                   disabled={isSubmitting}
                   className="h-16 bg-blue-500 hover:bg-blue-600 text-white border-0 shadow-lg hover:shadow-xl transition-all text-xl font-bold"
                 >
-                  Moyen
+                  Medium
                 </Button>
                 <Button
                   size="lg"
@@ -183,11 +183,11 @@ export function SmartReviewSession({
                   disabled={isSubmitting}
                   className="h-16 bg-orange-500 hover:bg-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all text-xl font-bold"
                 >
-                  Difficile
+                  Hard
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                Facile = apparaît moins souvent • Difficile = apparaît plus souvent
+                Easy = appears less often • Hard = appears more often
               </p>
             </div>
           )}
@@ -201,7 +201,7 @@ export function SmartReviewSession({
               disabled={isSubmitting}
               className="text-muted-foreground text-xs"
             >
-              Passer sans noter
+              Skip without rating
               <ChevronRight className="h-3 w-3 ml-1" />
             </Button>
           </div>
@@ -210,11 +210,11 @@ export function SmartReviewSession({
 
       {/* Item Info */}
       <div className="text-center text-xs text-muted-foreground">
-        Vu {currentItem.timesServed} fois
+        Seen {currentItem.timesServed} times
         {currentItem.lastDifficulty && (
-          <> • Dernière évaluation: {
-            currentItem.lastDifficulty === "EASY" ? "Facile" :
-            currentItem.lastDifficulty === "MEDIUM" ? "Moyen" : "Difficile"
+          <> • Last rating: {
+            currentItem.lastDifficulty === "EASY" ? "Easy" :
+            currentItem.lastDifficulty === "MEDIUM" ? "Medium" : "Hard"
           }</>
         )}
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,11 +27,7 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
   const [currentItem, setCurrentItem] = useState<SmartReviewItemWithRelations | null>(null);
   const [isReviewing, setIsReviewing] = useState(false);
 
-  useEffect(() => {
-    loadStats();
-  }, [courseId]);
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     try {
       const result = await getSmartReviewStatsAction(courseId);
       if (result.success && result.data) {
@@ -42,7 +38,11 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
 
   const handleStartReview = async () => {
     setIsStarting(true);
@@ -120,11 +120,11 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5 text-primary" />
-            Révision intelligente
+            Smart review
           </CardTitle>
           <CardDescription>
-            Révisez un mélange aléatoire de flashcards et d'activités de vos chapitres complétés.
-            Les items sont priorisés pour maximiser votre couverture.
+            Review a random mix of flashcards and activities from your completed chapters.
+            Items are prioritized to maximize coverage.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -134,25 +134,25 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
               <div className="text-2xl font-bold text-primary">
                 {isLoading ? "..." : stats?.completedChapters?.length || 0}
               </div>
-              <div className="text-xs text-muted-foreground">Chapitres débloqués</div>
+              <div className="text-xs text-muted-foreground">Unlocked chapters</div>
             </div>
             <div className="text-center p-3 rounded-lg sm:bg-muted/50 sm:border sm:border-border/40">
               <div className="text-2xl font-bold">
                 {isLoading ? "..." : totalItems}
               </div>
-              <div className="text-xs text-muted-foreground">Items disponibles</div>
+              <div className="text-xs text-muted-foreground">Available items</div>
             </div>
             <div className="text-center p-3 rounded-lg sm:bg-muted/50 sm:border sm:border-border/40">
               <div className="text-2xl font-bold text-green-600">
                 {isLoading ? "..." : totalReviewed}
               </div>
-              <div className="text-xs text-muted-foreground">Items vus</div>
+              <div className="text-xs text-muted-foreground">Items seen</div>
             </div>
             <div className="text-center p-3 rounded-lg sm:bg-muted/50 sm:border sm:border-border/40">
               <div className="text-2xl font-bold">
                 {isLoading ? "..." : stats?.totalItemsReviewed || 0}
               </div>
-              <div className="text-xs text-muted-foreground">Révisions totales</div>
+              <div className="text-xs text-muted-foreground">Total reviews</div>
             </div>
           </div>
 
@@ -164,12 +164,12 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
             disabled={isStarting || isLoading || !hasCompletedChapters}
           >
             <Play className="h-4 w-4 mr-2" />
-            {isStarting ? "Chargement..." : "Start review"}
+            {isStarting ? "Loading..." : "Start review"}
           </Button>
 
           {!hasCompletedChapters && !isLoading && (
             <p className="text-sm text-muted-foreground text-center">
-              Complétez au moins un chapitre dans la phase d'apprentissage pour débloquer la révision intelligente.
+              Complete at least one chapter in the learning phase to unlock smart review.
             </p>
           )}
         </CardContent>
@@ -179,7 +179,7 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
       {chapterStats.length > 0 && (
         <Card className="border-0 shadow-none sm:border sm:shadow">
           <CardHeader>
-            <CardTitle className="text-lg">Progression par chapitre</CardTitle>
+            <CardTitle className="text-lg">Progress by chapter</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -219,10 +219,10 @@ export function SmartReviewDashboard({ courseId, course, settings }: SmartReview
           <CardContent className="pt-6">
             <div className="text-center text-muted-foreground">
               <p className="text-sm">
-                {course.modules.length - (stats.completedChapters.length || 0)} chapitre(s) restant(s) à débloquer.
+                {course.modules.length - (stats.completedChapters.length || 0)} chapter(s) remaining to unlock.
               </p>
               <p className="text-xs mt-1">
-                Marquez les chapitres comme complétés dans la phase d'apprentissage pour les ajouter à la révision.
+                Mark chapters as completed in the learning phase to add them to review.
               </p>
             </div>
           </CardContent>

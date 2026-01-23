@@ -5,7 +5,7 @@ import { Video, FileText, Play, Layers, Brain, FileQuestion, BookOpen, Briefcase
 import { Button } from "@/components/ui/button";
 import { getCourseAction } from "@/app/actions/courses";
 import { getCaseStudiesAction } from "@/app/actions/case-studies";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 interface LearningToolsProps {
   courseId: string;
@@ -76,11 +76,7 @@ export function LearningTools({ courseId, onToolSelect }: LearningToolsProps) {
   const [hasCaseStudies, setHasCaseStudies] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadCourse();
-  }, [courseId]);
-
-  const loadCourse = async () => {
+  const loadCourse = useCallback(async () => {
     try {
       setLoading(true);
       const [courseResult, caseStudiesResult] = await Promise.all([
@@ -100,7 +96,11 @@ export function LearningTools({ courseId, onToolSelect }: LearningToolsProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    loadCourse();
+  }, [loadCourse]);
 
   // Filter tools based on component visibility
   const componentVisibility = course?.componentVisibility || {};
@@ -123,16 +123,16 @@ export function LearningTools({ courseId, onToolSelect }: LearningToolsProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold mb-2">Outils d'apprentissage</h2>
+        <h2 className="text-xl font-semibold mb-2">Learning tools</h2>
         <p className="text-muted-foreground">
-          Accédez directement à tous les contenus du cours sans passer par le système de phases
+          Access all course content directly without going through the phase system
         </p>
       </div>
 
       {loading ? (
         <Card>
           <CardContent className="py-10 text-center text-muted-foreground">
-            Chargement des outils...
+            Loading tools...
           </CardContent>
         </Card>
       ) : (
@@ -156,7 +156,7 @@ export function LearningTools({ courseId, onToolSelect }: LearningToolsProps) {
                 </CardHeader>
                 <CardContent>
                   <Button variant="outline" className="w-full">
-                    Accéder
+                    Access
                   </Button>
                 </CardContent>
               </Card>
@@ -167,4 +167,3 @@ export function LearningTools({ courseId, onToolSelect }: LearningToolsProps) {
     </div>
   );
 }
-

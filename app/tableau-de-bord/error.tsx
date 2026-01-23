@@ -35,21 +35,21 @@ export default function DashboardError({
         <CardHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="h-6 w-6 text-destructive" />
-            <CardTitle>Erreur dans le tableau de bord</CardTitle>
+            <CardTitle>Dashboard error</CardTitle>
           </div>
           <CardDescription>
-            Une erreur s'est produite lors du chargement du tableau de bord.
+            An error occurred while loading the dashboard.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-sm text-muted-foreground">
             {error.digest && (
               <p className="mb-2 font-mono text-xs">
-                <strong>ID d'erreur:</strong> {error.digest}
+                <strong>Error ID:</strong> {error.digest}
               </p>
             )}
             <p>
-              Veuillez réessayer ou contacter le support si le problème persiste.
+              Please try again or contact support if the issue persists.
             </p>
           </div>
 
@@ -66,11 +66,11 @@ export default function DashboardError({
           <div className="flex gap-2">
             <Button onClick={reset} className="flex-1" variant="default">
               <RefreshCw className="h-4 w-4 mr-2" />
-              Réessayer
+              Try again
             </Button>
             <Button onClick={() => router.push("/")} className="flex-1" variant="outline">
               <Home className="h-4 w-4 mr-2" />
-              Accueil
+              Home
             </Button>
           </div>
         </CardContent>

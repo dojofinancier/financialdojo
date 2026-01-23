@@ -71,9 +71,9 @@ export function OrientationHelpBubble({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Vidéo d'orientation</DialogTitle>
+            <DialogTitle>Orientation video</DialogTitle>
             <DialogDescription>
-              Revoyez cette vidéo pour vous rappeler des conseils d'étude et du format de l'examen
+              Rewatch this video to refresh study tips and the exam format
             </DialogDescription>
           </DialogHeader>
           
@@ -93,17 +93,17 @@ export function OrientationHelpBubble({
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Conseils d'étude</CardTitle>
+                <CardTitle className="text-lg">Study tips</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground space-y-2">
                 <p>
-                  Cette vidéo contient des informations importantes sur :
+                  This video contains important information about:
                 </p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li>Le format de l'examen</li>
-                  <li>La note de passage</li>
-                  <li>Comment utiliser cette plateforme efficacement</li>
-                  <li>Les stratégies d'étude recommandées</li>
+                  <li>The exam format</li>
+                  <li>The passing score</li>
+                  <li>How to use this platform effectively</li>
+                  <li>Recommended study strategies</li>
                 </ul>
               </CardContent>
             </Card>
@@ -113,4 +113,3 @@ export function OrientationHelpBubble({
     </>
   );
 }
-

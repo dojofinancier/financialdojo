@@ -13,7 +13,7 @@ export interface WeeklyPlanTask {
   moduleNumber?: number;
   itemCount?: number; // For flashcards/review sessions
   status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
-  isOffPlatform?: boolean; // For Lecture rapide and Lecture lente
+  isOffPlatform?: boolean; // For quick read and deep read
   entryIds?: string[]; // IDs of DailyPlanEntry records that make up this task
 }
 
@@ -97,7 +97,7 @@ export async function aggregateWeeklyTasks(
 
 /**
  * Aggregate LEARN tasks by module
- * Format: "Lecture rapide [module]", "Vidéo [module]", "Lecture lente [module]", "Notes [module]", "Quiz [module]"
+ * Format: "Quick read [module]", "Video [module]", "Deep read [module]", "Notes [module]", "Quiz [module]"
  */
 async function aggregateLearnTasks(
   entries: DailyPlanEntry[],
@@ -127,8 +127,8 @@ async function aggregateLearnTasks(
 
   // Process each module
   for (const [moduleId, moduleEntries] of moduleMap.entries()) {
-    const module = modules.find((m) => m.id === moduleId);
-    if (!module) continue;
+    const moduleRecord = modules.find((m) => m.id === moduleId);
+    if (!moduleRecord) continue;
 
     // Each task will have its own status based on its specific entries
     // We'll determine status per task type below
@@ -145,7 +145,7 @@ async function aggregateLearnTasks(
       (e) => e.targetContentItemId && e.estimatedBlocks === 1 && !e.targetQuizId
     );
     
-    console.log(`[aggregateLearnTasks] Module ${module.title}: hasVideo=${hasVideo}, hasNotes=${hasNotes}, entries=${moduleEntries.length}`);
+    console.log(`[aggregateLearnTasks] Module ${moduleRecord.title}: hasVideo=${hasVideo}, hasNotes=${hasNotes}, entries=${moduleEntries.length}`);
 
     const hasQuiz = moduleEntries.some((e) => e.targetQuizId);
 
@@ -175,38 +175,38 @@ async function aggregateLearnTasks(
     );
 
     // Add tasks in order:
-    // 1. Lecture rapide (off-platform, but checkable if entry exists)
+    // 1. Quick read (off-platform, but checkable if entry exists)
     tasks.push({
       type: "LEARN",
-      description: `Lecture rapide ${module.title}`,
-      moduleId: module.id,
-      moduleTitle: module.title,
-      moduleNumber: module.order,
+      description: `Quick read ${moduleRecord.title}`,
+      moduleId: moduleRecord.id,
+      moduleTitle: moduleRecord.title,
+      moduleNumber: moduleRecord.order,
       status: lectureRapideEntries.length > 0 ? getStatusForEntries(lectureRapideEntries) : "PENDING",
       isOffPlatform: true,
       entryIds: lectureRapideEntries.map(e => e.id),
     });
 
-    // 2. Vidéo (if has video content)
+    // 2. Video (if has video content)
     if (hasVideo) {
       tasks.push({
         type: "LEARN",
-        description: `Vidéo ${module.title}`,
-        moduleId: module.id,
-        moduleTitle: module.title,
-        moduleNumber: module.order,
+        description: `Video ${moduleRecord.title}`,
+        moduleId: moduleRecord.id,
+        moduleTitle: moduleRecord.title,
+        moduleNumber: moduleRecord.order,
         status: getStatusForEntries(videoEntries),
         entryIds: videoEntries.map(e => e.id),
       });
     }
 
-    // 3. Lecture lente (off-platform, but checkable if entry exists)
+    // 3. Deep read (off-platform, but checkable if entry exists)
     tasks.push({
       type: "LEARN",
-      description: `Lecture lente ${module.title}`,
-      moduleId: module.id,
-      moduleTitle: module.title,
-      moduleNumber: module.order,
+      description: `Deep read ${moduleRecord.title}`,
+      moduleId: moduleRecord.id,
+      moduleTitle: moduleRecord.title,
+      moduleNumber: moduleRecord.order,
       status: lectureLenteEntries.length > 0 ? getStatusForEntries(lectureLenteEntries) : "PENDING",
       isOffPlatform: true,
       entryIds: lectureLenteEntries.map(e => e.id),
@@ -216,10 +216,10 @@ async function aggregateLearnTasks(
     if (hasNotes) {
       tasks.push({
         type: "LEARN",
-        description: `Notes ${module.title}`,
-        moduleId: module.id,
-        moduleTitle: module.title,
-        moduleNumber: module.order,
+        description: `Notes ${moduleRecord.title}`,
+        moduleId: moduleRecord.id,
+        moduleTitle: moduleRecord.title,
+        moduleNumber: moduleRecord.order,
         status: getStatusForEntries(notesEntries),
         entryIds: notesEntries.map(e => e.id),
       });
@@ -229,10 +229,10 @@ async function aggregateLearnTasks(
     if (hasQuiz) {
       tasks.push({
         type: "LEARN",
-        description: `Quiz ${module.title}`,
-        moduleId: module.id,
-        moduleTitle: module.title,
-        moduleNumber: module.order,
+        description: `Quiz ${moduleRecord.title}`,
+        moduleId: moduleRecord.id,
+        moduleTitle: moduleRecord.title,
+        moduleNumber: moduleRecord.order,
         status: getStatusForEntries(quizEntries),
         entryIds: quizEntries.map(e => e.id),
       });
@@ -244,8 +244,8 @@ async function aggregateLearnTasks(
 
 /**
  * Aggregate REVIEW tasks
- * Format: "X séances de flashcards (ou révision intelligente)"
- * Format: "X séances de activités d'apprentissage (ou révision intelligente)"
+ * Format: "X flashcard sessions (or smart review)"
+ * Format: "X learning activity sessions (or smart review)"
  */
 function aggregateReviewTasks(entries: DailyPlanEntry[]): WeeklyPlanTask[] {
   const tasks: WeeklyPlanTask[] = [];
@@ -279,7 +279,7 @@ function aggregateReviewTasks(entries: DailyPlanEntry[]): WeeklyPlanTask[] {
   if (flashcardCount > 0) {
     tasks.push({
       type: "REVIEW",
-      description: `${flashcardCount} séance${flashcardCount > 1 ? "s" : ""} de flashcards (ou révision intelligente)`,
+      description: `${flashcardCount} flashcard session${flashcardCount > 1 ? "s" : ""} (or smart review)`,
       itemCount: flashcardCount,
       status,
       entryIds: flashcardEntries.map(e => e.id),
@@ -290,7 +290,7 @@ function aggregateReviewTasks(entries: DailyPlanEntry[]): WeeklyPlanTask[] {
   if (activityCount > 0) {
     tasks.push({
       type: "REVIEW",
-      description: `${activityCount} séance${activityCount > 1 ? "s" : ""} de activités d'apprentissage (ou révision intelligente)`,
+      description: `${activityCount} learning activity session${activityCount > 1 ? "s" : ""} (or smart review)`,
       itemCount: activityCount,
       status,
       entryIds: activityEntries.map(e => e.id),
@@ -303,7 +303,7 @@ function aggregateReviewTasks(entries: DailyPlanEntry[]): WeeklyPlanTask[] {
 /**
  * Aggregate PRACTICE tasks
  * Format: Practice exam names (itemized)
- * Format: "X séances de quiz" (aggregated)
+ * Format: "X quiz sessions" (aggregated)
  */
 async function aggregatePracticeTasks(entries: DailyPlanEntry[]): Promise<WeeklyPlanTask[]> {
   const tasks: WeeklyPlanTask[] = [];
@@ -339,7 +339,7 @@ async function aggregatePracticeTasks(entries: DailyPlanEntry[]): Promise<Weekly
 
       tasks.push({
         type: "PRACTICE",
-        description: exam?.title || "Examen blanc",
+        description: exam?.title || "Practice exam",
         status,
         entryIds: [entry.id],
       });
@@ -348,7 +348,7 @@ async function aggregatePracticeTasks(entries: DailyPlanEntry[]): Promise<Weekly
       // Add generic exam task
       tasks.push({
         type: "PRACTICE",
-        description: "Examen blanc",
+        description: "Practice exam",
         status: entry.status === "COMPLETED" ? "COMPLETED" : "PENDING",
         entryIds: [entry.id],
       });
@@ -363,7 +363,7 @@ async function aggregatePracticeTasks(entries: DailyPlanEntry[]): Promise<Weekly
 
     tasks.push({
       type: "PRACTICE",
-      description: `${quizSessionEntries.length} séance${quizSessionEntries.length > 1 ? "s" : ""} de quiz`,
+       description: `${quizSessionEntries.length} quiz session${quizSessionEntries.length > 1 ? "s" : ""}`,
       itemCount: quizSessionEntries.length,
       status,
       entryIds: quizSessionEntries.map(e => e.id),
@@ -455,4 +455,3 @@ function getWeekEnd(week1StartDate: Date, weekNumber: number): Date {
   weekEnd.setHours(23, 59, 59, 999);
   return weekEnd;
 }
-

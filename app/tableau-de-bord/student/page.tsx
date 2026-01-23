@@ -9,7 +9,10 @@ export default async function StudentDashboardPage() {
     user = await requireStudent();
     console.log(`[StudentDashboardPage] User authenticated: ${user.email}, role: ${user.role}`);
   } catch (error) {
-    console.error("[StudentDashboardPage] Error in requireStudent:", error);
+    const redirectDigest = (error as { digest?: string } | null)?.digest;
+    if (!redirectDigest?.startsWith("NEXT_REDIRECT")) {
+      console.error("[StudentDashboardPage] Error in requireStudent:", error);
+    }
     throw error; // Re-throw to let Next.js handle the redirect
   }
 

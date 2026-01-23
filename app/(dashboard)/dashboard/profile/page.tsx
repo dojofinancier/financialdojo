@@ -1,8 +1,9 @@
 import { requireAuth } from "@/lib/auth/require-auth";
+import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import { ProfileForm } from "@/components/profile/profile-form";
 
-export default async function ProfilePage() {
+async function ProfileContent() {
   const user = await requireAuth();
 
   // Get user with enrollment info for signup date
@@ -19,18 +20,25 @@ export default async function ProfilePage() {
   const signupDate = userWithEnrollments?.enrollments[0]?.purchaseDate || user.createdAt;
 
   return (
-    <div className="container mx-auto p-6 max-w-2xl">
-      <h1 className="text-3xl font-bold mb-6">Mon profil</h1>
+    <ProfileForm
+      user={{
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        signupDate,
+      }}
+    />
+  );
+}
 
-      <ProfileForm
-        user={{
-          id: user.id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          signupDate,
-        }}
-      />
+export default function ProfilePage() {
+  return (
+    <div className="container mx-auto p-6 max-w-2xl">
+      <h1 className="text-3xl font-bold mb-6">My profile</h1>
+      <Suspense fallback={<div className="text-muted-foreground">Loading profile...</div>}>
+        <ProfileContent />
+      </Suspense>
     </div>
   );
 }

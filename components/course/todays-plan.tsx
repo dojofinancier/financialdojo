@@ -95,30 +95,30 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
   const renderOrientationContent = (showTips = false) => (
     <div className="space-y-6 mt-4">
       <div>
-        <h3 className="text-lg font-semibold mb-2">Les trois phases d'apprentissage</h3>
+        <h3 className="text-lg font-semibold mb-2">The three learning phases</h3>
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Phase 1 - Apprendre</CardTitle>
+              <CardTitle className="text-base">Phase 1 - Learn</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
-              Première passe complète du syllabus avec vidéos, notes et mini-tests.
+              First complete pass through the syllabus with videos, notes, and mini-tests.
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Phase 2 - Réviser</CardTitle>
+              <CardTitle className="text-base">Phase 2 - Review</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
-              Consolidation via rappel actif et répétition espacée avec flashcards et quiz.
+              Consolidation through active recall and spaced repetition with flashcards and quizzes.
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Phase 3 - Pratiquer</CardTitle>
+              <CardTitle className="text-base">Phase 3 - Practice</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
-              Tests de préparation avec exercices et examens simulés.
+              Practice tests with exercises and mock exams.
             </CardContent>
           </Card>
         </div>
@@ -139,11 +139,11 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
           </div>
           {showTips && (
             <div className="text-sm text-muted-foreground space-y-2">
-              <p>Cette vidéo couvre notamment :</p>
+              <p>This video covers:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
-                <li>Le format de l’examen</li>
-                <li>La stratégie d’étude recommandée</li>
-                <li>Comment utiliser la plateforme efficacement</li>
+                <li>The exam format</li>
+                <li>The recommended study strategy</li>
+                <li>How to use the platform effectively</li>
               </ul>
             </div>
           )}
@@ -157,7 +157,7 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
         </div>
       ) : (
         <div className="text-sm text-muted-foreground">
-          Aucune vidéo ou texte d’orientation n’est configuré pour ce cours.
+          No orientation video or text is configured for this course.
         </div>
       )}
     </div>
@@ -216,11 +216,11 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
     switch (taskType) {
       case TaskType.LEARN:
         // Show module title for Phase 1
-        return phase1Module ? `Phase 1 - Étude ${phase1Module.title}` : "Phase 1 - Study";
+        return phase1Module ? `Phase 1 - Study ${phase1Module.title}` : "Phase 1 - Study";
       case TaskType.REVIEW:
         return "Phase 2 - Smart review";
       case TaskType.PRACTICE:
-        return "Phase 3 - Pratique";
+        return "Phase 3 - Practice";
       default:
         return "Task";
     }
@@ -229,13 +229,13 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
   const getStatusBadge = (status: PlanEntryStatus) => {
     switch (status) {
       case PlanEntryStatus.COMPLETED:
-        return <Badge variant="default" className="bg-green-500">Complété</Badge>;
+        return <Badge variant="default" className="bg-green-500">Completed</Badge>;
       case PlanEntryStatus.IN_PROGRESS:
-        return <Badge variant="default" className="bg-blue-500">En cours</Badge>;
+        return <Badge variant="default" className="bg-blue-500">In progress</Badge>;
       case PlanEntryStatus.PENDING:
-        return <Badge variant="outline">En attente</Badge>;
+        return <Badge variant="outline">Pending</Badge>;
       case PlanEntryStatus.SKIPPED:
-        return <Badge variant="secondary">Ignoré</Badge>;
+        return <Badge variant="secondary">Skipped</Badge>;
       default:
         return null;
     }
@@ -247,9 +247,9 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
         <Dialog open={orientationOpen} onOpenChange={setOrientationOpen}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Planifier votre étude</DialogTitle>
+              <DialogTitle>Plan your study</DialogTitle>
               <DialogDescription>
-                Conseils d’étude + rappel du format de l’examen (toujours accessible).
+                Study tips + exam format reminder (always accessible).
               </DialogDescription>
 
             </DialogHeader>
@@ -262,7 +262,7 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
         <Card>
           <CardHeader>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <CardTitle>Plan du jour</CardTitle>
+              <CardTitle>Today's plan</CardTitle>
               <Button
                 type="button"
                 size="sm"
@@ -277,7 +277,7 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
 
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">Chargement...</p>
+            <p className="text-muted-foreground">Loading...</p>
           </CardContent>
         </Card>
       </>
@@ -290,9 +290,9 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
         <Dialog open={orientationOpen} onOpenChange={setOrientationOpen}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Planifier votre étude</DialogTitle>
+              <DialogTitle>Plan your study</DialogTitle>
               <DialogDescription>
-                Conseils d’étude + rappel du format de l’examen (toujours accessible).
+                Study tips + exam format reminder (always accessible).
               </DialogDescription>
 
             </DialogHeader>
@@ -306,8 +306,8 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
           <CardHeader>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <CardTitle>Plan du jour</CardTitle>
-                <CardDescription>Aucune tâche planifiée pour aujourd'hui</CardDescription>
+                <CardTitle>Today's plan</CardTitle>
+                <CardDescription>No tasks scheduled for today</CardDescription>
               </div>
               <Button
                 type="button"
@@ -345,7 +345,7 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="font-semibold">{title}</div>
           <div className="text-xs sm:text-sm text-muted-foreground">
-            {blockCount} bloc{blockCount > 1 ? "s" : ""} (~{blockCount * 25} min)
+            {blockCount} block{blockCount > 1 ? "s" : ""} (~{blockCount * 25} min)
           </div>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -364,7 +364,7 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
                 onClick={() => handleStartTask(task.id, task.taskType)}
               >
                 <Play className="h-4 w-4 mr-1" />
-                Commencer
+                Start
               </Button>
             )}
             {task.status === PlanEntryStatus.IN_PROGRESS && (
@@ -375,7 +375,7 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
                 onClick={() => handleCompleteTask(task.id)}
               >
                 <CheckCircle2 className="h-4 w-4 mr-1" />
-                Terminer
+                Complete
               </Button>
             )}
             {task.status === PlanEntryStatus.COMPLETED && (
@@ -393,9 +393,9 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
       <Dialog open={orientationOpen} onOpenChange={setOrientationOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Planifier votre étude</DialogTitle>
+            <DialogTitle>Plan your study</DialogTitle>
             <DialogDescription>
-              Conseils d’étude + rappel du format de l’examen (toujours accessible).
+              Study tips + exam format reminder (always accessible).
             </DialogDescription>
           </DialogHeader>
 
@@ -408,9 +408,9 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
         <CardHeader>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle>Plan du jour</CardTitle>
+              <CardTitle>Today's plan</CardTitle>
               <CardDescription>
-                {planData.totalBlocks} blocs (~{planData.totalBlocks * 25} minutes)
+                {planData.totalBlocks} blocks (~{planData.totalBlocks * 25} minutes)
               </CardDescription>
             </div>
 
@@ -430,12 +430,12 @@ export function TodaysPlan({ courseId, orientationVideoUrl, orientationText, ini
         <CardContent>
           <div className="space-y-4">
             {renderSection(
-              "Session courte",
+              "Short session",
               sections.sessionCourte,
               sections.sessionCourte.reduce((sum, t) => sum + t.estimatedBlocks, 0)
             )}
             {renderSection(
-              "Session longue",
+              "Long session",
               sections.sessionLongue,
               sections.sessionLongue.reduce((sum, t) => sum + t.estimatedBlocks, 0)
             )}
