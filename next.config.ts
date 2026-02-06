@@ -46,11 +46,11 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  
+
   // Performance optimizations
   // Enable cacheComponents for better performance (moved from experimental)
-  cacheComponents: true,
-  
+
+
   // Enable experimental features for better performance
   experimental: {
     // Optimize package imports - tree-shake unused exports
@@ -76,7 +76,7 @@ const nextConfig: NextConfig = {
       'recharts',
     ],
   },
-  
+
   // Compiler optimizations
   compiler: {
     // Remove console.log in production to reduce bundle size
@@ -84,7 +84,7 @@ const nextConfig: NextConfig = {
       exclude: ['error', 'warn'], // Keep error and warn logs
     } : false,
   },
-  
+
   // Image optimization
   images: {
     // Enable image optimization
@@ -92,13 +92,13 @@ const nextConfig: NextConfig = {
     // Add your image domains if using external images
     // remotePatterns: [],
   },
-  
+
   // Enable compression
   compress: true,
-  
+
   // PoweredBy header removal (security + performance)
   poweredByHeader: false,
-  
+
   // Set output file tracing root to fix lockfile detection warning
   outputFileTracingRoot: path.resolve(__dirname),
 };
