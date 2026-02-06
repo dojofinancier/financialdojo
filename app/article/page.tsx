@@ -3,6 +3,8 @@ import { getArticlesList, getArticleCategories } from "@/app/actions/blog";
 import { ArticleList } from "@/components/blog/article-list";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Articles | Le Dojo Financier",
   description: "Discover our articles on finance, investing, and financial management.",
