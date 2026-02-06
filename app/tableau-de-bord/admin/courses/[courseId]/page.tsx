@@ -34,17 +34,17 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
   // This is a defensive check in case getCourseAction didn't convert them properly
   const serializedCourse = {
     ...course,
-    price: typeof course.price === 'object' && course.price !== null && 'toNumber' in course.price 
-      ? (course.price as any).toNumber() 
-      : typeof course.price === 'number' 
-        ? course.price 
+    price: typeof course.price === 'object' && course.price !== null && 'toNumber' in course.price
+      ? (course.price as any).toNumber()
+      : typeof course.price === 'number'
+        ? course.price
         : Number(course.price),
-    appointmentHourlyRate: course.appointmentHourlyRate 
+    appointmentHourlyRate: course.appointmentHourlyRate
       ? (typeof course.appointmentHourlyRate === 'object' && course.appointmentHourlyRate !== null && 'toNumber' in course.appointmentHourlyRate
-          ? (course.appointmentHourlyRate as any).toNumber()
-          : typeof course.appointmentHourlyRate === 'number'
-            ? course.appointmentHourlyRate
-            : Number(course.appointmentHourlyRate))
+        ? (course.appointmentHourlyRate as any).toNumber()
+        : typeof course.appointmentHourlyRate === 'number'
+          ? course.appointmentHourlyRate
+          : Number(course.appointmentHourlyRate))
       : null,
   };
 
@@ -104,6 +104,7 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
             courseId={courseId}
             initialShortDescription={(course as any).shortDescription || ""}
             initialAboutText={(course as any).aboutText || ""}
+            initialAboutAccordionItems={((course as any).aboutAccordionItems as any[]) || []}
           />
         </TabsContent>
         <TabsContent value="features" className="mt-6">

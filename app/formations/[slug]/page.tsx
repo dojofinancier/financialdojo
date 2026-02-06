@@ -27,6 +27,7 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
     features: Array.isArray((course as any).features) ? (course as any).features : [],
     testimonials: Array.isArray((course as any).testimonials) ? (course as any).testimonials : [],
     heroImages: Array.isArray((course as any).heroImages) ? (course as any).heroImages : [],
+    aboutAccordionItems: Array.isArray((course as any).aboutAccordionItems) ? (course as any).aboutAccordionItems : [],
   };
 
   return (
