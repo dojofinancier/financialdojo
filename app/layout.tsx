@@ -40,9 +40,9 @@ export const metadata: Metadata = {
   title: "Le Dojo Financier",
   description: "Plateforme d'apprentissage en finance",
   icons: {
-    icon: "/Favicon.ico",
-    shortcut: "/Favicon.ico",
-    apple: "/Favicon.ico",
+    icon: "/fav-fd.ico",
+    shortcut: "/fav-fd.ico",
+    apple: "/fav-fd.ico",
   },
 };
 
@@ -55,7 +55,7 @@ export default function RootLayout({
     <html lang="fr-CA" className={`${plusJakartaSans.variable} ${sourceSerif4.variable} ${jetBrainsMono.variable}`} suppressHydrationWarning>
       <head>
         {/* Favicon */}
-        <link rel="icon" href="/Favicon.ico" sizes="any" />
+        <link rel="icon" href="/fav-fd.ico" sizes="any" />
         {/* Resource hints for external domains - improves connection speed */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
@@ -69,11 +69,11 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://js.stripe.com" />
         <link rel="dns-prefetch" href="https://m.stripe.com" />
         <link rel="dns-prefetch" href="https://m.stripe.network" />
-        
+
         {/* Preload critical resources for LCP improvement */}
-        <link rel="preload" href="/logo_light.png" as="image" type="image/png" />
-        <link rel="preload" href="/logo_dark.png" as="image" type="image/png" />
-        
+        <link rel="preload" href="/FinanceDojo-white.png" as="image" type="image/png" />
+        <link rel="preload" href="/FinanceDojo-black.png" as="image" type="image/png" />
+
         {/* Blocking script to prevent theme flash - runs before page renders */}
         <script
           dangerouslySetInnerHTML={{

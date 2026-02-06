@@ -14,7 +14,7 @@ export function RecommendedArticles({ articles }: RecommendedArticlesProps) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold mb-6">Articles connexes</h2>
+      <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
       <div className="space-y-4">
         {articles.map((article) => (
           <Link key={article.id} href={`/article/${article.slug}`}>
@@ -29,7 +29,7 @@ export function RecommendedArticles({ articles }: RecommendedArticlesProps) {
                   </p>
                 )}
                 <div className="flex items-center text-sm text-primary font-medium">
-                  Lire l'article
+                  Read article
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </div>
               </CardContent>

@@ -38,7 +38,19 @@ const courseSchema = z.object({
     { message: "The URL must be a valid URL" }
   ).transform((val) => val === "" ? null : val),
   orientationText: z.string().optional().nullable(),
+  pdfUrl: z.string().optional().nullable(),
   heroImages: z.array(z.string()).optional().default([]),
+  statsVideos: z.number().int().min(0).optional().nullable(),
+  statsQuestions: z.number().int().min(0).optional().nullable(),
+  statsFlashcards: z.number().int().min(0).optional().nullable(),
+  statsVideosLabel: z.string().optional().nullable(),
+  statsQuestionsLabel: z.string().optional().nullable(),
+  statsFlashcardsLabel: z.string().optional().nullable(),
+  shortDescription: z.string().optional().nullable(),
+  aboutText: z.string().optional().nullable(),
+  aboutAccordionItems: z.any().optional(),
+  features: z.any().optional(),
+  testimonials: z.any().optional(),
 });
 
 export type CourseActionResult = {
@@ -60,14 +72,14 @@ export async function createCourseAction(
 
     // Separate categoryId and componentVisibility from other fields
     const { categoryId, componentVisibility, heroImages, ...createData } = validatedData;
-    
+
     const prismaData: any = { ...createData };
-    
+
     // Handle heroImages - explicitly set as JSON array
     if (heroImages !== undefined) {
       prismaData.heroImages = heroImages;
     }
-    
+
     // Generate slug from code if code exists
     if (createData.code) {
       const baseSlug = generateSlug(createData.code);
@@ -78,14 +90,14 @@ export async function createCourseAction(
       }).then(courses => courses.map(c => c.slug).filter(Boolean) as string[]);
       prismaData.slug = generateUniqueSlug(baseSlug, existingSlugs);
     }
-    
+
     // Handle categoryId using the relation syntax
     if (categoryId) {
       prismaData.category = {
         connect: { id: categoryId },
       };
     }
-    
+
     // Handle componentVisibility as JSON
     if (componentVisibility !== undefined) {
       prismaData.componentVisibility = componentVisibility;
@@ -116,7 +128,7 @@ export async function createCourseAction(
 
     return {
       success: false,
-      error: "Error creating the course",
+      error: error instanceof Error ? error.message : "Error creating the course",
     };
   }
 }
@@ -136,22 +148,22 @@ export async function updateCourseAction(
     console.log("Updating course with data:", { courseId, validatedData });
 
     // Separate categoryId from other fields and handle it as a relation
-    const { categoryId, code, appointmentHourlyRate, orientationVideoUrl, orientationText, heroImages, displayOrder, ...updateData } = validatedData;
-    
+    const { categoryId, code, appointmentHourlyRate, orientationVideoUrl, orientationText, heroImages, displayOrder, statsVideos, statsQuestions, statsFlashcards, statsVideosLabel, statsQuestionsLabel, statsFlashcardsLabel, shortDescription, aboutText, aboutAccordionItems, features, testimonials, ...updateData } = validatedData;
+
     const prismaData: any = { ...updateData };
-    
+
     // Handle heroImages - explicitly set as JSON array
     if (heroImages !== undefined) {
       prismaData.heroImages = heroImages;
     }
-    
+
     // Regenerate slug if code is being updated
     if (code !== undefined && code !== null) {
       prismaData.code = code; // Include code in the update
       const baseSlug = generateSlug(code);
       // Check for existing slugs (excluding current course)
       const existingSlugs = await prisma.course.findMany({
-        where: { 
+        where: {
           slug: { not: null },
           id: { not: courseId }
         },
@@ -159,27 +171,71 @@ export async function updateCourseAction(
       }).then(courses => courses.map(c => c.slug).filter(Boolean) as string[]);
       prismaData.slug = generateUniqueSlug(baseSlug, existingSlugs);
     }
-    
+
     // Handle appointmentHourlyRate - explicitly set null if provided (even if null)
     if (appointmentHourlyRate !== undefined) {
       prismaData.appointmentHourlyRate = appointmentHourlyRate;
     }
-    
+
     // Handle orientationVideoUrl - explicitly set null if provided (even if null)
     if (orientationVideoUrl !== undefined) {
       prismaData.orientationVideoUrl = orientationVideoUrl;
     }
-    
+
     // Handle orientationText - explicitly set null if provided (even if null)
     if (orientationText !== undefined) {
       prismaData.orientationText = orientationText;
     }
-    
+
+    // Handle pdfUrl - explicitly set null if provided (even if null)
+    if (updateData.pdfUrl !== undefined) {
+      prismaData.pdfUrl = updateData.pdfUrl;
+    }
+
     // Handle displayOrder - explicitly set null if provided (even if null)
     if (displayOrder !== undefined) {
       prismaData.displayOrder = displayOrder;
     }
-    
+
+    // Handle stats - explicitly set null if provided (even if null)
+    if (statsVideos !== undefined) {
+      prismaData.statsVideos = statsVideos;
+    }
+    if (statsQuestions !== undefined) {
+      prismaData.statsQuestions = statsQuestions;
+    }
+    if (statsFlashcards !== undefined) {
+      prismaData.statsFlashcards = statsFlashcards;
+    }
+
+    // Handle stats labels - explicitly set null if provided (even if null)
+    if (statsVideosLabel !== undefined) {
+      prismaData.statsVideosLabel = statsVideosLabel;
+    }
+    if (statsQuestionsLabel !== undefined) {
+      prismaData.statsQuestionsLabel = statsQuestionsLabel;
+    }
+    if (statsFlashcardsLabel !== undefined) {
+      prismaData.statsFlashcardsLabel = statsFlashcardsLabel;
+    }
+
+    // Handle new advanced fields
+    if (shortDescription !== undefined) {
+      prismaData.shortDescription = shortDescription;
+    }
+    if (aboutText !== undefined) {
+      prismaData.aboutText = aboutText;
+    }
+    if (aboutAccordionItems !== undefined) {
+      prismaData.aboutAccordionItems = aboutAccordionItems;
+    }
+    if (features !== undefined) {
+      prismaData.features = features;
+    }
+    if (testimonials !== undefined) {
+      prismaData.testimonials = testimonials;
+    }
+
     // Handle categoryId using the relation syntax
     if (categoryId !== undefined) {
       prismaData.category = {
@@ -212,7 +268,7 @@ export async function updateCourseAction(
     return { success: true, data: serializedCourse };
   } catch (error) {
     console.error("Update course error:", error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -467,7 +523,7 @@ async function fetchPublishedCourses(params: {
     { displayOrder: "asc" }, // Primary sort: displayOrder ascending (nulls last by default in PostgreSQL)
     { createdAt: "desc" }, // Secondary sort: newest first for courses without displayOrder
   ];
-  
+
   // If a specific orderBy is requested, use it as secondary sort instead of createdAt
   if (params.orderBy && params.orderBy !== "createdAt") {
     const orderField = params.orderBy;
@@ -658,7 +714,7 @@ export async function getPublishedCourseBySlugAction(slug: string) {
             },
           }),
         ]);
-        
+
         const totalQuizQuestions = quizzes.reduce((acc, quiz) => acc + quiz.questions.length, 0);
         const totalLearningActivities = learningActivities.length;
 
@@ -792,6 +848,7 @@ export async function getCourseContentAction(courseId: string) {
             shortTitle: true,
             description: true,
             order: true,
+            pdfUrl: true,
             contentItems: {
               orderBy: { order: "asc" },
               select: {
@@ -853,19 +910,19 @@ export async function getCourseContentAction(courseId: string) {
       recommendedStudyHoursMax: course.recommendedStudyHoursMax ?? 10,
       orientationVideoUrl: course.orientationVideoUrl ?? null,
       orientationText: course.orientationText ?? null,
-      modules: course.modules.map((module) => ({
+      modules: (course as any).modules.map((module: any) => ({
         ...module,
-        contentItems: module.contentItems.map((item) => ({
+        contentItems: module.contentItems.map((item: any) => ({
           ...item,
           title: item.contentType === "QUIZ" && item.quiz
             ? item.quiz.title
             : item.contentType === "VIDEO"
-            ? `Video ${item.order}`
-            : item.contentType === "NOTE" && item.notes && item.notes.length > 0
-            ? `Note ${item.order}`
-            : item.contentType === "FLASHCARD"
-            ? `Flashcard ${item.order}`
-            : `Contenu ${item.order}`,
+              ? `Video ${item.order}`
+              : item.contentType === "NOTE" && item.notes && item.notes.length > 0
+                ? `Note ${item.order}`
+                : item.contentType === "FLASHCARD"
+                  ? `Flashcard ${item.order}`
+                  : `Contenu ${item.order}`,
         })),
       })),
     };
@@ -877,7 +934,7 @@ export async function getCourseContentAction(courseId: string) {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     const errorStack = error instanceof Error ? error.stack : undefined;
-    
+
     console.error("getCourseContentAction error:", {
       courseId,
       errorMessage,
@@ -951,12 +1008,12 @@ export async function getCourseContentForAdminPreviewAction(courseId: string) {
             item.contentType === "QUIZ" && item.quiz
               ? item.quiz.title
               : item.contentType === "VIDEO"
-              ? `Video ${item.order}`
-              : item.contentType === "NOTE" && item.notes && item.notes.length > 0
-              ? `Note ${item.order}`
-              : item.contentType === "FLASHCARD"
-              ? `Flashcard ${item.order}`
-              : `Contenu ${item.order}`,
+                ? `Video ${item.order}`
+                : item.contentType === "NOTE" && item.notes && item.notes.length > 0
+                  ? `Note ${item.order}`
+                  : item.contentType === "FLASHCARD"
+                    ? `Flashcard ${item.order}`
+                    : `Contenu ${item.order}`,
         })),
       })),
     };
@@ -1071,7 +1128,11 @@ export async function updateCourseTestimonialsAction(
  */
 export async function updateCourseAboutAction(
   courseId: string,
-  data: { shortDescription: string; aboutText: string }
+  data: {
+    shortDescription: string;
+    aboutText: string;
+    aboutAccordionItems: Array<{ id: string; title: string; subtitle: string; richText: string }>;
+  }
 ): Promise<CourseActionResult> {
   try {
     await requireAdmin();
@@ -1081,6 +1142,7 @@ export async function updateCourseAboutAction(
       data: {
         shortDescription: data.shortDescription,
         aboutText: data.aboutText,
+        aboutAccordionItems: data.aboutAccordionItems,
       },
     });
 

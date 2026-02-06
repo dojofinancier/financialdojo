@@ -335,7 +335,7 @@ export async function updateQuestionInBankAction(
 
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     const errorStack = error instanceof Error ? error.stack : undefined;
-    
+
     console.error("Error updating question:", errorMessage, errorStack);
 
     await logServerError({
@@ -553,10 +553,10 @@ export async function uploadQuizCSVToModulesAction(
     // Parse header
     const header = parseCSVLine(lines[0]);
     const expectedHeaders = ["id", "chapter", "question", "option_a", "option_b", "option_c", "option_d", "correct_option", "explanation"];
-    
+
     // Validate header format (case-insensitive)
     const headerLower = header.map(h => h.toLowerCase().trim());
-    const hasValidFormat = expectedHeaders.every((expected, index) => 
+    const hasValidFormat = expectedHeaders.every((expected, index) =>
       headerLower[index] === expected.toLowerCase()
     );
 
@@ -613,7 +613,7 @@ export async function uploadQuizCSVToModulesAction(
       }
 
       if (isNaN(chapterNumber) || chapterNumber < 1) {
-          console.warn(`Invalid chapter number: ${chapterNumber} on line ${i + 1}`);
+        console.warn(`Invalid chapter number: ${chapterNumber} on line ${i + 1}`);
         continue;
       }
 
@@ -680,14 +680,14 @@ export async function uploadQuizCSVToModulesAction(
     // Create maps for different matching strategies
     const moduleMapByOrder = new Map<number, typeof modules[0]>();
     const moduleMapByTitle = new Map<number, typeof modules[0]>();
-    
+
     modules.forEach(module => {
       moduleMapByOrder.set(module.order, module);
-      
+
       // Try to extract chapter number from module title
       // Look for patterns like "Chapitre X", "Ch. X", "Chapter X", or just numbers
-      const titleMatch = module.title.match(/(?:chapitre|ch\.?|chapter)\s*(\d+)/i) || 
-                        module.title.match(/\b(\d+)\b/);
+      const titleMatch = module.title.match(/(?:chapitre|ch\.?|chapter)\s*(\d+)/i) ||
+        module.title.match(/\b(\d+)\b/);
       if (titleMatch) {
         const chapterNum = parseInt(titleMatch[1], 10);
         if (!isNaN(chapterNum)) {
@@ -714,17 +714,17 @@ export async function uploadQuizCSVToModulesAction(
       // 2. Match by order (chapterNumber)
       // 3. Match by order (chapterNumber - 1) for 0-indexed
       let moduleRecord = moduleMapByTitle.get(chapterNumber);
-      
+
       if (!moduleRecord) {
         // Try matching by order
         moduleRecord = moduleMapByOrder.get(chapterNumber);
       }
-      
+
       if (!moduleRecord) {
         // Try 0-indexed matching
         moduleRecord = moduleMapByOrder.get(chapterNumber - 1);
       }
-      
+
       if (!moduleRecord) {
         console.warn(
           `Module for Chapter ${chapterNumber} not found. ` +
@@ -758,7 +758,7 @@ export async function uploadQuizCSVToModulesAction(
         } else {
           // Create ContentItem for Phase 1 quiz
           const contentItemResult = await createContentItemAction({
-            moduleId: module.id,
+            moduleId: moduleRecord.id,
             contentType: "QUIZ",
             studyPhase: "PHASE_1_LEARN",
             order: 0, // Will be auto-adjusted
@@ -805,26 +805,19 @@ export async function uploadQuizCSVToModulesAction(
           return converted;
         };
 
-        const convertCorrectAnswer = (correctAnswer: string, options: Record<string, string>) => {
-          const letters = ["A", "B", "C", "D"];
-          const index = letters.indexOf(correctAnswer);
-          return index >= 0 ? `option${index + 1}` : correctAnswer;
-        };
-
-        // Insert all questions for this chapter
+        // Create questions for quiz
         const createdQuestions = await prisma.$transaction(
           questions.map((q) => {
             const convertedOptions = convertOptions(q.options);
-            const convertedCorrectAnswer = convertCorrectAnswer(q.correctAnswer, q.options);
-            
             return prisma.quizQuestion.create({
               data: {
                 quizId: quiz.id,
-                question: q.question,
-                type: "MULTIPLE_CHOICE",
-                options: convertedOptions,
-                correctAnswer: convertedCorrectAnswer,
                 order: nextOrder++,
+                type: "MULTIPLE_CHOICE",
+                question: q.question,
+                options: convertedOptions,
+                correctAnswer: q.options[q.correctAnswer] || q.correctAnswer, // Phase 1 uses full text match often
+                explanation: q.explanation || null,
               },
             });
           })
@@ -836,45 +829,46 @@ export async function uploadQuizCSVToModulesAction(
           quizId: quiz.id,
           questionCount: createdQuestions.length,
         });
+
       } else {
         // Phase 3: Create QuestionBank + QuestionBankQuestion
-        // Find or create question bank for this module
-        let questionBank = await prisma.questionBank.findFirst({
-          where: {
-            courseId,
-            moduleId: moduleRecord.id,
-            title: {
-              contains: `Chapter ${chapterNumber}`,
-            },
-          },
+        // Check if question bank already exists for this module
+        const existingBank = await prisma.questionBank.findFirst({
+          where: { courseId, moduleId: moduleRecord.id },
         });
 
-        if (!questionBank) {
-          questionBank = await prisma.questionBank.create({
+        let questionBankId: string;
+
+        if (existingBank) {
+          questionBankId = existingBank.id;
+        } else {
+          // Create new question bank
+          const newBank = await prisma.questionBank.create({
             data: {
               courseId,
               moduleId: moduleRecord.id,
-              title: `Chapter ${chapterNumber} Questions`,
-              description: `Questions for ${moduleRecord.title}`,
+              title: `Banque ${moduleRecord.order}: ${moduleRecord.title}`,
+              description: `Questions for Chapter ${moduleRecord.order}`,
             },
           });
+          questionBankId = newBank.id;
         }
 
-        // Get the next order number for this question bank
+        // Get the next order number
         const lastQuestion = await prisma.questionBankQuestion.findFirst({
-          where: { questionBankId: questionBank.id },
+          where: { questionBankId },
           orderBy: { order: "desc" },
           select: { order: true },
         });
 
         let nextOrder = lastQuestion ? lastQuestion.order + 1 : 0;
 
-        // Insert all questions for this chapter
+        // Create questions
         const createdQuestions = await prisma.$transaction(
           questions.map((q) =>
             prisma.questionBankQuestion.create({
               data: {
-                questionBankId: questionBank.id,
+                questionBankId,
                 question: q.question,
                 options: q.options,
                 correctAnswer: q.correctAnswer,
@@ -888,25 +882,23 @@ export async function uploadQuizCSVToModulesAction(
         results.push({
           chapterNumber,
           moduleTitle: moduleRecord.title,
-          questionBankId: questionBank.id,
+          questionBankId,
           questionCount: createdQuestions.length,
         });
       }
     }
 
-    const totalQuestions = results.reduce((sum, r) => sum + r.questionCount, 0);
-
     return {
       success: true,
       data: {
-        totalQuestions,
+        totalQuestions: results.reduce((sum, r) => sum + r.questionCount, 0),
         chaptersProcessed: results.length,
-        results,
+        details: results,
       },
     };
   } catch (error) {
     await logServerError({
-      errorMessage: `Failed to upload quiz CSV to modules: ${error instanceof Error ? error.message : "Unknown error"}`,
+      errorMessage: `Failed to upload quiz CSV: ${error instanceof Error ? error.message : "Unknown error"}`,
       stackTrace: error instanceof Error ? error.stack : undefined,
       severity: "HIGH",
     });
@@ -919,116 +911,7 @@ export async function uploadQuizCSVToModulesAction(
 }
 
 /**
- * Add questions from a question bank to a Phase 1 quiz
- */
-export async function addQuestionBankToPhase1QuizAction(
-  questionBankId: string,
-  quizId: string
-): Promise<QuestionBankResult> {
-  try {
-    await requireAdmin();
-
-    // Get the question bank and its questions
-    const questionBank = await prisma.questionBank.findUnique({
-      where: { id: questionBankId },
-      include: {
-        questions: {
-          orderBy: { order: "asc" },
-        },
-      },
-    });
-
-    if (!questionBank) {
-      return {
-        success: false,
-        error: "Question bank not found",
-      };
-    }
-
-    // Get the quiz
-    const quiz = await prisma.quiz.findUnique({
-      where: { id: quizId },
-    });
-
-    if (!quiz) {
-      return {
-        success: false,
-        error: "Quiz not found",
-      };
-    }
-
-    // Get the next order number for quiz questions
-    const lastQuestion = await prisma.quizQuestion.findFirst({
-      where: { quizId: quiz.id },
-      orderBy: { order: "desc" },
-      select: { order: true },
-    });
-
-    let nextOrder = lastQuestion ? lastQuestion.order + 1 : 1;
-
-    // Convert options format from {A: "...", B: "..."} to {option1: "...", option2: "..."}
-    const convertOptions = (options: Record<string, string>) => {
-      const converted: Record<string, string> = {};
-      const letters = ["A", "B", "C", "D"];
-      letters.forEach((letter, index) => {
-        if (options[letter]) {
-          converted[`option${index + 1}`] = options[letter];
-        }
-      });
-      return converted;
-    };
-
-    const convertCorrectAnswer = (correctAnswer: string, options: Record<string, string>) => {
-      const letters = ["A", "B", "C", "D"];
-      const index = letters.indexOf(correctAnswer);
-      return index >= 0 ? `option${index + 1}` : correctAnswer;
-    };
-
-    // Insert all questions from the question bank
-    const createdQuestions = await prisma.$transaction(
-      questionBank.questions.map((q) => {
-        const convertedOptions = convertOptions(q.options as Record<string, string>);
-        const convertedCorrectAnswer = convertCorrectAnswer(
-          q.correctAnswer,
-          q.options as Record<string, string>
-        );
-
-        return prisma.quizQuestion.create({
-          data: {
-            quizId: quiz.id,
-            question: q.question,
-            type: "MULTIPLE_CHOICE",
-            options: convertedOptions,
-            correctAnswer: convertedCorrectAnswer,
-            order: nextOrder++,
-          },
-        });
-      })
-    );
-
-    return {
-      success: true,
-      data: {
-        count: createdQuestions.length,
-        questions: createdQuestions,
-      },
-    };
-  } catch (error) {
-    await logServerError({
-      errorMessage: `Failed to add question bank to Phase 1 quiz: ${error instanceof Error ? error.message : "Unknown error"}`,
-      stackTrace: error instanceof Error ? error.stack : undefined,
-      severity: "HIGH",
-    });
-
-    return {
-      success: false,
-      error: `Error adding questions: ${error instanceof Error ? error.message : "Unknown error"}`,
-    };
-  }
-}
-
-/**
- * Add selected questions from a question bank to a Phase 1 quiz
+ * Add selected questions to a Phase 1 quiz
  */
 export async function addSelectedQuestionsToPhase1QuizAction(
   questionIds: string[],
@@ -1037,14 +920,6 @@ export async function addSelectedQuestionsToPhase1QuizAction(
   try {
     await requireAdmin();
 
-    if (questionIds.length === 0) {
-      return {
-        success: false,
-        error: "No question selected",
-      };
-    }
-
-    // Get the selected questions
     const questions = await prisma.questionBankQuestion.findMany({
       where: {
         id: { in: questionIds },
@@ -1072,7 +947,7 @@ export async function addSelectedQuestionsToPhase1QuizAction(
 
     // Get the next order number for quiz questions
     const lastQuestion = await prisma.quizQuestion.findFirst({
-      where: { quizId: quiz.id },
+      where: { quizId },
       orderBy: { order: "desc" },
       select: { order: true },
     });
@@ -1080,40 +955,38 @@ export async function addSelectedQuestionsToPhase1QuizAction(
     let nextOrder = lastQuestion ? lastQuestion.order + 1 : 1;
 
     // Convert options format from {A: "...", B: "..."} to {option1: "...", option2: "..."}
-    const convertOptions = (options: Record<string, string>) => {
+    const convertOptions = (options: any) => {
       const converted: Record<string, string> = {};
       const letters = ["A", "B", "C", "D"];
-      letters.forEach((letter, index) => {
-        if (options[letter]) {
-          converted[`option${index + 1}`] = options[letter];
-        }
-      });
+
+      if (typeof options === 'object' && options !== null) {
+        letters.forEach((letter, index) => {
+          if (options[letter]) {
+            converted[`option${index + 1}`] = options[letter];
+          }
+        });
+      }
       return converted;
     };
 
-    const convertCorrectAnswer = (correctAnswer: string, options: Record<string, string>) => {
-      const letters = ["A", "B", "C", "D"];
-      const index = letters.indexOf(correctAnswer);
-      return index >= 0 ? `option${index + 1}` : correctAnswer;
-    };
-
-    // Insert selected questions
+    // Create quiz questions
     const createdQuestions = await prisma.$transaction(
       questions.map((q) => {
-        const convertedOptions = convertOptions(q.options as Record<string, string>);
-        const convertedCorrectAnswer = convertCorrectAnswer(
-          q.correctAnswer,
-          q.options as Record<string, string>
-        );
+        const options = q.options as Record<string, string>;
+        const convertedOptions = convertOptions(options);
+
+        // Find the full text of the correct answer
+        const correctAnswerText = options[q.correctAnswer] || q.correctAnswer;
 
         return prisma.quizQuestion.create({
           data: {
-            quizId: quiz.id,
-            question: q.question,
-            type: "MULTIPLE_CHOICE",
-            options: convertedOptions,
-            correctAnswer: convertedCorrectAnswer,
+            quizId,
             order: nextOrder++,
+            type: "MULTIPLE_CHOICE",
+            question: q.question,
+            options: convertedOptions,
+            correctAnswer: correctAnswerText,
+            explanation: q.explanation || null,
           },
         });
       })
@@ -1123,25 +996,65 @@ export async function addSelectedQuestionsToPhase1QuizAction(
       success: true,
       data: {
         count: createdQuestions.length,
-        questions: createdQuestions,
       },
     };
   } catch (error) {
     await logServerError({
-      errorMessage: `Failed to add selected questions to Phase 1 quiz: ${error instanceof Error ? error.message : "Unknown error"}`,
+      errorMessage: `Failed to add questions to Phase 1 quiz: ${error instanceof Error ? error.message : "Unknown error"}`,
       stackTrace: error instanceof Error ? error.stack : undefined,
-      severity: "HIGH",
+      severity: "MEDIUM",
     });
 
     return {
       success: false,
-      error: `Error adding questions: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: "Error adding questions to quiz",
     };
   }
 }
 
 /**
- * Get all Phase 1 quizzes for a course
+ * Add an entire question bank to a Phase 1 quiz
+ */
+export async function addQuestionBankToPhase1QuizAction(
+  bankId: string,
+  quizId: string
+): Promise<QuestionBankResult> {
+  try {
+    await requireAdmin();
+
+    const questions = await prisma.questionBankQuestion.findMany({
+      where: {
+        questionBankId: bankId,
+      },
+      orderBy: { order: "asc" },
+      select: { id: true },
+    });
+
+    if (questions.length === 0) {
+      return {
+        success: false,
+        error: "No questions in this bank",
+      };
+    }
+
+    const questionIds = questions.map((q) => q.id);
+    return addSelectedQuestionsToPhase1QuizAction(questionIds, quizId);
+  } catch (error) {
+    await logServerError({
+      errorMessage: `Failed to add bank to Phase 1 quiz: ${error instanceof Error ? error.message : "Unknown error"}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "MEDIUM",
+    });
+
+    return {
+      success: false,
+      error: "Error adding question bank to quiz",
+    };
+  }
+}
+
+/**
+ * Get Phase 1 quizzes for assignment
  */
 export async function getPhase1QuizzesAction(
   courseId: string
@@ -1149,32 +1062,19 @@ export async function getPhase1QuizzesAction(
   try {
     await requireAdmin();
 
-    // Get all modules for this course
-    const modules = await prisma.module.findMany({
-      where: { courseId },
-      select: { id: true, title: true, order: true },
-    });
-
-    if (modules.length === 0) {
-      return { success: true, data: [] };
-    }
-
-    // Get all Phase 1 quizzes for these modules
     const quizzes = await prisma.quiz.findMany({
       where: {
+        courseId,
         contentItem: {
-          moduleId: { in: modules.map(m => m.id) },
-          contentType: "QUIZ",
           studyPhase: "PHASE_1_LEARN",
         },
-        isMockExam: false,
       },
       include: {
         contentItem: {
-          include: {
+          select: {
+            moduleId: true,
             module: {
               select: {
-                id: true,
                 title: true,
                 order: true,
               },
@@ -1191,12 +1091,12 @@ export async function getPhase1QuizzesAction(
       },
     });
 
-    const result = quizzes.map(q => ({
-      id: q.id,
-      title: q.title,
-      moduleId: q.contentItem.module.id,
-      moduleTitle: q.contentItem.module.title,
-      moduleOrder: q.contentItem.module.order,
+    const result = quizzes.map((quiz) => ({
+      id: quiz.id,
+      title: quiz.title,
+      moduleId: quiz.contentItem?.moduleId,
+      moduleTitle: quiz.contentItem?.module?.title,
+      moduleOrder: quiz.contentItem?.module?.order,
     }));
 
     return { success: true, data: result };
@@ -1249,4 +1149,149 @@ function parseCSVLine(line: string): string[] {
   fields.push(currentField);
 
   return fields;
+}
+
+/**
+ * Upload questions from JSON file and assign them to modules
+ */
+export async function uploadQuestionBankJsonAction(
+  courseId: string,
+  jsonContent: string
+): Promise<QuestionBankResult> {
+  try {
+    await requireAdmin();
+
+    // Parse JSON
+    let parsedData;
+    try {
+      parsedData = JSON.parse(jsonContent);
+    } catch (e) {
+      return { success: false, error: "Invalid JSON format" };
+    }
+
+    const rawQuestions = parsedData.questions;
+    if (!Array.isArray(rawQuestions) || rawQuestions.length === 0) {
+      return { success: false, error: "No 'questions' array found in JSON" };
+    }
+
+    // Group by 'element' (which maps to module)
+    const questionsByModule = new Map<number, any[]>();
+
+    for (const q of rawQuestions) {
+      const elementStr = String(q.element || "");
+      // Try to parse 'element' as integer order
+      const elementNum = parseInt(elementStr, 10);
+
+      if (!isNaN(elementNum) && elementNum > 0) {
+        // Convert 1-based element number to 0-based module order
+        const moduleOrder = elementNum - 1;
+
+        if (!questionsByModule.has(moduleOrder)) {
+          questionsByModule.set(moduleOrder, []);
+        }
+        questionsByModule.get(moduleOrder)!.push(q);
+      } else {
+        // Fallback or skip? Warn console
+        console.warn("Question skipped due to invalid element:", q.question_id);
+      }
+    }
+
+    if (questionsByModule.size === 0) {
+      return { success: false, error: "No valid questions with 'element' fields found" };
+    }
+
+    // Get modules
+    const modules = await prisma.module.findMany({
+      where: { courseId },
+      select: { id: true, order: true, title: true },
+    });
+
+    // Map order -> Module
+    const modulesByOrder = new Map<number, typeof modules[0]>();
+    modules.forEach(m => modulesByOrder.set(m.order, m));
+
+    let createdCount = 0;
+    const details = [];
+
+    // Process groups
+    for (const [order, questions] of questionsByModule.entries()) {
+      const module = modulesByOrder.get(order);
+      if (!module) {
+        console.warn(`Module with order ${order} not found`);
+        continue;
+      }
+
+      // Find or create Question Bank for this module
+      let questionBankId: string;
+      const existingBank = await prisma.questionBank.findFirst({
+        where: { courseId, moduleId: module.id },
+      });
+
+      if (existingBank) {
+        questionBankId = existingBank.id;
+      } else {
+        const newBank = await prisma.questionBank.create({
+          data: {
+            courseId,
+            moduleId: module.id,
+            // Use order + 1 for user-facing display (e.g. Chapter 1 instead of Chapter 0)
+            title: `Chapter ${module.order + 1} Question Bank`,
+            description: `Imported from JSON for Module ${module.order + 1}`,
+          },
+        });
+        questionBankId = newBank.id;
+      }
+
+      // Get max order
+      const lastQ = await prisma.questionBankQuestion.findFirst({
+        where: { questionBankId },
+        orderBy: { order: "desc" },
+        select: { order: true },
+      });
+      let nextOrder = lastQ ? lastQ.order + 1 : 0;
+
+      // Insert questions
+      const created = await prisma.$transaction(
+        questions.map((q) => {
+          // options is object in JSON { "A": "...", ... }
+          // correctAnswer is "B"
+          // explanation "B is correct..."
+
+          return prisma.questionBankQuestion.create({
+            data: {
+              questionBankId,
+              question: q.question,
+              options: q.options || {},
+              correctAnswer: q.correct_answer || "",
+              explanation: q.explanation || null,
+              order: nextOrder++,
+            },
+          });
+        })
+      );
+
+      createdCount += created.length;
+      details.push({ module: module.title, count: created.length });
+    }
+
+    return {
+      success: true,
+      data: {
+        count: createdCount,
+        details,
+      },
+    };
+
+  } catch (error) {
+    await logServerError({
+      errorMessage: `Failed to upload JSON questions: ${error instanceof Error ? error.message : "Unknown error"}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "HIGH",
+    });
+
+    return {
+      success: false,
+      error: `Error importing from JSON: ${error instanceof Error ? error.message : "Unknown error"}`,
+    };
+  }
 }

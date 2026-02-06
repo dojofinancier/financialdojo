@@ -241,7 +241,7 @@ export async function uploadQuestionsToExamAction(
       const fields: string[] = [];
       let currentField = "";
       let inQuotes = false;
-      
+
       for (let j = 0; j < line.length; j++) {
         const char = line[j];
         if (char === '"') {
@@ -300,7 +300,7 @@ export async function uploadQuestionsToExamAction(
         // Format: question,"Question text","",single_choice,1.00,1,1,1,,""
         const questionText = fields[1] || "";
         const order = parseInt(fields[5] || String(questionOrder++));
-        
+
         currentQuestion = {
           quizId: examId,
           question: questionText,
@@ -322,7 +322,7 @@ export async function uploadQuestionsToExamAction(
         const isCorrect = parseInt(fields[3] || "0") === 1;
         const order = parseInt(fields[6] || "1");
         const answerKey = `option${order}`;
-        
+
         currentQuestion.options[answerKey] = answerText;
 
         if (isCorrect) {
@@ -410,7 +410,7 @@ export async function cleanupEscapedQuotesAction(examId: string): Promise<ExamAc
       if (question.options && typeof question.options === 'object' && !Array.isArray(question.options)) {
         const cleanedOptions: Record<string, string> = {};
         let optionsChanged = false;
-        
+
         for (const [key, value] of Object.entries(question.options)) {
           if (typeof value === "string") {
             if (value.includes("\\'")) {
@@ -450,7 +450,7 @@ export async function cleanupEscapedQuotesAction(examId: string): Promise<ExamAc
     if (exam.contentItem?.module?.courseId) {
       revalidatePath(`/dashboard/admin/courses/${exam.contentItem.module.courseId}`);
     }
-    
+
     return {
       success: true,
       data: { updatedCount },
@@ -492,7 +492,7 @@ export async function importPracticeExamFromCSVAction(
       const fields: string[] = [];
       let currentField = "";
       let inQuotes = false;
-      
+
       for (let j = 0; j < line.length; j++) {
         const char = line[j];
         if (char === '"') {
@@ -518,15 +518,15 @@ export async function importPracticeExamFromCSVAction(
     // Parse header
     const header = parseCSVLine(lines[0]);
     const expectedHeader = ["id", "chapter", "question", "option_a", "option_b", "option_c", "option_d", "correct_option", "explanation"];
-    
+
     // Check if header matches expected format (case-insensitive)
     const headerLower = header.map(h => h.toLowerCase().trim());
     const hasRequiredFields = expectedHeader.every(field => headerLower.includes(field));
-    
+
     if (!hasRequiredFields) {
-      return { 
-        success: false, 
-        error: `Invalid CSV format. Expected headers: ${expectedHeader.join(", ")}` 
+      return {
+        success: false,
+        error: `Invalid CSV format. Expected headers: ${expectedHeader.join(", ")}`
       };
     }
 
@@ -545,9 +545,9 @@ export async function importPracticeExamFromCSVAction(
     const explanationIdx = getColumnIndex("explanation");
 
     if (questionIdx === -1 || optionAIdx === -1 || optionBIdx === -1 || correctOptionIdx === -1) {
-      return { 
-        success: false, 
-        error: "Colonnes requises manquantes: question, option_a, option_b, correct_option" 
+      return {
+        success: false,
+        error: "Colonnes requises manquantes: question, option_a, option_b, correct_option"
       };
     }
 
@@ -564,7 +564,7 @@ export async function importPracticeExamFromCSVAction(
       if (!line) continue;
 
       const fields = parseCSVLine(line);
-      
+
       const questionText = fields[questionIdx]?.trim();
       if (!questionText) continue;
 
@@ -633,7 +633,7 @@ export async function importPracticeExamFromCSVAction(
     } else {
       // Create new exam
       let targetModuleId = moduleId;
-      
+
       if (!targetModuleId) {
         const firstModule = await prisma.module.findFirst({
           where: { courseId },
@@ -735,3 +735,151 @@ export async function importPracticeExamFromCSVAction(
     };
   }
 }
+
+/**
+ * Upload a practice exam from JSON format
+ */
+export async function uploadPracticeExamJsonAction(
+  courseId: string,
+  jsonContent: string,
+  examTitle?: string,
+  moduleId?: string | null,
+  existingExamId?: string | null
+): Promise<ExamActionResult> {
+  try {
+    await requireAdmin();
+
+    // Parse JSON
+    let parsedData;
+    try {
+      parsedData = JSON.parse(jsonContent);
+    } catch (e) {
+      return { success: false, error: "Invalid JSON format" };
+    }
+
+    const rawQuestions = parsedData.questions;
+    if (!Array.isArray(rawQuestions) || rawQuestions.length === 0) {
+      return { success: false, error: "No 'questions' array found in JSON" };
+    }
+
+    let exam;
+    if (existingExamId) {
+      exam = await prisma.quiz.findUnique({
+        where: { id: existingExamId },
+      });
+      if (!exam) return { success: false, error: "Exam not found" };
+    } else {
+      // Create ONE new exam for all questions
+      let targetModuleId = moduleId;
+
+      if (!targetModuleId) {
+        // Fallback to first module for internal database association
+        const firstModule = await prisma.module.findFirst({
+          where: { courseId },
+          orderBy: { order: "asc" },
+        });
+
+        if (!firstModule) {
+          return { success: false, error: "No modules found for this course" };
+        }
+        targetModuleId = firstModule.id;
+      }
+
+      // Create content item (internal mapping)
+      const contentItemResult = await createContentItemAction({
+        moduleId: targetModuleId,
+        contentType: "QUIZ",
+        order: 0,
+      });
+
+      if (!contentItemResult.success || !contentItemResult.data) {
+        return {
+          success: false,
+          error: contentItemResult.error || "Error creating the content item",
+        };
+      }
+
+      // Create the exam
+      exam = await prisma.quiz.create({
+        data: {
+          contentItemId: contentItemResult.data.id,
+          courseId,
+          title: examTitle || `Practice Exam - ${new Date().toLocaleDateString()}`,
+          passingScore: 70,
+          timeLimit: 120 * 60, // 120 minutes default
+          isMockExam: true,
+        },
+      });
+    }
+
+    // Get next order
+    const lastQuestion = await prisma.quizQuestion.findFirst({
+      where: { quizId: exam.id },
+      orderBy: { order: "desc" },
+      select: { order: true },
+    });
+
+    let nextOrder = lastQuestion ? lastQuestion.order + 1 : 1;
+    let successCount = 0;
+    const errors: string[] = [];
+
+    // Import ALL questions to the same exam
+    for (const q of rawQuestions) {
+      try {
+        const options: Record<string, string> = {};
+        if (q.options) {
+          if (q.options.A) options.option1 = q.options.A;
+          if (q.options.B) options.option2 = q.options.B;
+          if (q.options.C) options.option3 = q.options.C;
+          if (q.options.D) options.option4 = q.options.D;
+        }
+
+        const correctAnswerMap: Record<string, string> = {
+          A: "option1",
+          B: "option2",
+          C: "option3",
+          D: "option4",
+        };
+        const correctAnswer = correctAnswerMap[q.correct_answer] || "option1";
+
+        await prisma.quizQuestion.create({
+          data: {
+            quizId: exam.id,
+            question: q.question,
+            type: "MULTIPLE_CHOICE",
+            order: nextOrder++,
+            options,
+            correctAnswer,
+            explanation: q.explanation || null,
+          },
+        });
+        successCount++;
+      } catch (err) {
+        errors.push(`Error creating question: ${err instanceof Error ? err.message : "Unknown error"}`);
+      }
+    }
+
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
+
+    return {
+      success: true,
+      data: {
+        examId: exam.id,
+        questionsAdded: successCount,
+        errors: errors.length > 0 ? errors : undefined,
+      },
+    };
+  } catch (error) {
+    await logServerError({
+      errorMessage: `Failed to upload practice exam JSON: ${error instanceof Error ? error.message : "Unknown error"}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "HIGH",
+    });
+
+    return {
+      success: false,
+      error: `Error during import: ${error instanceof Error ? error.message : "Unknown error"}`,
+    };
+  }
+}
+

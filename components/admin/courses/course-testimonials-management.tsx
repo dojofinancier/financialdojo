@@ -1,6 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,7 +53,7 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
 
   const handleAdd = () => {
     if (!formData.name.trim() || !formData.text.trim()) {
-      toast.error("Please fill in the name and testimonial");
+      toast.error("Veuillez remplir le nom et le témoignage");
       return;
     }
 
@@ -53,7 +70,7 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
 
   const handleUpdate = () => {
     if (!editingId || !formData.name.trim() || !formData.text.trim()) {
-      toast.error("Please fill in the name and testimonial");
+      toast.error("Veuillez remplir le nom et le témoignage");
       return;
     }
 
@@ -84,17 +101,33 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
     setFormData({ name: "", role: "", text: "" });
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = testimonials.findIndex((t) => t.id === active.id);
+    const newIndex = testimonials.findIndex((t) => t.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+    setTestimonials(arrayMove(testimonials, oldIndex, newIndex));
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
       const result = await updateCourseTestimonialsAction(courseId, testimonials);
       if (result.success) {
-        toast.success("Testimonials updated successfully");
+        toast.success("Témoignages mis à jour avec succès");
       } else {
-        toast.error(result.error || "Error updating");
+        toast.error(result.error || "Erreur lors de la mise à jour");
       }
     } catch (error) {
-      toast.error("Error saving");
+      toast.error("Erreur lors de la sauvegarde");
     } finally {
       setSaving(false);
     }
@@ -112,9 +145,9 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Testimonials</CardTitle>
+        <CardTitle>Témoignages</CardTitle>
         <CardDescription>
-          Add testimonials from former students (8 recommended for the carousel)
+          Ajoutez les témoignages d'anciens étudiants (8 recommandé pour le carrousel)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -122,28 +155,28 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
         <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Name *</Label>
+              <Label>Nom *</Label>
               <Input
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="e.g., Marie Dupont"
+                placeholder="Ex: Marie Dupont"
               />
             </div>
             <div className="space-y-2">
-              <Label>Role / Title</Label>
+              <Label>Rôle / Titre</Label>
               <Input
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                placeholder="e.g., Financial analyst"
+                placeholder="Ex: Analyste financier"
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Testimonial *</Label>
+            <Label>Témoignage *</Label>
             <Textarea
               value={formData.text}
               onChange={(e) => setFormData({ ...formData, text: e.target.value })}
-              placeholder="Ex: This course helped me pass my exam on the first try..."
+              placeholder="Ex: Cette formation m'a permis de réussir mon examen du premier coup..."
               rows={3}
             />
           </div>
@@ -152,17 +185,17 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
               <>
                 <Button onClick={handleUpdate} size="sm">
                   <Edit2 className="h-4 w-4 mr-2" />
-                  Update
+                  Mettre à jour
                 </Button>
                 <Button onClick={cancelEdit} variant="outline" size="sm">
                   <X className="h-4 w-4 mr-2" />
-                  Cancel
+                  Annuler
                 </Button>
               </>
             ) : (
               <Button onClick={handleAdd} size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Add testimonial
+                Ajouter un témoignage
               </Button>
             )}
           </div>
@@ -172,57 +205,22 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
         <div className="space-y-3">
           {testimonials.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
-              No testimonials yet. Add one above.
+              Aucun témoignage ajouté. Ajoutez-en un ci-dessus.
             </p>
           ) : (
-            testimonials.map((testimonial) => (
-              <Card key={testimonial.id}>
-                <CardContent className="pt-6">
-                  <div className="flex items-start gap-4">
-                    <GripVertical className="h-5 w-5 text-muted-foreground mt-1 cursor-move" />
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-primary/10 text-primary">
-                        {getInitials(testimonial.name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 space-y-2">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-semibold">{testimonial.name}</h4>
-                          {testimonial.role && (
-                            <span className="text-sm text-muted-foreground">
-                              • {testimonial.role}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-start gap-2 mt-2">
-                          <Quote className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-                          <p className="text-sm text-muted-foreground italic">
-                            {testimonial.text}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => startEdit(testimonial)}
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemove(testimonial.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={testimonials.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+                {testimonials.map((testimonial) => (
+                  <SortableTestimonialItem
+                    key={testimonial.id}
+                    testimonial={testimonial}
+                    getInitials={getInitials}
+                    startEdit={startEdit}
+                    handleRemove={handleRemove}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           )}
         </div>
 
@@ -230,7 +228,7 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
         <div className="flex justify-end pt-4 border-t">
           <Button onClick={handleSave} disabled={saving}>
             <Save className="h-4 w-4 mr-2" />
-            {saving ? "Enregistrement..." : "Save testimonials"}
+            {saving ? "Enregistrement..." : "Enregistrer les témoignages"}
           </Button>
         </div>
       </CardContent>
@@ -238,15 +236,78 @@ export function CourseTestimonialsManagement({ courseId, initialTestimonials }: 
   );
 }
 
+function SortableTestimonialItem({
+  testimonial,
+  getInitials,
+  startEdit,
+  handleRemove,
+}: {
+  testimonial: Testimonial;
+  getInitials: (name: string) => string;
+  startEdit: (t: Testimonial) => void;
+  handleRemove: (id: string) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: testimonial.id,
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
-
-
-
-
-
-
-
-
-
-
-
+  return (
+    <Card ref={setNodeRef} style={style}>
+      <CardContent className="pt-6">
+        <div className="flex items-start gap-4">
+          <div
+            {...attributes}
+            {...listeners}
+            className="mt-1 cursor-grab active:cursor-grabbing touch-none"
+          >
+            <GripVertical className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <Avatar className="h-10 w-10">
+            <AvatarFallback className="bg-primary/10 text-primary">
+              {getInitials(testimonial.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 space-y-2">
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="font-semibold">{testimonial.name}</h4>
+                {testimonial.role && (
+                  <span className="text-sm text-muted-foreground">
+                    • {testimonial.role}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-start gap-2 mt-2">
+                <Quote className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-muted-foreground italic">
+                  {testimonial.text}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => startEdit(testimonial)}
+            >
+              <Edit2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleRemove(testimonial.id)}
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

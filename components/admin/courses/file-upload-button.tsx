@@ -13,9 +13,16 @@ interface FileUploadButtonProps {
   onUploaded: (url: string, fileName: string) => void;
   accept?: string;
   label?: string;
+  bucketName?: string;
 }
 
-export function FileUploadButton({ folder, onUploaded, accept, label = "Upload a file" }: FileUploadButtonProps) {
+export function FileUploadButton({ 
+  folder, 
+  onUploaded, 
+  accept, 
+  label = "Upload a file",
+  bucketName = COURSE_ASSETS_BUCKET
+}: FileUploadButtonProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -30,7 +37,7 @@ export function FileUploadButton({ folder, onUploaded, accept, label = "Upload a
       const sanitizedName = file.name.replace(/\s+/g, "-").toLowerCase();
       const filePath = `${folder}/${timestamp}-${sanitizedName}`;
 
-      const { error } = await supabase.storage.from(COURSE_ASSETS_BUCKET).upload(filePath, file, {
+      const { error } = await supabase.storage.from(bucketName).upload(filePath, file, {
         cacheControl: "3600",
         upsert: false,
       });
@@ -40,7 +47,7 @@ export function FileUploadButton({ folder, onUploaded, accept, label = "Upload a
         return;
       }
 
-      const { data } = supabase.storage.from(COURSE_ASSETS_BUCKET).getPublicUrl(filePath);
+      const { data } = supabase.storage.from(bucketName).getPublicUrl(filePath);
       onUploaded(data.publicUrl, file.name);
       toast.success("File uploaded");
     } catch (error) {

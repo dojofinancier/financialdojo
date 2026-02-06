@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getExamsAction, upsertExamAction, deleteExamAction, uploadQuestionsToExamAction, cleanupEscapedQuotesAction, importPracticeExamFromCSVAction } from "@/app/actions/exams";
+import { getExamsAction, upsertExamAction, deleteExamAction, uploadQuestionsToExamAction, cleanupEscapedQuotesAction, importPracticeExamFromCSVAction, uploadPracticeExamJsonAction } from "@/app/actions/exams";
 import { getModulesAction } from "@/app/actions/modules";
 import { createContentItemAction } from "@/app/actions/content-items";
 import { createQuizQuestionAction, updateQuizQuestionAction, deleteQuizQuestionAction } from "@/app/actions/content-items";
@@ -86,9 +86,9 @@ function normalizeExams(raw: unknown): Exam[] {
     ...exam,
     questions: Array.isArray(exam.questions)
       ? exam.questions.map((q: any) => ({
-          ...q,
-          options: normalizeQuestionOptions(q.options),
-        }))
+        ...q,
+        options: normalizeQuestionOptions(q.options),
+      }))
       : [],
   }));
 }
@@ -237,7 +237,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
       toast.success(editingExam ? "Exam updated" : "Exam created");
       setExamDialogOpen(false);
       await loadExams();
-      
+
       // If creating new exam, open questions dialog
       if (!editingExam && result.data) {
         const newExam = result.data;
@@ -386,7 +386,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
     // Map options back to A, B, C, D format
     const optionKeys = Object.keys(question.options).sort();
     const optionValues = Object.values(question.options);
-    
+
     // Find which option is correct
     let correctAnswerKey = "A";
     if (question.correctAnswer === "option1" || question.correctAnswer === optionKeys[0]) correctAnswerKey = "A";
@@ -531,13 +531,25 @@ export function ExamManager({ courseId }: ExamManagerProps) {
     setImporting(true);
     try {
       const fileContent = await file.text();
-      const result = await importPracticeExamFromCSVAction(
-        courseId,
-        fileContent,
-        importExamTitle || undefined,
-        importModuleId || undefined,
-        importExistingExamId || undefined
-      );
+      let result;
+
+      if (file.name.toLowerCase().endsWith(".json")) {
+        result = await uploadPracticeExamJsonAction(
+          courseId,
+          fileContent,
+          importExamTitle || undefined,
+          importModuleId || undefined,
+          importExistingExamId || undefined
+        );
+      } else {
+        result = await importPracticeExamFromCSVAction(
+          courseId,
+          fileContent,
+          importExamTitle || undefined,
+          importModuleId || undefined,
+          importExistingExamId || undefined
+        );
+      }
 
       if (result.success) {
         const data = result.data as any;
@@ -549,7 +561,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
         setImportModuleId(null);
         setImportExistingExamId(null);
         await loadExams();
-        
+
         // If errors occurred, show them
         if (data?.errors && data.errors.length > 0) {
           console.warn("Import errors:", data.errors);
@@ -595,17 +607,17 @@ export function ExamManager({ courseId }: ExamManagerProps) {
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Import a practice exam from CSV</DialogTitle>
+                <DialogTitle>Import a practice exam</DialogTitle>
                 <DialogDescription>
-                  Format attendu: id,chapter,question,option_a,option_b,option_c,option_d,correct_option,explanation
+                  Supported formats: CSV (id,chapter,question,option_a,option_b,option_c,option_d,correct_option,explanation) or JSON.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label>CSV file *</Label>
+                  <Label>File (CSV or JSON) *</Label>
                   <Input
                     type="file"
-                    accept=".csv"
+                    accept=".csv,.json"
                     onChange={handleImportPracticeExam}
                     disabled={importing}
                   />
@@ -815,7 +827,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                     onClick={() => handleCleanupEscapedQuotes(exam.id)}
                     title="Clean escaped quotes (\\\\')"
                   >
-                      Clean
+                    Clean
                   </Button>
                   <Button variant="ghost" size="icon" onClick={() => openEditExamDialog(exam)}>
                     <Edit className="h-4 w-4" />
@@ -857,7 +869,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                             </DialogHeader>
                             <div className="space-y-4 mt-4">
                               <div className="space-y-2">
-                                  <Label>CSV file *</Label>
+                                <Label>CSV file *</Label>
                                 <Input
                                   type="file"
                                   accept=".csv"
@@ -896,7 +908,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                             const optionKeys = Object.keys(question.options).sort();
                             const correctOptionKey = question.correctAnswer;
                             const correctOptionValue = question.options[correctOptionKey] || "";
-                            
+
                             return (
                               <TableRow key={question.id}>
                                 <TableCell>{idx + 1}</TableCell>
@@ -974,7 +986,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                     </DialogHeader>
                     <div className="space-y-4 mt-4">
                       <div className="space-y-2">
-                          <Label>CSV file *</Label>
+                        <Label>CSV file *</Label>
                         <Input
                           type="file"
                           accept=".csv"
@@ -1078,7 +1090,7 @@ export function ExamManager({ courseId }: ExamManagerProps) {
                       const optionKeys = Object.keys(question.options).sort();
                       const correctOptionKey = question.correctAnswer;
                       const correctOptionValue = question.options[correctOptionKey] || "";
-                      
+
                       return (
                         <TableRow key={question.id}>
                           <TableCell>{idx + 1}</TableCell>

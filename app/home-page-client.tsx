@@ -48,9 +48,9 @@ function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-screen bg-black text-white overflow-hidden">
+    <section className="relative min-h-screen bg-black text-white overflow-hidden" data-nav-hero>
       {/* Hard grid pattern */}
-      <div 
+      <div
         ref={gridRef}
         className="absolute inset-0 opacity-10"
         style={{
@@ -101,13 +101,13 @@ function HeroSection() {
 
           {/* CTA - Brutalist buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link 
+            <Link
               href="#qui-etes-vous"
               className="inline-block bg-white text-black font-black uppercase text-lg tracking-wider px-10 py-5 border-4 border-white hover:bg-primary hover:border-primary hover:text-black transition-colors shadow-[8px_8px_0_0_hsl(var(--primary))]"
             >
               Get started →
             </Link>
-            <Link 
+            <Link
               href="/courses"
               className="inline-block bg-transparent text-white font-black uppercase text-lg tracking-wider px-10 py-5 border-4 border-white hover:bg-white hover:text-black transition-colors"
             >
@@ -195,7 +195,7 @@ function ClientPathsSection() {
         <div className="max-w-[1400px] mx-auto">
           <div className="grid md:grid-cols-3 gap-0 border-4 border-black">
             {paths.map((path, index) => (
-              <Link 
+              <Link
                 key={path.id}
                 href={path.link}
                 className={`group relative ${path.color} ${path.textColor} p-8 sm:p-10 ${index < 2 ? 'md:border-r-4 border-black' : ''} border-b-4 md:border-b-0 border-black last:border-b-0 transition-all duration-200 hover:scale-[1.02] hover:z-10`}
@@ -224,7 +224,7 @@ function ClientPathsSection() {
                   ))}
                 </ul>
                 <div className="flex items-center gap-2 font-black uppercase tracking-wider group-hover:gap-4 transition-all">
-                  DISCOVER 
+                  DISCOVER
                   <span className="text-2xl">→</span>
                 </div>
               </Link>
@@ -264,7 +264,7 @@ function AboutSection() {
                 <br />
                 <span className="text-primary">EXPERTISE</span>
               </h2>
-              
+
               <div className="space-y-6 text-lg leading-relaxed max-w-xl">
                 <p>
                   Financial Dojo was born from the desire to democratize access to high-quality financial training.
@@ -274,7 +274,7 @@ function AboutSection() {
                 </p>
               </div>
 
-              <Link 
+              <Link
                 href="/about"
                 className="inline-block mt-10 bg-white text-black font-black uppercase text-sm tracking-wider px-8 py-4 border-4 border-white hover:bg-primary hover:border-primary transition-colors shadow-[6px_6px_0_0_hsl(var(--primary))]"
               >
@@ -326,7 +326,7 @@ function HomeFooter() {
             <div className="lg:col-span-1">
               <Link href="/" className="inline-block mb-6">
                 <Image
-                  src="/logo_dark.png"
+                  src="/FinanceDojo-black.png"
                   alt="Financial Dojo"
                   width={200}
                   height={50}

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { FileUploadButton } from "@/components/admin/courses/file-upload-button";
 import {
   Select,
   SelectContent,
@@ -54,8 +55,16 @@ const courseFormSchema = z.object({
   recommendedStudyHoursMax: z.string().optional(),
   orientationVideoUrl: z.string().optional().nullable(),
   orientationText: z.string().optional().nullable(),
+  pdfUrl: z.string().optional().nullable(),
   heroImages: z.string().optional(),
   displayOrder: z.string().optional(),
+  statsVideos: z.string().optional(),
+  statsQuestions: z.string().optional(),
+  statsFlashcards: z.string().optional(),
+  statsVideosLabel: z.string().optional(),
+  statsQuestionsLabel: z.string().optional(),
+  statsFlashcardsLabel: z.string().optional(),
+
 });
 
 // Submit schema (transform strings -> typed values for server actions)
@@ -83,6 +92,22 @@ const courseSubmitSchema = courseFormSchema.extend({
     // Split by newline or comma, trim each, and filter empty strings
     return val.split(/[,\n]/).map((url) => url.trim()).filter((url) => url.length > 0);
   }),
+  statsVideos: z
+    .string()
+    .optional()
+    .transform((val) => (val && val.trim() !== "" ? parseInt(val, 10) : null)),
+  statsQuestions: z
+    .string()
+    .optional()
+    .transform((val) => (val && val.trim() !== "" ? parseInt(val, 10) : null)),
+  statsFlashcards: z
+    .string()
+    .optional()
+    .transform((val) => (val && val.trim() !== "" ? parseInt(val, 10) : null)),
+  statsVideosLabel: z.string().optional().transform((val) => (val && val.trim() !== "" ? val.trim() : null)),
+  statsQuestionsLabel: z.string().optional().transform((val) => (val && val.trim() !== "" ? val.trim() : null)),
+  statsFlashcardsLabel: z.string().optional().transform((val) => (val && val.trim() !== "" ? val.trim() : null)),
+
 });
 
 type CourseFormData = z.infer<typeof courseSubmitSchema>;
@@ -98,7 +123,9 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
   const [categories, setCategories] = useState<CourseCategory[]>([]);
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState(initialData?.description || "");
+
   const [orientationText, setOrientationText] = useState((initialData as any)?.orientationText || "");
+  const [pdfUrl, setPdfUrl] = useState((initialData as any)?.pdfUrl || "");
   const [componentVisibility, setComponentVisibility] = useState({
     videos: initialData?.componentVisibility?.videos ?? true,
     quizzes: initialData?.componentVisibility?.quizzes ?? true,
@@ -131,10 +158,18 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
       recommendedStudyHoursMax: (initialData as any)?.recommendedStudyHoursMax?.toString() || "10",
       orientationVideoUrl: (initialData as any)?.orientationVideoUrl || "",
       orientationText: (initialData as any)?.orientationText || "",
-      heroImages: Array.isArray((initialData as any)?.heroImages) 
-        ? (initialData as any).heroImages.join("\n") 
+      pdfUrl: (initialData as any)?.pdfUrl || "",
+      heroImages: Array.isArray((initialData as any)?.heroImages)
+        ? (initialData as any).heroImages.join("\n")
         : "",
       displayOrder: (initialData as any)?.displayOrder?.toString() || "",
+      statsVideos: (initialData as any)?.statsVideos?.toString() || "",
+      statsQuestions: (initialData as any)?.statsQuestions?.toString() || "",
+      statsFlashcards: (initialData as any)?.statsFlashcards?.toString() || "",
+      statsVideosLabel: (initialData as any)?.statsVideosLabel || "",
+      statsQuestionsLabel: (initialData as any)?.statsQuestionsLabel || "",
+      statsFlashcardsLabel: (initialData as any)?.statsFlashcardsLabel || "",
+
     },
   });
 
@@ -164,6 +199,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
         componentVisibility,
         orientationVideoUrl: data.orientationVideoUrl ?? null,
         orientationText: orientationText || null,
+        pdfUrl: pdfUrl || null,
       };
 
       let result;
@@ -299,6 +335,87 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
           </p>
         </div>
 
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="statsVideos">Videos count (override)</Label>
+            <Input
+              id="statsVideos"
+              type="number"
+              min="0"
+              {...register("statsVideos")}
+              placeholder="Auto"
+            />
+            <p className="text-xs text-muted-foreground">
+              Override the calculated number of videos (leave empty for auto)
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="statsVideosLabel">Videos label (override)</Label>
+            <Input
+              id="statsVideosLabel"
+              {...register("statsVideosLabel")}
+              placeholder="Videos"
+            />
+            <p className="text-xs text-muted-foreground">
+              Override the "Videos" label (e.g., "Hours of content")
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="statsQuestions">Questions count (override)</Label>
+            <Input
+              id="statsQuestions"
+              type="number"
+              min="0"
+              {...register("statsQuestions")}
+              placeholder="Auto"
+            />
+            <p className="text-xs text-muted-foreground">
+              Override the calculated number of questions (leave empty for auto)
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="statsQuestionsLabel">Questions label (override)</Label>
+            <Input
+              id="statsQuestionsLabel"
+              {...register("statsQuestionsLabel")}
+              placeholder="Questions"
+            />
+            <p className="text-xs text-muted-foreground">
+              Override the "Questions" label (e.g., "Exercises")
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="statsFlashcards">Flashcards count (override)</Label>
+            <Input
+              id="statsFlashcards"
+              type="number"
+              min="0"
+              {...register("statsFlashcards")}
+              placeholder="Auto"
+            />
+            <p className="text-xs text-muted-foreground">
+              Override the calculated number of flashcards (leave empty for auto)
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="statsFlashcardsLabel">Flashcards label (override)</Label>
+            <Input
+              id="statsFlashcardsLabel"
+              {...register("statsFlashcardsLabel")}
+              placeholder="Flashcards"
+            />
+            <p className="text-xs text-muted-foreground">
+              Override the "Flashcards" label (e.g., "Key Concepts")
+            </p>
+          </div>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="appointmentHourlyRate">Hourly rate for appointments ($)</Label>
           <Input
@@ -358,8 +475,8 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-            <SelectItem value="ONE_TIME">One-time payment</SelectItem>
-            <SelectItem value="SUBSCRIPTION">Subscription</SelectItem>
+              <SelectItem value="ONE_TIME">One-time payment</SelectItem>
+              <SelectItem value="SUBSCRIPTION">Subscription</SelectItem>
             </SelectContent>
           </Select>
           {errors.paymentType && (
@@ -395,6 +512,30 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
         />
         <p className="text-xs text-muted-foreground">
           Explanatory text shown to students during Phase 0 if no orientation video is provided. Use this field to explain the exam format, passing score, and how to use the platform.
+        </p>
+      </div>
+
+      {/* Complete Course PDF */}
+      <div className="space-y-2">
+        <Label htmlFor="pdfUrl">Complete course PDF</Label>
+        <div className="flex gap-2">
+          <Input
+            id="pdfUrl"
+            value={pdfUrl}
+            onChange={(e) => setPdfUrl(e.target.value)}
+            placeholder="PDF URL..."
+            readOnly
+          />
+          <FileUploadButton
+            folder="course-pdfs"
+            bucketName="course-content"
+            accept=".pdf"
+            onUploaded={(url) => setPdfUrl(url)}
+            label="Upload PDF"
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Upload the complete course PDF here. Students will be able to download it from the notes section.
         </p>
       </div>
 
@@ -544,8 +685,8 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
           {loading
             ? "Saving..."
             : courseId
-            ? "Update"
-            : "Create course"}
+              ? "Update"
+              : "Create course"}
         </Button>
         <Button
           type="button"
@@ -555,6 +696,6 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
           Cancel
         </Button>
       </div>
-    </form>
+    </form >
   );
 }

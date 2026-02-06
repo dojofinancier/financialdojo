@@ -88,7 +88,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedModule, setSelectedModule] = useState<ModuleWithContent | null>(null);
-  const [formData, setFormData] = useState({ title: "", shortTitle: "", description: "", examWeight: "" });
+  const [formData, setFormData] = useState({ title: "", shortTitle: "", description: "", examWeight: "", pdfUrl: "" });
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -146,12 +146,13 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
         description: formData.description || undefined,
         order: modules.length,
         examWeight: formData.examWeight ? parseFloat(formData.examWeight) / 100 : undefined,
+        pdfUrl: formData.pdfUrl || undefined,
       });
 
       if (result.success) {
         toast.success("Module created successfully");
         setCreateDialogOpen(false);
-        setFormData({ title: "", shortTitle: "", description: "", examWeight: "" });
+        setFormData({ title: "", shortTitle: "", description: "", examWeight: "", pdfUrl: "" });
         loadModules();
       } else {
         toast.error(result.error || "Error creating");
@@ -170,13 +171,14 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
         shortTitle: formData.shortTitle || undefined,
         description: formData.description || undefined,
         examWeight: formData.examWeight ? parseFloat(formData.examWeight) / 100 : undefined,
+        pdfUrl: formData.pdfUrl || undefined,
       });
 
       if (result.success) {
         toast.success("Module updated successfully");
         setEditDialogOpen(false);
         setSelectedModule(null);
-        setFormData({ title: "", shortTitle: "", description: "", examWeight: "" });
+        setFormData({ title: "", shortTitle: "", description: "", examWeight: "", pdfUrl: "" });
         loadModules();
       } else {
         toast.error(result.error || "Error updating");
@@ -211,6 +213,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
       shortTitle: module.shortTitle || "",
       description: module.description || "",
       examWeight: module.examWeight ? (module.examWeight * 100).toString() : "",
+      pdfUrl: (module as any).pdfUrl || "",
     });
     setEditDialogOpen(true);
   };
@@ -264,7 +267,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
                   id="title"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                   placeholder="e.g., Introduction"
+                  placeholder="e.g., Introduction"
                 />
               </div>
               <div className="space-y-2">
@@ -273,7 +276,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
                   id="shortTitle"
                   value={formData.shortTitle}
                   onChange={(e) => setFormData({ ...formData, shortTitle: e.target.value })}
-                   placeholder="e.g., Intro (optional)"
+                  placeholder="e.g., Intro (optional)"
                 />
                 <p className="text-xs text-muted-foreground">
                   Optional. A shorter title that appears in the sidebar if the full title is too long.
@@ -285,7 +288,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                   placeholder="Module description..."
+                  placeholder="Module description..."
                 />
               </div>
               <div className="space-y-2">
@@ -298,11 +301,30 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
                   step="0.1"
                   value={formData.examWeight}
                   onChange={(e) => setFormData({ ...formData, examWeight: e.target.value })}
-                   placeholder="e.g., 15 (for 15%)"
+                  placeholder="e.g., 15 (for 15%)"
                 />
                 <p className="text-xs text-muted-foreground">
                   Optional. Enter a percentage (0-100) representing this module's weight on the exam.
                 </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pdfUrl">Module PDF</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="pdfUrl"
+                    value={formData.pdfUrl}
+                    onChange={(e) => setFormData({ ...formData, pdfUrl: e.target.value })}
+                    placeholder="PDF URL..."
+                    readOnly
+                  />
+                  <FileUploadButton
+                    folder="module-pdfs"
+                    bucketName="course-content"
+                    accept=".pdf"
+                    onUploaded={(url) => setFormData({ ...formData, pdfUrl: url })}
+                    label="Upload PDF"
+                  />
+                </div>
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
@@ -370,7 +392,7 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
                 id="edit-shortTitle"
                 value={formData.shortTitle}
                 onChange={(e) => setFormData({ ...formData, shortTitle: e.target.value })}
-                 placeholder="e.g., Intro (optional)"
+                placeholder="e.g., Intro (optional)"
               />
               <p className="text-xs text-muted-foreground">
                 Optional. A shorter title that appears in the sidebar if the full title is too long.
@@ -394,11 +416,30 @@ export function ModuleManagement({ courseId }: ModuleManagementProps) {
                 step="0.1"
                 value={formData.examWeight}
                 onChange={(e) => setFormData({ ...formData, examWeight: e.target.value })}
-                 placeholder="e.g., 15 (for 15%)"
+                placeholder="e.g., 15 (for 15%)"
               />
               <p className="text-xs text-muted-foreground">
                 Optional. Enter a percentage (0-100) representing this module's weight on the exam.
               </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-pdfUrl">Module PDF</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="edit-pdfUrl"
+                  value={formData.pdfUrl}
+                  onChange={(e) => setFormData({ ...formData, pdfUrl: e.target.value })}
+                  placeholder="PDF URL..."
+                  readOnly
+                />
+                <FileUploadButton
+                  folder="module-pdfs"
+                  bucketName="course-content"
+                  accept=".pdf"
+                  onUploaded={(url) => setFormData({ ...formData, pdfUrl: url })}
+                  label="Upload PDF"
+                />
+              </div>
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
@@ -501,8 +542,8 @@ function SortableModuleItem({
                   if (item.contentType === "QUIZ") return item.quiz && !item.quiz.isMockExam;
                   return false;
                 }).length === 0 && (
-                  <Badge variant="secondary">Aucun contenu</Badge>
-                )}
+                    <Badge variant="secondary">Aucun contenu</Badge>
+                  )}
               </div>
             </div>
           </div>
@@ -772,7 +813,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
 
         // Convert markdown to HTML
         const htmlContent = marked.parse(markdownContent) as string;
-        
+
         // Set the converted HTML to the editor
         setNoteContent(htmlContent);
         toast.success("Markdown document imported successfully");
@@ -831,7 +872,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
         // Create a text preview by stripping HTML tags
         const textPreview = noteContent.replace(/<[^>]*>/g, "").substring(0, 150);
         const hasMoreContent = noteContent.length > 150 || noteContent.includes("<");
-        
+
         return (
           <Collapsible open={isExpanded} onOpenChange={() => toggleNoteExpansion(item.id)}>
             <div className="space-y-2">
@@ -1054,7 +1095,7 @@ function ModuleContentManager({ module, courseId, onRefresh }: ModuleContentMana
           </div>
 
           <div className="flex justify-end gap-2 pt-4 pb-6 px-6 border-t flex-shrink-0">
-             <Button variant="outline" onClick={() => handleContentDialogChange(false)}>
+            <Button variant="outline" onClick={() => handleContentDialogChange(false)}>
               Cancel
             </Button>
             <Button onClick={handleContentSave}>

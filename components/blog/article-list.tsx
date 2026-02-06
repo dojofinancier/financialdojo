@@ -46,7 +46,7 @@ export function ArticleList({
   const [hasMore, setHasMore] = useState(initialArticles.length < initialTotal);
   const [offset, setOffset] = useState(initialArticles.length);
   const observerTarget = useRef<HTMLDivElement>(null);
-  
+
   // Autocomplete state
   const [suggestions, setSuggestions] = useState<Array<{ id: string; title: string; slug: string; category: string | null; excerpt: string | null }>>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -230,7 +230,7 @@ export function ArticleList({
 
   const formatDate = (date: Date | null) => {
     if (!date) return null;
-    return new Date(date).toLocaleDateString("fr-CA", {
+    return new Date(date).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -247,7 +247,7 @@ export function ArticleList({
             <Input
               ref={searchInputRef}
               type="text"
-              placeholder="Rechercher un article..."
+              placeholder="Search articles..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -258,7 +258,7 @@ export function ArticleList({
               }}
               className="pl-10"
             />
-            
+
             {/* Autocomplete Suggestions */}
             {showSuggestions && (
               <div
@@ -275,9 +275,8 @@ export function ArticleList({
                       <li key={suggestion.id}>
                         <Link
                           href={`/article/${suggestion.slug}`}
-                          className={`block px-4 py-3 hover:bg-gray-50 transition-colors ${
-                            index === selectedIndex ? "bg-gray-50" : ""
-                          }`}
+                          className={`block px-4 py-3 hover:bg-gray-50 transition-colors ${index === selectedIndex ? "bg-gray-50" : ""
+                            }`}
                           onClick={() => {
                             setShowSuggestions(false);
                             setSearch(suggestion.title);

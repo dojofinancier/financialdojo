@@ -68,11 +68,13 @@ type Course = {
   title: string;
   // Prisma JSON fields are typed broadly (JsonValue includes string, etc.). Normalize at runtime.
   componentVisibility?: Prisma.JsonValue | ComponentVisibility | null;
+  pdfUrl?: string | null;
   modules: Array<{
     id: string;
     title: string;
     description: string | null;
     order: number;
+    pdfUrl?: string | null;
     contentItems: Array<{
       id: string;
       title: string;
@@ -119,6 +121,7 @@ export function CourseLearningInterface({
         ...item,
         moduleId: module.id,
         moduleTitle: module.title,
+        modulePdfUrl: module.pdfUrl,
       }))
   );
 
@@ -197,11 +200,10 @@ export function CourseLearningInterface({
                         <button
                           key={item.id}
                           onClick={() => handleContentItemSelect(item.id)}
-                          className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
-                            isSelected
+                          className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${isSelected
                               ? "bg-primary text-primary-foreground"
                               : "hover:bg-accent"
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center gap-2">
                             {item.contentType === "VIDEO" && <span>▶</span>}
@@ -273,11 +275,10 @@ export function CourseLearningInterface({
                             <button
                               key={item.id}
                               onClick={() => handleContentItemSelect(item.id)}
-                              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
-                                isSelected
+                              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${isSelected
                                   ? "bg-primary text-primary-foreground"
                                   : "hover:bg-accent"
-                              }`}
+                                }`}
                             >
                               <div className="flex items-center gap-2">
                                 {item.contentType === "VIDEO" && <span>▶</span>}
@@ -346,7 +347,11 @@ export function CourseLearningInterface({
                   />
                 )}
                 {selectedContentItem.contentType === "NOTE" && visibility.notes && (
-                  <NotesViewer contentItemId={selectedContentItem.id} />
+                  <NotesViewer
+                    contentItemId={selectedContentItem.id}
+                    coursePdfUrl={course.pdfUrl}
+                    modulePdfUrl={(selectedContentItem as any).modulePdfUrl}
+                  />
                 )}
               </div>
 

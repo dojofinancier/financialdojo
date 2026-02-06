@@ -26,11 +26,11 @@ interface ArticlePageProps {
 
 export function ArticlePage({ article, recommendedArticles, courses, readingTime }: ArticlePageProps) {
   const publishedDate = article.publishedAt
-    ? new Date(article.publishedAt).toLocaleDateString("fr-CA", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
+    ? new Date(article.publishedAt).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
     : null;
 
   return (
@@ -44,7 +44,7 @@ export function ArticlePage({ article, recommendedArticles, courses, readingTime
               <ol className="flex items-center space-x-2">
                 <li>
                   <Link href="/" className="hover:text-gray-900">
-                    Accueil
+                    Home
                   </Link>
                 </li>
                 <li>/</li>
@@ -89,7 +89,7 @@ export function ArticlePage({ article, recommendedArticles, courses, readingTime
                 )}
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
-                  <span>{readingTime} min de lecture</span>
+                  <span>{readingTime} min read</span>
                 </div>
               </div>
 

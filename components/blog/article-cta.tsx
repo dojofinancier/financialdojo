@@ -27,9 +27,9 @@ export function ArticleCTA({ courses, targetMarket }: ArticleCTAProps) {
       case "professionals":
         return "Recommended professional courses";
       case "investors":
-        return "Formations pour investisseurs";
+        return "Courses for investors";
       case "entrepreneurs":
-        return "Formations pour entrepreneurs";
+        return "Courses for entrepreneurs";
       default:
         return "Recommended courses";
     }
@@ -75,7 +75,7 @@ export function ArticleCTA({ courses, targetMarket }: ArticleCTAProps) {
             <CardFooter>
               <Button asChild className="w-full" variant="default">
                 <Link href={course.slug ? `/courses/${course.slug}` : `/courses/${course.id}`}>
-                  En savoir plus
+                  Learn more
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
@@ -87,7 +87,7 @@ export function ArticleCTA({ courses, targetMarket }: ArticleCTAProps) {
       <div className="text-center">
         <Button asChild variant="outline" size="lg">
           <Link href="/courses">
-            Voir toutes les formations
+            View all courses
             <ArrowRight className="w-4 h-4 ml-2" />
           </Link>
         </Button>

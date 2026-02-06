@@ -44,6 +44,7 @@ import {
   addSelectedQuestionsToPhase1QuizAction,
   deleteQuestionFromBankAction,
   updateQuestionInBankAction,
+  uploadQuestionBankJsonAction,
 } from "@/app/actions/question-banks";
 import { getModulesAction } from "@/app/actions/modules";
 
@@ -78,6 +79,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [uploadJsonDialogOpen, setUploadJsonDialogOpen] = useState(false);
   const [uploadQuizDialogOpen, setUploadQuizDialogOpen] = useState(false);
   const [assignToPhase1DialogOpen, setAssignToPhase1DialogOpen] = useState(false);
   const [questionEditDialogOpen, setQuestionEditDialogOpen] = useState(false);
@@ -187,13 +189,13 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
     try {
       const result = selectedBankId
         ? await updateQuestionBankAction(selectedBankId, {
-            ...formState,
-            courseId,
-          })
+          ...formState,
+          courseId,
+        })
         : await createQuestionBankAction({
-            ...formState,
-            courseId,
-          });
+          ...formState,
+          courseId,
+        });
 
       if (result.success) {
         toast.success(
@@ -258,6 +260,36 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
     } finally {
       setUploading(false);
       // Reset file input
+      event.target.value = "";
+    }
+  };
+
+  const handleJsonUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileContent = await file.text();
+      const result = await uploadQuestionBankJsonAction(courseId, fileContent);
+
+      if (result.success) {
+        const data = result.data;
+        let msg = `${data.count} questions imported via JSON.`;
+        if (data.details && data.details.length > 0) {
+          msg += ` Mapped to ${data.details.length} module(s).`;
+        }
+        toast.success(msg);
+        setUploadJsonDialogOpen(false);
+        loadQuestionBanks();
+      } else {
+        toast.error(result.error || "Error during JSON import");
+      }
+    } catch (error) {
+      console.error("Error uploading JSON:", error);
+      toast.error("Error importing JSON file");
+    } finally {
+      setUploading(false);
       event.target.value = "";
     }
   };
@@ -469,19 +501,19 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       const newMap = new Map(prev);
       const bankSelections = newMap.get(bankId) || new Set<string>();
       const newBankSelections = new Set(bankSelections);
-      
+
       if (newBankSelections.has(questionId)) {
         newBankSelections.delete(questionId);
       } else {
         newBankSelections.add(questionId);
       }
-      
+
       if (newBankSelections.size === 0) {
         newMap.delete(bankId);
       } else {
         newMap.set(bankId, newBankSelections);
       }
-      
+
       return newMap;
     });
   };
@@ -491,7 +523,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
       const newMap = new Map(prev);
       const bankSelections = newMap.get(bankId) || new Set<string>();
       const allSelected = allQuestionIds.every(id => bankSelections.has(id));
-      
+
       if (allSelected) {
         // Deselect all
         newMap.delete(bankId);
@@ -499,7 +531,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
         // Select all
         newMap.set(bankId, new Set(allQuestionIds));
       }
-      
+
       return newMap;
     });
   };
@@ -578,6 +610,39 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
           </p>
         </div>
         <div className="flex gap-2">
+          <Dialog open={uploadJsonDialogOpen} onOpenChange={setUploadJsonDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Upload className="h-4 w-4 mr-2" />
+                Import JSON
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Import questions from JSON</DialogTitle>
+                <DialogDescription>
+                  Upload a JSON file containing questions. Expected fields include &quot;questions&quot; array, where each object has &quot;element&quot; (for module order), &quot;question&quot;, &quot;options&quot;, &quot;correct_answer&quot;, &quot;explanation&quot;.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 mt-4">
+                <div>
+                  <Label>JSON file</Label>
+                  <Input
+                    type="file"
+                    accept=".json"
+                    onChange={handleJsonUpload}
+                    disabled={uploading}
+                  />
+                  {uploading && (
+                    <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Importing...
+                    </div>
+                  )}
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Dialog open={uploadQuizDialogOpen} onOpenChange={(open) => {
             setUploadQuizDialogOpen(open);
             if (!open) {
@@ -615,7 +680,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    {assignToPhase1 
+                    {assignToPhase1
                       ? "Questions will be created as quizzes in Phase 1 (learning with the module)"
                       : "Questions will be added to a question bank for Phase 3 (practice)"}
                   </p>
@@ -916,7 +981,7 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
                   <SelectValue placeholder="Select a module" />
                 </SelectTrigger>
                 <SelectContent>
-                <SelectItem value="none">No module</SelectItem>
+                  <SelectItem value="none">No module</SelectItem>
                   {modules.map((module) => (
                     <SelectItem key={module.id} value={module.id}>
                       {module.title}
@@ -1005,14 +1070,14 @@ export function QuestionBankManager({ courseId }: QuestionBankManagerProps) {
               <Select
                 value={
                   questionFormState.correctAnswer &&
-                  (questionFormState.optionA || questionFormState.optionB || 
-                   questionFormState.optionC || questionFormState.optionD)
+                    (questionFormState.optionA || questionFormState.optionB ||
+                      questionFormState.optionC || questionFormState.optionD)
                     ? questionFormState.correctAnswer
                     : questionFormState.optionA
-                    ? "A"
-                    : questionFormState.optionB
-                    ? "B"
-                    : "A"
+                      ? "A"
+                      : questionFormState.optionB
+                        ? "B"
+                        : "A"
                 }
                 onValueChange={(value) =>
                   setQuestionFormState({ ...questionFormState, correctAnswer: value })

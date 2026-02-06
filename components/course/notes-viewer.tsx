@@ -7,14 +7,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { BookOpen, FileText, Save } from "lucide-react";
-import { Loader2 } from "lucide-react";
+import { BookOpen, FileText, Save, Loader2, Download } from "lucide-react"; // Added Download icon
+import { NoteType } from "@prisma/client";
 
 interface NotesViewerProps {
   contentItemId: string;
+  coursePdfUrl?: string | null;
+  modulePdfUrl?: string | null;
 }
 
-export function NotesViewer({ contentItemId }: NotesViewerProps) {
+export function NotesViewer({ contentItemId, coursePdfUrl, modulePdfUrl }: NotesViewerProps) {
   const [adminNotes, setAdminNotes] = useState<string>("");
   const [studentNotes, setStudentNotes] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -64,9 +66,19 @@ export function NotesViewer({ contentItemId }: NotesViewerProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileText className="h-5 w-5" />
-          Notes
+        <CardTitle className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Notes
+          </div>
+          {modulePdfUrl && (
+            <Button variant="outline" size="sm" asChild>
+              <a href={modulePdfUrl} target="_blank" rel="noopener noreferrer">
+                <Download className="h-4 w-4 mr-2" />
+                Download Chapter PDF
+              </a>
+            </Button>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -117,6 +129,17 @@ export function NotesViewer({ contentItemId }: NotesViewerProps) {
             </Button>
           </TabsContent>
         </Tabs>
+
+        {coursePdfUrl && (
+          <div className="mt-8 pt-6 border-t">
+            <Button variant="outline" className="w-full" asChild>
+              <a href={coursePdfUrl} target="_blank" rel="noopener noreferrer">
+                <Download className="h-4 w-4 mr-2" />
+                Download Complete Course PDF
+              </a>
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

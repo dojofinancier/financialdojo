@@ -14,6 +14,7 @@ const moduleSchema = z.object({
   description: z.string().optional(),
   order: z.number().int().nonnegative(),
   examWeight: z.number().min(0).max(1).optional().nullable(), // 0 to 1 (e.g., 0.15 for 15%)
+  pdfUrl: z.string().optional().nullable(), // URL for the module PDF
 });
 
 export type ModuleActionResult = {
@@ -304,6 +305,7 @@ const getCachedCourseModules = unstable_cache(
         shortTitle: true,
         order: true,
         examWeight: true,
+        pdfUrl: true,
       },
     });
   },

@@ -9,6 +9,9 @@ import { LearningActivityManager } from "@/components/admin/courses/learning-act
 import { ExamManager } from "@/components/admin/courses/exam-manager";
 import { QuestionBankManager } from "@/components/admin/courses/question-bank-manager";
 import { CourseFAQManagement } from "@/components/admin/courses/course-faq-management";
+import { CourseAboutManagement } from "@/components/admin/courses/course-about-management";
+import { CourseFeaturesManagement } from "@/components/admin/courses/course-features-management";
+import { CourseTestimonialsManagement } from "@/components/admin/courses/course-testimonials-management";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -31,17 +34,17 @@ async function CourseDetailContent({ params }: CourseDetailPageProps) {
   // This is a defensive check in case getCourseAction didn't convert them properly
   const serializedCourse = {
     ...course,
-    price: typeof course.price === 'object' && course.price !== null && 'toNumber' in course.price 
-      ? (course.price as any).toNumber() 
-      : typeof course.price === 'number' 
-        ? course.price 
+    price: typeof course.price === 'object' && course.price !== null && 'toNumber' in course.price
+      ? (course.price as any).toNumber()
+      : typeof course.price === 'number'
+        ? course.price
         : Number(course.price),
-    appointmentHourlyRate: course.appointmentHourlyRate 
+    appointmentHourlyRate: course.appointmentHourlyRate
       ? (typeof course.appointmentHourlyRate === 'object' && course.appointmentHourlyRate !== null && 'toNumber' in course.appointmentHourlyRate
-          ? (course.appointmentHourlyRate as any).toNumber()
-          : typeof course.appointmentHourlyRate === 'number'
-            ? course.appointmentHourlyRate
-            : Number(course.appointmentHourlyRate))
+        ? (course.appointmentHourlyRate as any).toNumber()
+        : typeof course.appointmentHourlyRate === 'number'
+          ? course.appointmentHourlyRate
+          : Number(course.appointmentHourlyRate))
       : null,
   };
 
@@ -61,8 +64,11 @@ async function CourseDetailContent({ params }: CourseDetailPageProps) {
       </div>
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList>
+        <TabsList className="flex-wrap h-auto gap-1">
           <TabsTrigger value="details">Course details</TabsTrigger>
+          <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="features">Features</TabsTrigger>
+          <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
           <TabsTrigger value="modules">Modules and content</TabsTrigger>
           <TabsTrigger value="flashcards">Flashcards</TabsTrigger>
           <TabsTrigger value="activities">Learning activities</TabsTrigger>
@@ -89,7 +95,71 @@ async function CourseDetailContent({ params }: CourseDetailPageProps) {
               heroImages: Array.isArray((course as any).heroImages) ? (course as any).heroImages : [],
               displayOrder: (course as any).displayOrder ?? undefined,
               orientationText: (course as any).orientationText ?? undefined,
+              orientationVideoUrl: (course as any).orientationVideoUrl ?? undefined,
+              pdfUrl: (course as any).pdfUrl ?? undefined,
+              statsVideos: (course as any).statsVideos ?? undefined,
+              statsQuestions: (course as any).statsQuestions ?? undefined,
+              statsFlashcards: (course as any).statsFlashcards ?? undefined,
+              statsVideosLabel: (course as any).statsVideosLabel ?? undefined,
+              statsQuestionsLabel: (course as any).statsQuestionsLabel ?? undefined,
+              statsFlashcardsLabel: (course as any).statsFlashcardsLabel ?? undefined,
             }}
+          />
+        </TabsContent>
+        <TabsContent value="about" className="mt-6">
+          <CourseAboutManagement
+            courseId={courseId}
+            initialShortDescription={(course as any).shortDescription || ""}
+            initialAboutText={(course as any).aboutText || ""}
+            initialAboutAccordionItems={(() => {
+              const raw = (course as any).aboutAccordionItems;
+              if (Array.isArray(raw)) return raw;
+              if (typeof raw === "string") {
+                try {
+                  const parsed = JSON.parse(raw);
+                  return Array.isArray(parsed) ? parsed : [];
+                } catch {
+                  return [];
+                }
+              }
+              return [];
+            })()}
+          />
+        </TabsContent>
+        <TabsContent value="features" className="mt-6">
+          <CourseFeaturesManagement
+            courseId={courseId}
+            initialFeatures={(() => {
+              const raw = (course as any).features;
+              if (Array.isArray(raw)) return raw;
+              if (typeof raw === "string") {
+                try {
+                  const parsed = JSON.parse(raw);
+                  return Array.isArray(parsed) ? parsed : [];
+                } catch {
+                  return [];
+                }
+              }
+              return [];
+            })()}
+          />
+        </TabsContent>
+        <TabsContent value="testimonials" className="mt-6">
+          <CourseTestimonialsManagement
+            courseId={courseId}
+            initialTestimonials={(() => {
+              const raw = (course as any).testimonials;
+              if (Array.isArray(raw)) return raw;
+              if (typeof raw === "string") {
+                try {
+                  const parsed = JSON.parse(raw);
+                  return Array.isArray(parsed) ? parsed : [];
+                } catch {
+                  return [];
+                }
+              }
+              return [];
+            })()}
           />
         </TabsContent>
         <TabsContent value="modules" className="mt-6">
