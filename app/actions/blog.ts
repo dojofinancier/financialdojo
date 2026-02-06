@@ -234,8 +234,6 @@ export async function getArticlesList(params: {
       prisma.blogArticle.count({ where }),
     ]);
 
-    console.log(`[Blog Debug] Fetched ${articles.length} articles. Total: ${total}. Where:`, JSON.stringify(where));
-
     return {
       articles,
       pagination: {
@@ -247,11 +245,6 @@ export async function getArticlesList(params: {
     };
   } catch (error) {
     console.error("Error fetching articles list:", error);
-    // Log connection details safely (masking password)
-    const dbUrl = process.env.DATABASE_URL || "unknown";
-    const maskedUrl = dbUrl.replace(/:([^:@]+)@/, ":****@");
-    console.error(`[Blog Debug] Connection Error. DB URL: ${maskedUrl}`);
-
     return {
       articles: [],
       pagination: {

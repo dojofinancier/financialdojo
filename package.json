@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "node scripts/dev.js",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "db:generate": "prisma generate",

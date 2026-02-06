@@ -49,6 +49,7 @@ const nextConfig: NextConfig = {
 
   // Performance optimizations
   // Enable cacheComponents for better performance (moved from experimental)
+  cacheComponents: true,
 
 
   // Enable experimental features for better performance
