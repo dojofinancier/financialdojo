@@ -2,7 +2,7 @@
   package = "@netlify/plugin-nextjs"
 
 [build]
-  command = "npx prisma generate --schema=./prisma/schema.prisma && npm run build"
+  command = "npm run build"
   # Note: publish directory is automatically handled by the Next.js adapter
 
 [build.environment]

@@ -7,7 +7,6 @@
   },
   "scripts": {
     "dev": "node scripts/dev.js",
-    "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "db:generate": "prisma generate",
@@ -15,7 +14,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
-    "db:populate-slugs": "tsx scripts/populate-slugs.ts"
+    "db:populate-slugs": "tsx scripts/populate-slugs.ts",
+    "build": "cross-env PRISMA_GENERATE_DATAPROXY=false prisma generate && next build"
   },
   "dependencies": {
     "@date-fns/tz": "^1.4.1",
