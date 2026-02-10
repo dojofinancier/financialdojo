@@ -2,15 +2,9 @@
   package = "@netlify/plugin-nextjs"
 
 [build]
-  command = "npm run build"
+  command = "npm run db:generate && npm run build"
   # Note: publish directory is automatically handled by the Next.js adapter
-
-[build.environment]
-  NODE_VERSION = "20"
-  TZ = "America/Toronto"
-  # Ensure Prisma can generate without database connection issues
-  PRISMA_GENERATE_DATAPROXY = "false"
-  PRISMA_SKIP_POSTINSTALL_GENERATE = "false"
+  # db:generate runs prisma generate which creates the Prisma Client from schema.prisma
 
 # Note: Next.js API routes work automatically with the adapter
 # No need for manual redirects - the adapter handles all routing

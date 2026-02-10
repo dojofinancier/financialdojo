@@ -15,7 +15,7 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
     "db:populate-slugs": "tsx scripts/populate-slugs.ts",
-    "build": "cross-env PRISMA_GENERATE_DATAPROXY=false prisma generate && next build"
+    "build": "next build"
   },
   "dependencies": {
     "@date-fns/tz": "^1.4.1",
