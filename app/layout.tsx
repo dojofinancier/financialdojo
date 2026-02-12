@@ -37,8 +37,8 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Le Dojo Financier",
-  description: "Plateforme d'apprentissage en finance",
+  title: "Finance Dojo",
+  description: "Financial Education Platform",
   icons: {
     icon: "/fav-fd.ico",
     shortcut: "/fav-fd.ico",
@@ -69,10 +69,6 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://js.stripe.com" />
         <link rel="dns-prefetch" href="https://m.stripe.com" />
         <link rel="dns-prefetch" href="https://m.stripe.network" />
-
-        {/* Preload critical resources for LCP improvement */}
-        <link rel="preload" href="/FinanceDojo-white.png" as="image" type="image/png" />
-        <link rel="preload" href="/FinanceDojo-black.png" as="image" type="image/png" />
 
         {/* Blocking script to prevent theme flash - runs before page renders */}
         <script

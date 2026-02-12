@@ -126,7 +126,7 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Aucune flashcard disponible</p>
+          <p className="text-muted-foreground">No flashcards available</p>
         </CardContent>
       </Card>
     );
@@ -209,15 +209,13 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
             onClick={handleFlip}
           >
             <div
-              className={`relative w-full h-full transition-transform duration-500 transform-style-preserve-3d ${
-                isFlipped ? "rotate-y-180" : ""
-              }`}
+              className={`relative w-full h-full transition-transform duration-500 transform-style-preserve-3d ${isFlipped ? "rotate-y-180" : ""
+                }`}
             >
               {/* Front */}
               <div
-                className={`absolute inset-0 backface-hidden ${
-                  isFlipped ? "opacity-0 pointer-events-none" : "opacity-100"
-                }`}
+                className={`absolute inset-0 backface-hidden ${isFlipped ? "opacity-0 pointer-events-none" : "opacity-100"
+                  }`}
               >
                 <Card className="h-full flex items-center justify-center border-0 shadow-none sm:border sm:shadow">
                   <CardContent className="text-center p-6">
@@ -231,9 +229,8 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
 
               {/* Back */}
               <div
-                className={`absolute inset-0 backface-hidden rotate-y-180 ${
-                  isFlipped ? "opacity-100" : "opacity-0 pointer-events-none"
-                }`}
+                className={`absolute inset-0 backface-hidden rotate-y-180 ${isFlipped ? "opacity-100" : "opacity-0 pointer-events-none"
+                  }`}
               >
                 <Card className="h-full flex items-center justify-center bg-primary text-primary-foreground border-0 shadow-none sm:border sm:shadow">
                   <CardContent className="text-center p-6">
@@ -247,58 +244,58 @@ export function FlashcardComponent({ courseId, contentItemId }: FlashcardCompone
             </div>
           </div>
 
-        {/* Controls */}
-        {isFlipped && (
-          <div className="flex gap-2 justify-center">
+          {/* Controls */}
+          {isFlipped && (
+            <div className="flex gap-2 justify-center">
+              <Button
+                variant="outline"
+                onClick={() => handleDifficulty("EASY")}
+                className="flex-1"
+              >
+                <ThumbsUp className="h-4 w-4 mr-2" />
+                Easy
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleDifficulty("DIFFICULT")}
+                className="flex-1"
+              >
+                <ThumbsDown className="h-4 w-4 mr-2" />
+                Hard
+              </Button>
+            </div>
+          )}
+
+          {/* Navigation */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-0 pt-4 border-t border-border/40 sm:border-border">
             <Button
               variant="outline"
-              onClick={() => handleDifficulty("EASY")}
-              className="flex-1"
+              onClick={handlePrevious}
+              disabled={currentIndex === 0}
+              className="flex-1 sm:flex-initial"
             >
-              <ThumbsUp className="h-4 w-4 mr-2" />
-              Easy
+              ← Previous
             </Button>
             <Button
               variant="outline"
-              onClick={() => handleDifficulty("DIFFICULT")}
-              className="flex-1"
+              onClick={handleReset}
+              size="sm"
+              className="flex-1 sm:flex-initial"
             >
-              <ThumbsDown className="h-4 w-4 mr-2" />
-              Hard
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reset
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleNext}
+              disabled={currentIndex === flashcards.length - 1}
+              className="flex-1 sm:flex-initial"
+            >
+              Next →
             </Button>
           </div>
-        )}
-
-        {/* Navigation */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-0 pt-4 border-t border-border/40 sm:border-border">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={currentIndex === 0}
-            className="flex-1 sm:flex-initial"
-          >
-            ← Previous
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={handleReset} 
-            size="sm"
-            className="flex-1 sm:flex-initial"
-          >
-            <RotateCcw className="h-4 w-4 mr-2" />
-            Reset
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleNext}
-            disabled={currentIndex === flashcards.length - 1}
-            className="flex-1 sm:flex-initial"
-          >
-            Next →
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
     </>
   );
 }

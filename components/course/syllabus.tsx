@@ -52,7 +52,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Chargement du plan de cours...</p>
+          <p className="text-muted-foreground">Loading course syllabus...</p>
         </CardContent>
       </Card>
     );
@@ -62,7 +62,7 @@ export function Syllabus({ courseId }: SyllabusProps) {
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Aucun module disponible pour ce cours.</p>
+          <p className="text-muted-foreground">No modules available for this course.</p>
         </CardContent>
       </Card>
     );

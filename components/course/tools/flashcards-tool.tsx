@@ -14,7 +14,7 @@ export function FlashcardsTool({ courseId, onBack }: FlashcardsToolProps) {
     <div className="space-y-4">
       <Button variant="ghost" onClick={onBack}>
         <ChevronLeft className="h-4 w-4 mr-2" />
-        Retour
+        Back
       </Button>
       <FlashcardComponent courseId={courseId} contentItemId="flashcards" />
     </div>

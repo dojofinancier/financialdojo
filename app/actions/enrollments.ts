@@ -13,7 +13,7 @@ import type { PaginatedResult } from "@/lib/utils/pagination";
  */
 async function getNextOrderNumber(): Promise<number> {
   const STARTING_ORDER_NUMBER = 5190;
-  
+
   // Get max order number from both Enrollment and CohortEnrollment tables
   const [maxEnrollmentOrder, maxCohortOrder] = await Promise.all([
     prisma.enrollment.findFirst({
@@ -102,7 +102,16 @@ export async function createEnrollmentAction(
     // to avoid duplicate webhook sends. This action is called from the webhook handler,
     // so we don't send the webhook here to prevent duplicates.
 
-    return { success: true, data: enrollment };
+    return {
+      success: true,
+      data: {
+        ...enrollment,
+        course: {
+          ...enrollment.course,
+          price: Number(enrollment.course.price),
+        }
+      }
+    };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
@@ -368,8 +377,8 @@ export async function getUserEnrollmentsAction(params: {
       course: {
         ...enrollment.course,
         price: enrollment.course.price ? Number(enrollment.course.price) : null,
-        appointmentHourlyRate: enrollment.course.appointmentHourlyRate 
-          ? Number(enrollment.course.appointmentHourlyRate) 
+        appointmentHourlyRate: enrollment.course.appointmentHourlyRate
+          ? Number(enrollment.course.appointmentHourlyRate)
           : null,
       },
     }));

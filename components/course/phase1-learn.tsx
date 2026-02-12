@@ -14,11 +14,12 @@ interface Phase1LearnProps {
   course: any;
   settings: any;
   onModuleSelect?: (moduleId: string) => void;
+  initialModuleProgress?: any[] | null;
 }
 
-export function Phase1Learn({ courseId, course, settings, onModuleSelect }: Phase1LearnProps) {
-  const [moduleProgress, setModuleProgress] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export function Phase1Learn({ courseId, course, settings, onModuleSelect, initialModuleProgress }: Phase1LearnProps) {
+  const [moduleProgress, setModuleProgress] = useState<any[]>(initialModuleProgress ?? []);
+  const [loading, setLoading] = useState(!initialModuleProgress);
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
 
   const loadProgress = useCallback(async () => {
@@ -75,7 +76,7 @@ export function Phase1Learn({ courseId, course, settings, onModuleSelect }: Phas
   }
 
   if (loading) {
-    return <div>Chargement...</div>;
+    return <div>Loading...</div>;
   }
 
   const learnedCount = moduleProgress.filter((p) => p.learnStatus === LearnStatus.LEARNED).length;
@@ -124,8 +125,8 @@ export function Phase1Learn({ courseId, course, settings, onModuleSelect }: Phas
                       {progress.learnStatus === LearnStatus.LEARNED
                         ? "Appris"
                         : progress.learnStatus === LearnStatus.IN_PROGRESS
-                        ? "In progress"
-                        : "Not started"}
+                          ? "In progress"
+                          : "Not started"}
                     </div>
                   </div>
                 </div>

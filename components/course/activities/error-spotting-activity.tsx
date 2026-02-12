@@ -44,14 +44,14 @@ export function ErrorSpottingActivity({
       </div>
       <Card>
         <CardContent className="pt-6">
-          <Label className="text-sm font-semibold mb-2 block">Solution avec erreur:</Label>
+          <Label className="text-sm font-semibold mb-2 block">Solution with error:</Label>
           <pre className="whitespace-pre-wrap text-sm bg-muted p-4 rounded-md font-mono">
             {content.incorrectSolution}
           </pre>
         </CardContent>
       </Card>
       <div className="space-y-2">
-        <Label>Identifiez l'erreur</Label>
+        <Label>Identify the error</Label>
         <div className="relative">
           <Textarea
             value={answer}

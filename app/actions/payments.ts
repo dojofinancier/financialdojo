@@ -1,12 +1,13 @@
 "use server";
 
 import { stripe } from "@/lib/stripe/server";
+import { sendPaymentSuccessWebhook } from "@/lib/webhooks/make";
 import { requireAuth } from "@/lib/auth/require-auth";
 import { prisma } from "@/lib/prisma";
 import { validateCouponAction, applyCouponDiscountAction } from "@/app/actions/coupons";
 import { logServerError } from "@/lib/utils/error-logging";
 import { createEnrollmentAction } from "@/app/actions/enrollments";
-import { sendPaymentSuccessWebhook } from "@/lib/webhooks/make";
+
 import { z } from "zod";
 
 const createPaymentIntentSchema = z.object({
@@ -401,13 +402,34 @@ export async function getPaymentHistoryAction(params: {
         };
       })
     );
-
     const hasMore = enrollments.length > limit;
     const items = hasMore ? paymentsWithDetails.slice(0, limit) : paymentsWithDetails;
-    const nextCursor = hasMore && items.length > 0 ? items[items.length - 1].enrollment.id : null;
+    const serializedItems = items.map((item) => ({
+      ...item,
+      enrollment: {
+        ...item.enrollment,
+        course: {
+          ...item.enrollment.course,
+          price: Number(item.enrollment.course.price),
+          appointmentHourlyRate: item.enrollment.course.appointmentHourlyRate
+            ? Number(item.enrollment.course.appointmentHourlyRate)
+            : null,
+        },
+        couponUsage: item.enrollment.couponUsage ? {
+          ...item.enrollment.couponUsage,
+          discountAmount: Number(item.enrollment.couponUsage.discountAmount),
+          coupon: {
+            ...item.enrollment.couponUsage.coupon,
+            discountValue: Number(item.enrollment.couponUsage.coupon.discountValue),
+          }
+        } : null,
+      }
+    }));
+
+    const nextCursor = hasMore && serializedItems.length > 0 ? serializedItems[serializedItems.length - 1].enrollment.id : null;
 
     return {
-      items,
+      items: serializedItems,
       nextCursor,
       hasMore,
     };
@@ -583,14 +605,14 @@ export async function createEnrollmentFromPaymentIntentAction(
           try {
             const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
             const metadata = paymentIntent.metadata || {};
-            
+
             const originalAmount = parseFloat(metadata.originalAmount || "0");
             const discountAmount = parseFloat(metadata.discountAmount || "0");
             const finalAmount = parseFloat(metadata.finalAmount || paymentIntent.amount.toString()) / 100;
             const couponCode = metadata.couponCode || null;
 
             const enrollment = enrollmentResult.data;
-            const userName = `${enrollment.user.firstName || ''} ${enrollment.user.lastName || ''}`.trim() || enrollment.user.email;
+            const userName = `${enrollment.user.firstName || ""} ${enrollment.user.lastName || ""}`.trim() || enrollment.user.email;
 
             sendPaymentSuccessWebhook({
               paymentIntentId: paymentIntentId,
@@ -685,14 +707,14 @@ export async function createEnrollmentFromPaymentIntentAction(
           try {
             const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
             const metadata = paymentIntent.metadata || {};
-            
+
             const originalAmount = parseFloat(metadata.originalAmount || "0");
             const discountAmount = parseFloat(metadata.discountAmount || "0");
             const finalAmount = parseFloat(metadata.finalAmount || paymentIntent.amount.toString()) / 100;
             const couponCode = metadata.couponCode || null;
 
             const enrollment = enrollmentResult.data;
-            const userName = `${enrollment.user.firstName || ''} ${enrollment.user.lastName || ''}`.trim() || enrollment.user.email;
+            const userName = `${enrollment.user.firstName || ""} ${enrollment.user.lastName || ""}`.trim() || enrollment.user.email;
 
             sendPaymentSuccessWebhook({
               paymentIntentId: paymentIntentId,
@@ -737,5 +759,4 @@ export async function createEnrollmentFromPaymentIntentAction(
     };
   }
 }
-
 

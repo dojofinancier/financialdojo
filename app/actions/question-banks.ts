@@ -1215,8 +1215,8 @@ export async function uploadQuestionBankJsonAction(
 
     // Process groups
     for (const [order, questions] of questionsByModule.entries()) {
-      const module = modulesByOrder.get(order);
-      if (!module) {
+      const moduleRecord = modulesByOrder.get(order);
+      if (!moduleRecord) {
         console.warn(`Module with order ${order} not found`);
         continue;
       }
@@ -1224,7 +1224,7 @@ export async function uploadQuestionBankJsonAction(
       // Find or create Question Bank for this module
       let questionBankId: string;
       const existingBank = await prisma.questionBank.findFirst({
-        where: { courseId, moduleId: module.id },
+        where: { courseId, moduleId: moduleRecord.id },
       });
 
       if (existingBank) {
@@ -1233,10 +1233,10 @@ export async function uploadQuestionBankJsonAction(
         const newBank = await prisma.questionBank.create({
           data: {
             courseId,
-            moduleId: module.id,
+            moduleId: moduleRecord.id,
             // Use order + 1 for user-facing display (e.g. Chapter 1 instead of Chapter 0)
-            title: `Chapter ${module.order + 1} Question Bank`,
-            description: `Imported from JSON for Module ${module.order + 1}`,
+            title: `Chapter ${moduleRecord.order + 1} Question Bank`,
+            description: `Imported from JSON for Module ${moduleRecord.order + 1}`,
           },
         });
         questionBankId = newBank.id;
@@ -1271,7 +1271,7 @@ export async function uploadQuestionBankJsonAction(
       );
 
       createdCount += created.length;
-      details.push({ module: module.title, count: created.length });
+      details.push({ module: moduleRecord.title, count: created.length });
     }
 
     return {

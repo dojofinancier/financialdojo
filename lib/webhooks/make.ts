@@ -39,7 +39,7 @@ function getUrlForType(type: MakeEventType): string | undefined {
     case 'instructor.response':
       return process.env.MAKE_WEBHOOK_MESSAGES_URL
     case 'cohort.enrollment.created':
-      return process.env.MAKE_WEBHOOK_COHORT_ENROLLMENTS_URL || process.env.MAKE_WEBHOOK_PAYMENTS_URL
+      return process.env.MAKE_WEBHOOK_COHORT_ENROLLMENTS_URL
     case 'cohort.message.created':
       return process.env.MAKE_WEBHOOK_COHORT_MESSAGES_URL || process.env.MAKE_WEBHOOK_MESSAGES_URL
     case 'ticket.created':
@@ -57,7 +57,7 @@ function getUrlForType(type: MakeEventType): string | undefined {
     case 'course.updated':
     case 'cohort.created':
     case 'cohort.updated':
-      return process.env.MAKE_WEBHOOK_ADMIN_URL || process.env.MAKE_WEBHOOK_PAYMENTS_URL
+      return process.env.MAKE_WEBHOOK_ADMIN_URL
     default:
       // Unknown event types should not trigger webhooks
       return undefined

@@ -15,7 +15,7 @@ export function ExamsTool({ courseId, onBack, onStartExam }: ExamsToolProps) {
     <div className="space-y-4">
       <Button variant="ghost" onClick={onBack}>
         <ChevronLeft className="h-4 w-4 mr-2" />
-        Retour
+        Back
       </Button>
       <ExamList courseId={courseId} onStartExam={onStartExam} />
     </div>

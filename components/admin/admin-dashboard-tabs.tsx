@@ -240,7 +240,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <BarChart3 className="h-4 w-4" />
-            Vue d'ensemble
+            Overview
           </Button>
           <Button
             variant={activeTab === "courses" ? "default" : "outline"}
@@ -248,7 +248,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <BookOpen className="h-4 w-4" />
-            Cours
+            Courses
           </Button>
           <Button
             variant={activeTab === "students" ? "default" : "outline"}
@@ -256,7 +256,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <Users className="h-4 w-4" />
-                      Students
+            Students
           </Button>
           <Button
             variant={activeTab === "orders" ? "default" : "outline"}
@@ -264,7 +264,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <ShoppingCart className="h-4 w-4" />
-            Commandes
+            Orders
           </Button>
           <Button
             variant={activeTab === "coupons" ? "default" : "outline"}
@@ -280,7 +280,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <Calendar className="h-4 w-4" />
-            Rendez-vous
+            Appointments
           </Button>
           <Button
             variant={activeTab === "messages" ? "default" : "outline"}
@@ -296,7 +296,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <Ticket className="h-4 w-4" />
-            Support tickets
+            Support
           </Button>
           <Button
             variant={activeTab === "cohorts" ? "default" : "outline"}
@@ -304,7 +304,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <GraduationCap className="h-4 w-4" />
-            Cohortes
+            Cohorts
           </Button>
           <Button
             variant={activeTab === "errors" ? "default" : "outline"}
@@ -312,7 +312,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <AlertCircle className="h-4 w-4" />
-            Logs d'erreur
+            Error logs
           </Button>
           <Button
             variant={activeTab === "analytics" ? "default" : "outline"}
@@ -328,7 +328,7 @@ export function AdminDashboardTabs({ defaultTab = "overview", children }: AdminD
             className="flex items-center gap-2"
           >
             <Settings className="h-4 w-4" />
-            Compte
+            Account
           </Button>
         </div>
       </div>

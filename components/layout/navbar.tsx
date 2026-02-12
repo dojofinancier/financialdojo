@@ -57,7 +57,7 @@ export async function Navbar() {
               <Link href={getDashboardUrl(serializedUser.role)} prefetch={true}>
                 <Button variant="ghost" size="sm" className="p-2 sm:px-3">
                   <LayoutDashboard className="h-5 w-5 sm:mr-2" />
-                  <span className="hidden sm:inline">Tableau de bord</span>
+                  <span className="hidden sm:inline">Dashboard</span>
                 </Button>
               </Link>
               <UserMenu user={serializedUser} />

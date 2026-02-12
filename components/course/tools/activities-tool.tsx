@@ -14,7 +14,7 @@ export function ActivitiesTool({ courseId, onBack }: ActivitiesToolProps) {
     <div className="space-y-4">
       <Button variant="ghost" onClick={onBack}>
         <ChevronLeft className="h-4 w-4 mr-2" />
-        Retour
+        Back
       </Button>
       <LearningActivitiesList courseId={courseId} />
     </div>

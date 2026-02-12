@@ -45,7 +45,7 @@ export async function initializeCourseSettingsAction(
       return { success: false, error: "Course not found" };
     }
 
-    if (course.category.name !== "Professionnels") {
+    if (!["Professionnels", "Professional", "Professionals"].includes(course.category.name)) {
       return { success: false, error: "This system is only available for professional courses" };
     }
 
@@ -110,8 +110,8 @@ export async function initializeCourseSettingsAction(
     const planResult = await generateStudyPlanAction(courseId);
 
     revalidatePath(`/learn/${courseId}`);
-    return { 
-      success: true, 
+    return {
+      success: true,
       data: settings,
       isFirstCreation, // Return flag to indicate if this is first creation
       warnings: planResult.warnings || [],
@@ -243,9 +243,9 @@ export async function generateStudyPlanAction(courseId: string) {
     );
     const totalReviewBlocks = reviewBlocks.length;
     const flashcardBlocks = Math.ceil(totalReviewBlocks / 2);
-    
+
     let reviewBlockIndex = 0;
-    
+
     const planEntries = result.blocks
       // Create entries for all blocks, including off-platform items (lecture rapide/lente)
       // so they can be checked off
@@ -256,7 +256,7 @@ export async function generateStudyPlanAction(courseId: string) {
           // First half are flashcards, second half are activities
           const isFlashcard = reviewBlockIndex < flashcardBlocks;
           reviewBlockIndex++;
-          
+
           // Store empty array with a marker - we'll use the presence of the array
           // to indicate it's a review session (even if empty)
           targetFlashcardIds = isFlashcard ? ([] as any) : ([] as any);
@@ -269,7 +269,7 @@ export async function generateStudyPlanAction(courseId: string) {
         const dateKey = block.date.toISOString().split('T')[0];
         const entryKey = `${dateKey}-${block.taskType}-${block.targetModuleId || ''}-${block.targetContentItemId || ''}-${block.targetQuizId || ''}`;
         const existingEntry = existingEntriesMap.get(entryKey);
-        
+
         // Preserve status if entry was completed, otherwise set to PENDING
         const status = existingEntry && existingEntry.status === PlanEntryStatus.COMPLETED
           ? PlanEntryStatus.COMPLETED
@@ -338,7 +338,7 @@ export async function generateStudyPlanAction(courseId: string) {
     }
 
     revalidatePath(`/learn/${courseId}`);
-    
+
     // Return warnings and additional info
     const response: any = {
       success: true,
@@ -570,54 +570,54 @@ function formatTodaysPlanSections(
   // Separate Phase 1 and Phase 2 tasks from the selected tasks
   const phase1Tasks = tasks.filter(t => t.taskType === TaskType.LEARN);
   const phase2TasksInSelected = tasks.filter(t => t.taskType === TaskType.REVIEW);
-  
+
   // Track which tasks have been used
   const usedTaskIds = new Set<string>();
-  
+
   // Helper to mark task as used
   const markTaskUsed = (task: typeof tasks[0] | null) => {
     if (task) {
       usedTaskIds.add(task.id);
     }
   };
-  
+
   // Helper to get available tasks (not yet used)
   const getAvailable = (taskList: typeof tasks) => taskList.filter(t => !usedTaskIds.has(t.id));
 
   // Target distribution: 1 block, 2 blocks, 1 block, 2 blocks (total 6 blocks)
   // sessionCourteSupplementaire (3rd section) must be Phase 2
-  
+
   // IMPORTANT: Reserve a Phase 2 task for extra short session FIRST
   // This ensures it always gets a Phase 2 task even if Phase 2 tasks are used in earlier sections
   let reservedPhase2Task: typeof tasks[0] | null = null;
-  
+
   // Try to reserve from selected tasks first
   const availablePhase2 = getAvailable(phase2TasksInSelected);
   if (availablePhase2.length > 0) {
     reservedPhase2Task = availablePhase2.find(t => t.estimatedBlocks === 1) ||
-                         availablePhase2.find(t => t.estimatedBlocks <= 1) ||
-                         availablePhase2[0];
+      availablePhase2.find(t => t.estimatedBlocks <= 1) ||
+      availablePhase2[0];
   } else if (phase2Tasks && phase2Tasks.length > 0) {
     // Fallback: use from the full phase2Tasks parameter (all Phase 2 tasks from the week)
     // Find one that's in our selected tasks or use any available one
     reservedPhase2Task = phase2Tasks.find(t => tasks.some(st => st.id === t.id) && !usedTaskIds.has(t.id) && t.estimatedBlocks === 1) ||
-                         phase2Tasks.find(t => tasks.some(st => st.id === t.id) && !usedTaskIds.has(t.id) && t.estimatedBlocks <= 1) ||
-                         phase2Tasks.find(t => tasks.some(st => st.id === t.id) && !usedTaskIds.has(t.id)) ||
-                         phase2Tasks.find(t => !usedTaskIds.has(t.id) && t.estimatedBlocks === 1) ||
-                         phase2Tasks.find(t => !usedTaskIds.has(t.id)) ||
-                         phase2Tasks[0];
+      phase2Tasks.find(t => tasks.some(st => st.id === t.id) && !usedTaskIds.has(t.id) && t.estimatedBlocks <= 1) ||
+      phase2Tasks.find(t => tasks.some(st => st.id === t.id) && !usedTaskIds.has(t.id)) ||
+      phase2Tasks.find(t => !usedTaskIds.has(t.id) && t.estimatedBlocks === 1) ||
+      phase2Tasks.find(t => !usedTaskIds.has(t.id)) ||
+      phase2Tasks[0];
   }
-  
+
   if (reservedPhase2Task) {
     markTaskUsed(reservedPhase2Task);
   }
-  
+
   // Session courte (1 block) - prefer Phase 1, avoid using reserved Phase 2 task
   const availablePhase1 = getAvailable(phase1Tasks);
-  const sessionCourteTask = availablePhase1.find(t => t.estimatedBlocks === 1) || 
-                            availablePhase1.find(t => t.estimatedBlocks <= 1) ||
-                            getAvailable(phase2TasksInSelected).find(t => t.id !== reservedPhase2Task?.id && t.estimatedBlocks === 1) ||
-                            getAvailable(tasks).find(t => t.id !== reservedPhase2Task?.id && t.estimatedBlocks === 1);
+  const sessionCourteTask = availablePhase1.find(t => t.estimatedBlocks === 1) ||
+    availablePhase1.find(t => t.estimatedBlocks <= 1) ||
+    getAvailable(phase2TasksInSelected).find(t => t.id !== reservedPhase2Task?.id && t.estimatedBlocks === 1) ||
+    getAvailable(tasks).find(t => t.id !== reservedPhase2Task?.id && t.estimatedBlocks === 1);
   if (sessionCourteTask) {
     sections.sessionCourte.push(sessionCourteTask);
     markTaskUsed(sessionCourteTask);
@@ -625,9 +625,9 @@ function formatTodaysPlanSections(
 
   // Session longue (2 blocks) - prefer Phase 1, avoid using reserved Phase 2 task
   const sessionLongueTask = availablePhase1.find(t => t.estimatedBlocks === 2) ||
-                            availablePhase1.find(t => t.estimatedBlocks <= 2) ||
-                            getAvailable(phase2TasksInSelected).find(t => t.id !== reservedPhase2Task?.id && t.estimatedBlocks === 2) ||
-                            getAvailable(tasks).find(t => t.id !== reservedPhase2Task?.id && t.estimatedBlocks === 2);
+    availablePhase1.find(t => t.estimatedBlocks <= 2) ||
+    getAvailable(phase2TasksInSelected).find(t => t.id !== reservedPhase2Task?.id && t.estimatedBlocks === 2) ||
+    getAvailable(tasks).find(t => t.id !== reservedPhase2Task?.id && t.estimatedBlocks === 2);
   if (sessionLongueTask) {
     sections.sessionLongue.push(sessionLongueTask);
     markTaskUsed(sessionLongueTask);
@@ -638,8 +638,8 @@ function formatTodaysPlanSections(
     sections.sessionCourteSupplementaire.push(reservedPhase2Task);
   } else {
     // Fallback if no Phase 2 task was reserved (shouldn't happen, but handle gracefully)
-    const fallbackPhase2 = getAvailable(phase2TasksInSelected)[0] || 
-                           (phase2Tasks && phase2Tasks.length > 0 ? phase2Tasks.find(t => !usedTaskIds.has(t.id)) : null);
+    const fallbackPhase2 = getAvailable(phase2TasksInSelected)[0] ||
+      (phase2Tasks && phase2Tasks.length > 0 ? phase2Tasks.find(t => !usedTaskIds.has(t.id)) : null);
     if (fallbackPhase2) {
       sections.sessionCourteSupplementaire.push(fallbackPhase2);
       markTaskUsed(fallbackPhase2);
@@ -662,7 +662,7 @@ function formatTodaysPlanSections(
     sessionCourteSupplementaire: sections.sessionCourteSupplementaire.length,
     sessionLongueSupplementaire: sections.sessionLongueSupplementaire.length,
   });
-  
+
   // Ensure extra short session always has a task (even if it's not Phase 2 as fallback)
   if (sections.sessionCourteSupplementaire.length === 0 && phase2Tasks && phase2Tasks.length > 0) {
     console.warn(`[formatTodaysPlanSections] No Phase 2 task found for additional short session, using first available Phase 2 task`);
@@ -682,7 +682,7 @@ function formatTodaysPlanSections(
 export async function getWeeklyStudyPlanAction(courseId: string) {
   try {
     const user = await requireAuth();
-    
+
     // Get user settings to find plan start date and exam date
     const settings = await prisma.userCourseSettings.findUnique({
       where: {
@@ -786,8 +786,8 @@ export async function getWeeklyStudyPlanAction(courseId: string) {
     const { aggregateWeeklyTasks } = await import("@/lib/utils/weekly-plan-aggregator");
     const weeks = await aggregateWeeklyTasks(planEntries, modules, week1StartDate, examDate, phase1EndWeek);
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       data: weeks,
       week1StartDate,
       examDate,
@@ -804,11 +804,11 @@ export async function getWeeklyStudyPlanAction(courseId: string) {
 export async function getStudyPlanAction(courseId: string, startDate?: Date, endDate?: Date) {
   try {
     const user = await requireAuth();
-    
+
     // Default to current week if no dates provided
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     if (!startDate) {
       startDate = new Date(today);
       // Start from Monday of current week
@@ -819,7 +819,7 @@ export async function getStudyPlanAction(courseId: string, startDate?: Date, end
       startDate = new Date(startDate);
       startDate.setHours(0, 0, 0, 0);
     }
-    
+
     if (!endDate) {
       endDate = new Date(startDate);
       endDate.setDate(endDate.getDate() + 6); // 7 days (current week)
@@ -958,7 +958,7 @@ export async function checkPhase3AccessAction(courseId: string) {
 export async function checkBehindScheduleAction(courseId: string) {
   try {
     const user = await requireAuth();
-    
+
     const settings = await prisma.userCourseSettings.findUnique({
       where: {
         userId_courseId: {
@@ -975,7 +975,7 @@ export async function checkBehindScheduleAction(courseId: string) {
     // Get today's plan
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const todayEntries = await prisma.dailyPlanEntry.findMany({
       where: {
         userId: user.id,
@@ -995,7 +995,7 @@ export async function checkBehindScheduleAction(courseId: string) {
     // Get content inventory
     const { getCourseContentInventory } = await import("@/lib/utils/course-content-inventory");
     const inventory = await getCourseContentInventory(courseId);
-    
+
     // Calculate blocks available vs required
     const { getWeeksUntilExam, getBlocksPerWeek } = await import("@/lib/utils/study-plan");
     const examDate = new Date(settings.examDate);
@@ -1032,19 +1032,19 @@ export async function checkBehindScheduleAction(courseId: string) {
 
     // Check if many pending tasks and exam is soon
     const daysUntilExam = Math.ceil((examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    
+
     if (pendingToday > 2 && daysUntilExam < weeksUntilExam * 7 * 0.5) {
       const suggestions: string[] = [];
-      
+
       if (unlearnedModules > 0) {
         suggestions.push(
           `Mark ${unlearnedModules} module(s) as completed if you have already finished them`
         );
       }
-      
+
       suggestions.push("Increase your study hours per week");
       suggestions.push("Change the scheduled exam date if necessary");
-      
+
       return {
         success: true,
         isBehind: true,

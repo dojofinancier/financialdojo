@@ -37,13 +37,13 @@ type Course = {
   }>;
 };
 
-type NavigationItem = 
-  | "home" 
-  | "learn" 
-  | "review" 
-  | "practice" 
-  | "syllabus" 
-  | "tools" 
+type NavigationItem =
+  | "home"
+  | "learn"
+  | "review"
+  | "practice"
+  | "syllabus"
+  | "tools"
   | "progress"
   | "question"
   | `module-${string}`;
@@ -123,73 +123,73 @@ export function CourseSidebar({
               "hover:[&_svg]:scale-110"
             )}
             onClick={() => handleClick("home")}
-            title={!showExpanded ? "Plan du jour" : undefined}
+            title={!showExpanded ? "Today's Plan" : undefined}
           >
             <Home className={cn("h-4 w-4 transition-transform duration-200", showExpanded && "mr-2")} />
-            {showExpanded && "Plan du jour"}
+            {showExpanded && "Today's Plan"}
           </Button>
 
           {/* Plan settings */}
           {showExpanded && (
-          <div className="mb-2">
-            <StudyPlanSettings
-              courseId={course.id}
-              courseTitle={course.title}
-              recommendedStudyHoursMin={course.recommendedStudyHoursMin}
-              recommendedStudyHoursMax={course.recommendedStudyHoursMax}
-              onUpdate={onSettingsUpdate}
-            />
-          </div>
-        )}
+            <div className="mb-2">
+              <StudyPlanSettings
+                courseId={course.id}
+                courseTitle={course.title}
+                recommendedStudyHoursMin={course.recommendedStudyHoursMin}
+                recommendedStudyHoursMax={course.recommendedStudyHoursMax}
+                onUpdate={onSettingsUpdate}
+              />
+            </div>
+          )}
 
-        <Separator className="my-3" />
+          <Separator className="my-3" />
 
-          {/* Phase 1 - Apprendre (Collapsible) */}
+          {/* Phase 1 - Learn (Collapsible) */}
           {showExpanded && mounted && (
-          <Collapsible open={isPhase1Open} onOpenChange={setIsPhase1Open}>
-            <CollapsibleTrigger asChild>
-              <Button
-                variant={activeItem === "learn" || activeItem.startsWith("module-") ? "default" : "ghost"}
-                className={cn(
-                  "w-full justify-start transition-all duration-200",
-                  (activeItem === "learn" || activeItem.startsWith("module-")) && "bg-primary text-primary-foreground",
-                  "hover:[&_svg]:scale-110"
-                )}
-              >
-                <BookOpen className="mr-2 h-4 w-4 transition-transform duration-200" />
-                Phase 1 - Apprendre
-                {isPhase1Open ? (
-                  <ChevronDown className="ml-auto h-4 w-4 transition-transform duration-200" />
-                ) : (
-                  <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200" />
-                )}
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="transition-all duration-200">
-              <div className="ml-6 mt-1 space-y-1">
-                {sortedModules.map((module) => {
-                  const moduleItem = `module-${module.id}` as NavigationItem;
-                  const displayTitle = module.shortTitle || module.title;
-                  return (
-                    <Button
-                      key={module.id}
-                      variant={activeItem === moduleItem ? "secondary" : "ghost"}
-                      className={cn(
-                        "w-full justify-start text-sm truncate transition-all duration-200",
-                        activeItem === moduleItem && "bg-secondary text-secondary-foreground"
-                      )}
-                      onClick={() => handleClick(moduleItem)}
-                      title={module.title} // Show full title on hover
-                    >
-                      {displayTitle}
-                    </Button>
-                  );
-                })}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        )}
-        
+            <Collapsible open={isPhase1Open} onOpenChange={setIsPhase1Open}>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant={activeItem === "learn" || activeItem.startsWith("module-") ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start transition-all duration-200",
+                    (activeItem === "learn" || activeItem.startsWith("module-")) && "bg-primary text-primary-foreground",
+                    "hover:[&_svg]:scale-110"
+                  )}
+                >
+                  <BookOpen className="mr-2 h-4 w-4 transition-transform duration-200" />
+                  Phase 1 - Learn
+                  {isPhase1Open ? (
+                    <ChevronDown className="ml-auto h-4 w-4 transition-transform duration-200" />
+                  ) : (
+                    <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200" />
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="transition-all duration-200">
+                <div className="ml-6 mt-1 space-y-1">
+                  {sortedModules.map((module) => {
+                    const moduleItem = `module-${module.id}` as NavigationItem;
+                    const displayTitle = module.shortTitle || module.title;
+                    return (
+                      <Button
+                        key={module.id}
+                        variant={activeItem === moduleItem ? "secondary" : "ghost"}
+                        className={cn(
+                          "w-full justify-start text-sm truncate transition-all duration-200",
+                          activeItem === moduleItem && "bg-secondary text-secondary-foreground"
+                        )}
+                        onClick={() => handleClick(moduleItem)}
+                        title={module.title} // Show full title on hover
+                      >
+                        {displayTitle}
+                      </Button>
+                    );
+                  })}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
+
           {/* Collapsed Phase 1 Icon */}
           {!showExpanded && (
             <Button
@@ -222,7 +222,7 @@ export function CourseSidebar({
             {showExpanded && "Phase 2 - Review"}
           </Button>
 
-          {/* Phase 3 - Pratiquer */}
+          {/* Phase 3 - Practice */}
           <Button
             variant={activeItem === "practice" ? "default" : "ghost"}
             className={cn(
@@ -232,10 +232,10 @@ export function CourseSidebar({
               "hover:[&_svg]:scale-110"
             )}
             onClick={() => handleClick("practice")}
-            title={!showExpanded ? "Phase 3 - Pratiquer" : undefined}
+            title={!showExpanded ? "Phase 3 - Practice" : undefined}
           >
             <Target className={cn("h-4 w-4 transition-transform duration-200", showExpanded && "mr-2")} />
-            {showExpanded && "Phase 3 - Pratiquer"}
+            {showExpanded && "Phase 3 - Practice"}
           </Button>
         </nav>
 
@@ -257,7 +257,7 @@ export function CourseSidebar({
             {showExpanded && "Syllabus"}
           </Button>
 
-          {/* Outils d'apprentissage */}
+          {/* Learning Tools */}
           <Button
             variant={activeItem === "tools" ? "default" : "ghost"}
             className={cn(
@@ -267,10 +267,10 @@ export function CourseSidebar({
               "hover:[&_svg]:scale-110"
             )}
             onClick={() => handleClick("tools")}
-            title={!showExpanded ? "Outils d'apprentissage" : undefined}
+            title={!showExpanded ? "Learning Tools" : undefined}
           >
             <Wrench className={cn("h-4 w-4 transition-transform duration-200", showExpanded && "mr-2")} />
-            {showExpanded && "Outils d'apprentissage"}
+            {showExpanded && "Learning Tools"}
           </Button>
 
           {/* Progress and stats */}
@@ -291,7 +291,7 @@ export function CourseSidebar({
 
           {showExpanded && <Separator className="my-3 -mx-4" />}
 
-          {/* Poser une question */}
+          {/* Ask a question */}
           <Button
             variant={activeItem === "question" ? "default" : "outline"}
             className={cn(
@@ -301,10 +301,10 @@ export function CourseSidebar({
               "hover:[&_svg]:scale-110"
             )}
             onClick={() => handleClick("question")}
-            title={!showExpanded ? "Poser une question" : undefined}
+            title={!showExpanded ? "Ask a question" : undefined}
           >
             <MessageCircle className={cn("h-4 w-4 transition-transform duration-200", showExpanded && "mr-2")} />
-            {showExpanded && "Poser une question"}
+            {showExpanded && "Ask a question"}
           </Button>
         </div>
       </div>
@@ -324,7 +324,7 @@ export function CourseSidebar({
       {/* Mobile Sidebar Sheet */}
       <Sheet open={mobileMenuOpen} onOpenChange={onMobileMenuChange}>
         <SheetContent side="left" className="w-[85vw] sm:w-[400px] p-0 overflow-y-auto">
-          <SheetTitle className="sr-only">Navigation du cours</SheetTitle>
+          <SheetTitle className="sr-only">Course navigation</SheetTitle>
           <div className="h-full">
             <SidebarContent />
           </div>

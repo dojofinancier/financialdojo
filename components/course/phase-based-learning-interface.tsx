@@ -101,6 +101,8 @@ interface PhaseBasedLearningInterfaceProps {
   course: Course;
   initialSettings?: any; // Settings passed from server to avoid client-side fetch
   initialTodaysPlan?: TodaysPlanData | null;
+  /** Phase 1 module progress from server to avoid client-side fetch and speed up "learn" tab */
+  initialModuleProgress?: any[] | null;
 }
 
 
@@ -111,17 +113,18 @@ export function PhaseBasedLearningInterface({
   course,
   initialSettings,
   initialTodaysPlan,
+  initialModuleProgress,
 }: PhaseBasedLearningInterfaceProps) {
   const router = useRouter();
   const [activePhase, setActivePhase] = useState<Phase>("orientation");
   const [activeItem, setActiveItem] = useState<NavigationItem>("home");
-  
+
   // Use React Query for course settings - automatic caching and deduplication
   const { data: settings, isLoading: settingsLoading, error: settingsError } = useCourseSettings(
     course.id,
     initialSettings
   );
-  
+
   // Cache for loaded phase data to prevent redundant requests
   const [loadedPhases, setLoadedPhases] = useState<Set<string>>(new Set());
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
@@ -166,7 +169,7 @@ export function PhaseBasedLearningInterface({
   }, [settings, settingsLoading, settingsError]);
 
   const [studyPlanRefreshKey, setStudyPlanRefreshKey] = useState(0);
-  
+
   const handleSettingsUpdated = () => {
     router.refresh();
     setStudyPlanRefreshKey((prev) => prev + 1);
@@ -257,7 +260,7 @@ export function PhaseBasedLearningInterface({
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
           <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Chargement...</p>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -343,7 +346,7 @@ export function PhaseBasedLearningInterface({
             variant="ghost"
             size="icon"
             onClick={() => setMobileMenuOpen(true)}
-            aria-label="Ouvrir le menu"
+            aria-label="Open menu"
           >
             <Menu className="h-6 w-6" />
           </Button>
@@ -389,6 +392,7 @@ export function PhaseBasedLearningInterface({
                       courseId={course.id}
                       course={course}
                       settings={settings}
+                      initialModuleProgress={initialModuleProgress ?? undefined}
                       onModuleSelect={(moduleId) => {
                         setSelectedModuleId(moduleId);
                         setActiveItem(`module-${moduleId}` as NavigationItem);

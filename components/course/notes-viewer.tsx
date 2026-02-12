@@ -102,7 +102,7 @@ export function NotesViewer({ contentItemId, coursePdfUrl, modulePdfUrl }: Notes
               />
             ) : (
               <p className="text-muted-foreground text-center py-8">
-                Aucune note de l'instructeur disponible
+                No instructor notes available
               </p>
             )}
           </TabsContent>

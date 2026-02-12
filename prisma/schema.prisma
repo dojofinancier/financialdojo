@@ -82,20 +82,20 @@ model Course {
   recommendedStudyHoursMin  Int?                      @default(6) @map("recommended_study_hours_min")
   shortDescription          String?                   @map("short_description")
   aboutText                 String?                   @map("about_text")
-  aboutAccordionItems       Json?                     @default("[]") @map("about_accordion_items")
   features                  Json?                     @default("[]")
   testimonials              Json?                     @default("[]")
   heroImages                Json?                     @default("[]") @map("hero_images")
   orientationVideoUrl       String?                   @map("orientation_video_url")
   displayOrder              Int?                      @map("display_order")
   orientationText           String?                   @map("orientation_text")
-  pdfUrl                    String?                   @map("pdf_url")
-  statsVideos               Int?                      @map("stats_videos")
-  statsQuestions            Int?                      @map("stats_questions")
   statsFlashcards           Int?                      @map("stats_flashcards")
-  statsVideosLabel          String?                   @map("stats_videos_label")
-  statsQuestionsLabel       String?                   @map("stats_questions_label")
+  statsQuestions            Int?                      @map("stats_questions")
+  statsVideos               Int?                      @map("stats_videos")
   statsFlashcardsLabel      String?                   @map("stats_flashcards_label")
+  statsQuestionsLabel       String?                   @map("stats_questions_label")
+  statsVideosLabel          String?                   @map("stats_videos_label")
+  pdfUrl                    String?                   @map("pdf_url")
+  aboutAccordionItems       Json?                     @default("[]") @map("about_accordion_items")
   analytics                 Analytics[]
   appointmentAvailabilities AppointmentAvailability[]
   appointments              Appointment[]
@@ -432,6 +432,16 @@ model Note {
   @@index([courseId])
   @@index([userId, courseId])
   @@map("notes")
+}
+
+// Idempotency for Stripe webhooks: one row per processed event.id (Stripe can send the same event twice)
+model StripeWebhookEvent {
+  id        String   @id @default(uuid())
+  eventId   String   @unique @map("event_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([eventId])
+  @@map("stripe_webhook_events")
 }
 
 model Enrollment {
@@ -1059,34 +1069,6 @@ model CohortFAQ {
   @@map("cohort_faqs")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model chunk_elements {
-  chunk_id             String               @db.Uuid
-  element_id           String
-  course               String
-  created_at           DateTime?            @default(now()) @db.Timestamptz(6)
-  discovered_via       String?
-  relevance_score      Float?
-  primary_store_chunks primary_store_chunks @relation(fields: [chunk_id], references: [chunk_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([chunk_id, element_id, course])
-  @@unique([chunk_id, element_id], map: "chunk_elements_unique_link")
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model csc_chunks {
-  chunk_id    String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  course      String?                @default("csc")
-  source_file String?
-  chunk_text  String?
-  embedding   Unsupported("vector")?
-  token_count Int?
-  metadata    Json?                  @default("{}")
-  created_at  DateTime?              @default(now()) @db.Timestamptz(6)
-
-  @@index([embedding], map: "idx_csc_chunks_embedding")
-}
-
 model exam_questions {
   id              String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   code            String?                @unique @db.VarChar(50)
@@ -1103,22 +1085,21 @@ model exam_questions {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model note_sections {
-  section_id          String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  element_id          String
-  note_id             String?                @db.Uuid
-  section_header      String
-  section_content     String
-  section_index       Int
-  section_level       Int
-  section_path        String?
-  embedding           Unsupported("vector")?
-  token_count         Int?
-  metadata            Json?                  @default("{}")
-  created_at          DateTime?              @default(now()) @db.Timestamptz(6)
-  updated_at          DateTime?              @default(now()) @db.Timestamptz(6)
-  primary_store_notes primary_store_notes?   @relation(fields: [note_id], references: [note_id], onDelete: Cascade, onUpdate: NoAction)
+  section_id      String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  element_id      String
+  note_id         String?                @db.Uuid
+  section_header  String
+  section_content String
+  section_index   Int
+  section_level   Int
+  section_path    String?
+  embedding       Unsupported("vector")?
+  token_count     Int?
+  metadata        Json?                  @default("{}")
+  created_at      DateTime?              @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime?              @default(now()) @db.Timestamptz(6)
 
-  @@unique([element_id, section_index])
+  @@unique([note_id, section_index], map: "note_sections_note_id_section_index_unique")
   @@index([element_id], map: "idx_note_sections_element_id")
   @@index([embedding], map: "idx_note_sections_embedding")
   @@index([note_id], map: "idx_note_sections_note_id")
@@ -1126,47 +1107,20 @@ model note_sections {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model primary_store_chunks {
-  chunk_id          String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  chunk_text        String?
-  chunk_index       Int?
-  embedding         Unsupported("vector")?
-  token_count       Int?
-  section_path      String?
-  document_id       String?
-  content_hash      String?
-  source_type       String?
-  http_status       Int?
-  retrieved_at      DateTime?              @db.Timestamptz(6)
-  version           Int?                   @default(1)
-  source_id         String?
-  canonical_url     String?
-  final_url         String?
-  title             String?
-  tier              String?
-  reliability_score Float?
-  language          String?
-  status            String?
-  course            String?
-  metadata          Json?                  @default("{}")
-  created_at        DateTime?              @default(now()) @db.Timestamptz(6)
-  chunk_elements    chunk_elements[]
-
-  @@index([embedding], map: "idx_primary_store_chunks_embedding")
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model primary_store_notes {
-  note_id       String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  element_id    String?         @unique
-  content_md    String
-  metadata      Json?
-  version       Int?            @default(1)
-  status        String?         @default("draft")
-  created_at    DateTime?       @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime?       @default(now()) @db.Timestamptz(6)
-  note_sections note_sections[]
+  note_id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  element_id      String
+  course          String
+  title           String
+  content_md      String
+  version         Int?      @default(1)
+  status          String?   @default("raw")
+  cognitive_level String?
+  metadata        Json?     @default("{}")
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime? @default(now()) @db.Timestamptz(6)
 
+  @@unique([element_id, version])
   @@index([element_id], map: "idx_primary_store_notes_element_id")
 }
 

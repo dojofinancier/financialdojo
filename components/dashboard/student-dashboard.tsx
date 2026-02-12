@@ -62,7 +62,7 @@ interface StudentDashboardProps {
 
 const TabLoading = () => (
   <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-    Chargement...
+    Loading...
   </div>
 );
 
@@ -85,10 +85,10 @@ export function StudentDashboard({
     <div className="container mx-auto px-4 py-6 md:py-8 max-w-7xl">
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
-          Tableau de bord
+          Your Dashboard
         </h1>
         <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-          Bienvenue, {user.firstName || user.lastName ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : user.email}
+          Welcome, {user.firstName || user.lastName ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : user.email}
         </p>
       </div>
 
@@ -103,25 +103,25 @@ export function StudentDashboard({
                   {activeTab === "courses" && (
                     <>
                       <BookOpen className="h-4 w-4" />
-                      Formations
+                      Courses
                     </>
                   )}
                   {activeTab === "cohorts" && (
                     <>
                       <GraduationCap className="h-4 w-4" />
-                      Cohortes
+                      Cohorts
                     </>
                   )}
                   {activeTab === "profile" && (
                     <>
                       <User className="h-4 w-4" />
-                      Mon profil
+                      My profile
                     </>
                   )}
                   {activeTab === "appointments" && (
                     <>
                       <Calendar className="h-4 w-4" />
-                      Rendez-vous
+                      Coaching
                     </>
                   )}
                   {activeTab === "support" && (
@@ -140,28 +140,28 @@ export function StudentDashboard({
                 className={activeTab === "courses" ? "bg-accent" : ""}
               >
                 <BookOpen className="h-4 w-4 mr-2" />
-                Formations
+                Courses
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setActiveTab("cohorts")}
                 className={activeTab === "cohorts" ? "bg-accent" : ""}
               >
                 <GraduationCap className="h-4 w-4 mr-2" />
-                Cohortes
+                Cohorts
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setActiveTab("profile")}
                 className={activeTab === "profile" ? "bg-accent" : ""}
               >
                 <User className="h-4 w-4 mr-2" />
-                Mon profil
+                My profile
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setActiveTab("appointments")}
                 className={activeTab === "appointments" ? "bg-accent" : ""}
               >
                 <Calendar className="h-4 w-4 mr-2" />
-                Rendez-vous
+                Coaching
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setActiveTab("support")}
@@ -182,7 +182,7 @@ export function StudentDashboard({
             className="flex items-center gap-2"
           >
             <BookOpen className="h-4 w-4" />
-            Formations
+            Courses
           </Button>
           <Button
             variant={activeTab === "cohorts" ? "default" : "outline"}
@@ -190,7 +190,7 @@ export function StudentDashboard({
             className="flex items-center gap-2"
           >
             <GraduationCap className="h-4 w-4" />
-            Cohortes
+            Cohorts
           </Button>
           <Button
             variant={activeTab === "profile" ? "default" : "outline"}
@@ -198,7 +198,7 @@ export function StudentDashboard({
             className="flex items-center gap-2"
           >
             <User className="h-4 w-4" />
-            Mon profil
+            My profile
           </Button>
           <Button
             variant={activeTab === "appointments" ? "default" : "outline"}
@@ -206,7 +206,7 @@ export function StudentDashboard({
             className="flex items-center gap-2"
           >
             <Calendar className="h-4 w-4" />
-            Rendez-vous
+            Coaching
           </Button>
           <Button
             variant={activeTab === "support" ? "default" : "outline"}

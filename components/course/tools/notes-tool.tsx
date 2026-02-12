@@ -40,11 +40,11 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
     try {
       setLoading(true);
       const courseModules = await getCourseModulesAction(courseId);
-      
+
       // Batch load content for all modules with full note data
       const moduleIds = courseModules.map((m) => m.id);
       const batchResult = await getBatchModuleContentAction(moduleIds, true); // includeFullData = true
-      
+
       const modulesWithNotes: ModuleData[] = [];
 
       if (batchResult.success && batchResult.data) {
@@ -69,7 +69,7 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
       modulesWithNotes.sort((a, b) => a.order - b.order);
 
       setModules(modulesWithNotes);
-      
+
       // Auto-select first module if available
       if (modulesWithNotes.length > 0) {
         setSelectedModuleId(modulesWithNotes[0].id);
@@ -117,7 +117,7 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
   };
 
   const canGoPrevious = currentNoteIndex > 0 || currentModuleIndex > 0;
-  const canGoNext = 
+  const canGoNext =
     (selectedModule && currentNoteIndex < selectedModule.notes.length - 1) ||
     currentModuleIndex < modules.length - 1;
 
@@ -126,7 +126,7 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
 
     const title = `${selectedModule.title} - Note ${currentNoteIndex + 1}`;
     const html = `<!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>${title}</title>
@@ -207,7 +207,7 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
         </Button>
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Aucune note disponible pour ce cours.</p>
+            <p className="text-muted-foreground">No notes available for this course.</p>
           </CardContent>
         </Card>
       </div>
@@ -219,7 +219,7 @@ export function NotesTool({ courseId, onBack }: NotesToolProps) {
       <div className="flex items-center justify-between">
         <Button variant="ghost" onClick={onBack}>
           <ChevronLeft className="h-4 w-4 mr-2" />
-          Retour
+          Back
         </Button>
         <div className="flex items-center gap-3">
           <Select value={selectedModuleId || ""} onValueChange={setSelectedModuleId}>

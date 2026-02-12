@@ -5,8 +5,7 @@ import { requireAdmin, requireAuth } from "@/lib/auth/require-auth";
 import { z } from "zod";
 import { logServerError } from "@/lib/utils/error-logging";
 import type { PaginatedResult } from "@/lib/utils/pagination";
-import { sendCohortEnrollmentWebhook } from "@/lib/webhooks/make";
-import { stripe } from "@/lib/stripe/server";
+
 
 /**
  * Get the next order number for enrollments
@@ -15,7 +14,7 @@ import { stripe } from "@/lib/stripe/server";
  */
 async function getNextOrderNumber(): Promise<number> {
   const STARTING_ORDER_NUMBER = 5190;
-  
+
   // Get max order number from both Enrollment and CohortEnrollment tables
   const [maxEnrollmentOrder, maxCohortOrder] = await Promise.all([
     prisma.enrollment.findFirst({
@@ -150,53 +149,8 @@ export async function createCohortEnrollmentAction(
       },
     });
 
-    // Send webhooks to make.com (non-blocking, fire-and-forget)
-    // This ensures webhooks fire for both new users (checkout) and logged-in users
-    // Don't await - let them run in the background without blocking the response
-    
-    // Send cohort enrollment webhook
-    // Fetch amount from payment intent if available, otherwise use cohort price
-    (async () => {
-      let amount: number | null = null;
-      
-      if (enrollment.paymentIntentId) {
-        try {
-          const paymentIntent = await stripe.paymentIntents.retrieve(enrollment.paymentIntentId);
-          const metadata = paymentIntent.metadata || {};
-          // Try to get finalAmount from metadata (in dollars), otherwise convert from cents
-          const finalAmount = parseFloat(metadata.finalAmount || "0");
-          amount = finalAmount || paymentIntent.amount / 100; // Convert cents to dollars if needed
-        } catch (error) {
-          // If payment intent retrieval fails, fall back to cohort price
-          console.warn("Failed to fetch payment intent for cohort enrollment webhook:", error);
-        }
-      }
-      
-      // Fallback to cohort price if no payment intent amount
-      if (amount === null || amount === 0) {
-        amount = Number(enrollment.cohort.price);
-      }
-
-      sendCohortEnrollmentWebhook({
-        enrollmentId: enrollment.id,
-        userId: enrollment.userId,
-        userEmail: enrollment.user.email,
-        userName: `${enrollment.user.firstName || ''} ${enrollment.user.lastName || ''}`.trim() || enrollment.user.email,
-        cohortId: enrollment.cohortId,
-        cohortTitle: enrollment.cohort.title,
-        paymentIntentId: enrollment.paymentIntentId || "",
-        amount: amount,
-        expiresAt: enrollment.expiresAt.toISOString(),
-        createdAt: enrollment.purchaseDate.toISOString(),
-      }).catch((error) => {
-        // Silently fail - webhook is not critical for UX
-        console.error("Failed to send cohort enrollment webhook:", error);
-      });
-    })();
-
     // Note: Payment webhook is sent from the Stripe webhook handler (app/api/webhooks/stripe/route.ts)
-    // to avoid duplicate webhook sends. This action is called from the webhook handler,
-    // so we don't send the webhook here to prevent duplicates.
+    // to avoid duplicate webhook sends.
 
     // Convert Decimal to number for serialization
     return {
@@ -205,9 +159,9 @@ export async function createCohortEnrollmentAction(
         ...enrollment,
         cohort: enrollment.cohort
           ? {
-              ...enrollment.cohort,
-              price: Number(enrollment.cohort.price),
-            }
+            ...enrollment.cohort,
+            price: Number(enrollment.cohort.price),
+          }
           : null,
       },
     };

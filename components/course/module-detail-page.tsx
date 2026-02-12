@@ -71,14 +71,14 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
   const videosEnabled = componentVisibility?.videos !== false; // Default to true if not set
   const quizzesEnabled = componentVisibility?.quizzes !== false; // Default to true if not set
   const notesEnabled = componentVisibility?.notes !== false; // Default to true if not set
-  
+
   const [loading, setLoading] = useState(true);
   const [module, setModule] = useState<any>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [progress, setProgress] = useState<any>(null);
-  
+
   // Determine initial tab based on what's enabled and available
   const getInitialTab = (): "videos" | "notes" | "quiz" => {
     // Only show videos tab if enabled AND there are videos
@@ -87,7 +87,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     if (quizzesEnabled) return "quiz";
     return "notes"; // Fallback
   };
-  
+
   const [activeTab, setActiveTab] = useState<"videos" | "notes" | "quiz">(getInitialTab());
   const [quizAnswers, setQuizAnswers] = useState<Record<string, Record<string, string>>>({});
   const [quizSubmitted, setQuizSubmitted] = useState<Record<string, boolean>>({});
@@ -383,13 +383,13 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
       // If it's just the URL, return it
       return vimeoUrl.replace(/&amp;/g, '&');
     }
-    
+
     // Otherwise, extract the video ID and create a basic embed URL
     const vimeoIdMatch = vimeoUrl.match(/vimeo\.com\/(\d+)/);
     if (vimeoIdMatch) {
       return `https://player.vimeo.com/video/${vimeoIdMatch[1]}?autoplay=0&title=0&byline=0&portrait=0`;
     }
-    
+
     return vimeoUrl;
   };
 
@@ -413,7 +413,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     return (
       <Card>
         <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Module not found</p>
+          <p className="text-muted-foreground">Module not found</p>
         </CardContent>
       </Card>
     );
@@ -442,8 +442,8 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
               Completed
             </Badge>
           ) : (
-            <Button 
-              onClick={handleMarkAsComplete} 
+            <Button
+              onClick={handleMarkAsComplete}
               disabled={markingComplete}
               className="w-full sm:w-auto"
             >
@@ -502,12 +502,12 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                           allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                           referrerPolicy="strict-origin-when-cross-origin"
                           style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                           title={`Video ${videoItem.order}`}
+                          title={`Video ${videoItem.order}`}
                         />
                       </div>
                       {videoItem.video.transcript && (
                         <div className="mt-4 p-4 bg-muted rounded-lg">
-                          <div className="text-sm font-semibold mb-2">Transcription:</div>
+                          <div className="text-sm font-semibold mb-2">Transcript:</div>
                           <div className="text-sm whitespace-pre-wrap">{videoItem.video.transcript}</div>
                         </div>
                       )}
@@ -543,12 +543,12 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                     </Button>
                   </CardHeader>
                   <CardContent>
-                    <div 
+                    <div
                       className="note-content [&>p]:mb-4 [&>p:last-child]:mb-0 [&>ul]:my-4 [&>ol]:my-4 [&>li]:mb-2 [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mt-6 [&>h1]:mb-4 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:mt-6 [&>h2]:mb-4 [&>h3]:text-lg [&>h3]:font-semibold [&>h3]:mt-4 [&>h3]:mb-3 [&>strong]:font-semibold [&>em]:italic [&>a]:text-primary [&>a]:underline [&>a:hover]:no-underline [&>ul]:list-disc [&>ul]:pl-6 [&>ol]:list-decimal [&>ol]:pl-6 [&>li]:ml-4"
                       style={{
                         lineHeight: '1.75',
                       }}
-                      dangerouslySetInnerHTML={{ __html: noteItem.note.content }} 
+                      dangerouslySetInnerHTML={{ __html: noteItem.note.content }}
                     />
                   </CardContent>
                 </Card>
@@ -661,7 +661,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                                 disabled={isSubmitted}
                                 className="flex-1 sm:flex-initial"
                               >
-                                Suivant
+                                Next
                                 <ChevronRight className="h-4 w-4 ml-2" />
                               </Button>
                             ) : (
@@ -729,11 +729,10 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                                 return (
                                   <div
                                     key={attempt.id}
-                                    className={`flex items-center justify-between p-3 rounded-lg border ${
-                                      isPassed
+                                    className={`flex items-center justify-between p-3 rounded-lg border ${isPassed
                                         ? 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800'
                                         : 'bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800'
-                                    }`}
+                                      }`}
                                   >
                                     <div className="flex items-center gap-3">
                                       {isPassed ? (

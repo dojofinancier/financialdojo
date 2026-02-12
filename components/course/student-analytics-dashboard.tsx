@@ -155,11 +155,11 @@ export function StudentAnalyticsDashboard({ courseId }: StudentAnalyticsDashboar
           <TabsList className="inline-flex w-auto sm:grid sm:w-full sm:grid-cols-5 h-auto gap-1 sm:gap-0">
             <TabsTrigger value="overview" className="flex items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-1.5 text-xs sm:text-sm px-3 sm:px-3 whitespace-nowrap flex-shrink-0">
               <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span>Vue d'ensemble</span>
+              <span>Overview</span>
             </TabsTrigger>
             <TabsTrigger value="progress" className="flex items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-1.5 text-xs sm:text-sm px-3 sm:px-3 whitespace-nowrap flex-shrink-0">
               <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span>Progression</span>
+              <span>Progress</span>
             </TabsTrigger>
             <TabsTrigger value="performance" className="flex items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-1.5 text-xs sm:text-sm px-3 sm:px-3 whitespace-nowrap flex-shrink-0">
               <Target className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
@@ -167,11 +167,11 @@ export function StudentAnalyticsDashboard({ courseId }: StudentAnalyticsDashboar
             </TabsTrigger>
             <TabsTrigger value="habits" className="flex items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-1.5 text-xs sm:text-sm px-3 sm:px-3 whitespace-nowrap flex-shrink-0">
               <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span>Habitudes</span>
+              <span>Habits</span>
             </TabsTrigger>
             <TabsTrigger value="goals" className="flex items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-1.5 text-xs sm:text-sm px-3 sm:px-3 whitespace-nowrap flex-shrink-0">
               <Award className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span>Objectifs</span>
+              <span>Goals</span>
             </TabsTrigger>
           </TabsList>
         </div>
@@ -195,7 +195,7 @@ export function StudentAnalyticsDashboard({ courseId }: StudentAnalyticsDashboar
             <ProgressSection data={progressData} />
           ) : (
             <div className="flex items-center justify-center py-12">
-              <p className="text-muted-foreground">Chargement...</p>
+              <p className="text-muted-foreground">Loading...</p>
             </div>
           )}
         </TabsContent>
@@ -209,7 +209,7 @@ export function StudentAnalyticsDashboard({ courseId }: StudentAnalyticsDashboar
             <PerformanceSection data={performanceData} />
           ) : (
             <div className="flex items-center justify-center py-12">
-              <p className="text-muted-foreground">Chargement...</p>
+              <p className="text-muted-foreground">Loading...</p>
             </div>
           )}
         </TabsContent>
@@ -223,7 +223,7 @@ export function StudentAnalyticsDashboard({ courseId }: StudentAnalyticsDashboar
             <StudyHabitsSection data={studyHabitsData} />
           ) : (
             <div className="flex items-center justify-center py-12">
-              <p className="text-muted-foreground">Chargement...</p>
+              <p className="text-muted-foreground">Loading...</p>
             </div>
           )}
         </TabsContent>
@@ -237,7 +237,7 @@ export function StudentAnalyticsDashboard({ courseId }: StudentAnalyticsDashboar
             <GoalsSection data={goalsData} />
           ) : (
             <div className="flex items-center justify-center py-12">
-              <p className="text-muted-foreground">Chargement...</p>
+              <p className="text-muted-foreground">Loading...</p>
             </div>
           )}
         </TabsContent>

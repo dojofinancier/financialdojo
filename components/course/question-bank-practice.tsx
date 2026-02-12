@@ -235,7 +235,7 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Aucune question disponible pour le moment.</p>
+          <p className="text-muted-foreground">No questions available at the moment.</p>
         </CardContent>
       </Card>
     );
@@ -245,12 +245,12 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Question introuvable.</p>
+          <p className="text-muted-foreground">Question not found.</p>
         </CardContent>
       </Card>
     );
   }
-  
+
   // Count how many questions have been answered (submitted)
   const answeredCount = Object.values(questionStates).filter(
     (state) => state.submitted
@@ -270,7 +270,7 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
                 </div>
               </div>
               <div className="rounded-lg border border-border/60 bg-muted/30 p-3 sm:border-0 sm:bg-transparent sm:p-0">
-                <div className="text-sm text-muted-foreground">Score cumulatif</div>
+                <div className="text-sm text-muted-foreground">Cumulative score</div>
                 <div className="text-lg font-semibold">{stats.score}%</div>
               </div>
               <div className="rounded-lg border border-border/60 bg-muted/30 p-3 sm:border-0 sm:bg-transparent sm:p-0">
@@ -313,8 +313,8 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
                 typeof rawOptionValue === "string"
                   ? rawOptionValue
                   : rawOptionValue == null
-                  ? ""
-                  : String(rawOptionValue);
+                    ? ""
+                    : String(rawOptionValue);
               const isSelected = currentState.answer === key;
               const isCorrectOption = key === currentQuestion.correctAnswer;
               const showFeedback = currentState.submitted && (isSelected || isCorrectOption);
@@ -324,27 +324,25 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
                   <RadioGroupItem
                     value={key}
                     id={key}
-                    className={`self-center ${
-                      showFeedback
+                    className={`self-center ${showFeedback
                         ? isCorrectOption
                           ? "border-green-500"
                           : isSelected && !isCorrectOption
-                          ? "border-red-500"
-                          : ""
+                            ? "border-red-500"
+                            : ""
                         : ""
-                    }`}
+                      }`}
                   />
                   <Label
                     htmlFor={key}
-                    className={`flex-1 cursor-pointer leading-relaxed text-base ${
-                      showFeedback
+                    className={`flex-1 cursor-pointer leading-relaxed text-base ${showFeedback
                         ? isCorrectOption
                           ? "text-green-600 font-semibold"
                           : isSelected && !isCorrectOption
-                          ? "text-red-600"
-                          : ""
+                            ? "text-red-600"
+                            : ""
                         : ""
-                    }`}
+                      }`}
                   >
                     <span className="font-medium">{key}:</span> {optionValue}
                     {showFeedback && isCorrectOption && (
@@ -361,7 +359,7 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
 
           {currentState.submitted && currentQuestion.explanation && (
             <div className="p-4 bg-muted rounded-lg">
-              <div className="text-sm font-semibold mb-2">Explication:</div>
+              <div className="text-sm font-semibold mb-2">Explanation:</div>
               <div className="text-sm whitespace-pre-wrap">{currentQuestion.explanation}</div>
             </div>
           )}
@@ -381,15 +379,15 @@ export function QuestionBankPractice({ courseId }: QuestionBankPracticeProps) {
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Envoi...
+                    Submitting...
                   </>
                 ) : (
-                  "Soumettre"
+                  "Submit"
                 )}
               </Button>
             ) : (
               <Button onClick={handleNext} disabled={currentIndex === questions.length - 1}>
-                Suivant
+                Next
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             )}

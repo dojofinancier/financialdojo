@@ -351,11 +351,9 @@ export function PaymentForm({
         color: "hsl(var(--foreground))",
         fontFamily: "inherit",
         fontWeight: "400",
-        lineHeight: "1.5",
         letterSpacing: "0",
         "::placeholder": {
           color: "hsl(var(--muted-foreground))",
-          opacity: 1,
         },
       },
       invalid: {

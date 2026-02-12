@@ -49,6 +49,20 @@ export async function POST(request: NextRequest) {
     if (event.type === "payment_intent.succeeded") {
       const paymentIntent = event.data.object as any;
 
+      // Idempotency layer 1: Stripe can send the same event twice (~1s apart). Record event.id;
+      // duplicate delivery will hit unique constraint and we return 200 without processing.
+      try {
+        await prisma.stripeWebhookEvent.create({
+          data: { eventId: event.id },
+        });
+      } catch (eventErr: unknown) {
+        const code = (eventErr as { code?: string })?.code;
+        if (code === "P2002") {
+          return NextResponse.json({ received: true });
+        }
+        throw eventErr;
+      }
+
       const {
         userId,
         courseId,
@@ -194,29 +208,32 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Send webhook to Make.com (non-blocking, fire-and-forget)
-      // Don't await - let it run in the background without blocking the response
-      // This ensures webhook fires for both new users (checkout) and logged-in users
+      // Send webhook to Make.com (awaited to ensure delivery in serverless environments)
       // Note: We only send webhook here, not from enrollment actions, to avoid duplicates
-      (async () => {
-        try {
-          // Fetch user details
-          const user = await prisma.user.findUnique({
-            where: { id: userId },
-            select: {
-              email: true,
-              firstName: true,
-              lastName: true,
-              phone: true,
-            },
+      try {
+        if (!process.env.MAKE_WEBHOOK_PAYMENTS_URL) {
+          await logServerError({
+            errorMessage: "MAKE_WEBHOOK_PAYMENTS_URL is not set",
+            severity: "MEDIUM",
+            userId,
           });
+        }
 
-          if (!user) {
-            console.error("User not found for webhook:", userId);
-            return;
-          }
+        // Fetch user details
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+          },
+        });
 
-          const userName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email;
+        if (!user) {
+          console.error("User not found for webhook:", userId);
+        } else {
+          const userName = `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email;
           const userEmail = user.email;
           const userPhone = user.phone;
 
@@ -240,7 +257,7 @@ export async function POST(request: NextRequest) {
 
           // Get enrollment to retrieve order_number
           let orderNumber: number | null = null;
-          
+
           if (isCohortPayment) {
             const cohortEnrollment = await prisma.cohortEnrollment.findUnique({
               where: { id: enrollmentId },
@@ -255,7 +272,7 @@ export async function POST(request: NextRequest) {
             orderNumber = enrollment?.orderNumber || null;
           }
 
-          sendPaymentSuccessWebhook({
+          await sendPaymentSuccessWebhook({
             paymentIntentId: paymentIntent.id,
             userId,
             courseId: isCohortPayment ? undefined : courseId!,
@@ -264,24 +281,25 @@ export async function POST(request: NextRequest) {
             cohortTitle: cohortTitle,
             enrollmentId,
             orderNumber,
-            amount: parseFloat(finalAmount || "0"), // Amount in dollars
-            originalAmount: parseFloat(originalAmount || "0"), // Amount in dollars
-            discountAmount: parseFloat(discountAmount || "0"), // Amount in dollars
+            amount: parseFloat(finalAmount || "0"),
+            originalAmount: parseFloat(originalAmount || "0"),
+            discountAmount: parseFloat(discountAmount || "0"),
             couponCode: couponCode || null,
             type: paymentType as "course" | "cohort",
             userName: userName,
             userEmail: userEmail,
             userPhone: userPhone,
             timestamp: new Date().toISOString(),
-          }).catch((error) => {
-            // Silently fail - webhook is not critical for UX
-            console.error("Failed to send payment webhook:", error);
           });
-        } catch (error) {
-          // Silently fail - webhook is not critical for UX
-          console.error("Failed to fetch user/course/cohort data for webhook:", error);
         }
-      })();
+      } catch (error) {
+        await logServerError({
+          errorMessage: `Failed to send payment webhook: ${error instanceof Error ? error.message : "Unknown error"}`,
+          stackTrace: error instanceof Error ? error.stack : undefined,
+          severity: "MEDIUM",
+          userId,
+        });
+      }
 
       return NextResponse.json({ received: true });
     }
@@ -301,4 +319,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

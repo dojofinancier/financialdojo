@@ -18,7 +18,7 @@ export function ProfileTab({ user }: ProfileTabProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold mb-2">Mon profil</h2>
+        <h2 className="text-2xl font-bold mb-2">My profile</h2>
         <p className="text-muted-foreground">
           Manage your personal information and account security
         </p>

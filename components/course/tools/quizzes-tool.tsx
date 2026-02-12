@@ -111,7 +111,7 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
       const result = await submitQuizAttemptAction({ quizId: quiz.quiz.id, answers });
       if (result.success) {
         setQuizSubmitted((prev) => ({ ...prev, [quizId]: true }));
-        toast.success(`Quiz soumis! Score: ${result.data?.score || 0}%`);
+        toast.success(`Quiz submitted! Score: ${result.data?.score || 0}%`);
       } else {
         toast.error(result.error || "Error during submission");
       }
@@ -127,7 +127,7 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">Chargement des quiz...</p>
+          <p className="text-muted-foreground">Loading quizzes...</p>
         </CardContent>
       </Card>
     );
@@ -142,7 +142,7 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
         </Button>
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Aucun quiz disponible pour ce cours.</p>
+            <p className="text-muted-foreground">No quizzes available for this course.</p>
           </CardContent>
         </Card>
       </div>
@@ -162,7 +162,7 @@ export function QuizzesTool({ courseId, onBack }: QuizzesToolProps) {
       <div className="flex items-center justify-between">
         <Button variant="ghost" onClick={onBack}>
           <ChevronLeft className="h-4 w-4 mr-2" />
-          Retour
+          Back
         </Button>
         <div className="text-sm text-muted-foreground">
           Quiz {currentIndex + 1} / {quizzes.length}
