@@ -160,6 +160,14 @@ export function BrutalistNavbarClient({ user, variant = "transparent", dashboard
                 Sign in
               </Link>
             )}
+            <a
+              href="https://dojofinancier.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white font-black uppercase text-sm tracking-wider px-3 py-2 border-4 border-white hover:bg-white hover:text-black transition-colors"
+            >
+              FR
+            </a>
           </div>
         </div>
       </nav>

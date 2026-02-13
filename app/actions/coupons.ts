@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth/require-auth";
 import { z } from "zod";
 import { logServerError } from "@/lib/utils/error-logging";
 import type { PaginatedResult } from "@/lib/utils/pagination";
-import { getEasternNow, toEasternTime } from "@/lib/utils/timezone";
+import { getEasternNow, getEasternStartOfDay, getEasternEndOfDay } from "@/lib/utils/timezone";
 
 const couponSchema = z.object({
   code: z.string().min(1, "Code is required"),
@@ -57,8 +57,8 @@ export async function createCouponAction(
     });
 
     // Convert Decimal to number for Client Components
-    return { 
-      success: true, 
+    return {
+      success: true,
       data: {
         ...coupon,
         discountValue: Number(coupon.discountValue),
@@ -115,18 +115,17 @@ export async function validateCouponAction(
 
     // Check validity dates (using Eastern Time)
     const now = getEasternNow();
-    const easternNow = toEasternTime(now);
-    const easternValidFrom = toEasternTime(coupon.validFrom);
-    const easternValidUntil = toEasternTime(coupon.validUntil);
-    
-    if (easternNow < easternValidFrom) {
+    const validFromStart = getEasternStartOfDay(coupon.validFrom);
+    const validUntilEnd = getEasternEndOfDay(coupon.validUntil);
+
+    if (now < validFromStart) {
       return {
         success: false,
         error: "This coupon is not yet valid",
       };
     }
 
-    if (easternNow > easternValidUntil) {
+    if (now > validUntilEnd) {
       return {
         success: false,
         error: "This coupon has expired",
@@ -364,8 +363,8 @@ export async function updateCouponAction(
     });
 
     // Convert Decimal to number for Client Components
-    return { 
-      success: true, 
+    return {
+      success: true,
       data: {
         ...coupon,
         discountValue: Number(coupon.discountValue),
@@ -482,8 +481,8 @@ export async function getCouponUsageStatsAction(couponId: string) {
         },
         totalUsage: coupon.couponUsage.length,
         totalDiscount,
-        averageDiscount: coupon.couponUsage.length > 0 
-          ? totalDiscount / coupon.couponUsage.length 
+        averageDiscount: coupon.couponUsage.length > 0
+          ? totalDiscount / coupon.couponUsage.length
           : 0,
       },
     };

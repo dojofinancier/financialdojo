@@ -182,7 +182,6 @@ export async function validateCartCouponAction(
   courseId: string
 ): Promise<CartActionResult> {
   try {
-    await requireAuth();
 
     const validation = await validateCouponAction(couponCode, courseId);
 
