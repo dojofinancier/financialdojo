@@ -7,8 +7,10 @@ import { prisma } from "@/lib/prisma";
 import { validateCouponAction, applyCouponDiscountAction } from "@/app/actions/coupons";
 import { logServerError } from "@/lib/utils/error-logging";
 import { createEnrollmentAction } from "@/app/actions/enrollments";
-
+import { format } from "date-fns";
+import { enCA } from "date-fns/locale";
 import { z } from "zod";
+import type { ReceiptData } from "@/components/receipt/types";
 
 const createPaymentIntentSchema = z.object({
   courseId: z.string().min(1),
@@ -507,6 +509,169 @@ export async function downloadReceiptAction(paymentIntentId: string) {
     return {
       success: false,
       error: "Error downloading the receipt",
+    };
+  }
+}
+
+/**
+ * Get receipt data for PDF generation (course or cohort).
+ * Verifies the payment belongs to the current user.
+ */
+export async function getReceiptDataAction(
+  paymentIntentId: string
+): Promise<{ success: boolean; error?: string; data?: ReceiptData }> {
+  try {
+    const user = await requireAuth();
+
+    const currency = "CAD";
+    const currencyDisplay = currency;
+    const formatAmount = (amount: number) =>
+      new Intl.NumberFormat("en-CA", {
+        style: "currency",
+        currency,
+      }).format(amount);
+
+    // Try course enrollment first
+    const enrollment = await prisma.enrollment.findFirst({
+      where: {
+        userId: user.id,
+        paymentIntentId,
+      },
+      include: {
+        course: true,
+        couponUsage: { include: { coupon: true } },
+      },
+    });
+
+    if (enrollment) {
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        paymentIntentId,
+        { expand: ["latest_charge"] }
+      );
+      const charge =
+        typeof paymentIntent.latest_charge === "object" &&
+          paymentIntent.latest_charge !== null
+          ? paymentIntent.latest_charge
+          : null;
+      const paymentMethodDetails = charge?.payment_method_details as
+        | { card?: { brand?: string; last4?: string } }
+        | undefined;
+      const card = paymentMethodDetails?.card;
+      const paymentMethod =
+        card?.brand && card?.last4
+          ? `Card (${card.brand} •••• ${card.last4})`
+          : "Card";
+
+      let status: ReceiptData["status"] = "Paid";
+      if (paymentIntent.status !== "succeeded") {
+        status = "Failed";
+      } else if (charge && "amount_refunded" in charge && charge.amount_refunded > 0) {
+        status = "Refunded";
+      }
+
+      const purchaseDate = enrollment.purchaseDate;
+      const amount = paymentIntent.amount / 100;
+      let discount: string | null = null;
+      if (enrollment.couponUsage?.discountAmount != null) {
+        const discountAmount = Number(enrollment.couponUsage.discountAmount);
+        discount = `-${formatAmount(discountAmount)}`;
+      }
+
+      const data: ReceiptData = {
+        productName: enrollment.course.title,
+        price: amount,
+        currency: currencyDisplay,
+        userName:
+          `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.email,
+        userEmail: user.email,
+        orderNumber: enrollment.orderNumber ?? null,
+        paymentMethod,
+        dateShort: format(purchaseDate, "MM/dd/yyyy"),
+        dateLong: format(purchaseDate, "MMMM d, yyyy", { locale: enCA }),
+        tps: null,
+        tvq: null,
+        tpsNumber: null,
+        tvqNumber: null,
+        discount,
+        status,
+      };
+
+      return { success: true, data };
+    }
+
+    // Try cohort enrollment
+    const cohortEnrollment = await prisma.cohortEnrollment.findFirst({
+      where: {
+        userId: user.id,
+        paymentIntentId,
+      },
+      include: { cohort: true },
+    });
+
+    if (cohortEnrollment) {
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        paymentIntentId,
+        { expand: ["latest_charge"] }
+      );
+      const charge =
+        typeof paymentIntent.latest_charge === "object" &&
+          paymentIntent.latest_charge !== null
+          ? paymentIntent.latest_charge
+          : null;
+      const paymentMethodDetails = charge?.payment_method_details as
+        | { card?: { brand?: string; last4?: string } }
+        | undefined;
+      const card = paymentMethodDetails?.card;
+      const paymentMethod =
+        card?.brand && card?.last4
+          ? `Card (${card.brand} •••• ${card.last4})`
+          : "Card";
+
+      let status: ReceiptData["status"] = "Paid";
+      if (paymentIntent.status !== "succeeded") {
+        status = "Failed";
+      } else if (charge && "amount_refunded" in charge && charge.amount_refunded > 0) {
+        status = "Refunded";
+      }
+
+      const purchaseDate = cohortEnrollment.purchaseDate;
+      const amount = paymentIntent.amount / 100;
+
+      const data: ReceiptData = {
+        productName: cohortEnrollment.cohort.title,
+        price: amount,
+        currency: currencyDisplay,
+        userName:
+          `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.email,
+        userEmail: user.email,
+        orderNumber: cohortEnrollment.orderNumber ?? null,
+        paymentMethod,
+        dateShort: format(purchaseDate, "MM/dd/yyyy"),
+        dateLong: format(purchaseDate, "MMMM d, yyyy", { locale: enCA }),
+        tps: null,
+        tvq: null,
+        tpsNumber: null,
+        tvqNumber: null,
+        discount: null,
+        status,
+      };
+
+      return { success: true, data };
+    }
+
+    return {
+      success: false,
+      error: "Payment not found",
+    };
+  } catch (error) {
+    await logServerError({
+      errorMessage: `Failed to get receipt data: ${error instanceof Error ? error.message : "Unknown error"}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "MEDIUM",
+    });
+    return {
+      success: false,
+      error: "Error retrieving receipt",
     };
   }
 }

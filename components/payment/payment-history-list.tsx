@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { getPaymentHistoryAction } from "@/app/actions/payments";
-import { downloadReceiptAction } from "@/app/actions/payments";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, Download, CheckCircle, XCircle, RefreshCw } from "lucide-react";
@@ -45,42 +44,34 @@ export function PaymentHistoryList({ initialPayments }: PaymentHistoryListProps)
     setDownloadingReceipts((prev) => new Set(prev).add(paymentIntentId));
 
     try {
-      const result = await downloadReceiptAction(paymentIntentId);
+      const res = await fetch(`/api/receipt/${paymentIntentId}`, {
+        method: "GET",
+        credentials: "same-origin",
+      });
 
-      if (result.success && result.data) {
-        // Generate PDF receipt (simplified - in production, use a PDF library)
-        const receipt = result.data;
-        const receiptText = `
- PAYMENT RECEIPT
-================
-
-Date: ${format(receipt.date, "d MMMM yyyy", { locale: enCA })}
-Transaction ID: ${receipt.paymentIntentId}
-
-Course: ${receipt.course.title}
-Amount: ${receipt.amount.toFixed(2)} ${receipt.currency}
-
-Customer: ${receipt.customer.name}
-Email: ${receipt.customer.email}
-
-Status: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
-        `.trim();
-
-        // Create blob and download
-        const blob = new Blob([receiptText], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `receipt-${receipt.paymentIntentId}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        toast.success("Receipt downloaded");
-      } else {
-        toast.error(result.error || "Error during download");
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(
+          (err as { error?: string }).error ?? "Error downloading the receipt"
+        );
+        return;
       }
+
+      const blob = await res.blob();
+      const contentDisposition = res.headers.get("Content-Disposition");
+      const match = contentDisposition?.match(/filename="?([^";]+)"?/);
+      const filename = match?.[1] ?? `receipt-${paymentIntentId}.pdf`;
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast.success("Receipt downloaded");
     } catch (error) {
       toast.error("Error downloading the receipt");
     } finally {
@@ -182,7 +173,7 @@ Status: ${receipt.status === "succeeded" ? "Paid" : receipt.status}
                   ) : (
                     <Download className="h-4 w-4 mr-2" />
                   )}
-                  Download receipt
+                  Download receipt (PDF)
                 </Button>
               </div>
             </CardContent>
