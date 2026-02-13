@@ -4,6 +4,7 @@
  */
 
 import { DailyPlanEntry, TaskType } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 export interface WeeklyPlanTask {
   type: "LEARN" | "REVIEW" | "PRACTICE";
@@ -43,12 +44,12 @@ export async function aggregateWeeklyTasks(
 
   dailyEntries.forEach((entry) => {
     const weekNumber = getWeekNumber(entry.date, week1StartDate);
-    
+
     // Filter out Phase 1 entries after Phase 1 end week
     if (phase1EndWeek && entry.taskType === TaskType.LEARN && weekNumber > phase1EndWeek) {
       return; // Skip Phase 1 entries after Phase 1 end week
     }
-    
+
     if (!weeksMap.has(weekNumber)) {
       weeksMap.set(weekNumber, []);
     }
@@ -118,12 +119,11 @@ async function aggregateLearnTasks(
     }
     moduleMap.get(entry.targetModuleId)!.push(entry);
   });
-  
+
   console.log(`[aggregateLearnTasks] Grouped into ${moduleMap.size} modules`);
 
   // Get Prisma client to check content types
-  const { PrismaClient } = await import("@prisma/client");
-  const prisma = new PrismaClient();
+
 
   // Process each module
   for (const [moduleId, moduleEntries] of moduleMap.entries()) {
@@ -137,14 +137,14 @@ async function aggregateLearnTasks(
     // Videos: entries with targetContentItemId, estimatedBlocks === 2, no targetQuizId
     // Notes: entries with targetContentItemId, estimatedBlocks === 1, no targetQuizId
     // Quizzes: entries with targetQuizId
-    
+
     const hasVideo = moduleEntries.some(
       (e) => e.targetContentItemId && e.estimatedBlocks === 2 && !e.targetQuizId
     );
     const hasNotes = moduleEntries.some(
       (e) => e.targetContentItemId && e.estimatedBlocks === 1 && !e.targetQuizId
     );
-    
+
     console.log(`[aggregateLearnTasks] Module ${moduleRecord.title}: hasVideo=${hasVideo}, hasNotes=${hasNotes}, entries=${moduleEntries.length}`);
 
     const hasQuiz = moduleEntries.some((e) => e.targetQuizId);
@@ -263,7 +263,7 @@ function aggregateReviewTasks(entries: DailyPlanEntry[]): WeeklyPlanTask[] {
   const totalSessions = reviewEntries.length;
   const flashcardCount = Math.ceil(totalSessions / 2);
   const activityCount = totalSessions - flashcardCount;
-  
+
   console.log(`[aggregateReviewTasks] Splitting ${totalSessions} sessions: ${flashcardCount} flashcards, ${activityCount} activities`);
 
   // Determine status
@@ -318,8 +318,7 @@ async function aggregatePracticeTasks(entries: DailyPlanEntry[]): Promise<Weekly
   const quizSessionEntries = practiceEntries.filter((e) => !e.targetQuizId);
 
   // Get exam names
-  const { PrismaClient } = await import("@prisma/client");
-  const prisma = new PrismaClient();
+
 
   for (const entry of examEntries) {
     if (!entry.targetQuizId) continue;
@@ -334,8 +333,8 @@ async function aggregatePracticeTasks(entries: DailyPlanEntry[]): Promise<Weekly
         entry.status === "COMPLETED"
           ? "COMPLETED"
           : entry.status === "IN_PROGRESS"
-          ? "IN_PROGRESS"
-          : "PENDING";
+            ? "IN_PROGRESS"
+            : "PENDING";
 
       tasks.push({
         type: "PRACTICE",
@@ -363,7 +362,7 @@ async function aggregatePracticeTasks(entries: DailyPlanEntry[]): Promise<Weekly
 
     tasks.push({
       type: "PRACTICE",
-       description: `${quizSessionEntries.length} quiz session${quizSessionEntries.length > 1 ? "s" : ""}`,
+      description: `${quizSessionEntries.length} quiz session${quizSessionEntries.length > 1 ? "s" : ""}`,
       itemCount: quizSessionEntries.length,
       status,
       entryIds: quizSessionEntries.map(e => e.id),
@@ -421,7 +420,7 @@ function getWeekStart(week1StartDate: Date, weekNumber: number): Date {
     // Week 1 starts on plan generation day
     return new Date(week1StartDate);
   }
-  
+
   // For week 2+, calculate from week 1 end (Sunday)
   const week1End = getWeekEnd(week1StartDate, 1);
   const weekStart = new Date(week1End);
@@ -447,7 +446,7 @@ function getWeekEnd(week1StartDate: Date, weekNumber: number): Date {
     week1End.setHours(23, 59, 59, 999);
     return week1End;
   }
-  
+
   // For week 2+, end on Sunday (standard week)
   const weekStart = getWeekStart(week1StartDate, weekNumber);
   const weekEnd = new Date(weekStart);

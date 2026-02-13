@@ -3,7 +3,8 @@
  * Generates a straightforward study plan with all modules scheduled
  */
 
-import { PrismaClient, TaskType } from "@prisma/client";
+import { TaskType } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import {
   getWeeksUntilExam,
   getBlocksPerWeek,
@@ -12,7 +13,7 @@ import {
   type StudyPlanConfig,
 } from "./study-plan";
 
-const prisma = new PrismaClient();
+
 
 export interface SimpleStudyBlock {
   date: Date;
@@ -118,7 +119,7 @@ export async function generateSimpleStudyPlan(
 
     for (let m = 0; m < modulesThisWeek && moduleIndex < modules.length; m++) {
       const moduleRecord = modules[moduleIndex];
-      
+
       // Find a preferred day for this module
       const dayOffset = preferredDays[m % preferredDays.length] || 1;
       const moduleDate = new Date(weekStartDate);
@@ -169,7 +170,7 @@ export async function generateSimpleStudyPlan(
   for (let i = 0; i < practiceWeeks && i < 3; i++) {
     const weekFromEnd = i + 1;
     const practiceWeek = weeksUntilExam - weekFromEnd + 1;
-    
+
     if (practiceWeek <= 0) continue;
 
     const weekStartDate = new Date(week1StartDate);

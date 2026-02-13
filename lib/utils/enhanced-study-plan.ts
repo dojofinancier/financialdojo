@@ -3,7 +3,8 @@
  * Content-aware, adaptive study plan generation with Phase 1, 2, and 3 scheduling
  */
 
-import { PrismaClient, TaskType, PlanEntryStatus } from "@prisma/client";
+import { TaskType, PlanEntryStatus } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import {
   getWeeksUntilExam,
   getBlocksPerWeek,
@@ -21,8 +22,6 @@ import {
   prioritizeFlashcards,
   prioritizeActivities,
 } from "./enhanced-study-plan-prioritization";
-
-const prisma = new PrismaClient();
 
 export interface EnhancedStudyBlock {
   date: Date;
@@ -63,7 +62,7 @@ export async function generateEnhancedStudyPlan(
 
   // Get content inventory
   const inventory = await getCourseContentInventory(courseId);
-  
+
   // Debug: Verify we have all modules
   console.log(`[EnhancedStudyPlan] Course ${courseId}: Found ${inventory.modules.length} modules`);
   if (inventory.modules.length === 0) {
@@ -252,7 +251,7 @@ async function generatePhase1Blocks(
         }
 
         const scheduleDate = weekPreferredDays[currentDayIndex];
-        
+
         if (contentItem.contentType === "VIDEO") {
           blocks.push({
             date: new Date(scheduleDate),
@@ -289,7 +288,7 @@ async function generatePhase1Blocks(
           blocks.push({
             date: new Date(quizDate),
             taskType: TaskType.LEARN,
-          targetModuleId: moduleRecord.id,
+            targetModuleId: moduleRecord.id,
             targetQuizId: quiz.id,
             estimatedBlocks: 1,
             order: 0,
@@ -300,7 +299,7 @@ async function generatePhase1Blocks(
       // CRITICAL: Always increment moduleIndex to move to next module
       moduleIndex++;
       console.log(`[Phase1] Week ${weekNumber}: Completed module ${moduleRecord.order}, moduleIndex now: ${moduleIndex}`);
-      
+
       // Start next module on a different day to distribute load
       dayIndex = (dayIndex + 1) % weekPreferredDays.length;
     }
@@ -420,7 +419,7 @@ async function generatePhase2Blocks(
   // If module is already learned, use actual date; otherwise estimate
   for (const moduleRecord of inventory.modules) {
     let learnedDate: Date;
-    
+
     if (learnedModulesMap.has(moduleRecord.id)) {
       // Use actual learned date
       learnedDate = learnedModulesMap.get(moduleRecord.id)!;
@@ -463,7 +462,7 @@ async function generatePhase2Blocks(
           // Include if already learned or if order is less than current module
           return learnedModulesMap.has(m.id) || m.order <= moduleRecord.order;
         });
-        
+
         const allFlashcardIds: string[] = [];
         const allActivityIds: string[] = [];
         const moduleFlashcardMap = new Map<string, string[]>(); // moduleId -> flashcardIds
@@ -512,7 +511,7 @@ async function generatePhase2Blocks(
         if (preferredDays.includes(reviewDate.getDay())) {
           // Store prioritized flashcards and activities
           const allReviewItems = [...prioritizedFlashcardIds, ...prioritizedActivityIds];
-          
+
           blocks.push({
             date: reviewDate,
             taskType: TaskType.REVIEW,

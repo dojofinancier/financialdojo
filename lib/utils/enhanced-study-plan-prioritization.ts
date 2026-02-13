@@ -2,10 +2,8 @@
  * Prioritization functions for Phase 2 review scheduling
  */
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import type { ModuleInventory } from "./course-content-inventory";
-
-const prisma = new PrismaClient();
 
 /**
  * Prioritize flashcards: Minimum per module + difficult items

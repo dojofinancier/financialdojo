@@ -3,15 +3,14 @@
  * Implements the complete requirements for Phase 1, 2, and 3 with proper validation
  */
 
-import { PrismaClient, TaskType } from "@prisma/client";
+import { TaskType } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import {
   getWeeksUntilExam,
   getBlocksPerWeek,
   calculateWeek1StartDate,
   type StudyPlanConfig,
 } from "./study-plan";
-
-const prisma = new PrismaClient();
 
 export interface NewStudyBlock {
   date: Date;
@@ -158,16 +157,16 @@ function calculatePhase1Requirements(
   const blocksPerWeek = studyHoursPerWeek * 2; // Convert hours to blocks
   const phase1BlocksPerWeek = Math.max(1, Math.floor(blocksPerWeek * 0.8)); // 80% for Phase 1
   const phase2BlocksPerWeek = Math.max(1, blocksPerWeek - phase1BlocksPerWeek); // Remaining 20% for Phase 2
-  
+
   // Check if we can complete Phase 1 in the available weeks
   const totalPhase1BlocksNeeded = totalPhase1Blocks;
   const phase1BlocksAvailable = phase1BlocksPerWeek * weeksForPhase1;
-  
+
   if (phase1BlocksAvailable < totalPhase1BlocksNeeded) {
     // Need more hours
     const requiredBlocksPerWeek = Math.ceil(totalPhase1BlocksNeeded / weeksForPhase1);
     const requiredHoursPerWeek = Math.ceil(requiredBlocksPerWeek / 2);
-    
+
     return {
       totalPhase1Blocks,
       weeksForPhase1,
@@ -235,7 +234,7 @@ async function generatePhase1Blocks(
   const phase1EndDate = new Date(phase1EndWeekStart);
   phase1EndDate.setDate(phase1EndWeekStart.getDate() + 6); // End of week (Sunday)
   phase1EndDate.setHours(23, 59, 59, 999);
-  
+
   console.log(`[generatePhase1Blocks] Phase 1 end week: ${phase1EndWeek}, end date: ${phase1EndDate.toISOString()}`);
 
   // Get all modules with content (do not rely only on contentType)
@@ -270,7 +269,7 @@ async function generatePhase1Blocks(
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
     weekEnd.setHours(23, 59, 59, 999);
-    
+
     // Don't schedule past Phase 1 end date, but ensure we schedule all modules
     // If we're at the last week and still have modules, schedule them anyway
     if (weekStart > phase1EndDate && week < weeksForPhase1) {
@@ -288,8 +287,8 @@ async function generatePhase1Blocks(
       // Only include videos if they are enabled in componentVisibility
       const videos = videosEnabled
         ? moduleRecord.contentItems.filter(
-            (c) => c.video || c.contentType === "VIDEO"
-          )
+          (c) => c.video || c.contentType === "VIDEO"
+        )
         : [];
       const notes = moduleRecord.contentItems.filter(
         (c) => (c.notes && c.notes.length > 0) || c.contentType === "NOTE"
@@ -579,7 +578,7 @@ async function generatePhase3Blocks(
   for (let week = phase1EndWeek + 1; week <= weeksUntilExam; week++) {
     const weekStart = getWeekStart(week1StartDate, week);
     const sessionsThisWeek = Math.floor(quizSessionsNeeded / (weeksUntilExam - phase1EndWeek));
-    
+
     for (let i = 0; i < sessionsThisWeek; i++) {
       blocks.push({
         date: getPreferredDate(weekStart, preferredDays),
