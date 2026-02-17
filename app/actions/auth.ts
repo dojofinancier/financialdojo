@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { syncUserFromSupabase } from "@/lib/auth/user-sync";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export type AuthActionResult = {
   success: boolean;
@@ -17,7 +18,7 @@ export async function getCurrentUserInfoAction() {
   try {
     const { getCurrentUser } = await import("@/lib/auth/get-current-user");
     const user = await getCurrentUser();
-    
+
     if (!user) {
       return {
         success: true,
@@ -100,12 +101,17 @@ export async function resetPasswordAction(
   email: string
 ): Promise<AuthActionResult> {
   try {
-    const supabase = await createClient();
+    // Detect current host for redirection to avoid mismatch errors
+    const headersList = await headers();
+    const host = headersList.get("host");
+    const protocol = headersList.get("x-forwarded-proto") || "https";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `${protocol}://${host}`;
+
+    console.log(`[Reset] Using siteUrl for redirect: ${siteUrl}`);
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      // IMPORTANT: use a route handler callback so PKCE cookies can be set.
-      // Supabase will redirect to /auth/callback?code=... then we redirect to /reset-password/confirm.
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback?next=/reset-password/confirm`,
+      // Use the detected origin to ensure it matches the domain where cookies were set
+      redirectTo: `${siteUrl}/auth/callback?next=/reset-password/confirm`,
     });
 
     if (error) {
@@ -156,7 +162,7 @@ export async function verifyPasswordResetCodeAction(
 
     // Verify that we have a valid session after exchange
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
+
     if (userError || !user) {
       return {
         success: false,
@@ -188,7 +194,7 @@ export async function updatePasswordAction(
 
     // First check if we have a valid session
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
+
     if (userError || !user) {
       return {
         success: false,
