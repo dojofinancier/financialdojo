@@ -25,7 +25,7 @@ type Enrollment = {
   courseId: string;
   purchaseDate: Date;
   expiresAt: Date;
-  paymentIntentId: string | null;
+  paymentIntentId?: string | null;
   course: {
     id: string;
     title: string;
@@ -42,7 +42,7 @@ type CohortEnrollment = {
   cohortId: string;
   purchaseDate: Date;
   expiresAt: Date;
-  paymentIntentId: string | null;
+  paymentIntentId?: string | null;
   cohort: {
     id: string;
     title: string;
