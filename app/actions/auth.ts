@@ -109,6 +109,8 @@ export async function resetPasswordAction(
 
     console.log(`[Reset] Using siteUrl for redirect: ${siteUrl}`);
 
+    const supabase = await createClient();
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       // Use the detected origin to ensure it matches the domain where cookies were set
       redirectTo: `${siteUrl}/auth/callback?next=/reset-password/confirm`,
