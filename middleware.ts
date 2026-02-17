@@ -44,6 +44,7 @@ export async function middleware(request: NextRequest) {
     "/blog",
     "/login",
     "/reset-password",
+    "/auth/callback",
     "/payment",
     "/checkout",
     "/about",

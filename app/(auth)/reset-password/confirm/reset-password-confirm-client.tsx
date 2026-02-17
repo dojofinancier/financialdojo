@@ -20,17 +20,35 @@ export function ConfirmResetPasswordClient() {
 
   // Confirm we have a recovery session (set by /auth/callback exchanging the code)
   useEffect(() => {
+    let retries = 0;
+    const maxRetries = 2;
+
     const checkSession = async () => {
       try {
         const supabase = createClient();
+        console.log("[ConfirmReset] Checking session...");
         const { data, error } = await supabase.auth.getSession();
 
         if (error) {
+          console.error("[ConfirmReset] Session error:", error.message);
           setHasSession(false);
+          setIsVerifying(false);
+        } else if (data.session) {
+          console.log("[ConfirmReset] Session found!");
+          setHasSession(true);
+          setIsVerifying(false);
+        } else if (retries < maxRetries) {
+          console.log(`[ConfirmReset] No session yet, retry ${retries + 1}...`);
+          retries++;
+          setTimeout(checkSession, 500); // Wait 500ms and try again
         } else {
-          setHasSession(!!data.session);
+          console.log("[ConfirmReset] No session found after retries.");
+          setHasSession(false);
+          setIsVerifying(false);
         }
-      } finally {
+      } catch (err) {
+        console.error("[ConfirmReset] Unexpected error:", err);
+        setHasSession(false);
         setIsVerifying(false);
       }
     };

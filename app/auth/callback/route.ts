@@ -16,8 +16,12 @@ export async function GET(request: NextRequest) {
   const code = url.searchParams.get("code");
   const next = url.searchParams.get("next") || "/";
 
-  // Always redirect somewhere (even if we can't exchange the code).
-  const redirectUrl = new URL(next, url.origin);
+  // Determine the origin for redirection.
+  // In live environments, we should use the protocol from NEXT_PUBLIC_SITE_URL if available.
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || url.origin;
+  const siteOrigin = new URL(siteUrl).origin;
+
+  const redirectUrl = new URL(next, siteOrigin);
   const response = NextResponse.redirect(redirectUrl);
 
   if (!code) {
@@ -35,6 +39,7 @@ export async function GET(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
+            console.log(`[Auth Callback] Setting cookie: ${name}`);
             response.cookies.set(name, value, options);
           });
         },
@@ -42,7 +47,8 @@ export async function GET(request: NextRequest) {
     }
   );
 
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  console.log("[Auth Callback] Exchanging code for session...");
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
     // If the code is invalid/expired, forward user back to reset page with message.
