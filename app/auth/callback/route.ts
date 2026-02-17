@@ -16,12 +16,8 @@ export async function GET(request: NextRequest) {
   const code = url.searchParams.get("code");
   const next = url.searchParams.get("next") || "/";
 
-  // Determine the origin for redirection.
-  // In live environments, we should use the protocol from NEXT_PUBLIC_SITE_URL if available.
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || url.origin;
-  const siteOrigin = new URL(siteUrl).origin;
-
-  const redirectUrl = new URL(next, siteOrigin);
+  // Always redirect somewhere (even if we can't exchange the code).
+  const redirectUrl = new URL(next, url.origin);
   const response = NextResponse.redirect(redirectUrl);
 
   if (!code) {

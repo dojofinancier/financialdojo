@@ -101,19 +101,12 @@ export async function resetPasswordAction(
   email: string
 ): Promise<AuthActionResult> {
   try {
-    // Detect current host for redirection to avoid mismatch errors
-    const headersList = await headers();
-    const host = headersList.get("host");
-    const protocol = headersList.get("x-forwarded-proto") || "https";
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `${protocol}://${host}`;
-
-    console.log(`[Reset] Using siteUrl for redirect: ${siteUrl}`);
-
     const supabase = await createClient();
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      // Use the detected origin to ensure it matches the domain where cookies were set
-      redirectTo: `${siteUrl}/auth/callback?next=/reset-password/confirm`,
+      // IMPORTANT: use a route handler callback so PKCE cookies can be set.
+      // Supabase will redirect to /auth/callback?code=... then we redirect to /reset-password/confirm.
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback?next=/reset-password/confirm`,
     });
 
     if (error) {
