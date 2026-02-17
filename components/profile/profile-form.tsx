@@ -1,7 +1,8 @@
+
 "use client";
 
-import { useState, useEffect } from "react";
-import { updateProfileAction, changePasswordAction, getUserPurchaseHistoryAction, type PurchaseHistoryItem } from "@/app/actions/profile";
+import { useState } from "react";
+import { updateProfileAction, changePasswordAction } from "@/app/actions/profile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,8 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { enCA } from "date-fns/locale";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+
 
 type ProfileFormProps = {
   user: {
@@ -25,8 +25,6 @@ type ProfileFormProps = {
 export function ProfileForm({ user }: ProfileFormProps) {
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [isLoadingPassword, setIsLoadingPassword] = useState(false);
-  const [isLoadingPurchases, setIsLoadingPurchases] = useState(true);
-  const [purchases, setPurchases] = useState<PurchaseHistoryItem[]>([]);
   const [profileData, setProfileData] = useState({
     firstName: user.firstName || "",
     lastName: user.lastName || "",
@@ -38,17 +36,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
     confirmPassword: "",
   });
 
-  useEffect(() => {
-    async function loadPurchases() {
-      setIsLoadingPurchases(true);
-      const result = await getUserPurchaseHistoryAction();
-      if (result.success && result.data) {
-        setPurchases(result.data);
-      }
-      setIsLoadingPurchases(false);
-    }
-    loadPurchases();
-  }, []);
 
   const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -111,16 +98,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-CA", {
-      style: "currency",
-      currency: "CAD",
-    }).format(amount);
-  };
-
-  const isExpired = (expiresAt: Date) => {
-    return new Date(expiresAt) < new Date();
-  };
 
   return (
     <div className="space-y-6">
@@ -250,71 +227,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         </Card>
       </div>
 
-      {/* Purchase History */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Purchase history</CardTitle>
-          <CardDescription>
-            View your purchases and expiration dates
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoadingPurchases ? (
-            <div className="text-center py-8 text-muted-foreground">
-              Loading...
-            </div>
-          ) : purchases.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No purchases yet
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Purchase date</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Expiration date</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {purchases.map((purchase) => (
-                    <TableRow key={purchase.id}>
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
-                          {purchase.productName}
-                          <Badge variant="outline" className="text-xs">
-                            {purchase.type === "course" ? "Course" : "Cohort"}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {format(purchase.purchaseDate, "d MMM yyyy", { locale: enCA })}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {formatCurrency(purchase.amount)}
-                      </TableCell>
-                      <TableCell>
-                        {format(purchase.expiresAt, "d MMM yyyy", { locale: enCA })}
-                      </TableCell>
-                      <TableCell>
-                        {isExpired(purchase.expiresAt) ? (
-                          <Badge variant="destructive">Expired</Badge>
-                        ) : (
-                          <Badge variant="default">Active</Badge>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+
     </div>
   );
 }
-

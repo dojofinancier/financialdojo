@@ -31,7 +31,7 @@ export async function GET(
             );
         }
 
-        const logoPath = path.join(process.cwd(), "public", "logo_dark.png");
+        const logoPath = path.join(process.cwd(), "public", "FinanceDojo-black.png");
         let logoSrc: string | null = null;
         try {
             const logoBuffer = fs.readFileSync(logoPath);

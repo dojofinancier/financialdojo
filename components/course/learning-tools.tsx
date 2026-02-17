@@ -29,7 +29,7 @@ const allTools = [
   },
   {
     id: "quizzes",
-    title: "Quiz de modules",
+    title: "Module Quizzes",
     description: "Take the quizzes for each module",
     icon: FileQuestion,
     color: "text-purple-500",
@@ -51,13 +51,13 @@ const allTools = [
   {
     id: "exams",
     title: "Simulated Exams",
-    description: "Testez vos connaissances avec les examens",
+    description: "Test your knowledge with simulated exams",
     icon: BookOpen,
     color: "text-indigo-500",
   },
   {
     id: "question-bank",
-    title: "Banque de questions",
+    title: "Question Bank",
     description: "Practice with random questions",
     icon: Play,
     color: "text-pink-500",

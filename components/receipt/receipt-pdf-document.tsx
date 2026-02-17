@@ -151,7 +151,7 @@ type ReceiptPdfDocumentProps = {
     logoSrc?: string | null;
 };
 
-const COMPANY_LINE = "Financial Dojo | financialdojo.com | info@financialdojo.com";
+const COMPANY_LINE = "Finance Dojo | financedojo.ca | info@financedojo.ca";
 
 export function ReceiptPdfDocument({ data, logoSrc }: ReceiptPdfDocumentProps) {
     const amountFormatted = `${data.price.toFixed(2)} ${data.currency}`;
@@ -166,7 +166,7 @@ export function ReceiptPdfDocument({ data, logoSrc }: ReceiptPdfDocumentProps) {
                         {logoSrc ? (
                             <Image src={logoSrc} style={styles.logo} />
                         ) : (
-                            <Text style={[styles.title, { marginBottom: 8 }]}>Financial Dojo</Text>
+                            <Text style={[styles.title, { marginBottom: 8 }]}>Finance Dojo</Text>
                         )}
                         <Text style={styles.companyLine}>{COMPANY_LINE}</Text>
                         <Text style={styles.title}>TRANSACTION RECEIPT</Text>
@@ -211,6 +211,17 @@ export function ReceiptPdfDocument({ data, logoSrc }: ReceiptPdfDocumentProps) {
                             <Text style={styles.tableAmount}>{data.discount}</Text>
                         </View>
                     ) : null}
+
+                    {/* Total Row */}
+                    <View style={[styles.tableRow, { marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: "#e5e7eb" }]}>
+                        <Text style={[styles.tableDesc, { fontWeight: "bold" }]}>Total</Text>
+                        <Text style={styles.tableAmount}>
+                            {data.total !== undefined
+                                ? `${data.total.toFixed(2)} ${data.currency}`
+                                : `${(data.price - (Number(data.discount?.replace(/[^0-9.-]+/g, "")) || 0)).toFixed(2)} ${data.currency}`
+                            }
+                        </Text>
+                    </View>
 
                     {(data.tps != null || data.tvq != null) && (
                         <View style={styles.taxSection}>

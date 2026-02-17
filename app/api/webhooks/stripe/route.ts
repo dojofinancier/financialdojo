@@ -191,13 +191,16 @@ export async function POST(request: NextRequest) {
 
         // Track coupon usage if applicable (only for courses)
         if (couponId && enrollmentResult.data) {
+          console.log(`[Webhook] Tracking coupon usage: Coupon ${couponId}, Enrollment ${enrollmentResult.data.id}, Discount ${discountAmount}`);
           try {
             await trackCouponUsageAction(
               couponId,
               enrollmentResult.data.id,
               parseFloat(discountAmount || "0")
             );
+            console.log("[Webhook] Coupon usage tracked successfully");
           } catch (error) {
+            console.error("[Webhook] Coupon tracking failed:", error);
             // Log but don't fail enrollment
             await logServerError({
               errorMessage: `Failed to track coupon usage: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -205,6 +208,8 @@ export async function POST(request: NextRequest) {
               severity: "MEDIUM",
             });
           }
+        } else {
+          if (couponId) console.log(`[Webhook] Skipping coupon tracking. CouponId present? ${!!couponId}, Enrollment data present? ${!!enrollmentResult.data}`);
         }
       }
 

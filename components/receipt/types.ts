@@ -13,5 +13,6 @@ export type ReceiptData = {
     tpsNumber?: string | null;
     tvqNumber?: string | null;
     discount?: string | null;
+    total?: number;
     status?: "Paid" | "Failed" | "Refunded";
 };

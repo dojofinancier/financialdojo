@@ -21,6 +21,7 @@ async function StudentDashboardContent() {
         courseId: true,
         purchaseDate: true,
         expiresAt: true,
+        paymentIntentId: true,
         course: {
           select: {
             id: true,
@@ -44,6 +45,7 @@ async function StudentDashboardContent() {
         cohortId: true,
         purchaseDate: true,
         expiresAt: true,
+        paymentIntentId: true,
         cohort: {
           select: {
             id: true,

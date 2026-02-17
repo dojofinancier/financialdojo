@@ -109,7 +109,7 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                           <span>
                             {Math.ceil(
                               (new Date(enrollment.expiresAt).getTime() - Date.now()) /
-                                (1000 * 60 * 60 * 24)
+                              (1000 * 60 * 60 * 24)
                             )}{" "}
                             days remaining
                           </span>
@@ -153,7 +153,7 @@ export function CoursesTab({ enrollments, cohortEnrollments = [] }: CoursesTabPr
                           <span>
                             {Math.ceil(
                               (new Date(enrollment.expiresAt).getTime() - Date.now()) /
-                                (1000 * 60 * 60 * 24)
+                              (1000 * 60 * 60 * 24)
                             )}{" "}
                             days remaining
                           </span>

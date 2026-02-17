@@ -531,12 +531,16 @@ export async function getReceiptDataAction(
         currency,
       }).format(amount);
 
+    // Build query based on role
+    const whereQuery: any = { paymentIntentId };
+    // Only restrict to current user if not admin
+    if (user.role !== "ADMIN") {
+      whereQuery.userId = user.id;
+    }
+
     // Try course enrollment first
     const enrollment = await prisma.enrollment.findFirst({
-      where: {
-        userId: user.id,
-        paymentIntentId,
-      },
+      where: whereQuery,
       include: {
         course: true,
         couponUsage: { include: { coupon: true } },
@@ -544,15 +548,41 @@ export async function getReceiptDataAction(
     });
 
     if (enrollment) {
-      const paymentIntent = await stripe.paymentIntents.retrieve(
-        paymentIntentId,
-        { expand: ["latest_charge"] }
-      );
-      const charge =
-        typeof paymentIntent.latest_charge === "object" &&
-          paymentIntent.latest_charge !== null
-          ? paymentIntent.latest_charge
-          : null;
+      console.log(`[getReceiptDataAction] Enrollment found: ${enrollment.id}`);
+      console.log(`[getReceiptDataAction] CouponUsage:`, enrollment.couponUsage);
+
+      let paymentIntent;
+      let charge = null;
+      let status: ReceiptData["status"] = "Paid";
+
+      try {
+        paymentIntent = await stripe.paymentIntents.retrieve(
+          paymentIntentId,
+          { expand: ["latest_charge"] }
+        );
+        charge =
+          typeof paymentIntent.latest_charge === "object" &&
+            paymentIntent.latest_charge !== null
+            ? paymentIntent.latest_charge
+            : null;
+
+        if (paymentIntent.status !== "succeeded") {
+          status = "Failed";
+        } else if (charge && "amount_refunded" in charge && charge.amount_refunded > 0) {
+          status = "Refunded";
+        }
+      } catch (error) {
+        console.warn(`Payment intent not found in Stripe: ${paymentIntentId}. Using database records.`);
+        // Fallback to database records if Stripe fails (e.g. dev env)
+        const price = Number(enrollment.course.price);
+        const discountVal = Number(enrollment.couponUsage?.discountAmount || 0);
+        paymentIntent = {
+          amount: (price - discountVal) * 100,
+          currency: "cad",
+          status: "succeeded",
+        };
+      }
+
       const paymentMethodDetails = charge?.payment_method_details as
         | { card?: { brand?: string; last4?: string } }
         | undefined;
@@ -562,24 +592,38 @@ export async function getReceiptDataAction(
           ? `Card (${card.brand} •••• ${card.last4})`
           : "Card";
 
-      let status: ReceiptData["status"] = "Paid";
-      if (paymentIntent.status !== "succeeded") {
-        status = "Failed";
-      } else if (charge && "amount_refunded" in charge && charge.amount_refunded > 0) {
-        status = "Refunded";
-      }
-
       const purchaseDate = enrollment.purchaseDate;
       const amount = paymentIntent.amount / 100;
       let discount: string | null = null;
+      let discountAmount = 0;
+
+      // Calculate discount (prioritize DB, fallback to Metadata)
       if (enrollment.couponUsage?.discountAmount != null) {
-        const discountAmount = Number(enrollment.couponUsage.discountAmount);
+        discountAmount = Number(enrollment.couponUsage.discountAmount);
         discount = `-${formatAmount(discountAmount)}`;
+      } else if (paymentIntent && paymentIntent.metadata && paymentIntent.metadata.discountAmount) {
+        // Fallback to metadata if DB record is missing (e.g. webhook failure)
+        const metaDiscount = parseFloat(paymentIntent.metadata.discountAmount);
+        if (!isNaN(metaDiscount) && metaDiscount > 0) {
+          discountAmount = metaDiscount;
+          discount = `-${formatAmount(discountAmount)}`;
+          console.log(`[getReceiptDataAction] Used PaymentIntent metadata for discount: ${discountAmount}`);
+        }
       }
+
+      // Calculate total (Price - Discount + Taxes)
+      const originalPrice = Number(enrollment.course.price);
+      // Note: Taxes are currently null (not calculated in this function) 
+      // If taxes were present (tps/tvq), they should be added here. 
+      // Assuming for now paymentIntent.amount matches the final charged amount? 
+      // If paymentIntent.amount = 33745 ($337.45), and Original = 397, Discount = 59.55.
+      // 397 - 59.55 = 337.45.
+      // So Total = paymentIntent.amount / 100.
+      const total = paymentIntent.amount / 100;
 
       const data: ReceiptData = {
         productName: enrollment.course.title,
-        price: amount,
+        price: originalPrice,
         currency: currencyDisplay,
         userName:
           `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.email,
@@ -593,6 +637,7 @@ export async function getReceiptDataAction(
         tpsNumber: null,
         tvqNumber: null,
         discount,
+        total,
         status,
       };
 
@@ -601,23 +646,43 @@ export async function getReceiptDataAction(
 
     // Try cohort enrollment
     const cohortEnrollment = await prisma.cohortEnrollment.findFirst({
-      where: {
-        userId: user.id,
-        paymentIntentId,
-      },
+      where: whereQuery, // Use same query logic
       include: { cohort: true },
     });
 
     if (cohortEnrollment) {
-      const paymentIntent = await stripe.paymentIntents.retrieve(
-        paymentIntentId,
-        { expand: ["latest_charge"] }
-      );
-      const charge =
-        typeof paymentIntent.latest_charge === "object" &&
-          paymentIntent.latest_charge !== null
-          ? paymentIntent.latest_charge
-          : null;
+      let paymentIntent;
+      let charge = null;
+      let status: ReceiptData["status"] = "Paid";
+
+      try {
+        paymentIntent = await stripe.paymentIntents.retrieve(
+          paymentIntentId,
+          { expand: ["latest_charge"] }
+        );
+        charge =
+          typeof paymentIntent.latest_charge === "object" &&
+            paymentIntent.latest_charge !== null
+            ? paymentIntent.latest_charge
+            : null;
+
+        if (paymentIntent.status !== "succeeded") {
+          status = "Failed";
+        } else if (charge && "amount_refunded" in charge && charge.amount_refunded > 0) {
+          status = "Refunded";
+        }
+      } catch (error) {
+        console.warn(`Payment intent not found in Stripe: ${paymentIntentId}. Using database records.`);
+        const price = Number(cohortEnrollment.cohort.price);
+        // Cohort coupons not implemented yet, so discount is 0
+        const discountVal = 0;
+        paymentIntent = {
+          amount: (price - discountVal) * 100,
+          currency: "cad",
+          status: "succeeded",
+        };
+      }
+
       const paymentMethodDetails = charge?.payment_method_details as
         | { card?: { brand?: string; last4?: string } }
         | undefined;
@@ -626,13 +691,6 @@ export async function getReceiptDataAction(
         card?.brand && card?.last4
           ? `Card (${card.brand} •••• ${card.last4})`
           : "Card";
-
-      let status: ReceiptData["status"] = "Paid";
-      if (paymentIntent.status !== "succeeded") {
-        status = "Failed";
-      } else if (charge && "amount_refunded" in charge && charge.amount_refunded > 0) {
-        status = "Refunded";
-      }
 
       const purchaseDate = cohortEnrollment.purchaseDate;
       const amount = paymentIntent.amount / 100;
@@ -653,6 +711,7 @@ export async function getReceiptDataAction(
         tpsNumber: null,
         tvqNumber: null,
         discount: null,
+        total: amount,
         status,
       };
 

@@ -531,8 +531,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
             <div className="space-y-4">
               {notes.map((noteItem) => (
                 <Card key={noteItem.id}>
-                  <CardHeader className="flex flex-row items-center justify-between gap-3">
-                    <CardTitle>Note {noteItem.order + 1}</CardTitle>
+                  <CardHeader className="flex flex-row items-center justify-end gap-3">
                     <Button
                       variant="outline"
                       className="hidden md:inline-flex"
@@ -730,8 +729,8 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                                   <div
                                     key={attempt.id}
                                     className={`flex items-center justify-between p-3 rounded-lg border ${isPassed
-                                        ? 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800'
-                                        : 'bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800'
+                                      ? 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800'
+                                      : 'bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800'
                                       }`}
                                   >
                                     <div className="flex items-center gap-3">

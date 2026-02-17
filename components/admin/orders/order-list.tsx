@@ -24,7 +24,7 @@ import {
 } from "@/app/actions/orders";
 import { exportOrdersToCSV } from "@/lib/utils/csv-export";
 import { toast } from "sonner";
-import { Loader2, Eye, Download } from "lucide-react";
+import { Loader2, Eye, Download, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { enCA } from "date-fns/locale";
 import Link from "next/link";
@@ -48,9 +48,9 @@ type OrderItem = {
     price: number;
   };
   couponUsage: {
+    discountAmount: number;
     coupon: {
       code: string;
-      discountAmount: number;
     };
   } | null;
 };
@@ -75,7 +75,7 @@ export function OrderList() {
         dateFrom: dateFrom ? new Date(dateFrom) : undefined,
         dateTo: dateTo ? new Date(dateTo) : undefined,
       });
-      
+
       if (cursor) {
         setOrders((prev) => [...prev, ...result.items]);
       } else {
@@ -103,7 +103,7 @@ export function OrderList() {
         dateFrom: dateFrom ? new Date(dateFrom) : undefined,
         dateTo: dateTo ? new Date(dateTo) : undefined,
       });
-      
+
       exportOrdersToCSV(result.items);
       toast.success("CSV export generated");
     } catch (error) {
@@ -131,7 +131,7 @@ export function OrderList() {
 
   const calculateFinalPrice = (order: OrderItem) => {
     const coursePrice = Number(order.course.price);
-    const discount = order.couponUsage ? Number(order.couponUsage.coupon.discountAmount) : 0;
+    const discount = order.couponUsage ? Number(order.couponUsage.discountAmount) : 0;
     return Math.max(0, coursePrice - discount);
   };
 
@@ -238,7 +238,7 @@ export function OrderList() {
                           <div className="font-medium">${finalPrice.toFixed(2)}</div>
                           {order.couponUsage && (
                             <div className="text-xs text-muted-foreground">
-                              Coupon: {order.couponUsage.coupon.code} (-${Number(order.couponUsage.coupon.discountAmount).toFixed(2)})
+                              Coupon: {order.couponUsage.coupon.code} (-${Number(order.couponUsage.discountAmount).toFixed(2)})
                             </div>
                           )}
                         </div>
@@ -253,6 +253,18 @@ export function OrderList() {
                             <Eye className="h-4 w-4" />
                           </Button>
                         </Link>
+                        {order.paymentIntentId && (
+                          <a
+                            href={`/api/receipt/${order.paymentIntentId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block"
+                          >
+                            <Button variant="ghost" size="icon" title="Download Receipt">
+                              <FileText className="h-4 w-4" />
+                            </Button>
+                          </a>
+                        )}
                       </TableCell>
                     </TableRow>
                   );

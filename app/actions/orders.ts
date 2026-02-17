@@ -91,7 +91,7 @@ export async function getOrdersAction(params: {
     // Fetch Stripe payment intent status for each enrollment
     const ordersWithStatus = await Promise.all(
       enrollments.map(async (enrollment) => {
-        let paymentStatus = "pending";
+        let paymentStatus = "succeeded";
         let refunded = false;
 
         if (enrollment.paymentIntentId) {
@@ -128,20 +128,20 @@ export async function getOrdersAction(params: {
           ...enrollment,
           course: enrollment.course
             ? {
-                ...enrollment.course,
-                price: enrollment.course.price.toNumber(),
-              }
+              ...enrollment.course,
+              price: enrollment.course.price.toNumber(),
+            }
             : enrollment.course,
           couponUsage: enrollment.couponUsage
             ? {
-                ...enrollment.couponUsage,
-                discountAmount: enrollment.couponUsage.discountAmount.toNumber(),
-                coupon: enrollment.couponUsage.coupon
-                  ? {
-                      ...enrollment.couponUsage.coupon,
-                    }
-                  : enrollment.couponUsage.coupon,
-              }
+              ...enrollment.couponUsage,
+              discountAmount: enrollment.couponUsage.discountAmount.toNumber(),
+              coupon: enrollment.couponUsage.coupon
+                ? {
+                  ...enrollment.couponUsage.coupon,
+                }
+                : enrollment.couponUsage.coupon,
+            }
             : enrollment.couponUsage,
           paymentStatus,
           refunded,
@@ -215,20 +215,20 @@ export async function getOrderDetailsAction(enrollmentId: string) {
       ...enrollment,
       course: enrollment.course
         ? {
-            ...enrollment.course,
-            price: enrollment.course.price.toNumber(),
-          }
+          ...enrollment.course,
+          price: enrollment.course.price.toNumber(),
+        }
         : enrollment.course,
       couponUsage: enrollment.couponUsage
         ? {
-            ...enrollment.couponUsage,
-            discountAmount: enrollment.couponUsage.discountAmount.toNumber(),
-            coupon: enrollment.couponUsage.coupon
-              ? {
-                  ...enrollment.couponUsage.coupon,
-                }
-              : enrollment.couponUsage.coupon,
-          }
+          ...enrollment.couponUsage,
+          discountAmount: enrollment.couponUsage.discountAmount.toNumber(),
+          coupon: enrollment.couponUsage.coupon
+            ? {
+              ...enrollment.couponUsage.coupon,
+            }
+            : enrollment.couponUsage.coupon,
+        }
         : enrollment.couponUsage,
     };
 

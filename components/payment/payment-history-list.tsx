@@ -2,11 +2,20 @@
 
 import { useState } from "react";
 import { getPaymentHistoryAction } from "@/app/actions/payments";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Download, CheckCircle, XCircle, RefreshCw } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Download, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { format, isPast } from "date-fns";
 import { enCA } from "date-fns/locale";
 
 type PaymentHistoryListProps = {
@@ -95,91 +104,75 @@ export function PaymentHistoryList({ initialPayments }: PaymentHistoryListProps)
 
   return (
     <div className="space-y-4">
-      {payments.map((payment: any) => {
-        const enrollment = payment.enrollment;
-        const paymentIntent = payment.paymentIntent;
-        const refunds = payment.refunds || [];
-        const hasRefunds = refunds.length > 0;
-        const totalRefunded = refunds.reduce(
-          (sum: number, refund: any) => sum + refund.amount / 100,
-          0
-        );
-        const netAmount =
-          (paymentIntent?.amount || 0) / 100 - totalRefunded;
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[300px]">Product</TableHead>
+              <TableHead>Purchase date</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Expiration date</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Receipt</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {payments.map((payment: any) => {
+              const enrollment = payment.enrollment;
+              const paymentIntent = payment.paymentIntent;
+              const refunds = payment.refunds || [];
+              const totalRefunded = refunds.reduce(
+                (sum: number, refund: any) => sum + refund.amount / 100,
+                0
+              );
+              const netAmount = (paymentIntent?.amount || 0) / 100 - totalRefunded;
+              const isExpired = isPast(new Date(enrollment.expiresAt));
 
-        return (
-          <Card key={enrollment.id}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle>{enrollment.course.title}</CardTitle>
-                  <CardDescription>
-                    {format(enrollment.purchaseDate, "d MMMM yyyy", { locale: enCA })}
-                  </CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  {paymentIntent?.status === "succeeded" ? (
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <XCircle className="h-5 w-5 text-red-600" />
-                  )}
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Amount</span>
-                <span className="font-medium">
-                  {(paymentIntent?.amount || 0) / 100} CAD
-                </span>
-              </div>
-
-              {enrollment.couponUsage && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    Discount ({enrollment.couponUsage.coupon.code})
-                  </span>
-                  <span className="text-green-600">
-                    -{Number(enrollment.couponUsage.discountAmount).toFixed(2)} CAD
-                  </span>
-                </div>
-              )}
-
-              {hasRefunds && (
-                <div className="space-y-2 border-t pt-2">
-                  <div className="flex justify-between text-sm text-red-600">
-                    <span>Refunds</span>
-                    <span>-{totalRefunded.toFixed(2)} CAD</span>
-                  </div>
-                  <div className="flex justify-between font-medium">
-                    <span>Net amount</span>
-                    <span>{netAmount.toFixed(2)} CAD</span>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex justify-between items-center border-t pt-4">
-                <span className="text-sm text-muted-foreground">
-                  Transaction: {paymentIntent?.id || "N/A"}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDownloadReceipt(paymentIntent?.id || "")}
-                  disabled={downloadingReceipts.has(paymentIntent?.id || "")}
-                >
-                  {downloadingReceipts.has(paymentIntent?.id || "") ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  ) : (
-                    <Download className="h-4 w-4 mr-2" />
-                  )}
-                  Download receipt (PDF)
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+              return (
+                <TableRow key={enrollment.id}>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      {enrollment.course.title}
+                      <Badge variant="outline" className="text-xs font-normal">Course</Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {format(new Date(enrollment.purchaseDate), "d MMM yyyy", { locale: enCA })}
+                  </TableCell>
+                  <TableCell>
+                    ${netAmount.toFixed(2)}
+                  </TableCell>
+                  <TableCell>
+                    {format(new Date(enrollment.expiresAt), "d MMM yyyy", { locale: enCA })}
+                  </TableCell>
+                  <TableCell>
+                    {isExpired ? (
+                      <Badge variant="destructive">Expired</Badge>
+                    ) : (
+                      <Badge className="bg-green-600 hover:bg-green-700">Active</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDownloadReceipt(enrollment.paymentIntentId || "")}
+                      disabled={!enrollment.paymentIntentId || downloadingReceipts.has(enrollment.paymentIntentId)}
+                    >
+                      {downloadingReceipts.has(enrollment.paymentIntentId || "") ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : (
+                        <Download className="h-4 w-4 mr-2" />
+                      )}
+                      Download receipt (PDF)
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
 
       {hasMore && (
         <div className="flex justify-center pt-4">
@@ -205,3 +198,5 @@ export function PaymentHistoryList({ initialPayments }: PaymentHistoryListProps)
     </div>
   );
 }
+
+

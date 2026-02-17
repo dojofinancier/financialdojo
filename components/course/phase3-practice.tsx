@@ -3,15 +3,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 import { Button } from "@/components/ui/button";
-import { Target, FileText, BookOpen, AlertCircle, Lock } from "lucide-react";
+import { Target, FileText, BookOpen } from "lucide-react";
 import { ExamList } from "./exam-list";
 import { ExamPlayer } from "./exam-player";
 import { QuestionBankPractice } from "./question-bank-practice";
 import { CaseStudyList } from "./case-study-list";
 import { CaseStudyPlayer } from "./case-study-player";
-import { checkPhase3AccessAction } from "@/app/actions/study-plan";
+
 
 interface Phase3PracticeProps {
   courseId: string;
@@ -23,25 +23,10 @@ export function Phase3Practice({ courseId, course, settings }: Phase3PracticePro
   const [activeTab, setActiveTab] = useState<"exams" | "questions" | "case-studies">("exams");
   const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
   const [selectedCaseStudyId, setSelectedCaseStudyId] = useState<string | null>(null);
-  const [canAccess, setCanAccess] = useState<boolean | null>(null);
-  const [gateMessage, setGateMessage] = useState<string | null>(null);
-  const [unlearnedModules, setUnlearnedModules] = useState<Array<{ id: string; title: string; order: number }>>([]);
-  
   // Check if case studies are enabled
   const caseStudiesEnabled = course?.componentVisibility?.caseStudies ?? false;
 
-  const checkAccess = useCallback(async () => {
-    const result = await checkPhase3AccessAction(courseId);
-    if (result.success && result.data) {
-      setCanAccess(result.data.canAccess);
-      setGateMessage(result.data.message || null);
-      setUnlearnedModules(result.data.unlearnedModules || []);
-    }
-  }, [courseId]);
 
-  useEffect(() => {
-    checkAccess();
-  }, [checkAccess]);
 
   if (selectedExamId) {
     return (
@@ -65,54 +50,7 @@ export function Phase3Practice({ courseId, course, settings }: Phase3PracticePro
     );
   }
 
-  // Show gate message if cannot access
-  if (canAccess === false) {
-    return (
-      <div className="space-y-6">
-        <Alert variant="destructive">
-          <Lock className="h-4 w-4" />
-          <AlertTitle>Phase 3 access restricted</AlertTitle>
-          <AlertDescription className="space-y-3 mt-2">
-            <p>{gateMessage}</p>
-            {unlearnedModules.length > 0 && (
-              <div>
-                <p className="font-semibold mb-2">Modules to complete:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  {unlearnedModules.map((module) => (
-                    <li key={module.id}>
-                      Module {module.order}: {module.title}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <Button
-              onClick={() => {
-                window.location.href = `/learn/${courseId}?tab=learn`;
-              }}
-              className="mt-4"
-            >
-              <BookOpen className="h-4 w-4 mr-2" />
-              Go to Phase 1 - Learn
-            </Button>
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
 
-  // Show loading state
-  if (canAccess === null) {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardContent className="py-8 text-center">
-            <p className="text-muted-foreground">Checking access...</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
