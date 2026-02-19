@@ -89,6 +89,27 @@ export default function RootLayout({
             `,
           }}
         />
+        {/* Blocking script to prevent navigation flash - sets brutalist chrome before first paint */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var p = window.location.pathname;
+                if (
+                  p === '/' ||
+                  p === '/contact' ||
+                  p.indexOf('/courses') === 0 ||
+                  p.indexOf('/formations') === 0 ||
+                  (p.indexOf('/investor') === 0 && p.indexOf('/waitlist') === -1) ||
+                  (p.indexOf('/cohorts') === 0 && p.indexOf('/learn') === -1) ||
+                  (p.indexOf('/cohorte') === 0 && p.indexOf('/learn') === -1)
+                ) {
+                  document.documentElement.dataset.chrome = 'brutalist';
+                }
+              })();
+            `,
+          }}
+        />
       </head>
       <body className="font-sans antialiased">
         <Suspense fallback={null}>

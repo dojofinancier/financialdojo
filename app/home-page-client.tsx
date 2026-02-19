@@ -379,7 +379,7 @@ function HomeFooter() {
         <div className="px-4 sm:px-8 py-6">
           <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm font-mono opacity-50">
-              © {currentYear} FINANCIAL DOJO. ALL RIGHTS RESERVED.
+              © {currentYear} FINANCE DOJO. ALL RIGHTS RESERVED.
             </p>
             <p className="text-sm font-mono opacity-50">
               MONTREAL, QUEBEC

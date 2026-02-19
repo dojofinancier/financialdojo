@@ -57,7 +57,7 @@ export function Footer() {
             </Link>
           </div>
           <p className="text-center text-sm text-muted-foreground">
-            © {currentYear} Financial Dojo. All rights reserved.
+            © {currentYear} Finance Dojo. All rights reserved.
           </p>
         </div>
       </div>
