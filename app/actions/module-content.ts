@@ -24,6 +24,12 @@ const getCachedModuleContent = unstable_cache(
         title: true,
         description: true,
         order: true,
+        pdfUrl: true,
+        course: {
+          select: {
+            pdfUrl: true,
+          },
+        },
         contentItems: {
           where: {
             OR: [
@@ -114,6 +120,8 @@ const getCachedModuleContent = unstable_cache(
         title: moduleRecord.title,
         description: moduleRecord.description,
         order: moduleRecord.order,
+        pdfUrl: moduleRecord.pdfUrl,
+        coursePdfUrl: moduleRecord.course?.pdfUrl,
       },
       videos,
       notes,
@@ -121,7 +129,7 @@ const getCachedModuleContent = unstable_cache(
     };
   },
   ["module-content"],
-  { 
+  {
     revalidate: 300, // 5 minutes
     tags: ["module-content"]
   }
@@ -221,6 +229,12 @@ export async function getBatchModuleContentAction(
         id: true,
         title: true,
         order: true,
+        pdfUrl: true,
+        course: {
+          select: {
+            pdfUrl: true,
+          }
+        },
         contentItems: {
           where: {
             OR: [
@@ -236,16 +250,16 @@ export async function getBatchModuleContentAction(
             video: {
               select: includeFullData
                 ? {
-                    id: true,
-                    vimeoUrl: true,
-                    duration: true,
-                    transcript: true,
-                  }
+                  id: true,
+                  vimeoUrl: true,
+                  duration: true,
+                  transcript: true,
+                }
                 : {
-                    id: true,
-                    vimeoUrl: true,
-                    duration: true,
-                  },
+                  id: true,
+                  vimeoUrl: true,
+                  duration: true,
+                },
             },
             quiz: {
               select: {
@@ -261,12 +275,12 @@ export async function getBatchModuleContentAction(
               take: 1,
               select: includeFullData
                 ? {
-                    id: true,
-                    content: true,
-                  }
+                  id: true,
+                  content: true,
+                }
                 : {
-                    id: true,
-                  },
+                  id: true,
+                },
             },
           },
         },
@@ -300,13 +314,19 @@ export async function getBatchModuleContentAction(
           order: item.order,
         }));
 
-      result[moduleRecord.id] = { videos, notes, quizzes };
+      result[moduleRecord.id] = {
+        videos,
+        notes,
+        quizzes,
+        pdfUrl: moduleRecord.pdfUrl,
+        coursePdfUrl: moduleRecord.course?.pdfUrl
+      };
     }
 
     // Ensure all requested moduleIds are in the result (even if empty)
     for (const moduleId of moduleIds) {
       if (!result[moduleId]) {
-        result[moduleId] = { videos: [], notes: [], quizzes: [] };
+        result[moduleId] = { videos: [], notes: [], quizzes: [], pdfUrl: null, coursePdfUrl: null };
       }
     }
 

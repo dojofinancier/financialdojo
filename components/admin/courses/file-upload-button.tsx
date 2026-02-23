@@ -16,10 +16,10 @@ interface FileUploadButtonProps {
   bucketName?: string;
 }
 
-export function FileUploadButton({ 
-  folder, 
-  onUploaded, 
-  accept, 
+export function FileUploadButton({
+  folder,
+  onUploaded,
+  accept,
   label = "Upload a file",
   bucketName = COURSE_ASSETS_BUCKET
 }: FileUploadButtonProps) {
@@ -43,7 +43,8 @@ export function FileUploadButton({
       });
 
       if (error) {
-        toast.error("Upload failed");
+        toast.error(`Upload failed: ${error.message}`);
+        console.error("Supabase upload error:", error);
         return;
       }
 
@@ -51,7 +52,8 @@ export function FileUploadButton({
       onUploaded(data.publicUrl, file.name);
       toast.success("File uploaded");
     } catch (error) {
-      toast.error("Error during upload");
+      console.error("Upload exception:", error);
+      toast.error(error instanceof Error ? `Error during upload: ${error.message}` : "Error during upload");
     } finally {
       setUploading(false);
       if (inputRef.current) {

@@ -270,52 +270,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     }
   };
 
-  const handleDownloadNotePdf = (noteItem: Note) => {
-    const title = `${module?.title || "Note"} - Note ${noteItem.order + 1}`;
-    const html = `<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <title>${title}</title>
-    <style>
-      body { font-family: "Inter", Arial, sans-serif; margin: 32px; color: #111827; }
-      h1 { font-size: 20px; margin-bottom: 16px; }
-      .note-content { line-height: 1.75; }
-      .note-content p { margin: 0 0 16px 0; }
-      .note-content h1 { font-size: 24px; margin: 24px 0 16px; }
-      .note-content h2 { font-size: 20px; margin: 20px 0 12px; }
-      .note-content h3 { font-size: 18px; margin: 16px 0 10px; }
-      .note-content ul, .note-content ol { margin: 16px 0; padding-left: 24px; }
-      .note-content li { margin-bottom: 8px; }
-      @media print { body { margin: 0.5in; } }
-    </style>
-  </head>
-  <body>
-    <h1>${title}</h1>
-    <div class="note-content">${noteItem.note.content}</div>
-  </body>
-</html>`;
 
-    const iframe = document.createElement("iframe");
-    iframe.style.position = "fixed";
-    iframe.style.right = "0";
-    iframe.style.bottom = "0";
-    iframe.style.width = "0";
-    iframe.style.height = "0";
-    iframe.style.border = "0";
-    iframe.setAttribute("aria-hidden", "true");
-    iframe.srcdoc = html;
-
-    iframe.onload = () => {
-      const printWindow = iframe.contentWindow;
-      if (!printWindow) return;
-      printWindow.focus();
-      printWindow.print();
-      setTimeout(() => iframe.remove(), 1000);
-    };
-
-    document.body.appendChild(iframe);
-  };
 
   const handleQuizAnswerChange = (quizId: string, questionId: string, answer: string) => {
     setQuizAnswers((prev) => ({
@@ -532,14 +487,18 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
               {notes.map((noteItem) => (
                 <Card key={noteItem.id}>
                   <CardHeader className="flex flex-row items-center justify-end gap-3">
-                    <Button
-                      variant="outline"
-                      className="hidden md:inline-flex"
-                      onClick={() => handleDownloadNotePdf(noteItem)}
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download PDF
-                    </Button>
+                    {module?.pdfUrl && (
+                      <Button
+                        variant="outline"
+                        className="hidden md:inline-flex"
+                        asChild
+                      >
+                        <a href={module.pdfUrl} target="_blank" rel="noopener noreferrer">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download PDF
+                        </a>
+                      </Button>
+                    )}
                   </CardHeader>
                   <CardContent>
                     <div
@@ -552,6 +511,16 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                   </CardContent>
                 </Card>
               ))}
+              {module?.coursePdfUrl && (
+                <div className="mt-8 pt-6 border-t flex justify-center">
+                  <Button asChild variant="outline" className="w-full sm:w-auto">
+                    <a href={module.coursePdfUrl} target="_blank" rel="noopener noreferrer">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Complete Course PDF
+                    </a>
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </TabsContent>
