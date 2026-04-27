@@ -4,6 +4,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+
+/** Product URLs — align slugs with published courses in admin if a link 404s. */
+const EXAM_HREF = {
+  cire: "/courses/cire",
+  rse: "/courses/rse",
+} as const;
+
+
 // ============================================
 // SECTION 2: HERO - BRUTALIST
 // ============================================
@@ -102,7 +110,7 @@ function HeroSection() {
           {/* CTA - Brutalist buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
-              href="#qui-etes-vous"
+              href="#choose-your-exam"
               className="inline-block bg-white text-black font-black uppercase text-lg tracking-wider px-10 py-5 border-4 border-white hover:bg-primary hover:border-primary hover:text-black transition-colors shadow-[8px_8px_0_0_hsl(var(--primary))]"
             >
               Get started →
@@ -136,99 +144,58 @@ function HeroSection() {
   );
 }
 
-// ============================================
-// SECTION 3: CLIENT PATHS - THE DECISION
-// ============================================
-function ClientPathsSection() {
-  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
 
-  const paths = [
-    {
-      id: "pro",
-      number: "01",
-      title: "PROFESSIONALS",
-      subtitle: "FINANCIAL INDUSTRY",
-      description: "Advisors, representatives, managers, assistants. Get your OCRI, AMF and CSI certifications.",
-      features: ["CCVM / CSC", "ERCI / CIRE", "Securities examination"],
-      color: "bg-primary",
-      textColor: "text-black",
-      link: "/courses?category=professionnels",
-    },
-    {
-      id: "inv",
-      number: "02",
-      title: "INVESTORS",
-      subtitle: "INDIVIDUALS",
-      description: "Manage your wealth. Understand the markets. Make informed decisions.",
-      features: ["Portfolio management", "Fundamental analysis", "Strategies"],
-      color: "bg-white",
-      textColor: "text-black",
-      link: "/investor/waitlist",
-    },
-    {
-      id: "ent",
-      number: "03",
-      title: "ENTREPRENEURS",
-      subtitle: "& EXECUTIVES",
-      description: "Corporate finance, financial planning, growth.",
-      features: ["Corporate finance", "Planning", "Fundraising"],
-      color: "bg-black",
-      textColor: "text-white",
-      link: "/entrepreneur/waitlist",
-    },
-  ];
-
+// ============================================
+// CHOOSE YOUR EXAM
+// ============================================
+function ExamChoiceSection() {
   return (
-    <section id="qui-etes-vous" className="relative bg-white py-24 sm:py-32">
+    <section id="choose-your-exam" className="relative bg-white py-24 sm:py-32">
       <div className="px-4 sm:px-8 mb-16">
         <div className="max-w-[1400px] mx-auto">
           <span className="font-mono text-sm uppercase tracking-[0.3em] text-black/50 block mb-4">
-            [CHOOSE YOUR PATH]
+            [YOUR GOAL]
           </span>
-          <h2 className="text-6xl sm:text-7xl md:text-8xl font-black uppercase tracking-tighter text-black leading-[0.9]">
-            WHO<br />ARE YOU?
+          <h2 className="text-5xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter text-black leading-[0.9]">
+            CHOOSE
+            <br />
+            YOUR EXAM
           </h2>
         </div>
       </div>
 
       <div className="px-4 sm:px-8">
         <div className="max-w-[1400px] mx-auto">
-          <div className="grid md:grid-cols-3 gap-0 border-4 border-black">
-            {paths.map((path, index) => (
-              <Link
-                key={path.id}
-                href={path.link}
-                className={`group relative ${path.color} ${path.textColor} p-8 sm:p-10 ${index < 2 ? 'md:border-r-4 border-black' : ''} border-b-4 md:border-b-0 border-black last:border-b-0 transition-all duration-200 hover:scale-[1.02] hover:z-10`}
-                style={{
-                  boxShadow: hoveredPath === path.id ? '12px 12px 0 0 black' : 'none',
-                }}
-                onMouseEnter={() => setHoveredPath(path.id)}
-                onMouseLeave={() => setHoveredPath(null)}
-              >
-                <div className="font-mono text-sm opacity-50 mb-8">{path.number}</div>
-                <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-2">
-                  {path.title}
-                </h3>
-                <div className="text-sm font-mono uppercase tracking-wider opacity-70 mb-6">
-                  {path.subtitle}
-                </div>
-                <p className="text-lg leading-relaxed mb-8 opacity-90">
-                  {path.description}
-                </p>
-                <ul className="space-y-2 mb-8">
-                  {path.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm font-mono uppercase tracking-wide">
-                      <span className="w-2 h-2 bg-current" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <div className="flex items-center gap-2 font-black uppercase tracking-wider group-hover:gap-4 transition-all">
-                  DISCOVER
-                  <span className="text-2xl">→</span>
-                </div>
-              </Link>
-            ))}
+          <div className="grid md:grid-cols-2 gap-0 border-4 border-black">
+            <Link
+              href={EXAM_HREF.cire}
+              className="group relative bg-primary text-black p-8 sm:p-10 border-b-4 border-black md:border-b-0 md:border-r-4 transition-all duration-200 hover:scale-[1.02] hover:z-10 hover:shadow-[12px_12px_0_0_black]"
+            >
+              <div className="font-mono text-sm opacity-50 mb-6">01</div>
+              <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-2">CIRE</h3>
+              <p className="text-lg leading-relaxed mb-8 opacity-90">
+                Canadian Investment Regulatory Exam. Prepare for the CIRE exam.
+              </p>
+              <div className="flex items-center gap-2 font-black uppercase tracking-wider group-hover:gap-4 transition-all">
+                START
+                <span className="text-2xl">→</span>
+              </div>
+            </Link>
+
+            <Link
+              href={EXAM_HREF.rse}
+              className="group relative bg-white text-black p-8 sm:p-10 transition-all duration-200 hover:scale-[1.02] hover:z-10 hover:shadow-[12px_12px_0_0_black]"
+            >
+              <div className="font-mono text-sm opacity-50 mb-6">02</div>
+              <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-2">RSE</h3>
+              <p className="text-lg leading-relaxed mb-8 opacity-90">
+                Retail Securities Exam. Pass the exam quickly.
+              </p>
+              <div className="flex items-center gap-2 font-black uppercase tracking-wider group-hover:gap-4 transition-all">
+                START
+                <span className="text-2xl">→</span>
+              </div>
+            </Link>
           </div>
         </div>
       </div>
@@ -238,6 +205,126 @@ function ClientPathsSection() {
           <p className="font-mono text-sm text-black/50 uppercase tracking-wider">
             Not sure? <Link href="/courses" className="underline hover:text-primary">See all courses</Link>
           </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// HOW IT WORKS
+// ============================================
+function HowItWorksSection() {
+  const steps = [
+    {
+      n: "01",
+      title: "Diagnostic & study plan",
+      body: "We start from your current level and target date to build a realistic, week-by-week plan.",
+    },
+    {
+      n: "02",
+      title: "Structured learning",
+      body: "Ordered modules, clear objectives, and measurable progress — no scattered content or random review.",
+    },
+    {
+      n: "03",
+      title: "MCQs & mock exams",
+      body: "Multiple-choice question banks and timed mock exams to replicate real conditions.",
+    },
+    {
+      n: "04",
+      title: "Coaching & support",
+      body: "Questions, clarifications, and coaching to stay motivated and course-correct before the exam.",
+    },
+  ];
+
+  return (
+    <section className="relative bg-black text-white py-24 sm:py-32 border-t-4 border-white">
+      <div className="px-4 sm:px-8 mb-16">
+        <div className="max-w-[1400px] mx-auto">
+          <span className="font-mono text-sm uppercase tracking-[0.3em] text-white/50 block mb-4">
+            [METHODOLOGY]
+          </span>
+          <h2 className="text-5xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-4">
+            HOW IT
+            <br />
+            <span className="text-primary">WORKS</span>
+          </h2>
+        </div>
+      </div>
+
+      <div className="px-4 sm:px-8">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="grid md:grid-cols-2 gap-0 border-4 border-white">
+            {steps.map((step, i) => (
+              <div
+                key={step.n}
+                className={"p-8 sm:p-10 border-white " + (i < 3 ? "border-b-4 " : "") + (i % 2 === 0 ? "md:border-r-4 " : "") + (i < 2 ? "md:border-b-4" : "")}
+              >
+                <div className="font-mono text-sm text-primary mb-4">{step.n}</div>
+                <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight mb-4">
+                  {step.title}
+                </h3>
+                <p className="text-lg leading-relaxed opacity-85 max-w-xl">{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// INVESTORS & ENTREPRENEURS — SOON
+// ============================================
+function WaitlistStripSection() {
+  return (
+    <section className="relative bg-white py-16 sm:py-20 border-t-4 border-black">
+      <div className="px-4 sm:px-8">
+        <div className="max-w-[1400px] mx-auto">
+          <span className="font-mono text-sm uppercase tracking-[0.3em] text-black/50 block mb-8 text-center">
+            [COMING SOON]
+          </span>
+          <div className="grid md:grid-cols-2 gap-0 border-4 border-black">
+            <Link
+              href="/investor/waitlist"
+              className="group relative bg-white text-black p-8 sm:p-10 border-b-4 md:border-b-0 md:border-r-4 border-black transition-all duration-200 hover:scale-[1.01] hover:z-10 hover:shadow-[8px_8px_0_0_hsl(var(--primary))]"
+            >
+              <div className="font-mono text-sm opacity-50 mb-4">01</div>
+              <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight mb-2">
+                INVESTORS
+              </h3>
+              <div className="text-xs font-mono uppercase tracking-wider opacity-70 mb-4">
+                INDIVIDUALS
+              </div>
+              <p className="text-base leading-relaxed mb-6 opacity-90">
+                Manage your wealth. Understand the markets. Make informed decisions.
+              </p>
+              <div className="flex items-center gap-2 font-black uppercase tracking-wider text-sm group-hover:gap-3 transition-all">
+                Waitlist →
+              </div>
+            </Link>
+
+            <Link
+              href="/entrepreneur/waitlist"
+              className="group relative bg-black text-white p-8 sm:p-10 transition-all duration-200 hover:scale-[1.01] hover:z-10 hover:shadow-[8px_8px_0_0_hsl(var(--primary))]"
+            >
+              <div className="font-mono text-sm opacity-50 mb-4">02</div>
+              <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight mb-2">
+                ENTREPRENEURS
+              </h3>
+              <div className="text-xs font-mono uppercase tracking-wider opacity-70 mb-4">
+                & EXECUTIVES
+              </div>
+              <p className="text-base leading-relaxed mb-6 opacity-90">
+                Corporate finance, financial planning, growth.
+              </p>
+              <div className="flex items-center gap-2 font-black uppercase tracking-wider text-sm group-hover:gap-3 transition-all">
+                Waitlist →
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
     </section>
@@ -345,8 +432,8 @@ function HomeFooter() {
                 Courses
               </h3>
               <ul className="space-y-3">
-                <li><Link href="/courses/ccvm-pcvm" className="text-sm font-mono hover:text-primary transition-colors">CCVM / CSC</Link></li>
-                <li><Link href="/courses/pdg-ciro" className="text-sm font-mono hover:text-primary transition-colors">ERCI / CIRE</Link></li>
+                <li><Link href={EXAM_HREF.cire} className="text-sm font-mono hover:text-primary transition-colors">CIRE</Link></li>
+                <li><Link href={EXAM_HREF.rse} className="text-sm font-mono hover:text-primary transition-colors">RSE</Link></li>
                 <li><Link href="/courses" className="text-sm font-mono hover:text-primary transition-colors">All courses →</Link></li>
               </ul>
             </div>
@@ -399,7 +486,9 @@ export function HomePageClient() {
     <>
       <main>
         <HeroSection />
-        <ClientPathsSection />
+        <ExamChoiceSection />
+        <HowItWorksSection />
+        <WaitlistStripSection />
         <AboutSection />
       </main>
       <HomeFooter />

@@ -8,7 +8,7 @@ async function AdminAnalyticsContent() {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Tableau de bord analytique</h1>
+        <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
         <p className="text-muted-foreground mt-2">
           Enrollment metrics, completion rates, and engagement
         </p>

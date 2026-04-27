@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms and Conditions | Financial Dojo",
   description: "Terms of Use of the Financial Dojo",
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || "https://financedojo.ca"}/terms-and-conditions`,
+  },
 };
 
 export default function TermsAndConditionsPage() {
@@ -12,7 +15,7 @@ export default function TermsAndConditionsPage() {
         <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8">
           Terms and Conditions
         </h1>
-        
+
         <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed space-y-6">
           <p className="text-sm text-slate-500">
             Last updated: December 17, 2025
@@ -21,7 +24,7 @@ export default function TermsAndConditionsPage() {
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">1. Acceptance of terms</h2>
             <p>
-              By accessing and using the Financial Dojo website ("the Site"), you agree to be bound by these terms and conditions. If you do not accept these terms, please do not use the Site.
+              By accessing and using the Financial Dojo website (&quot;the Site&quot;), you agree to be bound by these terms and conditions. If you do not accept these terms, please do not use the Site.
             </p>
           </section>
 
@@ -50,7 +53,7 @@ export default function TermsAndConditionsPage() {
               Prices for our courses are listed in Canadian dollars. Payments are processed securely through our payment providers.
             </p>
             <p>
-              <strong>Refund policy:</strong> Refunds are available within 14 days of purchase, provided that less than 25% of the course content has been accessed. Refund requests must be submitted in writing to admin@dojofnancier.com.
+              <strong>Refund policy:</strong> Refunds are available within 14 days of purchase, provided that less than 25% of the course content has been accessed. Refund requests must be submitted in writing to admin@financedojo.ca.
             </p>
           </section>
 
@@ -79,7 +82,7 @@ export default function TermsAndConditionsPage() {
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">7. Limitation of liability</h2>
             <p>
-              Financial Dojo provides the Site and its content "as is." We do not guarantee that the Site will be error-free, uninterrupted, or secure. To the extent permitted by law, we disclaim any liability for direct, indirect, incidental, or consequential damages resulting from the use of the Site.
+              Financial Dojo provides the Site and its content &quot;as is.&quot; We do not guarantee that the Site will be error-free, uninterrupted, or secure. To the extent permitted by law, we disclaim any liability for direct, indirect, incidental, or consequential damages resulting from the use of the Site.
             </p>
             <p>
               <strong>Disclaimer:</strong> The educational content provided is for information and education only. It does not constitute personalized financial, legal, or tax advice. Always consult a qualified professional for advice tailored to your situation.
@@ -114,7 +117,7 @@ export default function TermsAndConditionsPage() {
             </p>
             <p className="mt-2">
               <strong>Financial Dojo</strong><br />
-              Email : admin@dojofnancier.com
+              Email: admin@financedojo.ca
             </p>
           </section>
         </div>
@@ -122,13 +125,3 @@ export default function TermsAndConditionsPage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-

@@ -42,12 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
     }));
 
-    const formationEntries: MetadataRoute.Sitemap = courses.map((course) => ({
-        url: `${siteUrl}/formations/${course.slug}`,
-        lastModified: course.updatedAt || new Date(),
-        changeFrequency: "monthly",
-        priority: 0.8,
-    }));
+
 
     const staticRoutes: MetadataRoute.Sitemap = [
         "",
@@ -57,14 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         "/article",
         "/privacy-policy",
         "/terms-and-conditions",
-        "/a-propos",
-        "/formations",
-        "/politique-de-confidentialite",
-        "/termes-et-conditions",
         "/investor",
-        "/investisseur",
-        "/learn",
-        "/apprendre",
     ].map((route) => ({
         url: `${siteUrl}${route}`,
         lastModified: new Date(),
@@ -72,5 +60,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: route === "" ? 1.0 : 0.8,
     }));
 
-    return [...staticRoutes, ...courseEntries, ...formationEntries, ...articleEntries];
+    return [...staticRoutes, ...courseEntries, ...articleEntries];
 }

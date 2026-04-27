@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getPublishedCoursesAction } from "@/app/actions/courses";
 import { getPublishedCohortsAction } from "@/app/actions/cohorts";
 import { CourseCatalog } from "@/components/courses/course-catalog";

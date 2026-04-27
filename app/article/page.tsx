@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { getArticlesList, getArticleCategories } from "@/app/actions/blog";
 import { ArticleList } from "@/components/blog/article-list";
 import { Suspense } from "react";
+import { ArticleListingJsonLd } from "@/components/blog/article-listing-json-ld";
 
 export const metadata: Metadata = {
-  title: "Articles | Le Dojo Financier",
-  description: "Discover our articles on finance, investing, and financial management.",
+  title: "Finance & Investing Articles",
+  description: "Stay ahead in the financial industry. Read expert articles on exam strategies, market insights, and career growth for Canadian finance professionals.",
   openGraph: {
-    title: "Articles | Le Dojo Financier",
-    description: "Discover our articles on finance, investing, and financial management.",
+    title: "Finance & Investing Articles | Financial Dojo",
+    description: "Stay ahead in the financial industry. Read expert articles on exam strategies, market insights, and career growth for Canadian finance professionals.",
     type: "website",
   },
 };

@@ -1,6 +1,6 @@
 {
     "diagnostic_id": "diagnostic_investisseur_v1",
-    "language": "fr-CA",
+    "language": "en-CA",
     "version": "1.0.0",
     "scoring_model": {
       "method": "weighted_points",
@@ -31,118 +31,118 @@
     "questions": [
       {
         "id": "q1_goal",
-        "label": "Objectif principal",
+        "label": "Main goal",
         "type": "single_choice",
         "answers": [
-          { "id": "q1_a1_growth", "text": "Faire croître mon patrimoine à long terme" },
-          { "id": "q1_a2_income", "text": "Générer un revenu complémentaire" },
-          { "id": "q1_a3_capital", "text": "Protéger mon capital avant tout" },
-          { "id": "q1_a4_fi", "text": "Atteindre l’indépendance financière" },
-          { "id": "q1_a5_unclear", "text": "Je ne sais pas / pas clairement défini" }
+          { "id": "q1_a1_growth", "text": "Grow my wealth over the long term" },
+          { "id": "q1_a2_income", "text": "Generate supplemental income" },
+          { "id": "q1_a3_capital", "text": "Protect my capital above all else" },
+          { "id": "q1_a4_fi", "text": "Achieve financial independence" },
+          { "id": "q1_a5_unclear", "text": "I am not sure / not clearly defined" }
         ]
       },
       {
         "id": "q2_horizon",
-        "label": "Horizon de placement",
+        "label": "Investment horizon",
         "type": "single_choice",
         "answers": [
-          { "id": "q2_a1_lt5", "text": "Moins de 5 ans" },
-          { "id": "q2_a2_5to10", "text": "Entre 5 et 10 ans" },
-          { "id": "q2_a3_10plus", "text": "Plus de 10 ans" },
-          { "id": "q2_a4_depends", "text": "Ça dépend des occasions" },
-          { "id": "q2_a5_never", "text": "Je n’y ai jamais vraiment réfléchi" }
+          { "id": "q2_a1_lt5", "text": "Less than 5 years" },
+          { "id": "q2_a2_5to10", "text": "Between 5 and 10 years" },
+          { "id": "q2_a3_10plus", "text": "More than 10 years" },
+          { "id": "q2_a4_depends", "text": "It depends on opportunities" },
+          { "id": "q2_a5_never", "text": "I have never really thought about it" }
         ]
       },
       {
         "id": "q3_drawdown_reaction",
-        "label": "Réaction aux baisses",
+        "label": "Reaction to market downturns",
         "type": "single_choice",
         "answers": [
-          { "id": "q3_a1_stay", "text": "Je reste investi sans changer ma stratégie" },
-          { "id": "q3_a2_review", "text": "Je réévalue, mais sans paniquer" },
-          { "id": "q3_a3_reduce", "text": "Je réduis mon exposition pour me rassurer" },
-          { "id": "q3_a4_sell_wait", "text": "Je vends et j’attends que “ça se replace”" },
-          { "id": "q3_a5_never_lived", "text": "Je n’ai jamais vraiment vécu une baisse importante" }
+          { "id": "q3_a1_stay", "text": "I stay invested without changing my strategy" },
+          { "id": "q3_a2_review", "text": "I reassess, but without panicking" },
+          { "id": "q3_a3_reduce", "text": "I reduce my exposure to reassure myself" },
+          { "id": "q3_a4_sell_wait", "text": "I sell and wait for things to stabilize" },
+          { "id": "q3_a5_never_lived", "text": "I have never really experienced a significant downturn" }
         ]
       },
       {
         "id": "q4_structure",
-        "label": "Niveau de structure",
+        "label": "Level of structure",
         "type": "single_choice",
         "answers": [
-          { "id": "q4_a1_written", "text": "J’ai une stratégie d’investissement claire et écrite" },
-          { "id": "q4_a2_general", "text": "J’ai une idée générale, mais rien de formalisé" },
-          { "id": "q4_a3_delegate", "text": "Je fais confiance à mon conseiller sans trop intervenir" },
-          { "id": "q4_a4_info_flow", "text": "Je prends des décisions au fil de l’information que je consomme" },
-          { "id": "q4_a5_bricole", "text": "J’ai l’impression de « bricoler » sans vision d’ensemble" }
+          { "id": "q4_a1_written", "text": "I have a clear, written investment strategy" },
+          { "id": "q4_a2_general", "text": "I have a general idea, but nothing formalized" },
+          { "id": "q4_a3_delegate", "text": "I trust my advisor without intervening much" },
+          { "id": "q4_a4_info_flow", "text": "I make decisions based on information I consume" },
+          { "id": "q4_a5_bricole", "text": "I feel like I am improvising without a big-picture view" }
         ]
       },
       {
         "id": "q5_info_source",
-        "label": "Source principale d’information",
+        "label": "Main information source",
         "type": "single_choice",
         "answers": [
-          { "id": "q5_a1_advisor", "text": "Mon conseiller financier" },
-          { "id": "q5_a2_structured_learning", "text": "Des livres ou formations structurées" },
-          { "id": "q5_a3_media", "text": "YouTube, podcasts, médias financiers" },
-          { "id": "q5_a4_social", "text": "Discussions, forums, réseaux sociaux" },
-          { "id": "q5_a5_mix", "text": "Un mélange de tout ça" }
+          { "id": "q5_a1_advisor", "text": "My financial advisor" },
+          { "id": "q5_a2_structured_learning", "text": "Books or structured courses" },
+          { "id": "q5_a3_media", "text": "YouTube, podcasts, financial media" },
+          { "id": "q5_a4_social", "text": "Discussions, forums, social media" },
+          { "id": "q5_a5_mix", "text": "A mix of all of the above" }
         ]
       },
       {
         "id": "q6_time_energy",
-        "label": "Temps et énergie investis",
+        "label": "Time and energy invested",
         "type": "single_choice",
         "answers": [
-          { "id": "q6_a1_low_by_choice", "text": "J’y consacre peu de temps, volontairement" },
-          { "id": "q6_a2_right_amount", "text": "J’y consacre le temps nécessaire, sans excès" },
-          { "id": "q6_a3_lots_no_clarity", "text": "J’y consacre beaucoup de temps, mais sans grande clarté" },
-          { "id": "q6_a4_too_much_for_results", "text": "J’y consacre trop de temps pour les résultats obtenus" },
-          { "id": "q6_a5_avoid", "text": "J’évite le sujet autant que possible" }
+          { "id": "q6_a1_low_by_choice", "text": "I spend little time on it, by choice" },
+          { "id": "q6_a2_right_amount", "text": "I spend the necessary time, without excess" },
+          { "id": "q6_a3_lots_no_clarity", "text": "I spend a lot of time on it, but without much clarity" },
+          { "id": "q6_a4_too_much_for_results", "text": "I spend too much time for the results I get" },
+          { "id": "q6_a5_avoid", "text": "I avoid the topic as much as possible" }
         ]
       }
     ],
     "archetypes": [
       {
         "id": "architecte",
-        "name": "L’Architecte",
-        "one_liner": "Structuré, discipliné, long terme — parfois trop rigide.",
+        "name": "The Architect",
+        "one_liner": "Structured, disciplined, long-term — sometimes too rigid.",
         "signals": { "primary": ["q4_a1_written", "q3_a1_stay", "q2_a3_10plus"] }
       },
       {
         "id": "stratege",
-        "name": "Le Stratège",
-        "one_liner": "Bonne tête, bonne direction — manque encore de cadre formalisé.",
+        "name": "The Strategist",
+        "one_liner": "Good instincts, right direction — still lacks a formalized framework.",
         "signals": { "primary": ["q4_a2_general", "q3_a2_review", "q2_a2_5to10"] }
       },
       {
         "id": "delegateur",
-        "name": "Le Délégateur",
-        "one_liner": "Délègue par confiance — comprend moins qu’il pense.",
+        "name": "The Delegator",
+        "one_liner": "Delegates out of trust — understands less than they think.",
         "signals": { "primary": ["q4_a3_delegate", "q5_a1_advisor"] }
       },
       {
         "id": "navigateur",
-        "name": "Le Navigateur",
-        "one_liner": "Avance au fil de l’info — sans boussole stable.",
+        "name": "The Navigator",
+        "one_liner": "Moves with the flow of information — without a stable compass.",
         "signals": { "primary": ["q4_a4_info_flow", "q5_a3_media", "q5_a5_mix"] }
       },
       {
         "id": "optimiseur",
-        "name": "L’Optimiseur",
-        "one_liner": "Très impliqué — optimise trop tôt, au mauvais endroit.",
+        "name": "The Optimizer",
+        "one_liner": "Highly engaged — optimizes too early, in the wrong places.",
         "signals": { "primary": ["q6_a4_too_much_for_results", "q6_a3_lots_no_clarity"] }
       },
       {
         "id": "prudent",
-        "name": "Le Prudent",
-        "one_liner": "Sécurité d’abord — le risque émotionnel dicte les décisions.",
+        "name": "The Cautious",
+        "one_liner": "Safety first — emotional risk drives the decisions.",
         "signals": { "primary": ["q1_a3_capital", "q3_a4_sell_wait", "q3_a3_reduce"] }
       },
       {
         "id": "explorateur",
-        "name": "L’Explorateur",
-        "one_liner": "Curieux, opportuniste — incohérent dans le temps.",
+        "name": "The Explorer",
+        "one_liner": "Curious, opportunistic — inconsistent over time.",
         "signals": { "primary": ["q2_a4_depends", "q4_a5_bricole", "q5_a5_mix"] }
       }
     ],
@@ -153,31 +153,31 @@
         "q1_a3_capital": { "prudent": 3, "delegateur": 1 },
         "q1_a4_fi": { "architecte": 1, "stratege": 2, "optimiseur": 1 },
         "q1_a5_unclear": { "navigateur": 2, "explorateur": 1 },
-  
+
         "q2_a1_lt5": { "prudent": 2, "delegateur": 1 },
         "q2_a2_5to10": { "stratege": 2, "architecte": 1 },
         "q2_a3_10plus": { "architecte": 3, "stratege": 1 },
         "q2_a4_depends": { "explorateur": 3, "navigateur": 1, "optimiseur": 1 },
         "q2_a5_never": { "navigateur": 2, "delegateur": 1 },
-  
+
         "q3_a1_stay": { "architecte": 3, "stratege": 1 },
         "q3_a2_review": { "stratege": 3, "architecte": 1 },
         "q3_a3_reduce": { "prudent": 2, "delegateur": 1 },
         "q3_a4_sell_wait": { "prudent": 3 },
         "q3_a5_never_lived": { "explorateur": 1, "navigateur": 1 },
-  
+
         "q4_a1_written": { "architecte": 4, "stratege": 1 },
         "q4_a2_general": { "stratege": 4, "architecte": 1 },
         "q4_a3_delegate": { "delegateur": 5, "prudent": 1 },
         "q4_a4_info_flow": { "navigateur": 5, "optimiseur": 1 },
         "q4_a5_bricole": { "explorateur": 3, "navigateur": 2 },
-  
+
         "q5_a1_advisor": { "delegateur": 4, "stratege": 1 },
         "q5_a2_structured_learning": { "architecte": 2, "stratege": 2, "optimiseur": 1 },
         "q5_a3_media": { "navigateur": 3, "optimiseur": 1 },
         "q5_a4_social": { "navigateur": 2, "explorateur": 2 },
         "q5_a5_mix": { "navigateur": 2, "explorateur": 2, "optimiseur": 1 },
-  
+
         "q6_a1_low_by_choice": { "delegateur": 2, "architecte": 1 },
         "q6_a2_right_amount": { "architecte": 2, "stratege": 2 },
         "q6_a3_lots_no_clarity": { "navigateur": 2, "optimiseur": 3 },
@@ -189,13 +189,13 @@
       "compute": [
         {
           "step": "sum_weights",
-          "description": "Sommer les points par archétype selon les réponses sélectionnées.",
+          "description": "Sum points by archetype based on selected answers.",
           "input": "selected_answer_ids[]",
           "output": "scores_by_archetype{archetype_id:number}"
         },
         {
           "step": "select_primary_secondary",
-          "description": "Trier par score décroissant; appliquer règles d'éligibilité pour secondaire.",
+          "description": "Sort by descending score; apply eligibility rules for secondary.",
           "output": {
             "primary": "top_1",
             "secondary": "top_2_if_eligible_else_none"
@@ -230,9 +230,8 @@
       "primary_profile": { "id": "", "name": "", "score": 0 },
       "secondary_profile": { "id": "", "name": "", "score": 0 },
       "notes": {
-        "disclaimer": "Éducation seulement. Aucun conseil d’investissement personnalisé.",
+        "disclaimer": "Educational only. No personalized investment advice.",
         "confidence": "medium"
       }
     }
   }
-  

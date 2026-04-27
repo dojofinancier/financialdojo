@@ -25,7 +25,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
         <Link href="/dashboard/student">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour au tableau de bord
+            Back to dashboard
           </Button>
         </Link>
         <h1 className="text-3xl font-bold">Ticket: {ticket.ticketNumber}</h1>

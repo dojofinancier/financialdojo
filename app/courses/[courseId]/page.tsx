@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { CourseProductPage } from "@/components/courses/course-product-page";
 import { Suspense } from "react";
 import { CourseProductPageAuthed } from "./course-product-page-authed";
+import { CourseJsonLd } from "@/components/courses/course-json-ld";
 
 // Note: Caching is handled automatically by Next.js 16 with cacheComponents enabled
 // The page will be cached and revalidated based on Next.js defaults
@@ -31,8 +32,11 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
   };
 
   return (
-    <Suspense fallback={<CourseProductPage course={courseWithDefaults} isEnrolled={false} />}>
+    <>
+      <CourseJsonLd course={courseWithDefaults as any} />
+      <Suspense fallback={<CourseProductPage course={courseWithDefaults} isEnrolled={false} />}>
       <CourseProductPageAuthed course={courseWithDefaults} />
     </Suspense>
+    </>
   );
 }

@@ -35,7 +35,7 @@ export function NotFoundClient() {
           {/* Error number */}
           <div className="mb-8">
             <span className="text-primary font-mono text-sm uppercase tracking-[0.3em] block mb-4">
-              [ERREUR]
+              [ERROR]
             </span>
             <h1 className="text-[20vw] sm:text-[15vw] md:text-[12vw] font-black uppercase leading-[0.85] tracking-tighter text-primary">
               404

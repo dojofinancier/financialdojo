@@ -56,10 +56,10 @@ export default function LearnError({
           <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
             <Mail className="h-4 w-4 text-muted-foreground" />
             <a
-              href="mailto:support@ledojofinancier.com"
+              href="mailto:support@financedojo.ca"
               className="text-sm text-primary hover:underline"
             >
-              support@ledojofinancier.com
+              support@financedojo.ca
             </a>
           </div>
 

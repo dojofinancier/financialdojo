@@ -11,6 +11,7 @@ import { OfflineIndicator } from "@/components/error/offline-indicator";
 import { ErrorBoundary } from "@/components/error/error-boundary";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { RouteChrome } from "@/components/layout/route-chrome";
+import { buildSiteWideJsonLdGraph } from "@/lib/seo/json-ld";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -37,12 +38,24 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Finance Dojo",
-  description: "Financial Education Platform",
+  metadataBase: new URL("https://financedojo.ca"),
+  title: {
+    default: "Financial Dojo - Master Your Finance Exams (CIRE, RSE)",
+    template: "%s | Financial Dojo",
+  },
+  description: "Pass your CIRE and RSE exams with confidence. Discover world-class financial training, targeted prep courses, and expert insights for Canadian finance professionals.",
+  applicationName: "Financial Dojo",
   icons: {
     icon: "/fav-fd.ico",
     shortcut: "/fav-fd.ico",
     apple: "/fav-fd.ico",
+  },
+  openGraph: {
+    title: "Financial Dojo - Master Your Finance Exams (CIRE, RSE)",
+    description: "Pass your CIRE and RSE exams with confidence. Discover world-class financial training, targeted prep courses, and expert insights for Canadian finance professionals.",
+    type: "website",
+    siteName: "Financial Dojo",
+    locale: "en_CA",
   },
 };
 
@@ -52,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr-CA" className={`${plusJakartaSans.variable} ${sourceSerif4.variable} ${jetBrainsMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${plusJakartaSans.variable} ${sourceSerif4.variable} ${jetBrainsMono.variable}`} suppressHydrationWarning>
       <head>
         {/* Favicon */}
         <link rel="icon" href="/fav-fd.ico" sizes="any" />
@@ -69,6 +82,13 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://js.stripe.com" />
         <link rel="dns-prefetch" href="https://m.stripe.com" />
         <link rel="dns-prefetch" href="https://m.stripe.network" />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(buildSiteWideJsonLdGraph()),
+          }}
+        />
 
         {/* Blocking script to prevent theme flash - runs before page renders */}
         <script

@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Privacy Policy | Financial Dojo",
   description: "Financial Dojo Privacy Policy",
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || "https://financedojo.ca"}/privacy-policy`,
+  },
 };
 
 export default function PrivacyPolicyPage() {
@@ -12,7 +15,7 @@ export default function PrivacyPolicyPage() {
         <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8">
           Privacy Policy
         </h1>
-        
+
         <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed space-y-6">
           <p className="text-sm text-slate-500">
             Last updated: December 17, 2025
@@ -21,7 +24,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">1. Introduction</h2>
             <p>
-              Financial Dojo ("we", "our", "us") is committed to protecting the privacy of your personal information. This privacy policy explains how we collect, use, disclose, and protect your information when you use our website and services.
+              Financial Dojo (&quot;we&quot;, &quot;our&quot;, &quot;us&quot;) is committed to protecting the privacy of your personal information. This privacy policy explains how we collect, use, disclose, and protect your information when you use our website and services.
             </p>
           </section>
 
@@ -101,7 +104,7 @@ export default function PrivacyPolicyPage() {
             </p>
             <p className="mt-2">
               <strong>Financial Dojo</strong><br />
-              Email : admin@dojofnancier.com
+              Email: admin@financedojo.ca
             </p>
           </section>
         </div>
@@ -109,13 +112,3 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-

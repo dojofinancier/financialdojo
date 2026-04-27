@@ -61,7 +61,7 @@ export function StickyBottomCTA({
                 >
                   <span className="inline-flex items-center gap-2">
                     <Play className="h-5 w-5" />
-                    Continuer l'apprentissage →
+                    Continue learning →
                   </span>
                 </button>
               ) : inCart ? (
@@ -72,7 +72,7 @@ export function StickyBottomCTA({
                 >
                   <span className="inline-flex items-center gap-2">
                     <ShoppingCart className="h-5 w-5" />
-                    Voir le panier →
+                    View cart →
                   </span>
                 </button>
               ) : (

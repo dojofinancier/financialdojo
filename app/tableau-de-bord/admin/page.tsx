@@ -13,9 +13,9 @@ export default async function AdminDashboardPage({ searchParams }: AdminDashboar
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Tableau de bord administrateur</h1>
+        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <p className="text-muted-foreground mt-2">
-          Bienvenue, {user.firstName || user.email}
+          Welcome, {user.firstName || user.email}
         </p>
       </div>
       

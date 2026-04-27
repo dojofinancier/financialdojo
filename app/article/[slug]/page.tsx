@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getArticleBySlug, getRecommendedArticles, getProfessionalCourses, getInvestorCourses } from "@/app/actions/blog";
+import { getArticleBySlug, getRecommendedArticles, getCTACourses } from "@/app/actions/blog";
 import { calculateReadingTime } from "@/lib/utils/blog";
 import { ArticlePage } from "@/components/blog/article-page";
 import { ArticleSEO } from "@/components/blog/article-seo";
@@ -15,12 +15,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ledojofinancier.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://financedojo.ca";
   const articleUrl = `${siteUrl}/article/${article.slug}`;
   const description = article.metaDescription || article.excerpt || "";
 
   return {
-    title: `${article.title} | Le Dojo Financier`,
+    title: `${article.title} | Financial Dojo`,
     description,
     openGraph: {
       title: article.title,
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       publishedTime: article.publishedAt?.toISOString(),
       modifiedTime: article.updatedAt?.toISOString() || article.publishedAt?.toISOString(),
       url: articleUrl,
-      siteName: "Le Dojo Financier",
+      siteName: "Financial Dojo",
       // Add image when available
       // images: article.featuredImage ? [{ url: article.featuredImage }] : [],
     },
@@ -70,14 +70,8 @@ export default async function ArticlePageRoute({ params }: { params: Promise<{ s
     3
   );
 
-  // Get courses for CTA based on target market (case-insensitive)
-  let courses = null;
-  const targetMarket = article.targetMarket?.toLowerCase();
-  if (targetMarket === "professionals") {
-    courses = await getProfessionalCourses();
-  } else if (targetMarket === "investors") {
-    courses = await getInvestorCourses();
-  }
+  // Get courses for CTA
+  const courses = await getCTACourses();
 
   const readingTime = calculateReadingTime(article.content || "");
 

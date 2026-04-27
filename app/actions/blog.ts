@@ -769,3 +769,42 @@ export async function batchGenerateEmbeddings(options?: {
     return { processed: 0, errors: 0 };
   }
 }
+
+
+/**
+ * Get CIRE and RSE courses for CTA
+ */
+export async function getCTACourses() {
+  try {
+    const courses = await prisma.course.findMany({
+      where: {
+        published: true,
+        slug: { in: ["cire", "rse"] }
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        shortDescription: true,
+        price: true,
+        category: {
+          select: {
+            name: true,
+            slug: true,
+          },
+        },
+      },
+      orderBy: {
+        title: "asc",
+      },
+    });
+
+    return courses.map((course) => ({
+      ...course,
+      price: course.price.toNumber(),
+    }));
+  } catch (error) {
+    console.error("Error fetching CTA courses:", error);
+    return [];
+  }
+}

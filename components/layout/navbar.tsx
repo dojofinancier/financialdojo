@@ -66,7 +66,7 @@ export async function Navbar() {
             <>
               <CartIcon />
               <Button asChild className="bg-primary hover:bg-accent text-xs sm:text-sm px-3 sm:px-4">
-                <Link href="/login" prefetch={true}>Connexion</Link>
+                <Link href="/login" prefetch={true}>Log in</Link>
               </Button>
             </>
           )}

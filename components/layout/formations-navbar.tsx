@@ -42,7 +42,7 @@ export async function FormationsNavbar() {
         <Link href={getDashboardUrl(serializedUser.role)} prefetch={true}>
           <Button variant="ghost" size="sm" className="p-2 sm:px-3 text-white hover:bg-white/10">
             <LayoutDashboard className="h-5 w-5 sm:mr-2" />
-            <span className="hidden sm:inline">Tableau de bord</span>
+            <span className="hidden sm:inline">Dashboard</span>
           </Button>
         </Link>
         <div className="[&_button]:text-white [&_button]:hover:bg-white/10">
@@ -58,7 +58,7 @@ export async function FormationsNavbar() {
         <CartIcon />
       </div>
       <Button asChild className="bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm px-3 sm:px-4 border border-white/20">
-        <Link href="/login" prefetch={true}>Connexion</Link>
+        <Link href="/login" prefetch={true}>Log in</Link>
       </Button>
     </>
   )

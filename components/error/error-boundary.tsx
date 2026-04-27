@@ -24,7 +24,7 @@ interface State {
  * Features:
  * - Catches React component errors
  * - Logs errors to database
- * - Shows user-friendly French error message
+ * - Shows user-friendly error message
  * - Displays support email
  * - Provides reset/reload functionality
  */
@@ -110,10 +110,10 @@ export class ErrorBoundary extends Component<Props, State> {
               <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
                 <Mail className="h-4 w-4 text-muted-foreground" />
                 <a
-                  href="mailto:support@ledojofinancier.com"
+                  href="mailto:support@financedojo.ca"
                   className="text-sm text-primary hover:underline"
                 >
-                  support@ledojofinancier.com
+                  support@financedojo.ca
                 </a>
               </div>
 
@@ -144,4 +144,3 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
-

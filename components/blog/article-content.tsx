@@ -31,17 +31,23 @@ function isHtmlContent(content: string): boolean {
 }
 
 export function ArticleContent({ content }: ArticleContentProps) {
+  // Remove the first H1 (either Markdown or HTML) as it duplicates the page title
+  const cleanTitleContent = (content || "").replace(
+    /(?:^|\n)\s*(?:<h1[^>]*>[\s\S]*?<\/h1>|#\s+[^\n]+)[\r\n]*/i,
+    '\n'
+  ).trim();
+
   const [sanitizedHtml, setSanitizedHtml] = useState<string>("");
   const [isHtml, setIsHtml] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const detected = isHtmlContent(content);
+      const detected = isHtmlContent(cleanTitleContent);
       setIsHtml(detected);
       
       if (detected) {
         // Sanitize HTML content using DOMPurify
-        const clean = DOMPurify.sanitize(content, {
+        const clean = DOMPurify.sanitize(cleanTitleContent, {
           ALLOWED_TAGS: [
             'p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'a', 'img', 'span', 'div',
@@ -121,7 +127,7 @@ export function ArticleContent({ content }: ArticleContentProps) {
           },
         }}
       >
-        {content}
+        {cleanTitleContent}
       </ReactMarkdown>
     </div>
   );

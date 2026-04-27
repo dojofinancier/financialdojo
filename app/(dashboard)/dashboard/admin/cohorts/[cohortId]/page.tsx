@@ -32,7 +32,7 @@ async function CohortDetailContent({ params }: CohortDetailPageProps) {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Tableau de bord administrateur</h1>
+        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
       </div>
       
       <AdminDashboardTabs defaultTab="cohorts">

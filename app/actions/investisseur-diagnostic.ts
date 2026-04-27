@@ -59,7 +59,7 @@ export async function submitInvestisseurDiagnosticAction(
           leadId: lead.id,
           diagnosticId: INVESTISSEUR_DIAGNOSTIC_META.diagnosticId || "diagnostic_investisseur_v1",
           diagnosticVersion: INVESTISSEUR_DIAGNOSTIC_META.version || "1.0.0",
-          language: INVESTISSEUR_DIAGNOSTIC_META.language || "fr-CA",
+          language: INVESTISSEUR_DIAGNOSTIC_META.language || "en-CA",
           responses: parsed.responses,
           scores: result.scores,
           primaryId: result.primary.id,
@@ -94,7 +94,7 @@ export async function submitInvestisseurDiagnosticAction(
     await sendInvestorDiagnosticCompletedWebhook({
       diagnosticId: INVESTISSEUR_DIAGNOSTIC_META.diagnosticId || "diagnostic_investisseur_v1",
       diagnosticVersion: INVESTISSEUR_DIAGNOSTIC_META.version || "1.0.0",
-      language: INVESTISSEUR_DIAGNOSTIC_META.language || "fr-CA",
+      language: INVESTISSEUR_DIAGNOSTIC_META.language || "en-CA",
       firstName: parsed.firstName,
       email: parsed.email,
       reportUrl,

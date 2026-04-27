@@ -56,7 +56,7 @@ export function ArticleCTA({ courses, targetMarket }: ArticleCTAProps) {
         <p className="text-gray-600">{getCTADescription()}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {courses.map((course) => (
           <Card key={course.id} className="flex flex-col">
             <CardHeader>
