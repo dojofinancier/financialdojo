@@ -1,4 +1,0 @@
-firstName,lastName,email,courseIdentifier,password
-John,Doe,john.doe@example.com,ccvm-1,
-Jane,Smith,jane.smith@example.com,CCVM-2,MySecurePass123
-Bob,Johnson,bob@example.com,ccvm-1,AnotherPassword456
