@@ -88,12 +88,12 @@ function HeroSection() {
           {/* Oversized headline */}
           <div className="mb-8">
             <span className="text-primary font-mono text-sm uppercase tracking-[0.3em] block mb-4">
-              [FINANCIAL COURSES]
+              [CIRE, RSE, CSC, WME]
             </span>
             <h1 className="text-[12vw] sm:text-[10vw] md:text-[8vw] font-black uppercase leading-[0.85] tracking-tighter">
-              MASTER
+              Prep for
               <br />
-              <span className="text-primary">FINANCE</span>
+              <span className="text-primary">CIRO exams</span>
             </h1>
           </div>
 
@@ -101,7 +101,7 @@ function HeroSection() {
           <div className="max-w-xl mb-12">
             <div className="border-l-4 border-primary pl-6 py-2">
               <p className="text-xl sm:text-2xl font-light leading-relaxed">
-                OCRI, AMF, CSI certifications.
+                CIRO regulatory exams for the financial industry.
                 <span className="font-bold"> Pass your exams with confidence.</span>
               </p>
             </div>
@@ -115,12 +115,7 @@ function HeroSection() {
             >
               Get started →
             </Link>
-            <Link
-              href="/courses"
-              className="inline-block bg-transparent text-white font-black uppercase text-lg tracking-wider px-10 py-5 border-4 border-white hover:bg-white hover:text-black transition-colors"
-            >
-              View courses
-            </Link>
+            
           </div>
 
           {/* Stats row - hard borders */}
