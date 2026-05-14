@@ -3,10 +3,11 @@
 import { prisma } from "@/lib/prisma";
 import { requireAdmin, requireAuth } from "@/lib/auth/require-auth";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { logServerError } from "@/lib/utils/error-logging";
 import type { PaginatedResult } from "@/lib/utils/pagination";
 import { generateSlug, generateUniqueSlug } from "@/lib/utils/slug";
-import { revalidatePath, unstable_cache } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 
 const componentVisibilitySchema = z.object({
   videos: z.boolean().default(true),
@@ -1160,6 +1161,75 @@ export async function updateCourseAboutAction(
     return {
       success: false,
       error: "Error while updating the About section",
+    };
+  }
+}
+
+const programTimelineStepSchema = z.object({
+  label: z.string().optional(),
+  title: z.string().min(1, "Each step must have a title"),
+  description: z.string().min(1, "Each step must have a description"),
+});
+
+/**
+ * Update program timeline ("How does it work?") — admin only.
+ * Pass `null` to use the site default template for this course.
+ */
+export async function updateCourseProgramTimelineAction(
+  courseId: string,
+  data: { programTimelineSteps: unknown[] | null }
+): Promise<CourseActionResult> {
+  try {
+    await requireAdmin();
+
+    let value: unknown = null;
+    if (data.programTimelineSteps !== null) {
+      const parsed = z.array(programTimelineStepSchema).length(5).safeParse(data.programTimelineSteps);
+      if (!parsed.success) {
+        return {
+          success: false,
+          error: "Exactly 5 complete steps (title and description) are required.",
+        };
+      }
+      value = parsed.data.map((s) => ({
+        label: s.label?.trim() || undefined,
+        title: s.title.trim(),
+        description: s.description.trim(),
+      }));
+    }
+
+    await prisma.course.update({
+      where: { id: courseId },
+      data: {
+        programTimelineSteps:
+          value === null ? Prisma.DbNull : (value as Prisma.InputJsonValue),
+      },
+    });
+
+    const updated = await prisma.course.findUnique({
+      where: { id: courseId },
+      select: { slug: true },
+    });
+
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
+    revalidatePath(`/courses/${courseId}`);
+    if (updated?.slug) {
+      revalidatePath(`/courses/${updated.slug}`);
+    }
+    revalidatePath("/courses");
+    revalidateTag("courses", "max");
+
+    return { success: true };
+  } catch (error) {
+    await logServerError({
+      errorMessage: `Failed to update program timeline: ${error instanceof Error ? error.message : "Unknown error"}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "HIGH",
+    });
+
+    return {
+      success: false,
+      error: "Error while updating the program timeline",
     };
   }
 }

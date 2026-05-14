@@ -12,6 +12,7 @@ import { CourseFAQManagement } from "@/components/admin/courses/course-faq-manag
 import { CourseAboutManagement } from "@/components/admin/courses/course-about-management";
 import { CourseFeaturesManagement } from "@/components/admin/courses/course-features-management";
 import { CourseTestimonialsManagement } from "@/components/admin/courses/course-testimonials-management";
+import { CourseProgramTimelineManagement } from "@/components/admin/courses/course-program-timeline-management";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -67,6 +68,7 @@ async function CourseDetailContent({ params }: CourseDetailPageProps) {
         <TabsList className="flex-wrap h-auto gap-1">
           <TabsTrigger value="details">Course details</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="program-timeline">Program timeline</TabsTrigger>
           <TabsTrigger value="features">Features</TabsTrigger>
           <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
           <TabsTrigger value="modules">Modules and content</TabsTrigger>
@@ -123,6 +125,25 @@ async function CourseDetailContent({ params }: CourseDetailPageProps) {
                 }
               }
               return [];
+            })()}
+          />
+        </TabsContent>
+        <TabsContent value="program-timeline" className="mt-6">
+          <CourseProgramTimelineManagement
+            courseId={courseId}
+            initialProgramTimelineSteps={(() => {
+              const raw = (course as any).programTimelineSteps;
+              if (raw === null || raw === undefined) return null;
+              if (Array.isArray(raw)) return raw;
+              if (typeof raw === "string") {
+                try {
+                  const parsed = JSON.parse(raw);
+                  return Array.isArray(parsed) ? parsed : null;
+                } catch {
+                  return null;
+                }
+              }
+              return null;
             })()}
           />
         </TabsContent>

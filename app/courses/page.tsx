@@ -74,7 +74,7 @@ export default function CoursesPage() {
           <div className="relative px-4 sm:px-8">
             <div className="max-w-[1400px] mx-auto">
               <span className="text-primary font-mono text-sm uppercase tracking-[0.3em] block mb-4">
-                [CATALOG]
+                [OUR PREP COURSES]
               </span>
               <h1 className="text-6xl sm:text-7xl md:text-8xl font-black uppercase tracking-tighter leading-[0.9]">
                 FINANCE
@@ -84,7 +84,7 @@ export default function CoursesPage() {
               <div className="max-w-2xl mt-8">
                 <div className="border-l-4 border-primary pl-6 py-2">
                   <p className="text-xl sm:text-2xl font-light leading-relaxed opacity-80">
-                    OCRI, AMF, CSI tracks. Pick your target and go.
+                    For financial industry professionals.
                   </p>
                 </div>
               </div>

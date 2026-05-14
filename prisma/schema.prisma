@@ -96,6 +96,7 @@ model Course {
   statsVideosLabel          String?                   @map("stats_videos_label")
   pdfUrl                    String?                   @map("pdf_url")
   aboutAccordionItems       Json?                     @default("[]") @map("about_accordion_items")
+  programTimelineSteps      Json?                     @map("program_timeline_steps") // 5 steps; null = site default (see lib/constants/program-timeline-defaults)
   analytics                 Analytics[]
   appointmentAvailabilities AppointmentAvailability[]
   appointments              Appointment[]

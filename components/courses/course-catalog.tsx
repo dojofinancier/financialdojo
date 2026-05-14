@@ -64,7 +64,7 @@ export function CourseCatalog({ initialCourses }: CourseCatalogProps) {
         <div className="flex flex-col md:flex-row gap-4 md:items-end">
           <div className="flex-1">
             <label className="block font-mono text-xs uppercase tracking-[0.25em] text-black/60 mb-2">
-              Rechercher
+              Search
             </label>
             <input
               value={search}

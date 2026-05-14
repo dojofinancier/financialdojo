@@ -43,6 +43,8 @@ import { addToCart, isInCart } from "@/lib/utils/cart";
 import { toast } from "sonner";
 import { TestimonialCarousel } from "./testimonial-carousel";
 import { StickyBottomCTA } from "./sticky-bottom-cta";
+import { ProgramTimelineSection } from "./program-timeline-section";
+import { resolveProgramTimelineSteps } from "@/lib/utils/resolve-program-timeline";
 import Image from "next/image";
 
 // Icon mapping for dynamic features
@@ -129,6 +131,8 @@ interface Course {
   totalQuizQuestions?: number;
   totalQuestionBankQuestions?: number;
   totalLearningActivities?: number;
+  /** Custom program timeline; null/undefined = site default in resolver */
+  programTimelineSteps?: unknown;
 }
 
 interface CourseProductPageProps {
@@ -223,6 +227,11 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
   const features = useMemo(() => Array.isArray(course.features) ? course.features : [], [course.features]);
   const testimonials = useMemo(() => Array.isArray(course.testimonials) ? course.testimonials : [], [course.testimonials]);
   const faqs = useMemo(() => Array.isArray(course.faqs) ? course.faqs : [], [course.faqs]);
+
+  const programTimelineResolved = useMemo(
+    () => resolveProgramTimelineSteps(course.programTimelineSteps),
+    [course.programTimelineSteps]
+  );
 
   const aboutAccordionItems = useMemo(
     () => Array.isArray(course.aboutAccordionItems)
@@ -554,6 +563,10 @@ export function CourseProductPage({ course, isEnrolled }: CourseProductPageProps
               </div>
             </div>
           </section>
+        )}
+
+        {programTimelineResolved && programTimelineResolved.length === 5 && (
+          <ProgramTimelineSection steps={programTimelineResolved} />
         )}
 
         {/* ============================================ */}

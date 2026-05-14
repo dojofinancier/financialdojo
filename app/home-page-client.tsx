@@ -167,9 +167,9 @@ function ExamChoiceSection() {
               className="group relative bg-primary text-black p-8 sm:p-10 border-b-4 border-black md:border-b-0 md:border-r-4 transition-all duration-200 hover:scale-[1.02] hover:z-10 hover:shadow-[12px_12px_0_0_black]"
             >
               <div className="font-mono text-sm opacity-50 mb-6">01</div>
-              <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-2">CIRE</h3>
+              <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-2">Canadian Investment Regulatory Exam (CIRE)</h3>
               <p className="text-lg leading-relaxed mb-8 opacity-90">
-                Canadian Investment Regulatory Exam. Prepare for the CIRE exam.
+                 Prepare for the CIRE exam with a customized study, plan, detailed notes, flashcards,over 1000 MCQs, and mock exams. You get unlimited access to experienced instuctors to help you if you get stuck.
               </p>
               <div className="flex items-center gap-2 font-black uppercase tracking-wider group-hover:gap-4 transition-all">
                 START
@@ -182,9 +182,9 @@ function ExamChoiceSection() {
               className="group relative bg-white text-black p-8 sm:p-10 transition-all duration-200 hover:scale-[1.02] hover:z-10 hover:shadow-[12px_12px_0_0_black]"
             >
               <div className="font-mono text-sm opacity-50 mb-6">02</div>
-              <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-2">RSE</h3>
+              <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-2">Retail Securities Exam (RSE)</h3>
               <p className="text-lg leading-relaxed mb-8 opacity-90">
-                Retail Securities Exam. Pass the exam quickly.
+                Pass the exam quickly with a customized study, plan, detailed notes, flashcards,over 1000 MCQs, and mock exams. You get unlimited access to experienced instuctors to help you if you get stuck.
               </p>
               <div className="flex items-center gap-2 font-black uppercase tracking-wider group-hover:gap-4 transition-all">
                 START
