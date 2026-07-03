@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/require-auth";
 import { logServerError } from "@/lib/utils/error-logging";
+import { isAnswerCorrect } from "@/lib/utils/quiz-answer-display";
 import { z } from "zod";
 
 export type ExamTakingResult = {
@@ -283,23 +284,8 @@ export async function submitExamAction(
     const totalQuestions = exam.questions.length;
 
     exam.questions.forEach((question) => {
-      const userAnswer = answers[question.id];
-      if (userAnswer) {
-        // For MCQ, compare with correctAnswer
-        if (question.type === "MULTIPLE_CHOICE") {
-          // Handle both "option1" format and direct answer format
-          const normalizedUserAnswer = userAnswer.trim().toLowerCase();
-          const normalizedCorrectAnswer = question.correctAnswer.trim().toLowerCase();
-          
-          if (normalizedUserAnswer === normalizedCorrectAnswer) {
-            correctAnswers++;
-          }
-        } else {
-          // For other types, direct comparison
-          if (userAnswer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase()) {
-            correctAnswers++;
-          }
-        }
+      if (isAnswerCorrect(question, answers[question.id])) {
+        correctAnswers++;
       }
     });
 

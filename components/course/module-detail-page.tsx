@@ -10,6 +10,12 @@ import { toast } from "sonner";
 import { getModuleContentAction } from "@/app/actions/module-content";
 import { markModuleAsLearnedAction } from "@/app/actions/study-plan";
 import { submitQuizAttemptAction, getQuizAttemptsAction } from "@/app/actions/quizzes";
+import {
+  getAnswerDisplay,
+  getOptionLetter,
+  getOrderedOptionKeys,
+  isAnswerCorrect,
+} from "@/lib/utils/quiz-answer-display";
 import { getStudentModuleNoteAction, saveStudentModuleNoteAction } from "@/app/actions/student-notes";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -102,8 +108,10 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     score: number;
     completedAt: Date;
     passed?: boolean;
+    answers?: Record<string, string>;
   }>>>({});
   const [loadingAttempts, setLoadingAttempts] = useState<Record<string, boolean>>({});
+  const [expandedAttemptId, setExpandedAttemptId] = useState<Record<string, string | null>>({});
 
   // Update active tab if videos tab is selected but there are no videos
   useEffect(() => {
@@ -204,6 +212,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
         score: number;
         completedAt: Date;
         passed?: boolean;
+        answers?: Record<string, string>;
       }>> = {};
 
       results.forEach(({ quizId, attempts }) => {
@@ -215,6 +224,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
             score: attempt.score,
             completedAt: new Date(attempt.completedAt),
             passed: attempt.score >= passingScore,
+            answers: (attempt.answers as Record<string, string>) || {},
           }));
         }
       });
@@ -346,14 +356,6 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     }
 
     return vimeoUrl;
-  };
-
-  // Helper function to map option keys to letters
-  const getOptionLetter = (key: string, index: number): string => {
-    if (/^[A-Z]$/i.test(key)) {
-      return key.toUpperCase();
-    }
-    return String.fromCharCode(65 + index);
   };
 
   if (loading) {
@@ -565,7 +567,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                 if (!currentQuestion) return null;
 
                 const optionKeys = currentQuestion.options
-                  ? Object.keys(currentQuestion.options).sort()
+                  ? getOrderedOptionKeys(currentQuestion.options)
                   : [];
                 const userAnswer = answers[currentQuestion.id];
 
@@ -686,6 +688,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                             <div className="space-y-3">
                               {quizAttempts[quiz.id].map((attempt, index) => {
                                 const isPassed = attempt.passed ?? (attempt.score >= quiz.passingScore);
+                                const isExpanded = expandedAttemptId[quiz.id] === attempt.id;
                                 const formattedDate = new Intl.DateTimeFormat('en-CA', {
                                   year: 'numeric',
                                   month: 'long',
@@ -697,39 +700,93 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                                 return (
                                   <div
                                     key={attempt.id}
-                                    className={`flex items-center justify-between p-3 rounded-lg border ${isPassed
+                                    className={`rounded-lg border p-3 space-y-3 ${isPassed
                                       ? 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800'
                                       : 'bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800'
                                       }`}
                                   >
-                                    <div className="flex items-center gap-3">
-                                      {isPassed ? (
-                                        <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-                                      ) : (
-                                        <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                                      )}
-                                      <div>
-                                        <div className="flex items-center gap-2">
-                                          <span className="font-semibold">
-                                            Attempt #{quizAttempts[quiz.id].length - index}
-                                          </span>
-                                          <Badge
-                                            variant={isPassed ? 'default' : 'destructive'}
-                                            className="text-xs"
-                                          >
-                                            {attempt.score}%
-                                          </Badge>
-                                          {isPassed && (
-                                            <Badge variant="outline" className="text-xs border-green-600 text-green-700 dark:text-green-400">
-                                              Passed
+                                    <div className="flex items-center justify-between gap-3">
+                                      <div className="flex items-center gap-3">
+                                        {isPassed ? (
+                                          <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+                                        ) : (
+                                          <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                                        )}
+                                        <div>
+                                          <div className="flex items-center gap-2">
+                                            <span className="font-semibold">
+                                              Attempt #{quizAttempts[quiz.id].length - index}
+                                            </span>
+                                            <Badge
+                                              variant={isPassed ? 'default' : 'destructive'}
+                                              className="text-xs"
+                                            >
+                                              {attempt.score}%
                                             </Badge>
-                                          )}
+                                            {isPassed && (
+                                              <Badge variant="outline" className="text-xs border-green-600 text-green-700 dark:text-green-400">
+                                                Passed
+                                              </Badge>
+                                            )}
+                                          </div>
+                                          <p className="text-sm text-muted-foreground mt-1">
+                                            {formattedDate}
+                                          </p>
                                         </div>
-                                        <p className="text-sm text-muted-foreground mt-1">
-                                          {formattedDate}
-                                        </p>
                                       </div>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                          setExpandedAttemptId((prev) => ({
+                                            ...prev,
+                                            [quiz.id]: prev[quiz.id] === attempt.id ? null : attempt.id,
+                                          }))
+                                        }
+                                      >
+                                        {isExpanded ? "Hide" : "View answers"}
+                                      </Button>
                                     </div>
+
+                                    {isExpanded && (
+                                      <div className="rounded-lg border bg-background p-4 space-y-4">
+                                        {quiz.questions.map((question, questionIndex) => {
+                                          const options = question.options || {};
+                                          const userAnswer = attempt.answers?.[question.id];
+                                          const userDisplay = getAnswerDisplay(userAnswer, options);
+                                          const correctDisplay = getAnswerDisplay(
+                                            question.correctAnswer,
+                                            options
+                                          );
+                                          const isCorrect = isAnswerCorrect(
+                                            {
+                                              type: "MULTIPLE_CHOICE",
+                                              correctAnswer: question.correctAnswer,
+                                              options,
+                                            },
+                                            userAnswer
+                                          );
+
+                                          return (
+                                            <div key={question.id} className="space-y-2">
+                                              <div className="font-medium">{questionIndex + 1}. {question.question}</div>
+                                              <div className="text-sm">
+                                                <span
+                                                  className={`font-semibold ${isCorrect ? "text-green-600" : "text-red-600"}`}
+                                                >
+                                                  Your answer:
+                                                </span>
+                                                <span className="ml-2">{userDisplay.label}</span>
+                                              </div>
+                                              <div className="text-sm">
+                                                <span className="font-semibold">Correct answer:</span>
+                                                <span className="ml-2">{correctDisplay.label}</span>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
                                   </div>
                                 );
                               })}

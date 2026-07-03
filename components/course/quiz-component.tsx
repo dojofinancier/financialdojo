@@ -9,6 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { submitQuizAttemptAction } from "@/app/actions/quizzes";
+import {
+  getAnswerDisplay,
+  getOrderedOptionKeys,
+  isAnswerCorrect,
+  resolveAnswerIndex,
+} from "@/lib/utils/quiz-answer-display";
 import { toast } from "sonner";
 import { Clock, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -156,7 +162,21 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
 
         {quiz.questions.map((question, index) => {
           const userAnswer = answers[question.id];
-          const isCorrect = submitted && result && userAnswer?.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase();
+          const options = (question.options as Record<string, string>) || {};
+          const isCorrect =
+            submitted &&
+            result &&
+            isAnswerCorrect(
+              { type: question.type, correctAnswer: question.correctAnswer, options },
+              userAnswer
+            );
+          const correctIndex = resolveAnswerIndex(question.correctAnswer, options);
+          const orderedKeys = getOrderedOptionKeys(options);
+          const correctKey =
+            correctIndex !== null && correctIndex >= 0 && correctIndex < orderedKeys.length
+              ? orderedKeys[correctIndex]
+              : null;
+          const correctDisplay = getAnswerDisplay(question.correctAnswer, options);
 
           return (
             <div key={question.id} className="space-y-3">
@@ -181,25 +201,23 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
                       className="mt-3"
                     >
                       {question.options &&
-                        Object.entries(question.options as Record<string, string>).map(
-                          ([key, value]) => (
-                            <div key={key} className="flex items-center space-x-2">
-                              <RadioGroupItem value={key} id={`${question.id}-${key}`} />
-                              <Label
-                                htmlFor={`${question.id}-${key}`}
-                                className={`cursor-pointer ${
-                                  submitted && key === question.correctAnswer
-                                    ? "text-green-600 font-semibold"
-                                    : submitted && key === userAnswer && !isCorrect
-                                    ? "text-red-600"
-                                    : ""
-                                }`}
-                              >
-                                {key}: {value}
-                              </Label>
-                            </div>
-                          )
-                        )}
+                        getOrderedOptionKeys(options).map((key) => (
+                          <div key={key} className="flex items-center space-x-2">
+                            <RadioGroupItem value={key} id={`${question.id}-${key}`} />
+                            <Label
+                              htmlFor={`${question.id}-${key}`}
+                              className={`cursor-pointer ${
+                                submitted && key === correctKey
+                                  ? "text-green-600 font-semibold"
+                                  : submitted && key === userAnswer && !isCorrect
+                                  ? "text-red-600"
+                                  : ""
+                              }`}
+                            >
+                              {key}: {options[key]}
+                            </Label>
+                          </div>
+                        ))}
                     </RadioGroup>
                   )}
 
@@ -263,7 +281,7 @@ export function QuizComponent({ quiz, contentItemId }: QuizComponentProps) {
                       ) : (
                         <div className="text-red-600 flex items-center gap-1">
                           <XCircle className="h-4 w-4" />
-                          Incorrect. Correct answer: {question.correctAnswer}
+                          Incorrect. Correct answer: {correctDisplay.label}
                         </div>
                       )}
                     </div>

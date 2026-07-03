@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/require-auth";
 import { logServerError } from "@/lib/utils/error-logging";
+import { convertCorrectAnswerForImport } from "@/lib/utils/quiz-answer-display";
 import { z } from "zod";
 
 const questionBankSchema = z.object({
@@ -809,6 +810,7 @@ export async function uploadQuizCSVToModulesAction(
         const createdQuestions = await prisma.$transaction(
           questions.map((q) => {
             const convertedOptions = convertOptions(q.options);
+            const convertedCorrectAnswer = convertCorrectAnswerForImport(q.correctAnswer);
             return prisma.quizQuestion.create({
               data: {
                 quizId: quiz.id,
@@ -816,7 +818,7 @@ export async function uploadQuizCSVToModulesAction(
                 type: "MULTIPLE_CHOICE",
                 question: q.question,
                 options: convertedOptions,
-                correctAnswer: q.options[q.correctAnswer] || q.correctAnswer, // Phase 1 uses full text match often
+                correctAnswer: convertedCorrectAnswer,
                 explanation: q.explanation || null,
               },
             });
@@ -974,9 +976,7 @@ export async function addSelectedQuestionsToPhase1QuizAction(
       questions.map((q) => {
         const options = q.options as Record<string, string>;
         const convertedOptions = convertOptions(options);
-
-        // Find the full text of the correct answer
-        const correctAnswerText = options[q.correctAnswer] || q.correctAnswer;
+        const convertedCorrectAnswer = convertCorrectAnswerForImport(q.correctAnswer);
 
         return prisma.quizQuestion.create({
           data: {
@@ -985,7 +985,7 @@ export async function addSelectedQuestionsToPhase1QuizAction(
             type: "MULTIPLE_CHOICE",
             question: q.question,
             options: convertedOptions,
-            correctAnswer: correctAnswerText,
+            correctAnswer: convertedCorrectAnswer,
             explanation: q.explanation || null,
           },
         });
