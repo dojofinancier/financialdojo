@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,10 +27,28 @@ import {
   revokeEnrollmentAccessAction,
   deleteEnrollmentAction,
 } from "@/app/actions/enrollments";
+import {
+  getStudentAttemptsAction,
+  type StudentAttemptsResult,
+} from "@/app/actions/students";
+import { AdminQuizAttemptReviewDialog } from "@/components/admin/students/admin-quiz-attempt-review-dialog";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { enCA } from "date-fns/locale";
-import { Calendar, Clock, BookOpen, TrendingUp, Ban, Trash2, Plus } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  BookOpen,
+  TrendingUp,
+  Ban,
+  Trash2,
+  Plus,
+  Trophy,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  Eye,
+} from "lucide-react";
 import type { UserRole } from "@prisma/client";
 
 type EnrollmentWithCourse = {
@@ -101,6 +119,30 @@ export function StudentDetails({ student }: StudentDetailsProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedEnrollment, setSelectedEnrollment] = useState<any>(null);
   const [additionalDays, setAdditionalDays] = useState("30");
+  const [activeTab, setActiveTab] = useState("profile");
+  const [attemptsData, setAttemptsData] = useState<StudentAttemptsResult | null>(null);
+  const [attemptsLoading, setAttemptsLoading] = useState(false);
+  const [reviewAttemptId, setReviewAttemptId] = useState<string | null>(null);
+
+  const fetchAttempts = async () => {
+    setAttemptsLoading(true);
+    try {
+      const result = await getStudentAttemptsAction(student.id);
+      if (result.success) setAttemptsData(result.data);
+      else toast.error(result.error);
+    } finally {
+      setAttemptsLoading(false);
+    }
+  };
+
+  const loadAttempts = () => {
+    if (attemptsData !== null || attemptsLoading) return;
+    void fetchAttempts();
+  };
+
+  useEffect(() => {
+    if (activeTab === "results") loadAttempts();
+  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleExtendAccess = async () => {
     if (!selectedEnrollment) return;
@@ -162,11 +204,15 @@ export function StudentDetails({ student }: StudentDetailsProps) {
   const minutesSpent = Math.floor((totalTimeSpent % 3600) / 60);
 
   return (
-    <Tabs defaultValue="profile" className="w-full">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList>
         <TabsTrigger value="profile">Profile</TabsTrigger>
         <TabsTrigger value="enrollments">Enrollments</TabsTrigger>
         <TabsTrigger value="progress">Progress</TabsTrigger>
+        <TabsTrigger value="results">
+          <Trophy className="h-4 w-4 mr-2" />
+          Results
+        </TabsTrigger>
         <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
       </TabsList>
 
@@ -408,6 +454,128 @@ export function StudentDetails({ student }: StudentDetailsProps) {
         </Card>
       </TabsContent>
 
+      <TabsContent value="results" className="mt-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Results</CardTitle>
+            <CardDescription>
+              Exams, quizzes, and case studies
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {attemptsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : attemptsData &&
+              (attemptsData.quizAttempts.length > 0 ||
+                attemptsData.caseStudyAttempts.length > 0) ? (
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Course</TableHead>
+                      <TableHead>Score</TableHead>
+                      <TableHead>Passing score</TableHead>
+                      <TableHead>Result</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right w-[120px]">Answers</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {attemptsData.quizAttempts.map((attempt) => {
+                      const passed = attempt.score >= attempt.quiz.passingScore;
+
+                      return (
+                        <TableRow key={attempt.id}>
+                          <TableCell>
+                            <Badge variant="outline">
+                              {attempt.quiz.isMockExam ? "Exam" : "Quiz"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="font-medium">{attempt.quiz.title}</TableCell>
+                          <TableCell>{attempt.quiz.course.title}</TableCell>
+                          <TableCell>{attempt.score}%</TableCell>
+                          <TableCell>{attempt.quiz.passingScore}%</TableCell>
+                          <TableCell>
+                            {passed ? (
+                              <Badge className="bg-primary">
+                                <CheckCircle2 className="h-4 w-4 mr-1" />
+                                Passed
+                              </Badge>
+                            ) : (
+                              <Badge variant="destructive">
+                                <XCircle className="h-4 w-4 mr-1" />
+                                Failed
+                              </Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {format(new Date(attempt.completedAt), "d MMM yyyy, HH:mm", {
+                              locale: enCA,
+                            })}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="h-8 gap-1"
+                              onClick={() => setReviewAttemptId(attempt.id)}
+                            >
+                              <Eye className="h-3.5 w-3.5" />
+                              View
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                    {attemptsData.caseStudyAttempts.map((attempt) => (
+                      <TableRow key={attempt.id}>
+                        <TableCell>
+                          <Badge variant="outline">Case study</Badge>
+                        </TableCell>
+                        <TableCell className="font-medium">{attempt.caseStudy.title}</TableCell>
+                        <TableCell>{attempt.caseStudy.course.title}</TableCell>
+                        <TableCell>{attempt.score}%</TableCell>
+                        <TableCell>{attempt.caseStudy.passingScore}%</TableCell>
+                        <TableCell>
+                          {attempt.passed ? (
+                            <Badge className="bg-primary">
+                              <CheckCircle2 className="h-4 w-4 mr-1" />
+                              Passed
+                            </Badge>
+                          ) : (
+                            <Badge variant="destructive">
+                              <XCircle className="h-4 w-4 mr-1" />
+                              Failed
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {format(new Date(attempt.completedAt), "d MMM yyyy, HH:mm", {
+                            locale: enCA,
+                          })}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <span className="text-muted-foreground text-sm">—</span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                No results recorded
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+
       <TabsContent value="subscriptions" className="mt-6">
         <Card>
           <CardHeader>
@@ -538,6 +706,15 @@ export function StudentDetails({ student }: StudentDetailsProps) {
           </div>
         </DialogContent>
       </Dialog>
+
+      <AdminQuizAttemptReviewDialog
+        open={reviewAttemptId !== null}
+        onOpenChange={(open) => {
+          if (!open) setReviewAttemptId(null);
+        }}
+        studentUserId={student.id}
+        attemptId={reviewAttemptId}
+      />
     </Tabs>
   );
 }
