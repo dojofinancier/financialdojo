@@ -10,10 +10,10 @@ export default async function CreateTicketPage() {
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-6">
-        <Link href="/dashboard/student">
+        <Link href="/dashboard/student?tab=support">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to dashboard
+            Back to support
           </Button>
         </Link>
         <h1 className="text-3xl font-bold">Create a support ticket</h1>
@@ -25,4 +25,3 @@ export default async function CreateTicketPage() {
     </div>
   );
 }
-
