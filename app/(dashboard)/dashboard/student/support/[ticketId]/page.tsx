@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ViewTicketDetails } from "@/components/dashboard/view-ticket-details";
+import { Suspense } from "react";
 
 interface TicketDetailPageProps {
   params: Promise<{ ticketId: string }>;
 }
 
-export default async function TicketDetailPage({ params }: TicketDetailPageProps) {
+async function TicketDetailContent({ params }: TicketDetailPageProps) {
   await requireAuth();
   const { ticketId } = await params;
   const ticket = await getTicketDetailsAction(ticketId);
@@ -33,5 +34,19 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
       </div>
       <ViewTicketDetails ticket={ticket} />
     </div>
+  );
+}
+
+export default function TicketDetailPage({ params }: TicketDetailPageProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto p-6 max-w-4xl">
+          <div className="text-muted-foreground">Loading ticket...</div>
+        </div>
+      }
+    >
+      <TicketDetailContent params={params} />
+    </Suspense>
   );
 }

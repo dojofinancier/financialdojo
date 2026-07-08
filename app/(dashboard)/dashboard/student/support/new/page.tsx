@@ -3,8 +3,9 @@ import { CreateTicketForm } from "@/components/dashboard/create-ticket-form";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Suspense } from "react";
 
-export default async function CreateTicketPage() {
+async function CreateTicketContent() {
   await requireAuth();
 
   return (
@@ -23,5 +24,19 @@ export default async function CreateTicketPage() {
       </div>
       <CreateTicketForm />
     </div>
+  );
+}
+
+export default function CreateTicketPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto p-6 max-w-4xl">
+          <div className="text-muted-foreground">Loading...</div>
+        </div>
+      }
+    >
+      <CreateTicketContent />
+    </Suspense>
   );
 }
