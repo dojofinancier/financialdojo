@@ -12,62 +12,34 @@ async function StudentDashboardContent() {
   // Do NOT query course modules/quizzes/flashcards here — that belongs to /learn/*.
   //
   // Also avoid calling server actions that each call requireAuth() again; we already have `user`.
-  const [enrollments, cohortEnrollments] = await Promise.all([
-    prisma.enrollment.findMany({
-      where: { userId: user.id },
-      orderBy: { purchaseDate: "desc" },
-      select: {
-        id: true,
-        courseId: true,
-        purchaseDate: true,
-        expiresAt: true,
-        course: {
-          select: {
-            id: true,
-            title: true,
-            code: true,
-            slug: true,
-            category: {
-              select: {
-                name: true,
-              },
+  const enrollments = await prisma.enrollment.findMany({
+    where: { userId: user.id },
+    orderBy: { purchaseDate: "desc" },
+    select: {
+      id: true,
+      courseId: true,
+      purchaseDate: true,
+      expiresAt: true,
+      course: {
+        select: {
+          id: true,
+          title: true,
+          code: true,
+          slug: true,
+          category: {
+            select: {
+              name: true,
             },
           },
         },
       },
-    }),
-    prisma.cohortEnrollment.findMany({
-      where: { userId: user.id },
-      orderBy: { purchaseDate: "desc" },
-      select: {
-        id: true,
-        cohortId: true,
-        purchaseDate: true,
-        expiresAt: true,
-        cohort: {
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            instructor: {
-              select: {
-                id: true,
-                email: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
-          },
-        },
-      },
-    }),
-  ]);
+    },
+  });
 
   return (
     <StudentDashboard
       user={user}
       initialEnrollments={enrollments}
-      initialCohortEnrollments={cohortEnrollments}
     />
   );
 }

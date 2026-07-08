@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { createSupportTicketAction } from "@/app/actions/support-tickets";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ import { Loader2 } from "lucide-react";
 
 export function CreateTicketForm() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     subject: "",
@@ -42,7 +44,9 @@ export function CreateTicketForm() {
 
       if (result.success) {
         toast.success("Ticket created successfully!");
-        // Redirect to support tab in the dashboard
+        // Drop every cached support-ticket list so the Support tab refetches
+        // when it remounts (server cache is already revalidated server-side).
+        await queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
         router.push("/dashboard/student?tab=support");
       } else {
         toast.error(result.error || "Error creating the ticket");

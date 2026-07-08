@@ -1,6 +1,5 @@
 import { requireStudent } from "@/lib/auth/require-auth";
 import { getUserEnrollmentsAction } from "@/app/actions/enrollments";
-import { getUserCohortEnrollmentsAction } from "@/app/actions/cohort-enrollments";
 import { StudentDashboard } from "@/components/dashboard/student-dashboard";
 
 export default async function StudentDashboardPage() {
@@ -17,10 +16,7 @@ export default async function StudentDashboardPage() {
   }
 
   // Fetch data in parallel
-  const [enrollments, cohortEnrollments] = await Promise.all([
-    getUserEnrollmentsAction({ limit: 100 }),
-    getUserCohortEnrollmentsAction({ limit: 100 }),
-  ]);
+  const enrollments = await getUserEnrollmentsAction({ limit: 100 });
 
   // Serialize user object (remove any non-serializable fields like supabaseUser)
   // Dates are fine to pass, but we need to exclude supabaseUser if it exists
@@ -39,7 +35,6 @@ export default async function StudentDashboardPage() {
     <StudentDashboard
       user={serializedUser}
       initialEnrollments={enrollments.items}
-      initialCohortEnrollments={cohortEnrollments.items}
     />
   );
 }

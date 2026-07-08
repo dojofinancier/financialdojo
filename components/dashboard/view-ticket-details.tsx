@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { replyToTicketAction } from "@/app/actions/support-tickets";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,7 @@ interface ViewTicketDetailsProps {
 
 export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [replyMessage, setReplyMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -103,6 +105,7 @@ export function ViewTicketDetails({ ticket }: ViewTicketDetailsProps) {
       if (result.success) {
         toast.success("Response sent successfully!");
         setReplyMessage("");
+        await queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
         router.refresh();
       } else {
         toast.error(result.error || "Error sending the response");
