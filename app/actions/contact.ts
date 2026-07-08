@@ -25,6 +25,17 @@ export async function submitContactFormAction(
   try {
     const validatedData = contactFormSchema.parse(data);
 
+    if (!process.env.MAKE_WEBHOOK_CONTACT) {
+      await logServerError({
+        errorMessage: "Make.com webhook URL not configured for contact form",
+        severity: "MEDIUM",
+      });
+      return {
+        success: false,
+        error: "The contact form is temporarily unavailable. Please email us at hello@financedojo.com.",
+      };
+    }
+
     // Send webhook to Make.com
     await sendContactFormWebhook({
       name: validatedData.name,

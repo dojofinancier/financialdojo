@@ -49,9 +49,9 @@ function getUrlForType(type: MakeEventType): string | undefined {
     case 'error.occurred':
       return process.env.MAKE_WEBHOOK_ERRORS_URL
     case 'contact.form.submitted':
-      return process.env.MAKE_WEBHOOK_CONTACT_URL
+      return process.env.MAKE_WEBHOOK_CONTACT
     case 'investor.diagnostic.completed':
-      return process.env.MAKE_WEBHOOK_INVESTOR_DIAGNOSTIC_URL || process.env.MAKE_WEBHOOK_CONTACT_URL
+      return process.env.MAKE_WEBHOOK_INVESTOR_DIAGNOSTIC_URL || process.env.MAKE_WEBHOOK_CONTACT
     // Admin operations (optional)
     case 'course.created':
     case 'course.updated':
