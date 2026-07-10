@@ -16,8 +16,10 @@ export type FinancialActionResult = {
  */
 export async function getRevenueByPeriodAction(
   year: number,
-  month?: number
+  month?: number,
+  options?: { includeStripeRefunds?: boolean }
 ): Promise<FinancialActionResult> {
+  const includeStripeRefunds = options?.includeStripeRefunds ?? true;
   try {
     await requireAdmin();
 
@@ -76,10 +78,11 @@ export async function getRevenueByPeriodAction(
       courseRevenue[enrollment.courseId] += amount;
     }
 
-    // Get refunds in period - batch process for efficiency
+    // Get refunds in period - optional Stripe round-trips
     let totalRefunds = 0;
     const refundsByCourse: Record<string, number> = {};
 
+    if (includeStripeRefunds) {
     // Get unique payment intent IDs
     const paymentIntentIds = Array.from(
       new Set(enrollments.map(e => e.paymentIntentId).filter(Boolean) as string[])
@@ -130,6 +133,8 @@ export async function getRevenueByPeriodAction(
           }
         })
       );
+    }
+
     }
 
     // Calculate net revenue
@@ -302,7 +307,10 @@ export async function getRefundStatisticsAction(
 /**
  * Get total revenue (all-time) - net of refunds
  */
-export async function getTotalRevenueAction(): Promise<FinancialActionResult> {
+export async function getTotalRevenueAction(options?: {
+  includeStripeRefunds?: boolean;
+}): Promise<FinancialActionResult> {
+  const includeStripeRefunds = options?.includeStripeRefunds ?? true;
   try {
     await requireAdmin();
 
@@ -345,8 +353,9 @@ export async function getTotalRevenueAction(): Promise<FinancialActionResult> {
       revenueByCourse[enrollment.courseId].revenue += amount;
     }
 
-    // Calculate total refunds - batch process for efficiency
+    // Calculate total refunds - optional Stripe round-trips
     let totalRefunds = 0;
+    if (includeStripeRefunds) {
     const paymentIntentIds = Array.from(
       new Set(enrollments.map(e => e.paymentIntentId).filter(Boolean) as string[])
     );
@@ -373,6 +382,7 @@ export async function getTotalRevenueAction(): Promise<FinancialActionResult> {
           }
         })
       );
+    }
     }
 
     return {
@@ -401,7 +411,10 @@ export async function getTotalRevenueAction(): Promise<FinancialActionResult> {
 /**
  * Get subscription statistics
  */
-export async function getSubscriptionStatisticsAction(): Promise<FinancialActionResult> {
+export async function getSubscriptionStatisticsAction(options?: {
+  includeStripeRevenue?: boolean;
+}): Promise<FinancialActionResult> {
+  const includeStripeRevenue = options?.includeStripeRevenue ?? true;
   try {
     await requireAdmin();
 
@@ -469,7 +482,10 @@ export async function getSubscriptionStatisticsAction(): Promise<FinancialAction
  * Get revenue trends (monthly data for last 12 months)
  * Optimized version that fetches all data in a single query
  */
-export async function getRevenueTrendsAction(): Promise<FinancialActionResult> {
+export async function getRevenueTrendsAction(options?: {
+  includeStripeRefunds?: boolean;
+}): Promise<FinancialActionResult> {
+  const includeStripeRefunds = options?.includeStripeRefunds ?? true;
   try {
     await requireAdmin();
 
@@ -522,14 +538,16 @@ export async function getRevenueTrendsAction(): Promise<FinancialActionResult> {
       }
     }
 
-    // Batch fetch refunds with concurrency limit
+    // Batch fetch refunds with concurrency limit (optional)
+    const refundsByEnrollment: Record<string, Array<{ date: Date; amount: number }>> = {};
+
+    if (includeStripeRefunds) {
     const paymentIntentIds = Array.from(
       new Set(enrollments.map(e => e.paymentIntentId).filter(Boolean) as string[])
     );
 
     // Process refunds in batches to avoid overwhelming Stripe API
     const batchSize = 10;
-    const refundsByEnrollment: Record<string, Array<{ date: Date; amount: number }>> = {};
 
     for (let i = 0; i < paymentIntentIds.length; i += batchSize) {
       const batch = paymentIntentIds.slice(i, i + batchSize);
@@ -562,6 +580,7 @@ export async function getRevenueTrendsAction(): Promise<FinancialActionResult> {
           }
         })
       );
+    }
     }
 
     // Map refunds to enrollments and calculate by month

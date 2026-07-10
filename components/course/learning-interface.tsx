@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, BookOpen, CheckCircle2, Circle, MessageCircle } from "lucide-react";
+import { Menu, BookOpen, MessageCircle, Loader2 } from "lucide-react";
+import { getLearningContentItemAction } from "@/app/actions/courses";
 import { VideoPlayer } from "./video-player";
 import { QuizComponent } from "./quiz-component";
 import { FlashcardComponent } from "./flashcard-component";
@@ -68,20 +69,18 @@ type Course = {
   title: string;
   // Prisma JSON fields are typed broadly (JsonValue includes string, etc.). Normalize at runtime.
   componentVisibility?: Prisma.JsonValue | ComponentVisibility | null;
-  pdfUrl?: string | null;
   modules: Array<{
     id: string;
     title: string;
     description: string | null;
     order: number;
-    pdfUrl?: string | null;
     contentItems: Array<{
       id: string;
       title: string;
       contentType: string;
       order: number;
-      video: any;
-      quiz: any;
+      video?: any;
+      quiz?: any;
     }>;
   }>;
 };
@@ -102,6 +101,11 @@ export function CourseLearningInterface({
     initialContentItemId || null
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [contentLoading, setContentLoading] = useState(false);
+  const [loadedItems, setLoadedItems] = useState<
+    Record<string, { video?: any; quiz?: any }>
+  >({});
+  const fetchedIdsRef = useRef(new Set<string>());
 
   // Get visibility settings (default to all visible if not set)
   const visibility = normalizeVisibility(course.componentVisibility);
@@ -121,7 +125,6 @@ export function CourseLearningInterface({
         ...item,
         moduleId: module.id,
         moduleTitle: module.title,
-        modulePdfUrl: module.pdfUrl,
       }))
   );
 
@@ -135,6 +138,48 @@ export function CourseLearningInterface({
   const selectedContentItem = allContentItems.find(
     (item) => item.id === selectedContentItemId
   );
+
+  // Lazy-load video/quiz data for the selected item (shell SSR only sends metadata).
+  // Admin preview passes full data inline — skip fetch when video/quiz are already present.
+  useEffect(() => {
+    if (!selectedContentItemId || !selectedContentItem) return;
+
+    const { contentType, id } = selectedContentItem;
+    if (contentType !== "VIDEO" && contentType !== "QUIZ") return;
+    if (selectedContentItem.video || selectedContentItem.quiz) return;
+    if (fetchedIdsRef.current.has(id)) return;
+    fetchedIdsRef.current.add(id);
+
+    let cancelled = false;
+    (async () => {
+      setContentLoading(true);
+      try {
+        const result = await getLearningContentItemAction(id);
+        if (cancelled) return;
+        if (result.success && result.data) {
+          setLoadedItems((prev) => ({
+            ...prev,
+            [id]: { video: result.data.video, quiz: result.data.quiz },
+          }));
+        } else {
+          fetchedIdsRef.current.delete(id);
+        }
+      } catch {
+        fetchedIdsRef.current.delete(id);
+      } finally {
+        if (!cancelled) setContentLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedContentItemId, selectedContentItem]);
+
+  const activeVideo =
+    selectedContentItem?.video ?? loadedItems[selectedContentItemId ?? ""]?.video;
+  const activeQuiz =
+    selectedContentItem?.quiz ?? loadedItems[selectedContentItemId ?? ""]?.quiz;
 
   const handleContentItemSelect = (contentItemId: string) => {
     setSelectedContentItemId(contentItemId);
@@ -200,10 +245,11 @@ export function CourseLearningInterface({
                         <button
                           key={item.id}
                           onClick={() => handleContentItemSelect(item.id)}
-                          className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${isSelected
+                          className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                            isSelected
                               ? "bg-primary text-primary-foreground"
                               : "hover:bg-accent"
-                            }`}
+                          }`}
                         >
                           <div className="flex items-center gap-2">
                             {item.contentType === "VIDEO" && <span>▶</span>}
@@ -218,17 +264,17 @@ export function CourseLearningInterface({
                   </div>
                 </div>
               ))}
-              {/* Poser une question button */}
+              {/* Ask a question button */}
               <div className="mt-4 pt-4 border-t">
                 <Button
                   variant="outline"
                   className="w-full justify-start border-primary/20 hover:bg-primary/10"
                   onClick={() => {
-                    router.push(`/learn/${course.slug || course.id}/ask-question`);
+                    router.push(`/learn/${course.slug || course.id}/poser-question`);
                   }}
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
-                  Poser une question
+                  Ask a question
                 </Button>
               </div>
             </nav>
@@ -275,10 +321,11 @@ export function CourseLearningInterface({
                             <button
                               key={item.id}
                               onClick={() => handleContentItemSelect(item.id)}
-                              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${isSelected
+                              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                                isSelected
                                   ? "bg-primary text-primary-foreground"
                                   : "hover:bg-accent"
-                                }`}
+                              }`}
                             >
                               <div className="flex items-center gap-2">
                                 {item.contentType === "VIDEO" && <span>▶</span>}
@@ -293,18 +340,18 @@ export function CourseLearningInterface({
                     </div>
                   </div>
                 ))}
-                {/* Poser une question button */}
+                {/* Ask a question button */}
                 <div className="mt-4 pt-4 border-t px-4">
                   <Button
                     variant="outline"
                     className="w-full justify-start border-primary/20 hover:bg-primary/10"
                     onClick={() => {
                       setSidebarOpen(false);
-                      router.push(`/learn/${course.slug || course.id}/ask-question`);
+                      router.push(`/learn/${course.slug || course.id}/poser-question`);
                     }}
                   >
                     <MessageCircle className="mr-2 h-4 w-4" />
-                    Poser une question
+                    Ask a question
                   </Button>
                 </div>
               </nav>
@@ -328,15 +375,28 @@ export function CourseLearningInterface({
 
               {/* Content Component */}
               <div>
-                {selectedContentItem.contentType === "VIDEO" && selectedContentItem.video && visibility.videos && (
+                {contentLoading &&
+                  (selectedContentItem.contentType === "VIDEO" ||
+                    selectedContentItem.contentType === "QUIZ") && (
+                  <div className="flex items-center justify-center py-16">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  </div>
+                )}
+                {!contentLoading &&
+                  selectedContentItem.contentType === "VIDEO" &&
+                  activeVideo &&
+                  visibility.videos && (
                   <VideoPlayer
-                    video={selectedContentItem.video}
+                    video={activeVideo}
                     contentItemId={selectedContentItem.id}
                   />
                 )}
-                {selectedContentItem.contentType === "QUIZ" && selectedContentItem.quiz && visibility.quizzes && (
+                {!contentLoading &&
+                  selectedContentItem.contentType === "QUIZ" &&
+                  activeQuiz &&
+                  visibility.quizzes && (
                   <QuizComponent
-                    quiz={selectedContentItem.quiz}
+                    quiz={activeQuiz}
                     contentItemId={selectedContentItem.id}
                   />
                 )}
@@ -347,11 +407,7 @@ export function CourseLearningInterface({
                   />
                 )}
                 {selectedContentItem.contentType === "NOTE" && visibility.notes && (
-                  <NotesViewer
-                    contentItemId={selectedContentItem.id}
-                    coursePdfUrl={course.pdfUrl}
-                    modulePdfUrl={(selectedContentItem as any).modulePdfUrl}
-                  />
+                  <NotesViewer contentItemId={selectedContentItem.id} />
                 )}
               </div>
 
@@ -370,20 +426,20 @@ export function CourseLearningInterface({
                   onClick={handlePrevious}
                   disabled={!getPreviousContentItem()}
                 >
-                  ← Previous
+                  ← Précédent
                 </Button>
                 <Button
                   onClick={handleNext}
                   disabled={!getNextContentItem()}
                 >
-                  Next →
+                  Suivant →
                 </Button>
               </div>
             </div>
           ) : (
             <div className="text-center py-12">
               <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
-              <p className="text-muted-foreground">Select content to get started</p>
+              <p className="text-muted-foreground">Sélectionnez un contenu pour commencer</p>
             </div>
           )}
         </div>
@@ -391,3 +447,4 @@ export function CourseLearningInterface({
     </div>
   );
 }
+

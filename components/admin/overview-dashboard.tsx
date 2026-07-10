@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,17 +11,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  getEnrollmentStatisticsAction,
-  getDetailedCompletionRatesAction,
-  getUserEngagementAction,
-  getCourseMetricsAction,
-} from "@/app/actions/analytics";
-import {
-  getTotalRevenueAction,
-  getRevenueByPeriodAction,
-  getSubscriptionStatisticsAction,
-  getRevenueTrendsAction,
-} from "@/app/actions/financials";
+  getAdminOverviewAction,
+  getAdminOverviewPeriodAction,
+} from "@/app/actions/admin-overview";
+import { getRevenueByPeriodAction } from "@/app/actions/financials";
 import { exportFinancialsToCSV } from "@/lib/utils/csv-export";
 import { toast } from "sonner";
 import { Loader2, RefreshCw, Users, BookOpen, TrendingUp, Clock, DollarSign, Download } from "lucide-react";
@@ -33,13 +26,14 @@ import { RevenueByCourseChart } from "./financials/revenue-by-course-chart";
 
 export function OverviewDashboard() {
   const [loading, setLoading] = useState(true);
-  
+  const [financialsLoading, setFinancialsLoading] = useState(false);
+
   // Analytics state
   const [enrollmentStats, setEnrollmentStats] = useState<any>(null);
   const [completionRates, setCompletionRates] = useState<any>(null);
   const [userEngagement, setUserEngagement] = useState<any>(null);
   const [courseMetrics, setCourseMetrics] = useState<any>(null);
-  
+
   // Financials state
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
@@ -49,64 +43,73 @@ export function OverviewDashboard() {
   const [revenueTrends, setRevenueTrends] = useState<any>(null);
   const [trendsLoading, setTrendsLoading] = useState(false);
 
-  const loadData = async () => {
+  const mountedRef = useRef(true);
+  const initialLoadDone = useRef(false);
+
+  // Single consolidated request: one server invocation loads everything in
+  // parallel, instead of ~8 concurrent server-action POSTs that each spun up a
+  // cold function instance and timed out (502) under contention.
+  const loadAll = async (year: number, month?: number) => {
     setLoading(true);
     try {
-      // Load critical data first (without revenue trends for faster initial load)
-      const [
-        enrollmentResult,
-        completionResult,
-        engagementResult,
-        metricsResult,
-        totalResult,
-        periodResult,
-        subscriptionResult,
-      ] = await Promise.all([
-        getEnrollmentStatisticsAction(),
-        getDetailedCompletionRatesAction(),
-        getUserEngagementAction(),
-        getCourseMetricsAction(),
-        getTotalRevenueAction(),
-        getRevenueByPeriodAction(selectedYear, selectedMonth || undefined),
-        getSubscriptionStatisticsAction(),
-      ]);
-
-      if (enrollmentResult.success) setEnrollmentStats(enrollmentResult.data);
-      if (completionResult.success) setCompletionRates(completionResult.data);
-      if (engagementResult.success) setUserEngagement(engagementResult.data);
-      if (metricsResult.success) setCourseMetrics(metricsResult.data);
-      if (totalResult.success) setTotalRevenue(totalResult.data);
-      if (periodResult.success) setPeriodRevenue(periodResult.data);
-      if (subscriptionResult.success) setSubscriptionStats(subscriptionResult.data);
+      const result = await getAdminOverviewAction(year, month);
+      if (!mountedRef.current) return;
+      if (!result.success || !result.data) {
+        toast.error(result.error || "Error loading data");
+        return;
+      }
+      const data = result.data;
+      setEnrollmentStats(data.enrollmentStats);
+      setCompletionRates(data.completionRates);
+      setUserEngagement(data.userEngagement);
+      setCourseMetrics(data.courseMetrics);
+      setTotalRevenue(data.totalRevenue);
+      setPeriodRevenue(data.periodRevenue);
+      setSubscriptionStats(data.subscriptionStats);
+      setRevenueTrends(data.revenueTrends);
     } catch (error) {
-      toast.error("Error loading data");
+      if (mountedRef.current) toast.error("Error loading data");
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
+      initialLoadDone.current = true;
     }
   };
 
-  const loadRevenueTrends = async () => {
-    if (revenueTrends) return; // Already loaded
-    setTrendsLoading(true);
+  // Lightweight refresh when only the year/month filter changes.
+  const loadPeriod = async (year: number, month?: number) => {
+    setFinancialsLoading(true);
     try {
-      const trendsResult = await getRevenueTrendsAction();
-      if (trendsResult.success) setRevenueTrends(trendsResult.data);
+      const result = await getAdminOverviewPeriodAction(year, month);
+      if (mountedRef.current && result.success) {
+        setPeriodRevenue(result.data?.periodRevenue ?? null);
+      }
     } catch (error) {
-      toast.error("Error loading trends");
+      if (mountedRef.current) toast.error("Error loading data financières");
     } finally {
-      setTrendsLoading(false);
+      if (mountedRef.current) setFinancialsLoading(false);
     }
   };
 
   useEffect(() => {
-    loadData();
-    // Load revenue trends separately after a short delay for better UX
-    const trendsTimer = setTimeout(() => {
-      loadRevenueTrends();
-    }, 500);
-    return () => clearTimeout(trendsTimer);
+    mountedRef.current = true;
+    loadAll(selectedYear, selectedMonth || undefined);
+    return () => {
+      mountedRef.current = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // When year/month change after the initial load, refresh period revenue only.
+  useEffect(() => {
+    if (!initialLoadDone.current || !mountedRef.current) return;
+    loadPeriod(selectedYear, selectedMonth || undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYear, selectedMonth]);
+
+  const loadData = async () => {
+    setTrendsLoading(false);
+    await loadAll(selectedYear, selectedMonth || undefined);
+  };
 
   const handleExportCSV = async () => {
     try {
@@ -116,7 +119,7 @@ export function OverviewDashboard() {
         toast.success("CSV export generated");
       }
     } catch (error) {
-      toast.error("Error exporting");
+      toast.error("Export error");
     }
   };
 
@@ -181,18 +184,22 @@ export function OverviewDashboard() {
 
       {/* Summary Cards - Combined Analytics & Financials */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Financial Cards */}
+        {/* Financial Cards (load after analytics; show loading state) */}
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Revenu total (net)</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
-              <DollarSign className="h-5 w-5" />
-              ${totalRevenue?.netRevenue?.toFixed(2) || "0.00"}
+              {financialsLoading && !totalRevenue ? (
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              ) : (
+                <DollarSign className="h-5 w-5" />
+              )}
+              ${totalRevenue?.netRevenue?.toFixed(2) ?? (financialsLoading ? "…" : "0.00")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              Brut: ${totalRevenue?.grossRevenue?.toFixed(2) || "0.00"}
+              Brut: ${totalRevenue?.grossRevenue?.toFixed(2) ?? (financialsLoading ? "…" : "0.00")}
             </div>
             <div className="text-xs text-muted-foreground">
               Remboursements: ${totalRevenue?.totalRefunds?.toFixed(2) || "0.00"}
@@ -203,7 +210,7 @@ export function OverviewDashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>
-              Revenu {selectedMonth ? "du mois" : "of the year"}
+              Revenu {selectedMonth ? "du mois" : "de l'année"}
             </CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
@@ -223,7 +230,7 @@ export function OverviewDashboard() {
         {/* Analytics Cards */}
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total enrollments</CardDescription>
+            <CardDescription>Total inscriptions</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
               {enrollmentStats?.totalEnrollments || 0}
@@ -231,17 +238,17 @@ export function OverviewDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              Active: {enrollmentStats?.activeEnrollments || 0}
+              Actives: {enrollmentStats?.activeEnrollments || 0}
             </div>
             <div className="text-xs text-muted-foreground">
-              Expired: {enrollmentStats?.expiredEnrollments || 0}
+              Expirées: {enrollmentStats?.expiredEnrollments || 0}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Active users</CardDescription>
+            <CardDescription>Utilisateurs actifs</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <Users className="h-5 w-5" />
               {userEngagement?.activeUsers || 0}
@@ -252,7 +259,7 @@ export function OverviewDashboard() {
               Total: {userEngagement?.totalUsers || 0}
             </div>
             <div className="text-xs text-muted-foreground">
-              Last 30 days
+              Derniers 30 jours
             </div>
           </CardContent>
         </Card>
@@ -262,7 +269,7 @@ export function OverviewDashboard() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Active subscriptions</CardDescription>
+            <CardDescription>Abonnements actifs</CardDescription>
             <CardTitle className="text-2xl">
               {subscriptionStats?.activeSubscriptions || 0}
             </CardTitle>
@@ -272,28 +279,28 @@ export function OverviewDashboard() {
               Total: {subscriptionStats?.totalSubscriptions || 0}
             </div>
             <div className="text-xs text-muted-foreground">
-              Churn rate: {subscriptionStats?.churnRate?.toFixed(1) || "0.0"}%
+              Taux de désabonnement: {subscriptionStats?.churnRate?.toFixed(1) || "0.0"}%
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Estimated monthly revenue</CardDescription>
+            <CardDescription>Revenu mensuel estimé</CardDescription>
             <CardTitle className="text-2xl">
               ${subscriptionStats?.estimatedMonthlyRevenue?.toFixed(2) || "0.00"}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              Recurring subscriptions
+              Abonnements récurrents
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Average completion rate</CardDescription>
+            <CardDescription>Taux de complétion moyen</CardDescription>
             <CardTitle className="text-2xl">
               {completionRates && completionRates.length > 0
                 ? (
@@ -308,14 +315,14 @@ export function OverviewDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              All courses
+              Tous les cours
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Average time per student</CardDescription>
+            <CardDescription>Temps moyen par étudiant</CardDescription>
             <CardTitle className="text-2xl flex items-center gap-2">
               <Clock className="h-5 w-5" />
               {userEngagement?.averageTimeSpent
@@ -326,7 +333,7 @@ export function OverviewDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              Total time spent
+              Temps total passé
             </div>
           </CardContent>
         </Card>
@@ -336,8 +343,8 @@ export function OverviewDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Revenue trends (last 12 months)</CardTitle>
-            <CardDescription>Net revenue per month</CardDescription>
+            <CardTitle>Tendances de revenus (12 derniers mois)</CardTitle>
+            <CardDescription>Revenu net par mois</CardDescription>
           </CardHeader>
           <CardContent>
             {trendsLoading ? (
@@ -348,7 +355,7 @@ export function OverviewDashboard() {
               <RevenueChart data={revenueTrends.months} />
             ) : (
               <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                <span>Loading trends...</span>
+                <span>Chargement des tendances...</span>
               </div>
             )}
           </CardContent>
@@ -356,8 +363,8 @@ export function OverviewDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Revenue by course</CardTitle>
-            <CardDescription>Total revenue by course</CardDescription>
+            <CardTitle>Revenu par cours</CardTitle>
+            <CardDescription>Revenu total par cours</CardDescription>
           </CardHeader>
           <CardContent>
             {totalRevenue?.revenueByCourse ? (
@@ -375,8 +382,8 @@ export function OverviewDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Enrollments by course</CardTitle>
-            <CardDescription>Top 10 courses by enrollment count</CardDescription>
+            <CardTitle>Inscriptions par cours</CardTitle>
+            <CardDescription>Top 10 cours par nombre d'inscriptions</CardDescription>
           </CardHeader>
           <CardContent>
             {enrollmentStats?.enrollmentsByCourse ? (
@@ -391,8 +398,8 @@ export function OverviewDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Completion rate by course</CardTitle>
-            <CardDescription>Average completion percentage</CardDescription>
+            <CardTitle>Taux de complétion par cours</CardTitle>
+            <CardDescription>Pourcentage de complétion moyen</CardDescription>
           </CardHeader>
           <CardContent>
             {completionRates ? (
@@ -411,14 +418,14 @@ export function OverviewDashboard() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Course metrics</CardTitle>
+              <CardTitle>Métriques par cours</CardTitle>
               <CardDescription>
-                Enrollment, completion, and engagement details
+                Détails d'inscription, complétion et engagement
               </CardDescription>
             </div>
             <Button onClick={loadData} variant="outline" size="sm">
               <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
+              Actualiser
             </Button>
           </div>
         </CardHeader>
@@ -435,3 +442,4 @@ export function OverviewDashboard() {
     </div>
   );
 }
+

@@ -36,6 +36,7 @@ import {
   getModulesAction,
   createModuleAction,
   updateModuleAction,
+  updateModuleSlideImagesAction,
   deleteModuleAction,
   reorderModulesAction,
 } from "@/app/actions/modules";
@@ -58,6 +59,8 @@ import {
   FileText,
   ChevronDown,
   ChevronUp,
+  Presentation,
+  Loader2,
 } from "lucide-react";
 import type { Module, ContentItem, Video as VideoModel, Quiz, Note, QuizQuestion, ContentType } from "@prisma/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -558,9 +561,104 @@ function SortableModuleItem({
         </div>
       </CardHeader>
       <CardContent>
+        <ModuleSlideImagesRow
+          moduleId={module.id}
+          moduleTitle={module.title}
+          initialSlideImages={
+            Array.isArray((module as Module & { slideImages?: string[] }).slideImages)
+              ? ((module as Module & { slideImages?: string[] }).slideImages as string[])
+              : []
+          }
+          onRefresh={onRefresh}
+        />
         <ModuleContentManager module={module} courseId={module.courseId} onRefresh={onRefresh} />
       </CardContent>
     </Card>
+  );
+}
+
+interface ModuleSlideImagesRowProps {
+  moduleId: string;
+  moduleTitle: string;
+  initialSlideImages: string[];
+  onRefresh: () => void;
+}
+
+function ModuleSlideImagesRow({
+  moduleId,
+  moduleTitle,
+  initialSlideImages,
+  onRefresh,
+}: ModuleSlideImagesRowProps) {
+  const [slideText, setSlideText] = useState(initialSlideImages.join("\n"));
+  const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    setSlideText(initialSlideImages.join("\n"));
+    setDirty(false);
+  }, [initialSlideImages]);
+
+  const handleChange = (value: string) => {
+    setSlideText(value);
+    setDirty(true);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const urls = slideText
+        .split(/[\n,]/)
+        .map((url) => url.trim())
+        .filter((url) => url.length > 0);
+      const result = await updateModuleSlideImagesAction(moduleId, urls);
+      if (result.success) {
+        toast.success("Slides updated");
+        setDirty(false);
+        onRefresh();
+      } else {
+        toast.error(result.error || "Failed to save");
+      }
+    } catch {
+      toast.error("Failed to save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const imageCount = slideText
+    .split(/[\n,]/)
+    .map((url) => url.trim())
+    .filter((url) => url.length > 0).length;
+
+  return (
+    <div className="rounded-lg border p-3 bg-muted/40 mb-4">
+      <div className="flex items-center gap-2 mb-2">
+        <Presentation className="h-4 w-4 text-muted-foreground" />
+        <span className="text-sm font-medium">Slides – {moduleTitle}</span>
+        {imageCount > 0 && (
+          <Badge variant="secondary" className="text-xs">
+            {imageCount} slide{imageCount > 1 ? "s" : ""}
+          </Badge>
+        )}
+      </div>
+      <Textarea
+        value={slideText}
+        onChange={(e) => handleChange(e.target.value)}
+        placeholder={"https://example.com/slide1.png\nhttps://example.com/slide2.png"}
+        rows={3}
+        className="font-mono text-sm mb-2"
+      />
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-muted-foreground">
+          One image URL per line. Supported: PNG, JPG, WebP.
+        </p>
+        <Button size="sm" onClick={handleSave} disabled={saving || !dirty}>
+          {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+          Save
+        </Button>
+      </div>
+    </div>
   );
 }
 

@@ -252,6 +252,36 @@ export async function reorderModulesAction(
 }
 
 /**
+ * Update slide image URLs for a module (admin only)
+ */
+export async function updateModuleSlideImagesAction(
+  moduleId: string,
+  slideImages: string[]
+): Promise<ModuleActionResult> {
+  try {
+    await requireAdmin();
+
+    const updatedModule = await prisma.module.update({
+      where: { id: moduleId },
+      data: { slideImages },
+    });
+
+    return { success: true, data: updatedModule };
+  } catch (error) {
+    await logServerError({
+      errorMessage: `Failed to update module slide images: ${error instanceof Error ? error.message : "Unknown error"}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "HIGH",
+    });
+
+    return {
+      success: false,
+      error: "Failed to update slide images",
+    };
+  }
+}
+
+/**
  * Get modules for a course
  */
 export async function getModulesAction(courseId: string) {

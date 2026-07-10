@@ -1,4 +1,4 @@
-import { getCourseContentAction } from "@/app/actions/courses";
+import { getCourseLearningShellAction } from "@/app/actions/courses";
 import { getPublishedCourseBySlugAction } from "@/app/actions/courses";
 import { getTodaysPlanAction, getUserCourseSettingsAction, getModuleProgressAction } from "@/app/actions/study-plan";
 import { notFound, redirect } from "next/navigation";
@@ -31,7 +31,7 @@ export default async function CourseLearningPage({
 
     // Fetch course content and settings in parallel for better performance
     const [courseResult, settingsResult, todaysPlanResult, moduleProgressResult] = await Promise.all([
-      getCourseContentAction(actualCourseId),
+      getCourseLearningShellAction(actualCourseId),
       getUserCourseSettingsAction(actualCourseId).catch(() => ({ success: false, data: null })),
       getTodaysPlanAction(actualCourseId).catch(() => ({ success: false, data: null })),
       getModuleProgressAction(actualCourseId).catch(() => ({ success: false, data: null })),
@@ -40,12 +40,12 @@ export default async function CourseLearningPage({
     const result = courseResult;
 
     if (!result.success || !result.data) {
-      console.error(`getCourseContentAction failed for course ${actualCourseId}:`, result.error);
+      console.error(`getCourseLearningShellAction failed for course ${actualCourseId}:`, result.error);
       // If user is not enrolled or access denied, redirect to course detail page
       const errorMessage = result.error?.toLowerCase() || "";
 
       // If it's a generic error, try to get more details by checking enrollment directly
-      if (errorMessage.includes("error loading") || !result.error) {
+      if (errorMessage.includes("error loading course content") || !result.error) {
         // Generic error - check if course exists and user is enrolled
         try {
           const { requireAuth } = await import("@/lib/auth/require-auth");

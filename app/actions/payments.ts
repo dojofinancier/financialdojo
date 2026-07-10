@@ -2,7 +2,7 @@
 
 import { stripe } from "@/lib/stripe/server";
 import { sendPaymentSuccessWebhook } from "@/lib/webhooks/make";
-import { requireAuth } from "@/lib/auth/require-auth";
+import { requireAuth, requireAdmin } from "@/lib/auth/require-auth";
 import { prisma } from "@/lib/prisma";
 import { validateCouponAction, applyCouponDiscountAction } from "@/app/actions/coupons";
 import { logServerError } from "@/lib/utils/error-logging";
@@ -731,6 +731,208 @@ export async function getReceiptDataAction(
     return {
       success: false,
       error: "Error retrieving receipt",
+    };
+  }
+}
+
+
+
+/**
+ * Fetches receipt for any paymentIntentId without user ownership check.
+ */
+export async function getReceiptDataForAdminAction(
+  paymentIntentId: string
+): Promise<{ success: boolean; error?: string; data?: ReceiptData }> {
+  try {
+    await requireAdmin();
+
+    const currency = "CAD";
+    const currencyDisplay = currency;
+    const formatAmount = (amount: number) =>
+      new Intl.NumberFormat("en-CA", {
+        style: "currency",
+        currency,
+      }).format(amount);
+
+    const enrollment = await prisma.enrollment.findFirst({
+      where: { paymentIntentId },
+      include: {
+        course: true,
+        user: true,
+        couponUsage: { include: { coupon: true } },
+      },
+    });
+
+    if (enrollment) {
+      let paymentIntent;
+      let charge = null;
+      let status: ReceiptData["status"] = "Paid";
+
+      try {
+        paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId, {
+          expand: ["latest_charge"],
+        });
+        charge =
+          typeof paymentIntent.latest_charge === "object" &&
+          paymentIntent.latest_charge !== null
+            ? paymentIntent.latest_charge
+            : null;
+        if (paymentIntent.status !== "succeeded") {
+          status = "Failed";
+        } else if (charge && "amount_refunded" in charge && charge.amount_refunded > 0) {
+          status = "Refunded";
+        }
+      } catch (stripeError: unknown) {
+        const msg = stripeError instanceof Error ? stripeError.message : "Stripe error";
+        await logServerError({
+          errorMessage: `Stripe retrieve failed in getReceiptDataForAdminAction: ${msg}`,
+          stackTrace: stripeError instanceof Error ? stripeError.stack : undefined,
+          severity: "MEDIUM",
+        });
+        return {
+          success: false,
+          error:
+            process.env.NODE_ENV === "development"
+              ? `Stripe: ${msg}`
+              : "Unable to retrieve payment details.",
+        };
+      }
+
+      const paymentMethodDetails = charge?.payment_method_details as
+        | { card?: { brand?: string; last4?: string } }
+        | undefined;
+      const card = paymentMethodDetails?.card;
+      const paymentMethod =
+        card?.brand && card?.last4
+          ? `Card (${card.brand} •••• ${card.last4})`
+          : "Card";
+
+      const user = enrollment.user;
+      const purchaseDate = enrollment.purchaseDate;
+      const amount = paymentIntent.amount / 100;
+      let discount: string | null = null;
+      let originalAmount: number | null = null;
+      if (enrollment.couponUsage?.discountAmount != null) {
+        const discountAmount = Number(enrollment.couponUsage.discountAmount);
+        discount = `-${formatAmount(discountAmount)}`;
+        originalAmount = Number(enrollment.course.price);
+      }
+
+      const data: ReceiptData = {
+        productName: enrollment.course.title,
+        price: originalAmount ?? amount,
+        currency: currencyDisplay,
+        userName:
+          `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.email,
+        userEmail: user.email,
+        orderNumber: enrollment.orderNumber ?? null,
+        paymentMethod,
+        dateShort: format(purchaseDate, "MM/dd/yyyy"),
+        dateLong: format(purchaseDate, "MMMM d, yyyy", { locale: enCA }),
+        tps: null,
+        tvq: null,
+        tpsNumber: null,
+        tvqNumber: null,
+        discount,
+        couponCode: enrollment.couponUsage?.coupon?.code ?? null,
+        originalAmount,
+        total: amount,
+        status,
+      };
+
+      return { success: true, data };
+    }
+
+    const cohortEnrollment = await prisma.cohortEnrollment.findFirst({
+      where: { paymentIntentId },
+      include: { cohort: true, user: true },
+    });
+
+    if (cohortEnrollment) {
+      let paymentIntent;
+      let charge = null;
+      let status: ReceiptData["status"] = "Paid";
+
+      try {
+        paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId, {
+          expand: ["latest_charge"],
+        });
+        charge =
+          typeof paymentIntent.latest_charge === "object" &&
+          paymentIntent.latest_charge !== null
+            ? paymentIntent.latest_charge
+            : null;
+        if (paymentIntent.status !== "succeeded") {
+          status = "Failed";
+        } else if (charge && "amount_refunded" in charge && charge.amount_refunded > 0) {
+          status = "Refunded";
+        }
+      } catch (stripeError: unknown) {
+        const msg = stripeError instanceof Error ? stripeError.message : "Stripe error";
+        await logServerError({
+          errorMessage: `Stripe retrieve failed (cohort) in getReceiptDataForAdminAction: ${msg}`,
+          stackTrace: stripeError instanceof Error ? stripeError.stack : undefined,
+          severity: "MEDIUM",
+        });
+        return {
+          success: false,
+          error:
+            process.env.NODE_ENV === "development"
+              ? `Stripe: ${msg}`
+              : "Unable to retrieve payment details.",
+        };
+      }
+
+      const paymentMethodDetails = charge?.payment_method_details as
+        | { card?: { brand?: string; last4?: string } }
+        | undefined;
+      const card = paymentMethodDetails?.card;
+      const paymentMethod =
+        card?.brand && card?.last4
+          ? `Card (${card.brand} •••• ${card.last4})`
+          : "Card";
+
+      const user = cohortEnrollment.user;
+      const purchaseDate = cohortEnrollment.purchaseDate;
+      const amount = paymentIntent.amount / 100;
+
+      const data: ReceiptData = {
+        productName: cohortEnrollment.cohort.title,
+        price: amount,
+        currency: currencyDisplay,
+        userName:
+          `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.email,
+        userEmail: user.email,
+        orderNumber: cohortEnrollment.orderNumber ?? null,
+        paymentMethod,
+        dateShort: format(purchaseDate, "MM/dd/yyyy"),
+        dateLong: format(purchaseDate, "MMMM d, yyyy", { locale: enCA }),
+        tps: null,
+        tvq: null,
+        tpsNumber: null,
+        tvqNumber: null,
+        discount: null,
+        total: amount,
+        status,
+      };
+
+      return { success: true, data };
+    }
+
+    return { success: false, error: "Payment not found" };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    await logServerError({
+      errorMessage: `Failed to get receipt data (admin): ${message}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "MEDIUM",
+    });
+    return {
+      success: false,
+      error:
+        process.env.NODE_ENV === "development"
+          ? `Error retrieving receipt: ${message}`
+          : "Error retrieving receipt",
     };
   }
 }

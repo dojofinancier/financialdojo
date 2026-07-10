@@ -31,6 +31,11 @@ import {
   getStudentAttemptsAction,
   type StudentAttemptsResult,
 } from "@/app/actions/students";
+import {
+  grantQuizCorrectionsAccessAction,
+  revokeQuizCorrectionsGrantAction,
+} from "@/app/actions/quiz-corrections-grants";
+import { findActiveGrantForAttempt } from "@/lib/quiz-corrections-access";
 import { AdminQuizAttemptReviewDialog } from "@/components/admin/students/admin-quiz-attempt-review-dialog";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -123,6 +128,7 @@ export function StudentDetails({ student }: StudentDetailsProps) {
   const [attemptsData, setAttemptsData] = useState<StudentAttemptsResult | null>(null);
   const [attemptsLoading, setAttemptsLoading] = useState(false);
   const [reviewAttemptId, setReviewAttemptId] = useState<string | null>(null);
+  const [correctionsActionId, setCorrectionsActionId] = useState<string | null>(null);
 
   const fetchAttempts = async () => {
     setAttemptsLoading(true);
@@ -482,11 +488,20 @@ export function StudentDetails({ student }: StudentDetailsProps) {
                       <TableHead>Result</TableHead>
                       <TableHead>Date</TableHead>
                       <TableHead className="text-right w-[120px]">Answers</TableHead>
+                      <TableHead className="text-right w-[280px]">Corrections</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {attemptsData.quizAttempts.map((attempt) => {
                       const passed = attempt.score >= attempt.quiz.passingScore;
+                      const grants = attemptsData.quizCorrectionsGrants ?? [];
+                      const matchingGrant = findActiveGrantForAttempt(
+                        grants,
+                        attempt.quiz.id,
+                        attempt.id
+                      );
+                      const showCorrectionsAdmin =
+                        attempt.quiz.isMockExam && attempt.score > 0 && !passed;
 
                       return (
                         <TableRow key={attempt.id}>
@@ -529,6 +544,89 @@ export function StudentDetails({ student }: StudentDetailsProps) {
                               View
                             </Button>
                           </TableCell>
+                          <TableCell className="text-right">
+                            {showCorrectionsAdmin ? (
+                              <div className="flex flex-col items-end gap-1">
+                                {matchingGrant ? (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-8"
+                                    disabled={correctionsActionId !== null}
+                                    onClick={async () => {
+                                      setCorrectionsActionId(matchingGrant.id);
+                                      const res = await revokeQuizCorrectionsGrantAction({
+                                        grantId: matchingGrant.id,
+                                      });
+                                      setCorrectionsActionId(null);
+                                      if (res.success) {
+                                        toast.success("Corrections access revoked");
+                                        void fetchAttempts();
+                                      } else {
+                                        toast.error(res.error);
+                                      }
+                                    }}
+                                  >
+                                    Revoke access
+                                  </Button>
+                                ) : (
+                                  <>
+                                    <Button
+                                      type="button"
+                                      variant="outline"
+                                      size="sm"
+                                      className="h-8"
+                                      disabled={correctionsActionId !== null}
+                                      onClick={async () => {
+                                        setCorrectionsActionId(`one-${attempt.id}`);
+                                        const res = await grantQuizCorrectionsAccessAction({
+                                          studentUserId: student.id,
+                                          quizId: attempt.quiz.id,
+                                          attemptId: attempt.id,
+                                        });
+                                        setCorrectionsActionId(null);
+                                        if (res.success) {
+                                          toast.success("Corrections granted for this attempt");
+                                          void fetchAttempts();
+                                        } else {
+                                          toast.error(res.error);
+                                        }
+                                      }}
+                                    >
+                                      This attempt
+                                    </Button>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8"
+                                      disabled={correctionsActionId !== null}
+                                      onClick={async () => {
+                                        setCorrectionsActionId(`all-${attempt.quiz.id}`);
+                                        const res = await grantQuizCorrectionsAccessAction({
+                                          studentUserId: student.id,
+                                          quizId: attempt.quiz.id,
+                                          attemptId: null,
+                                        });
+                                        setCorrectionsActionId(null);
+                                        if (res.success) {
+                                          toast.success("Corrections granted for all attempts");
+                                          void fetchAttempts();
+                                        } else {
+                                          toast.error(res.error);
+                                        }
+                                      }}
+                                    >
+                                      All attempts
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">—</span>
+                            )}
+                          </TableCell>
                         </TableRow>
                       );
                     })}
@@ -558,6 +656,9 @@ export function StudentDetails({ student }: StudentDetailsProps) {
                           {format(new Date(attempt.completedAt), "d MMM yyyy, HH:mm", {
                             locale: enCA,
                           })}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <span className="text-muted-foreground text-sm">—</span>
                         </TableCell>
                         <TableCell className="text-right">
                           <span className="text-muted-foreground text-sm">—</span>

@@ -37,9 +37,12 @@ model User {
   moduleProgress           ModuleProgress[]
   studentNotes             Note[]
   progressTracking         ProgressTracking[]
-  questionBankAttempts     QuestionBankAttempt[]
-  quizAttempts             QuizAttempt[]
-  smartReviewItems         SmartReviewItem[]
+  questionBankAttempts            QuestionBankAttempt[]
+  quizAttempts                    QuizAttempt[]
+  quizSupplementaryQuestionSets   QuizSupplementaryQuestionSet[]
+  quizCorrectionsGrantsAsStudent  QuizCorrectionsGrant[]     @relation("QuizCorrectionsGrantStudent")
+  quizCorrectionsGrantsGranted    QuizCorrectionsGrant[]     @relation("QuizCorrectionsGrantGranter")
+  smartReviewItems                SmartReviewItem[]
   smartReviewProgress      SmartReviewProgress[]
   subscriptions            Subscription[]
   supportTicketReplies     SupportTicketReply[]
@@ -130,6 +133,7 @@ model Module {
   examWeight         Float?             @map("exam_weight")
   shortTitle         String?            @map("short_title")
   pdfUrl             String?            @map("pdf_url")
+  slideImages        Json?              @default("[]") @map("slide_images")
   cohortModules      CohortModule[]
   contentItems       ContentItem[]
   dailyPlanEntries   DailyPlanEntry[]
@@ -188,11 +192,13 @@ model Quiz {
   updatedAt     DateTime       @updatedAt @map("updated_at")
   examFormat    String?        @map("exam_format")
   isMockExam    Boolean        @default(false) @map("is_mock_exam")
-  courseId      String         @map("course_id")
-  attempts      QuizAttempt[]
-  questions     QuizQuestion[]
-  contentItem   ContentItem    @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
-  course        Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId                         String                         @map("course_id")
+  attempts                         QuizAttempt[]
+  questions                        QuizQuestion[]
+  supplementaryQuestionSets        QuizSupplementaryQuestionSet[]
+  correctionsGrants              QuizCorrectionsGrant[]
+  contentItem                      ContentItem                    @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  course                           Course                         @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@index([courseId])
   @@index([courseId, isMockExam])
@@ -217,17 +223,54 @@ model QuizQuestion {
 }
 
 model QuizAttempt {
-  id          String   @id @default(uuid())
-  userId      String   @map("user_id")
-  quizId      String   @map("quiz_id")
-  score       Int
-  answers     Json
-  completedAt DateTime @default(now()) @map("completed_at")
-  timeSpent   Int?     @map("time_spent")
-  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String   @id @default(uuid())
+  userId            String   @map("user_id")
+  quizId            String   @map("quiz_id")
+  quizSequence      Int      @default(1) @map("quiz_sequence")
+  score             Int
+  answers           Json
+  questionsSnapshot Json?    @map("questions_snapshot")
+  completedAt       DateTime @default(now()) @map("completed_at")
+  timeSpent         Int?     @map("time_spent")
+  quiz              Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  correctionsGrants QuizCorrectionsGrant[]
 
+  @@index([userId, quizId, quizSequence])
   @@map("quiz_attempts")
+}
+
+model QuizSupplementaryQuestionSet {
+  id                String   @id @default(uuid())
+  userId            String   @map("user_id")
+  quizId            String   @map("quiz_id")
+  quizSequence      Int      @map("quiz_sequence")
+  questionsSnapshot Json     @map("questions_snapshot")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, quizId, quizSequence])
+  @@map("quiz_supplementary_question_sets")
+}
+
+model QuizCorrectionsGrant {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  quizId          String    @map("quiz_id")
+  attemptId       String?   @map("attempt_id")
+  grantedByUserId String    @map("granted_by_user_id")
+  grantedAt       DateTime  @default(now()) @map("granted_at")
+  revokedAt       DateTime? @map("revoked_at")
+
+  user      User         @relation("QuizCorrectionsGrantStudent", fields: [userId], references: [id], onDelete: Cascade)
+  grantedBy User         @relation("QuizCorrectionsGrantGranter", fields: [grantedByUserId], references: [id], onDelete: Cascade)
+  quiz      Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  attempt   QuizAttempt? @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([userId, quizId])
+  @@map("quiz_corrections_grants")
 }
 
 model CaseStudy {

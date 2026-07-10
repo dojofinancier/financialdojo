@@ -25,6 +25,7 @@ const getCachedModuleContent = unstable_cache(
         description: true,
         order: true,
         pdfUrl: true,
+        slideImages: true,
         course: {
           select: {
             pdfUrl: true,
@@ -114,6 +115,10 @@ const getCachedModuleContent = unstable_cache(
         quiz: item.quiz,
       }));
 
+    const slideImages = Array.isArray(moduleRecord.slideImages)
+      ? (moduleRecord.slideImages as string[])
+      : [];
+
     return {
       module: {
         id: moduleRecord.id,
@@ -122,10 +127,12 @@ const getCachedModuleContent = unstable_cache(
         order: moduleRecord.order,
         pdfUrl: moduleRecord.pdfUrl,
         coursePdfUrl: moduleRecord.course?.pdfUrl,
+        slideImages,
       },
       videos,
       notes,
       quizzes,
+      slideImages,
     };
   },
   ["module-content"],
@@ -164,12 +171,17 @@ export async function getModuleContentAction(moduleId: string): Promise<ModuleCo
 
     // Get component visibility settings (default to enabled if not set)
     const componentVisibility = (moduleRecord?.course?.componentVisibility as any) || {};
-    const videosEnabled = componentVisibility.videos !== false; // Default to true if not set
+    const videosEnabled = componentVisibility.videos !== false;
+    const slidesEnabled = componentVisibility.slides === true;
 
-    // Filter videos based on componentVisibility
     const filteredData = {
       ...cachedData,
       videos: videosEnabled ? cachedData.videos : [],
+      slideImages: slidesEnabled ? cachedData.slideImages : [],
+      module: {
+        ...cachedData.module,
+        slideImages: slidesEnabled ? cachedData.slideImages : [],
+      },
     };
 
     // Get user's progress for this module (not cached, user-specific)
@@ -230,6 +242,7 @@ export async function getBatchModuleContentAction(
         title: true,
         order: true,
         pdfUrl: true,
+        slideImages: true,
         course: {
           select: {
             pdfUrl: true,

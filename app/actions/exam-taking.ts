@@ -3,14 +3,83 @@
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth/require-auth";
 import { logServerError } from "@/lib/utils/error-logging";
-import { isAnswerCorrect } from "@/lib/utils/quiz-answer-display";
-import { z } from "zod";
+import { correctionAccessFromGrants, userCanViewQuizCorrections } from "@/lib/quiz-corrections-access";
+import type { QuizQuestion } from "@prisma/client";
+
+/** Robust answer resolution - handles option1, A, option 1, etc. Same logic as quizzes.ts */
+function getOrderedOptionKeys(options: Record<string, string>) {
+  const optionKeys = Object.keys(options || {});
+  return optionKeys.slice().sort((a, b) => {
+    const aNum = Number.parseInt(a.replace(/\D/g, ""), 10);
+    const bNum = Number.parseInt(b.replace(/\D/g, ""), 10);
+    if (!Number.isNaN(aNum) && !Number.isNaN(bNum) && aNum !== bNum) return aNum - bNum;
+    return a.localeCompare(b);
+  });
+}
+
+function resolveAnswerIndex(answer: string | undefined, options: Record<string, string>): number | null {
+  if (!answer) return null;
+  const trimmed = answer.trim();
+  if (!trimmed) return null;
+
+  const lower = trimmed.toLowerCase();
+  const orderedKeys = getOrderedOptionKeys(options);
+
+  const directKey = orderedKeys.find((key) => key.toLowerCase() === lower);
+  if (directKey) return orderedKeys.indexOf(directKey);
+
+  const valueMatchKey = orderedKeys.find((key) => {
+    const value = options[key];
+    return value && value.trim().toLowerCase() === lower;
+  });
+  if (valueMatchKey) return orderedKeys.indexOf(valueMatchKey);
+
+  const letterMatch = lower.match(/^([a-d])\s*[\).:\-]?/);
+  if (letterMatch) {
+    const idx = ["a", "b", "c", "d"].indexOf(letterMatch[1]);
+    if (idx >= 0 && idx < orderedKeys.length) return idx;
+  }
+
+  const numberMatch = lower.match(/^([1-4])\s*[\).:\-]?/);
+  if (numberMatch) {
+    const idx = Number.parseInt(numberMatch[1], 10) - 1;
+    if (idx >= 0 && idx < orderedKeys.length) return idx;
+  }
+
+  const optionMatch = lower.match(/^option\s*([1-9]\d*)/);
+  if (optionMatch) {
+    const idx = Number.parseInt(optionMatch[1], 10) - 1;
+    if (idx >= 0 && idx < orderedKeys.length) return idx;
+  }
+
+  return null;
+}
+
+function mapQuestionsForCorrectionsReview(questions: QuizQuestion[]) {
+  return questions.map((q) => ({
+    id: q.id,
+    question: q.question,
+    options: q.options as Record<string, string>,
+    correctAnswer: q.correctAnswer,
+    explanation: q.explanation ?? null,
+  }));
+}
 
 export type ExamTakingResult = {
   success: boolean;
   error?: string;
   data?: any;
 };
+
+/** Treat as a finished mock exam row (avoids showing abandoned in-progress rows that also use score 0). */
+function isSubmittedMockAttempt(attempt: { score: number; answers: unknown }, questionCount: number): boolean {
+  const ans = attempt.answers;
+  const keys =
+    ans && typeof ans === "object" && !Array.isArray(ans)
+      ? Object.keys(ans as Record<string, unknown>)
+      : [];
+  return attempt.score > 0 || keys.length >= questionCount;
+}
 
 /**
  * Get all available mock exams for a course
@@ -56,50 +125,71 @@ export async function getAvailableExamsAction(courseId: string) {
       },
     });
 
-    // Batch load all attempts for all exams in a single query
     const examIds = exams.map((e) => e.id);
-    const allAttempts = await prisma.quizAttempt.findMany({
-      where: {
-        userId: user.id,
-        quizId: { in: examIds },
-      },
-      orderBy: { completedAt: "desc" },
-      select: {
-        id: true,
-        quizId: true,
-        score: true,
-        completedAt: true,
-      },
-    });
 
-    // Get attempt counts in a single aggregation query
-    const attemptCounts = await prisma.quizAttempt.groupBy({
-      by: ["quizId"],
-      where: {
-        userId: user.id,
-        quizId: { in: examIds },
-      },
-      _count: {
-        id: true,
-      },
-    });
+    const [allAttempts, grants] = await Promise.all([
+      prisma.quizAttempt.findMany({
+        where: {
+          userId: user.id,
+          quizId: { in: examIds },
+        },
+        orderBy: { completedAt: "desc" },
+        select: {
+          id: true,
+          quizId: true,
+          score: true,
+          completedAt: true,
+          answers: true,
+        },
+      }),
+      prisma.quizCorrectionsGrant.findMany({
+        where: {
+          userId: user.id,
+          quizId: { in: examIds },
+          revokedAt: null,
+        },
+        select: { quizId: true, attemptId: true },
+      }),
+    ]);
 
-    const countMap = new Map(attemptCounts.map((c) => [c.quizId, c._count.id]));
-
-    // Group attempts by quizId and get most recent for each
-    const attemptsByQuiz = new Map<string, typeof allAttempts[0]>();
+    const attemptsByQuiz = new Map<string, typeof allAttempts>();
     for (const attempt of allAttempts) {
-      if (!attemptsByQuiz.has(attempt.quizId)) {
-        attemptsByQuiz.set(attempt.quizId, attempt);
-      }
+      const list = attemptsByQuiz.get(attempt.quizId) ?? [];
+      list.push(attempt);
+      attemptsByQuiz.set(attempt.quizId, list);
     }
 
-    // Combine exam data with attempts
-    const examsWithAttempts = exams.map((exam) => ({
-      ...exam,
-      latestAttempt: attemptsByQuiz.get(exam.id) || null,
-      attemptCount: countMap.get(exam.id) || 0,
-    }));
+    const examsWithAttempts = exams.map((exam) => {
+      const bucket = attemptsByQuiz.get(exam.id) ?? [];
+      const questionCount = exam._count.questions;
+      const submitted = bucket.filter((a) => isSubmittedMockAttempt(a, questionCount));
+      const latestAttempt = submitted[0] ?? null;
+
+      return {
+        ...exam,
+        latestAttempt: latestAttempt
+          ? {
+              id: latestAttempt.id,
+              score: latestAttempt.score,
+              completedAt: latestAttempt.completedAt,
+            }
+          : null,
+        attemptCount: submitted.length,
+        submittedAttempts: submitted.map((a) => ({
+          id: a.id,
+          score: a.score,
+          completedAt: a.completedAt,
+          passed: a.score >= exam.passingScore,
+          canViewCorrections: correctionAccessFromGrants(
+            grants,
+            exam.id,
+            a.id,
+            a.score,
+            exam.passingScore
+          ),
+        })),
+      };
+    });
 
     return {
       success: true,
@@ -114,7 +204,7 @@ export async function getAvailableExamsAction(courseId: string) {
 
     return {
       success: false,
-      error: "Error loading exams",
+      error: "Erreur lors du chargement des examens",
     };
   }
 }
@@ -187,7 +277,7 @@ export async function getExamForTakingAction(examId: string) {
 
     return {
       success: false,
-      error: "Error loading the exam",
+      error: "Erreur lors du chargement de l'examen",
     };
   }
 }
@@ -246,7 +336,7 @@ export async function saveExamAnswersAction(
 
     return {
       success: false,
-      error: "Error saving",
+      error: "Erreur lors de la sauvegarde",
     };
   }
 }
@@ -272,20 +362,37 @@ export async function submitExamAction(
       },
     });
 
-    if (!exam) {
+    if (!exam || !exam.isMockExam) {
       return {
         success: false,
         error: "Examen introuvable",
       };
     }
 
-    // Calculate score
+    // Calculate score using robust answer resolution (handles option1, A, option 1, etc.)
     let correctAnswers = 0;
     const totalQuestions = exam.questions.length;
 
     exam.questions.forEach((question) => {
-      if (isAnswerCorrect(question, answers[question.id])) {
-        correctAnswers++;
+      const userAnswer = answers[question.id];
+      const correctAnswer = question.correctAnswer;
+      if (!correctAnswer || typeof correctAnswer !== "string" || !correctAnswer.trim()) {
+        return; // Skip questions with invalid correctAnswer to avoid errors
+      }
+      if (!userAnswer) return;
+
+      if (question.type === "MULTIPLE_CHOICE") {
+        const options = (question.options as Record<string, string>) || {};
+        const userIndex = resolveAnswerIndex(userAnswer, options);
+        const correctIndex = resolveAnswerIndex(correctAnswer, options);
+        if (userIndex !== null && correctIndex !== null && userIndex === correctIndex) {
+          correctAnswers++;
+        }
+      } else {
+        // For other types, direct comparison
+        if (userAnswer.trim().toLowerCase() === correctAnswer.trim().toLowerCase()) {
+          correctAnswers++;
+        }
       }
     });
 
@@ -326,23 +433,29 @@ export async function submitExamAction(
       });
     }
 
+    const passed = score >= exam.passingScore;
+    const canViewCorrections = await userCanViewQuizCorrections({
+      userId: user.id,
+      quizId: exam.id,
+      attemptId: attempt.id,
+      score,
+      passingScore: exam.passingScore,
+    });
+
     return {
       success: true,
       data: {
-        attempt,
+        attemptId: attempt.id,
         score,
         passingScore: exam.passingScore,
-        passed: score >= exam.passingScore,
+        passed,
         correctAnswers,
         totalQuestions,
-        userAnswers: answers, // Include user's answers
-        questions: exam.questions.map((q) => ({
-          id: q.id,
-          question: q.question,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          explanation: q.explanation || null,
-        })),
+        userAnswers: answers,
+        canViewCorrections,
+        ...(canViewCorrections && {
+          questions: mapQuestionsForCorrectionsReview(exam.questions),
+        }),
       },
     };
   } catch (error) {
@@ -354,13 +467,167 @@ export async function submitExamAction(
 
     return {
       success: false,
-      error: "Error submitting the exam",
+      error: "Erreur lors de la soumission de l'examen",
     };
   }
 }
 
 /**
- * Get exam attempt results
+ * Load per-question corrections for a completed mock exam attempt (authorized users only).
+ */
+export async function getExamCorrectionsAction(attemptId: string): Promise<ExamTakingResult> {
+  try {
+    const user = await requireAuth();
+
+    const attempt = await prisma.quizAttempt.findUnique({
+      where: { id: attemptId },
+      include: {
+        quiz: {
+          include: {
+            questions: {
+              orderBy: { order: "asc" },
+            },
+          },
+        },
+      },
+    });
+
+    if (!attempt || attempt.userId !== user.id || !attempt.quiz.isMockExam) {
+      return {
+        success: false,
+        error: "Tentative introuvable",
+      };
+    }
+
+    const canViewCorrections = await userCanViewQuizCorrections({
+      userId: user.id,
+      quizId: attempt.quizId,
+      attemptId: attempt.id,
+      score: attempt.score,
+      passingScore: attempt.quiz.passingScore,
+    });
+
+    if (!canViewCorrections) {
+      return {
+        success: false,
+        error: "Accès aux corrections non autorisé",
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        questions: mapQuestionsForCorrectionsReview(attempt.quiz.questions),
+      },
+    };
+  } catch (error) {
+    await logServerError({
+      errorMessage: `Failed to get exam corrections: ${error instanceof Error ? error.message : "Unknown error"}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "MEDIUM",
+    });
+
+    return {
+      success: false,
+      error: "Erreur lors du chargement des corrections",
+    };
+  }
+}
+
+/**
+ * Review a past mock exam attempt on the exam list (user answers; correct answers only if allowed).
+ */
+export async function getMockExamAttemptReviewAction(attemptId: string): Promise<ExamTakingResult> {
+  try {
+    const user = await requireAuth();
+
+    const attempt = await prisma.quizAttempt.findUnique({
+      where: { id: attemptId },
+      include: {
+        quiz: {
+          include: {
+            questions: {
+              orderBy: { order: "asc" },
+            },
+          },
+        },
+      },
+    });
+
+    if (!attempt || attempt.userId !== user.id || !attempt.quiz.isMockExam) {
+      return {
+        success: false,
+        error: "Tentative introuvable",
+      };
+    }
+
+    const questionCount = attempt.quiz.questions.length;
+    if (!isSubmittedMockAttempt(attempt, questionCount)) {
+      return {
+        success: false,
+        error: "Tentative non terminée",
+      };
+    }
+
+    const canViewCorrections = await userCanViewQuizCorrections({
+      userId: user.id,
+      quizId: attempt.quizId,
+      attemptId: attempt.id,
+      score: attempt.score,
+      passingScore: attempt.quiz.passingScore,
+    });
+
+    const userAnswers =
+      attempt.answers && typeof attempt.answers === "object" && !Array.isArray(attempt.answers)
+        ? (attempt.answers as Record<string, string>)
+        : {};
+
+    const toOpts = (raw: unknown): Record<string, string> => {
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+      const o = raw as Record<string, unknown>;
+      const out: Record<string, string> = {};
+      for (const [k, v] of Object.entries(o)) {
+        if (v == null) continue;
+        out[k] = typeof v === "string" ? v : String(v);
+      }
+      return out;
+    };
+
+    const questions = attempt.quiz.questions.map((q) => ({
+      id: q.id,
+      question: q.question,
+      options: toOpts(q.options),
+      correctAnswer: canViewCorrections ? q.correctAnswer : "",
+      explanation: canViewCorrections ? q.explanation ?? null : null,
+    }));
+
+    return {
+      success: true,
+      data: {
+        score: attempt.score,
+        passingScore: attempt.quiz.passingScore,
+        passed: attempt.score >= attempt.quiz.passingScore,
+        canViewCorrections,
+        userAnswers,
+        questions,
+      },
+    };
+  } catch (error) {
+    await logServerError({
+      errorMessage: `getMockExamAttemptReviewAction: ${error instanceof Error ? error.message : "Unknown error"}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "MEDIUM",
+    });
+
+    return {
+      success: false,
+      error: "Erreur lors du chargement de la tentative",
+    };
+  }
+}
+
+/**
+ * Get exam attempt results (correct answers omitted unless the user may review corrections).
  */
 export async function getExamAttemptAction(attemptId: string) {
   try {
@@ -386,9 +653,30 @@ export async function getExamAttemptAction(attemptId: string) {
       };
     }
 
+    const canViewCorrections = await userCanViewQuizCorrections({
+      userId: user.id,
+      quizId: attempt.quizId,
+      attemptId: attempt.id,
+      score: attempt.score,
+      passingScore: attempt.quiz.passingScore,
+    });
+
+    const questions = attempt.quiz.questions.map((q) => ({
+      ...q,
+      correctAnswer: canViewCorrections ? q.correctAnswer : "",
+      explanation: canViewCorrections ? q.explanation : null,
+    }));
+
     return {
       success: true,
-      data: attempt,
+      data: {
+        ...attempt,
+        quiz: {
+          ...attempt.quiz,
+          questions,
+        },
+        canViewCorrections,
+      },
     };
   } catch (error) {
     await logServerError({
@@ -399,7 +687,7 @@ export async function getExamAttemptAction(attemptId: string) {
 
     return {
       success: false,
-      error: "Error loading the attempt",
+      error: "Erreur lors du chargement de la tentative",
     };
   }
 }

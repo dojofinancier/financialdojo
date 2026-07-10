@@ -37,6 +37,7 @@ const componentVisibilitySchema = z.object({
   appointments: z.boolean().default(true),
   virtualTutor: z.boolean().default(false),
   caseStudies: z.boolean().default(false),
+  slides: z.boolean().default(false),
 });
 
 // Form schema (keep inputs as strings for react-hook-form)
@@ -135,6 +136,7 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
     appointments: initialData?.componentVisibility?.appointments ?? true,
     virtualTutor: initialData?.componentVisibility?.virtualTutor ?? false,
     caseStudies: initialData?.componentVisibility?.caseStudies ?? false,
+    slides: initialData?.componentVisibility?.slides ?? false,
   });
 
   const {
@@ -661,6 +663,18 @@ export function CourseForm({ courseId, initialData }: CourseFormProps) {
                 checked={componentVisibility.virtualTutor}
                 onCheckedChange={(checked) =>
                   setComponentVisibility((prev) => ({ ...prev, virtualTutor: checked }))
+                }
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="visibility-slides" className="cursor-pointer">
+                Slide deck
+              </Label>
+              <Switch
+                id="visibility-slides"
+                checked={componentVisibility.slides}
+                onCheckedChange={(checked) =>
+                  setComponentVisibility((prev) => ({ ...prev, slides: checked }))
                 }
               />
             </div>

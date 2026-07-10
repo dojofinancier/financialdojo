@@ -17,6 +17,7 @@ const componentVisibilitySchema = z.object({
   messaging: z.boolean().default(true),
   appointments: z.boolean().default(true),
   virtualTutor: z.boolean().default(false),
+  slides: z.boolean().default(false),
 });
 
 const courseSchema = z.object({
@@ -444,6 +445,197 @@ export async function getCourseBySlugOrIdAction(slugOrId: string) {
     });
 
     return null;
+  }
+}
+
+
+
+/** Admin course editor — auth-gated wrapper around getCourseAction. */
+export async function getCourseAdminPageAction(courseId: string) {
+  try {
+    await requireAdmin();
+    return getCourseAction(courseId);
+  } catch (error) {
+    await logServerError({
+      errorMessage: `Failed to get admin course page: ${error instanceof Error ? error.message : "Unknown error"}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "MEDIUM",
+    });
+    return null;
+  }
+}
+
+/** Derive a display title for a content item from its type and relations. */
+function contentItemDisplayTitle(item: {
+  contentType: string;
+  order: number;
+  quiz?: { title: string } | null;
+  notes?: { id: string }[];
+}): string {
+  if (item.contentType === "QUIZ" && item.quiz) return item.quiz.title;
+  if (item.contentType === "VIDEO") return `Video ${item.order}`;
+  if (item.contentType === "NOTE" && item.notes && item.notes.length > 0) return `Note ${item.order}`;
+  if (item.contentType === "FLASHCARD") return `Flashcard ${item.order}`;
+  return `Content ${item.order}`;
+}
+
+/**
+ * Lightweight course shell for the learning page — module tree metadata only.
+ */
+export async function getCourseLearningShellAction(courseId: string) {
+  try {
+    const user = await requireAuth();
+    const { validateCourseAccess } = await import("@/lib/utils/access-validation");
+
+    const accessResult = await validateCourseAccess(user.id, courseId);
+    if (!accessResult.hasAccess) {
+      return { success: false as const, error: accessResult.reason || "Access denied" };
+    }
+
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        componentVisibility: true,
+        pdfUrl: true,
+        category: true,
+        recommendedStudyHoursMin: true,
+        recommendedStudyHoursMax: true,
+        orientationVideoUrl: true,
+        orientationText: true,
+        modules: {
+          orderBy: { order: "asc" },
+          select: {
+            id: true,
+            title: true,
+            shortTitle: true,
+            description: true,
+            order: true,
+            pdfUrl: true,
+            contentItems: {
+              orderBy: { order: "asc" },
+              select: {
+                id: true,
+                contentType: true,
+                order: true,
+                quiz: { select: { title: true } },
+                notes: { where: { type: "ADMIN" }, select: { id: true }, take: 1 },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!course) {
+      return { success: false as const, error: "Course not found" };
+    }
+
+    return {
+      success: true as const,
+      data: {
+        ...course,
+        recommendedStudyHoursMin: course.recommendedStudyHoursMin ?? 6,
+        recommendedStudyHoursMax: course.recommendedStudyHoursMax ?? 10,
+        orientationVideoUrl: course.orientationVideoUrl ?? null,
+        orientationText: course.orientationText ?? null,
+        modules: course.modules.map((module) => ({
+          ...module,
+          contentItems: module.contentItems.map((item) => ({
+            id: item.id,
+            contentType: item.contentType,
+            order: item.order,
+            title: contentItemDisplayTitle(item),
+          })),
+        })),
+      },
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    await logServerError({
+      errorMessage: `Failed to get course learning shell: ${errorMessage}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "MEDIUM",
+    });
+    return { success: false as const, error: "Error loading course content" };
+  }
+}
+
+/**
+ * Load a single content item's heavy data (video, quiz) on demand.
+ */
+export async function getLearningContentItemAction(contentItemId: string) {
+  try {
+    const user = await requireAuth();
+    const { validateCourseAccess } = await import("@/lib/utils/access-validation");
+
+    const contentItem = await prisma.contentItem.findUnique({
+      where: { id: contentItemId },
+      select: {
+        id: true,
+        contentType: true,
+        order: true,
+        module: { select: { courseId: true, title: true } },
+        video: {
+          select: { id: true, vimeoUrl: true, duration: true },
+        },
+        quiz: {
+          select: {
+            id: true,
+            title: true,
+            passingScore: true,
+            timeLimit: true,
+            questions: {
+              orderBy: { order: "asc" },
+              select: {
+                id: true,
+                order: true,
+                type: true,
+                question: true,
+                options: true,
+                correctAnswer: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!contentItem) {
+      return { success: false as const, error: "Content not found" };
+    }
+
+    const accessResult = await validateCourseAccess(user.id, contentItem.module.courseId);
+    if (!accessResult.hasAccess) {
+      return { success: false as const, error: accessResult.reason || "Access denied" };
+    }
+
+    return {
+      success: true as const,
+      data: {
+        id: contentItem.id,
+        contentType: contentItem.contentType,
+        order: contentItem.order,
+        title: contentItemDisplayTitle({
+          contentType: contentItem.contentType,
+          order: contentItem.order,
+          quiz: contentItem.quiz,
+        }),
+        moduleTitle: contentItem.module.title,
+        video: contentItem.video,
+        quiz: contentItem.quiz,
+      },
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    await logServerError({
+      errorMessage: `Failed to get learning content item: ${errorMessage}`,
+      stackTrace: error instanceof Error ? error.stack : undefined,
+      severity: "MEDIUM",
+    });
+    return { success: false as const, error: "Error loading content" };
   }
 }
 

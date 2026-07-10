@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,17 +11,25 @@ import { getModuleContentAction } from "@/app/actions/module-content";
 import { markModuleAsLearnedAction } from "@/app/actions/study-plan";
 import { submitQuizAttemptAction, getQuizAttemptsAction } from "@/app/actions/quizzes";
 import {
-  getAnswerDisplay,
-  getOptionLetter,
-  getOrderedOptionKeys,
-  isAnswerCorrect,
-} from "@/lib/utils/quiz-answer-display";
+  getModuleQuizProgressAction,
+  startSupplementaryQuizAction,
+  loadSupplementaryQuestionsForRetakeAction,
+} from "@/app/actions/module-quiz";
+import type { QuizQuestionSnapshotPublic, QuizQuestionSnapshotItem } from "@/lib/types/module-quiz";
 import { getStudentModuleNoteAction, saveStudentModuleNoteAction } from "@/app/actions/student-notes";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronLeft, ChevronRight, StickyNote, Save } from "lucide-react";
+import { ChevronLeft, ChevronRight, StickyNote, Save, Presentation } from "lucide-react";
+import { SlideDeckViewer } from "./slide-deck-viewer";
+import { SanitizedHtmlBlock } from "@/components/ui/sanitized-html-block";
+import {
+  getAnswerDisplay,
+  getOptionLetter,
+  getOrderedOptionKeys,
+  resolveAnswerIndex,
+} from "@/lib/utils/quiz-answer-display";
 
 interface ModuleDetailPageProps {
   courseId: string;
@@ -31,7 +39,8 @@ interface ModuleDetailPageProps {
     videos?: boolean;
     quizzes?: boolean;
     notes?: boolean;
-  } | null;
+    slides?: boolean;
+      } | null;
 }
 
 type Video = {
@@ -68,33 +77,40 @@ type Quiz = {
       question: string;
       options: Record<string, string>;
       correctAnswer: string;
+      explanation?: string | null;
     }>;
   };
 };
 
 export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibility }: ModuleDetailPageProps) {
   // Get component visibility settings (default to enabled if not set)
-  const videosEnabled = componentVisibility?.videos !== false; // Default to true if not set
-  const quizzesEnabled = componentVisibility?.quizzes !== false; // Default to true if not set
-  const notesEnabled = componentVisibility?.notes !== false; // Default to true if not set
-
+  const videosEnabled = componentVisibility?.videos !== false;
+  const quizzesEnabled = componentVisibility?.quizzes !== false;
+  const notesEnabled = componentVisibility?.notes !== false;
+  const slidesEnabled = componentVisibility?.slides === true; // Default to false
   const [loading, setLoading] = useState(true);
   const [module, setModule] = useState<any>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [slideImages, setSlideImages] = useState<string[]>([]);
   const [progress, setProgress] = useState<any>(null);
-
+  
+  const modulePdfUrl = module?.pdfUrl ?? null;
+  const coursePdfUrl = module?.coursePdfUrl ?? null;
+  const showModulePdfDownload = !!modulePdfUrl;
+  const showCoursePdfDownload = !!coursePdfUrl;
+  
   // Determine initial tab based on what's enabled and available
-  const getInitialTab = (): "videos" | "notes" | "quiz" => {
-    // Only show videos tab if enabled AND there are videos
+  const getInitialTab = (): "videos" | "notes" | "quiz" | "slides" => {
     if (videosEnabled && videos.length > 0) return "videos";
     if (notesEnabled) return "notes";
+    if (slidesEnabled && slideImages.length > 0) return "slides";
     if (quizzesEnabled) return "quiz";
-    return "notes"; // Fallback
+    return "notes";
   };
-
-  const [activeTab, setActiveTab] = useState<"videos" | "notes" | "quiz">(getInitialTab());
+  
+  const [activeTab, setActiveTab] = useState<"videos" | "notes" | "quiz" | "slides">(getInitialTab());
   const [quizAnswers, setQuizAnswers] = useState<Record<string, Record<string, string>>>({});
   const [quizSubmitted, setQuizSubmitted] = useState<Record<string, boolean>>({});
   const [submittingQuiz, setSubmittingQuiz] = useState<string | null>(null);
@@ -109,23 +125,84 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     completedAt: Date;
     passed?: boolean;
     answers?: Record<string, string>;
+    quizSequence?: number;
+    label?: string;
+    questionsSnapshot?: QuizQuestionSnapshotItem[] | null;
   }>>>({});
+  const [quizProgress, setQuizProgress] = useState<Record<string, {
+    passingScore: number;
+    unlockedQuiz2: boolean;
+    unlockedQuiz3: boolean;
+    supplementaryAvailable: boolean;
+    hasQuiz2Set: boolean;
+    hasQuiz3Set: boolean;
+  }>>({});
+  const [activeQuizSequence, setActiveQuizSequence] = useState<Record<string, 1 | 2 | 3>>({});
+  const [supplementaryQuestions, setSupplementaryQuestions] = useState<
+    Record<string, QuizQuestionSnapshotPublic[]>
+  >({});
   const [loadingAttempts, setLoadingAttempts] = useState<Record<string, boolean>>({});
   const [expandedAttemptId, setExpandedAttemptId] = useState<Record<string, string | null>>({});
+  const [startingSupplementary, setStartingSupplementary] = useState<string | null>(null);
 
-  // Update active tab if videos tab is selected but there are no videos
+  const getQuizSessionKey = (quizId: string, sequence: number) => `${quizId}:${sequence}`;
+
   useEffect(() => {
-    if (activeTab === "videos" && (!videosEnabled || videos.length === 0)) {
-      // Switch to first available tab
-      if (notesEnabled) {
-        setActiveTab("notes");
-      } else if (quizzesEnabled) {
-        setActiveTab("quiz");
+    loadModuleContent();
+    loadStudentNote();
+    
+    // Check URL parameters for tab
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab === 'videos' || tab === 'notes' || tab === 'quiz' || tab === 'slides') {
+      setActiveTab(tab);
+    }
+  }, [moduleId]);
+
+  // Load quiz attempts and progress when quizzes are loaded
+  useEffect(() => {
+    if (quizzes.length > 0) {
+      loadQuizAttempts();
+      loadQuizProgress();
+    }
+  }, [quizzes, moduleId]);
+
+  // Update active tab if the selected tab is no longer available
+  useEffect(() => {
+    if (loading) return;
+
+    const firstAvailableTab = (): "videos" | "notes" | "quiz" | "slides" => {
+      if (videosEnabled && videos.length > 0) return "videos";
+      if (notesEnabled) return "notes";
+      if (slidesEnabled && slideImages.length > 0) return "slides";
+      if (quizzesEnabled) return "quiz";
+      return "notes";
+    };
+
+    const tabAvailable =
+      (activeTab === "videos" && videosEnabled && videos.length > 0) ||
+      (activeTab === "notes" && notesEnabled) ||
+      (activeTab === "slides" && slidesEnabled && slideImages.length > 0) ||
+      (activeTab === "quiz" && quizzesEnabled);
+
+    if (!tabAvailable) {
+      const next = firstAvailableTab();
+      if (next !== activeTab) {
+        setActiveTab(next);
       }
     }
-  }, [activeTab, videosEnabled, videos.length, notesEnabled, quizzesEnabled]);
+  }, [
+    loading,
+    activeTab,
+    videosEnabled,
+    videos.length,
+    notesEnabled,
+    quizzesEnabled,
+    slidesEnabled,
+    slideImages.length,
+  ]);
 
-  const loadStudentNote = useCallback(async () => {
+  const loadStudentNote = async () => {
     try {
       const result = await getStudentModuleNoteAction(moduleId);
       if (result.success && result.data) {
@@ -135,7 +212,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     } catch (error) {
       console.error("Error loading student note:", error);
     }
-  }, [moduleId]);
+  };
 
   const handleSaveNote = async () => {
     setSavingNote(true);
@@ -143,21 +220,21 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
       const result = await saveStudentModuleNoteAction(moduleId, studentNote);
       if (result.success) {
         setNoteSaved(true);
-        toast.success("Note saved");
+        toast.success("Note sauvegardée");
         // Reset the saved indicator after 2 seconds
         setTimeout(() => setNoteSaved(false), 2000);
       } else {
-        toast.error(result.error || "Error saving");
+        toast.error(result.error || "Failed to save");
       }
     } catch (error) {
       console.error("Error saving note:", error);
-      toast.error("Error saving");
+      toast.error("Failed to save");
     } finally {
       setSavingNote(false);
     }
   };
 
-  const loadModuleContent = useCallback(async () => {
+  const loadModuleContent = async () => {
     setLoading(true);
     try {
       const result = await getModuleContentAction(moduleId);
@@ -166,32 +243,21 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
         setVideos(result.data.videos);
         setNotes(result.data.notes);
         setQuizzes(result.data.quizzes);
+        setSlideImages(result.data.slideImages || []);
         setProgress(result.data.progress);
       } else {
-        toast.error(result.error || "Error loading the module");
+        toast.error(result.error || "Failed to load module");
       }
     } catch (error) {
       console.error("Error loading module content:", error);
-      toast.error("Error loading the module");
+      toast.error("Failed to load module");
     } finally {
       setLoading(false);
     }
-  }, [moduleId]);
-
-  useEffect(() => {
-    loadModuleContent();
-    loadStudentNote();
-
-    // Check URL parameters for tab
-    const params = new URLSearchParams(window.location.search);
-    const tab = params.get("tab");
-    if (tab === "videos" || tab === "notes" || tab === "quiz") {
-      setActiveTab(tab);
-    }
-  }, [loadModuleContent, loadStudentNote]);
+  };
 
 
-  const loadQuizAttempts = useCallback(async () => {
+  const loadQuizAttempts = async () => {
     try {
       const attemptsPromises = quizzes.map(async (quizItem) => {
         setLoadingAttempts((prev) => ({ ...prev, [quizItem.quiz.id]: true }));
@@ -225,6 +291,9 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
             completedAt: new Date(attempt.completedAt),
             passed: attempt.score >= passingScore,
             answers: (attempt.answers as Record<string, string>) || {},
+            quizSequence: attempt.quizSequence ?? 1,
+            label: attempt.label ?? `Quiz ${attempt.quizSequence ?? 1} · Attempt 1`,
+            questionsSnapshot: attempt.questionsSnapshot ?? null,
           }));
         }
       });
@@ -233,33 +302,80 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     } catch (error) {
       console.error("Error loading quiz attempts:", error);
     }
-  }, [quizzes]);
+  };
 
-  // Load quiz attempts when quizzes are loaded
-  useEffect(() => {
-    if (quizzes.length > 0) {
-      loadQuizAttempts();
+  const loadQuizProgress = async () => {
+    const mainQuiz = quizzes[0];
+    if (!mainQuiz) return;
+    try {
+      const result = await getModuleQuizProgressAction(moduleId, mainQuiz.quiz.id);
+      if (result.success && result.data) {
+        setQuizProgress((prev) => ({
+          ...prev,
+          [mainQuiz.quiz.id]: result.data as typeof quizProgress[string],
+        }));
+      }
+    } catch (error) {
+      console.error("Error loading quiz progress:", error);
     }
-  }, [loadQuizAttempts, quizzes.length]);
+  };
 
-  const handleRetakeQuiz = (quizId: string) => {
-    // Reset the quiz state to allow retaking
-    setQuizSubmitted((prev) => ({
-      ...prev,
-      [quizId]: false,
-    }));
-    setQuizAnswers((prev) => ({
-      ...prev,
-      [quizId]: {},
-    }));
-    setCurrentQuizIndex((prev) => ({
-      ...prev,
-      [quizId]: 0,
-    }));
+  const resetQuizSession = (quizId: string, sequence: 1 | 2 | 3) => {
+    const sessionKey = getQuizSessionKey(quizId, sequence);
+    setQuizSubmitted((prev) => ({ ...prev, [sessionKey]: false }));
+    setQuizAnswers((prev) => ({ ...prev, [quizId]: {} }));
+    setCurrentQuizIndex((prev) => ({ ...prev, [quizId]: 0 }));
+  };
+
+  const handleRetakeQuiz = async (quizId: string, sequence: 1 | 2 | 3) => {
+    if (sequence === 2 || sequence === 3) {
+      const result = await loadSupplementaryQuestionsForRetakeAction(
+        quizId,
+        sequence
+      );
+      if (!result.success || !result.data) {
+        toast.error(result.error || "Impossible de charger le quiz");
+        return;
+      }
+      const data = result.data as { questions: QuizQuestionSnapshotPublic[] };
+      setSupplementaryQuestions((prev) => ({
+        ...prev,
+        [quizId]: data.questions,
+      }));
+    }
+    setActiveQuizSequence((prev) => ({ ...prev, [quizId]: sequence }));
+    resetQuizSession(quizId, sequence);
+  };
+
+  const handleStartSupplementaryQuiz = async (quizId: string, sequence: 2 | 3) => {
+    setStartingSupplementary(`${quizId}:${sequence}`);
+    try {
+      const result = await startSupplementaryQuizAction(moduleId, quizId, sequence);
+      if (!result.success || !result.data) {
+        toast.error(result.error || "Impossible de démarrer le quiz");
+        return;
+      }
+      const data = result.data as {
+        questions: QuizQuestionSnapshotPublic[];
+        quizSequence: 2 | 3;
+      };
+      setSupplementaryQuestions((prev) => ({
+        ...prev,
+        [quizId]: data.questions,
+      }));
+      setActiveQuizSequence((prev) => ({ ...prev, [quizId]: sequence }));
+      resetQuizSession(quizId, sequence);
+      await loadQuizProgress();
+    } catch (error) {
+      console.error("Error starting supplementary quiz:", error);
+      toast.error("Failed to start quiz");
+    } finally {
+      setStartingSupplementary(null);
+    }
   };
 
   const handleMarkAsComplete = async () => {
-    if (!confirm("Do you want to mark this module as completed?")) {
+    if (!confirm("Mark this module as completed?")) {
       return;
     }
 
@@ -270,17 +386,15 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
         toast.success("Module marked as completed!");
         await loadModuleContent(); // Reload to update progress
       } else {
-        toast.error(result.error || "Error updating");
+        toast.error(result.error || "Failed to update");
       }
     } catch (error) {
       console.error("Error marking module as complete:", error);
-      toast.error("Error updating");
+      toast.error("Failed to update");
     } finally {
       setMarkingComplete(false);
     }
   };
-
-
 
   const handleQuizAnswerChange = (quizId: string, questionId: string, answer: string) => {
     setQuizAnswers((prev) => ({
@@ -292,44 +406,53 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
     }));
   };
 
-  const handleSubmitQuiz = async (quiz: Quiz) => {
-    if (!quizAnswers[quiz.quiz.id] || Object.keys(quizAnswers[quiz.quiz.id]).length === 0) {
-      toast.error("Please answer all questions");
+  const handleSubmitQuiz = async (quizItem: Quiz) => {
+    const quiz = quizItem.quiz;
+    const sequence = activeQuizSequence[quiz.id] ?? 1;
+    const sessionKey = getQuizSessionKey(quiz.id, sequence);
+
+    const displayQuestions =
+      sequence === 1
+        ? quiz.questions
+        : (supplementaryQuestions[quiz.id] ?? []);
+
+    if (displayQuestions.length === 0) {
+      toast.error("No questions to submit");
       return;
     }
 
-    // Check if all questions are answered
-    const allAnswered = quiz.quiz.questions.every(
-      (q) => quizAnswers[quiz.quiz.id]?.[q.id]
-    );
+    const answers = quizAnswers[quiz.id] || {};
+    const allAnswered = displayQuestions.every((q) => answers[q.id]);
     if (!allAnswered) {
-      toast.error("Please answer all questions");
+      toast.error("Veuillez répondre à toutes les questions");
       return;
     }
 
-    setSubmittingQuiz(quiz.quiz.id);
+    setSubmittingQuiz(quiz.id);
     try {
       const result = await submitQuizAttemptAction({
-        quizId: quiz.quiz.id,
-        answers: quizAnswers[quiz.quiz.id],
-        timeSpent: 0, // Phase 1 quizzes don't track time
+        quizId: quiz.id,
+        answers,
+        timeSpent: 0,
+        quizSequence: sequence,
+        moduleId: sequence > 1 ? moduleId : undefined,
       });
 
       if (result.success && result.data) {
-        setQuizSubmitted((prev) => ({ ...prev, [quiz.quiz.id]: true }));
+        setQuizSubmitted((prev) => ({ ...prev, [sessionKey]: true }));
         if (result.data.passed) {
           toast.success(`Quiz passed! Score: ${result.data.score}%`);
         } else {
-          toast.warning(`Score: ${result.data.score}%. Passing score: ${quiz.quiz.passingScore}%`);
+          toast.warning(`Score: ${result.data.score}%. Note de passage: ${quiz.passingScore}%`);
         }
-        // Reload attempts to show the new submission
         await loadQuizAttempts();
+        await loadQuizProgress();
       } else {
-        toast.error(result.error || "Error during submission");
+        toast.error(result.error || "Failed to submit");
       }
     } catch (error) {
       console.error("Error submitting quiz:", error);
-      toast.error("Error during submission");
+      toast.error("Failed to submit");
     } finally {
       setSubmittingQuiz(null);
     }
@@ -348,13 +471,13 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
       // If it's just the URL, return it
       return vimeoUrl.replace(/&amp;/g, '&');
     }
-
+    
     // Otherwise, extract the video ID and create a basic embed URL
     const vimeoIdMatch = vimeoUrl.match(/vimeo\.com\/(\d+)/);
     if (vimeoIdMatch) {
       return `https://player.vimeo.com/video/${vimeoIdMatch[1]}?autoplay=0&title=0&byline=0&portrait=0`;
     }
-
+    
     return vimeoUrl;
   };
 
@@ -385,7 +508,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
         <div className="flex-1 min-w-0">
           <Button variant="ghost" onClick={onBack} className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            Retour
           </Button>
           <h1 className="text-xl sm:text-2xl font-bold break-words">{module.title}</h1>
           {module.description && (
@@ -396,23 +519,23 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
           {isCompleted ? (
             <Badge variant="default" className="h-8 w-full sm:w-auto justify-center">
               <CheckCircle2 className="h-4 w-4 mr-2" />
-              Completed
+              Complété
             </Badge>
           ) : (
-            <Button
-              onClick={handleMarkAsComplete}
+            <Button 
+              onClick={handleMarkAsComplete} 
               disabled={markingComplete}
               className="w-full sm:w-auto"
             >
               {markingComplete ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Saving...
+                  Enregistrement...
                 </>
               ) : (
                 <>
                   <CheckCircle2 className="h-4 w-4 mr-2" />
-                  Mark as completed
+                  Marquer comme complété
                 </>
               )}
             </Button>
@@ -422,17 +545,28 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
 
       {/* Content Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-        <TabsList className={`grid w-full ${videosEnabled && videos.length > 0 && quizzesEnabled && notesEnabled ? 'grid-cols-3' : videosEnabled && videos.length > 0 && quizzesEnabled ? 'grid-cols-2' : videosEnabled && videos.length > 0 && notesEnabled ? 'grid-cols-2' : quizzesEnabled && notesEnabled ? 'grid-cols-2' : 'grid-cols-1'}`}>
+        <TabsList className={`grid w-full ${
+          (() => {
+            const count = [videosEnabled && videos.length > 0, notesEnabled, slidesEnabled && slideImages.length > 0, quizzesEnabled].filter(Boolean).length;
+            return count === 4 ? 'grid-cols-4' : count === 3 ? 'grid-cols-3' : count === 2 ? 'grid-cols-2' : 'grid-cols-1';
+          })()
+        }`}>
           {videosEnabled && videos.length > 0 && (
             <TabsTrigger value="videos">
               <VideoIcon className="h-4 w-4 mr-2" />
-              Videos
+              Vidéos
             </TabsTrigger>
           )}
           {notesEnabled && (
             <TabsTrigger value="notes">
               <FileText className="h-4 w-4 mr-2" />
-              Course notes
+              Notes du cours
+            </TabsTrigger>
+          )}
+          {slidesEnabled && slideImages.length > 0 && (
+            <TabsTrigger value="slides">
+              <Presentation className="h-4 w-4 mr-2" />
+              Slides
             </TabsTrigger>
           )}
           {quizzesEnabled && (
@@ -459,12 +593,12 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                           allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                           referrerPolicy="strict-origin-when-cross-origin"
                           style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                          title={`Video ${videoItem.order}`}
+                          title={`Vidéo ${videoItem.order}`}
                         />
                       </div>
                       {videoItem.video.transcript && (
                         <div className="mt-4 p-4 bg-muted rounded-lg">
-                          <div className="text-sm font-semibold mb-2">Transcript:</div>
+                          <div className="text-sm font-semibold mb-2">Transcription:</div>
                           <div className="text-sm whitespace-pre-wrap">{videoItem.video.transcript}</div>
                         </div>
                       )}
@@ -479,53 +613,86 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
         {/* Notes Tab */}
         <TabsContent value="notes" className="mt-6">
           {notes.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">No notes available for this module.</p>
-              </CardContent>
-            </Card>
+            <>
+              <Card>
+                {showModulePdfDownload && (
+                  <CardHeader className="flex flex-row items-center justify-end gap-3 pb-2">
+                    <Button variant="outline" size="sm" className="hidden md:inline-flex" asChild>
+                      <a
+                        href={modulePdfUrl!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Télécharger les notes détaillées
+                      </a>
+                    </Button>
+                  </CardHeader>
+                )}
+                <CardContent className={showModulePdfDownload ? "pt-0 py-12 text-center" : "py-12 text-center"}>
+                  <p className="text-muted-foreground">No notes available for this module.</p>
+                </CardContent>
+              </Card>
+              {showCoursePdfDownload && (
+                <div className="pt-2 flex justify-end">
+                  <a
+                    href={coursePdfUrl!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    Télécharger le document consolidé (PDF)
+                  </a>
+                </div>
+              )}
+            </>
           ) : (
             <div className="space-y-4">
               {notes.map((noteItem) => (
                 <Card key={noteItem.id}>
-                  <CardHeader className="flex flex-row items-center justify-end gap-3">
-                    {module?.pdfUrl && (
-                      <Button
-                        variant="outline"
-                        className="hidden md:inline-flex"
-                        asChild
-                      >
-                        <a href={module.pdfUrl} target="_blank" rel="noopener noreferrer">
+                  {showModulePdfDownload && (
+                    <CardHeader className="flex flex-row items-center justify-end gap-3 pb-2">
+                      <Button variant="outline" size="sm" className="hidden md:inline-flex" asChild>
+                        <a
+                          href={modulePdfUrl!}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           <Download className="h-4 w-4 mr-2" />
-                          Download PDF
+                          Télécharger les notes détaillées
                         </a>
                       </Button>
-                    )}
-                  </CardHeader>
-                  <CardContent>
-                    <div
-                      className="note-content [&>p]:mb-4 [&>p:last-child]:mb-0 [&>ul]:my-4 [&>ol]:my-4 [&>li]:mb-2 [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mt-6 [&>h1]:mb-4 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:mt-6 [&>h2]:mb-4 [&>h3]:text-lg [&>h3]:font-semibold [&>h3]:mt-4 [&>h3]:mb-3 [&>strong]:font-semibold [&>em]:italic [&>a]:text-primary [&>a]:underline [&>a:hover]:no-underline [&>ul]:list-disc [&>ul]:pl-6 [&>ol]:list-decimal [&>ol]:pl-6 [&>li]:ml-4"
-                      style={{
-                        lineHeight: '1.75',
-                      }}
-                      dangerouslySetInnerHTML={{ __html: noteItem.note.content }}
-                    />
+                    </CardHeader>
+                  )}
+                  <CardContent className={showModulePdfDownload ? "pt-0" : "pt-6"}>
+                    <div className="note-content prose prose-sm max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: noteItem.note.content }} />
                   </CardContent>
                 </Card>
               ))}
-              {module?.coursePdfUrl && (
-                <div className="mt-8 pt-6 border-t flex justify-center">
-                  <Button asChild variant="outline" className="w-full sm:w-auto">
-                    <a href={module.coursePdfUrl} target="_blank" rel="noopener noreferrer">
-                      <Download className="h-4 w-4 mr-2" />
-                      Download Complete Course PDF
-                    </a>
-                  </Button>
+              {showCoursePdfDownload && (
+                <div className="pt-2 flex justify-end">
+                  <a
+                    href={coursePdfUrl!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    Télécharger le document consolidé (PDF)
+                  </a>
                 </div>
               )}
             </div>
           )}
         </TabsContent>
+
+        {/* Slides Tab */}
+        {slidesEnabled && slideImages.length > 0 && (
+          <TabsContent value="slides" className="mt-6">
+            <SlideDeckViewer slideImages={slideImages} />
+          </TabsContent>
+        )}
 
         {/* Quiz Tab */}
         <TabsContent value="quiz" className="mt-6">
@@ -537,14 +704,44 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
             </Card>
           ) : (
             <div className="space-y-6">
-              {quizzes.map((quizItem) => {
+              {quizzes.map((quizItem, quizItemIndex) => {
                 const quiz = quizItem.quiz;
-                const isSubmitted = quizSubmitted[quiz.id];
+                const isMainModuleQuiz = quizItemIndex === 0;
+                const sequence: 1 | 2 | 3 = isMainModuleQuiz
+                  ? (activeQuizSequence[quiz.id] ?? 1)
+                  : 1;
+                const sessionKey = getQuizSessionKey(quiz.id, sequence);
+                const isSubmitted = quizSubmitted[sessionKey];
                 const isSubmitting = submittingQuiz === quiz.id;
                 const answers = quizAnswers[quiz.id] || {};
                 const currentIndex = currentQuizIndex[quiz.id] || 0;
-                const currentQuestion = quiz.questions[currentIndex];
-                const totalQuestions = quiz.questions.length;
+                const progress = isMainModuleQuiz ? quizProgress[quiz.id] : undefined;
+
+                type DisplayQuestion = {
+                  id: string;
+                  question: string;
+                  options: Record<string, string>;
+                  explanation?: string | null;
+                  correctAnswer?: string;
+                };
+
+                const displayQuestions: DisplayQuestion[] =
+                  sequence === 1
+                    ? quiz.questions.map((q) => ({
+                        id: q.id,
+                        question: q.question,
+                        options: (q.options as Record<string, string>) || {},
+                        explanation: q.explanation,
+                        correctAnswer: q.correctAnswer,
+                      }))
+                    : (supplementaryQuestions[quiz.id] ?? []).map((q) => ({
+                        id: q.id,
+                        question: q.question,
+                        options: q.options,
+                      }));
+
+                const totalQuestions = displayQuestions.length;
+                const currentQuestion = displayQuestions[currentIndex];
 
                 const handlePrevious = () => {
                   if (currentIndex > 0) {
@@ -564,29 +761,116 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                   }
                 };
 
+                if (totalQuestions === 0) {
+                  if (isMainModuleQuiz && (sequence === 2 || sequence === 3)) {
+                    return (
+                      <Card key={quizItem.id}>
+                        <CardContent className="py-8 text-center space-y-4">
+                          <p className="text-muted-foreground">
+                            Load the quiz to get started.
+                          </p>
+                          <Button
+                            onClick={() =>
+                              handleStartSupplementaryQuiz(quiz.id, sequence as 2 | 3)
+                            }
+                            disabled={startingSupplementary === `${quiz.id}:${sequence}`}
+                          >
+                            {startingSupplementary === `${quiz.id}:${sequence}` ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Loading...
+                              </>
+                            ) : (
+                              `Start quiz ${sequence}`
+                            )}
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  }
+                  return null;
+                }
+
                 if (!currentQuestion) return null;
 
-                const optionKeys = currentQuestion.options
-                  ? getOrderedOptionKeys(currentQuestion.options)
-                  : [];
+                const optionKeys = getOrderedOptionKeys(currentQuestion.options);
                 const userAnswer = answers[currentQuestion.id];
+                const radioValue =
+                  userAnswer && optionKeys.includes(userAnswer) ? userAnswer : "";
+
+                const quizSlotLabel = `Quiz ${sequence}`;
 
                 return (
                   <div key={quizItem.id} className="space-y-4">
+                    {isMainModuleQuiz && progress && (progress.unlockedQuiz2 || progress.unlockedQuiz3) && (
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant={sequence === 1 ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => {
+                            setActiveQuizSequence((prev) => ({ ...prev, [quiz.id]: 1 }));
+                            resetQuizSession(quiz.id, 1);
+                          }}
+                        >
+                          Quiz 1
+                        </Button>
+                        {progress.unlockedQuiz2 && (
+                          <Button
+                            variant={sequence === 2 ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => {
+                              if (progress.hasQuiz2Set) {
+                                handleRetakeQuiz(quiz.id, 2);
+                              } else {
+                                handleStartSupplementaryQuiz(quiz.id, 2);
+                              }
+                            }}
+                            disabled={startingSupplementary === `${quiz.id}:2`}
+                          >
+                            Quiz 2
+                          </Button>
+                        )}
+                        {progress.unlockedQuiz3 && (
+                          <Button
+                            variant={sequence === 3 ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => {
+                              if (progress.hasQuiz3Set) {
+                                handleRetakeQuiz(quiz.id, 3);
+                              } else {
+                                handleStartSupplementaryQuiz(quiz.id, 3);
+                              }
+                            }}
+                            disabled={startingSupplementary === `${quiz.id}:3`}
+                          >
+                            Quiz 3
+                          </Button>
+                        )}
+                      </div>
+                    )}
                     <Card>
                       <CardHeader>
-                        <CardTitle>{quiz.title}</CardTitle>
+                        <CardTitle>
+                          {isMainModuleQuiz ? quizSlotLabel : quiz.title}
+                        </CardTitle>
                         <CardDescription>
-                          Question {currentIndex + 1} / {totalQuestions} • Passing score: {quiz.passingScore}%
+                          {isMainModuleQuiz && sequence > 1
+                            ? "10 questions tirées de la banque du chapitre · "
+                            : ""}
+                          Question {currentIndex + 1} / {totalQuestions} • Note de passage:{" "}
+                          {quiz.passingScore}%
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-6">
                         <div className="space-y-3">
-                          <div className="font-semibold text-lg">
-                            {currentQuestion.question}
-                          </div>
+                          <SanitizedHtmlBlock
+                            html={currentQuestion.question}
+                            className="text-lg"
+                            plainClassName="font-semibold text-lg"
+                          />
                           <RadioGroup
-                            value={userAnswer || ""}
+                            key={currentQuestion.id}
+                            value={radioValue}
                             onValueChange={(value) =>
                               handleQuizAnswerChange(quiz.id, currentQuestion.id, value)
                             }
@@ -612,7 +896,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
 
                         <div className="pt-4 border-t space-y-3">
                           <div className="text-sm text-muted-foreground text-center">
-                            {Object.keys(answers).length} / {totalQuestions} answered
+                            {Object.keys(answers).length} / {totalQuestions} répondues
                           </div>
                           <div className="flex items-center justify-between gap-2">
                             <Button
@@ -643,7 +927,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                                 {isSubmitting ? (
                                   <>
                                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                    Submitting...
+                                    Soumission...
                                   </>
                                 ) : (
                                   "Submit quiz"
@@ -656,15 +940,51 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                         {isSubmitted && (
                           <div className="p-4 bg-muted rounded-lg space-y-3">
                             <p className="text-sm text-muted-foreground text-center">Quiz submitted</p>
-                            <div className="flex justify-center">
+                            <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2">
                               <Button
                                 variant="outline"
-                                onClick={() => handleRetakeQuiz(quiz.id)}
+                                onClick={() => handleRetakeQuiz(quiz.id, sequence)}
                                 size="sm"
                               >
-                                Retake quiz
+                                Refaire le {quizSlotLabel.toLowerCase()}
                               </Button>
+                              {isMainModuleQuiz && sequence === 1 && progress?.unlockedQuiz2 && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleStartSupplementaryQuiz(quiz.id, 2)}
+                                  disabled={startingSupplementary === `${quiz.id}:2`}
+                                >
+                                  {startingSupplementary === `${quiz.id}:2` ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    "Start quiz 2"
+                                  )}
+                                </Button>
+                              )}
+                              {isMainModuleQuiz && sequence === 2 && progress?.unlockedQuiz3 && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleStartSupplementaryQuiz(quiz.id, 3)}
+                                  disabled={startingSupplementary === `${quiz.id}:3`}
+                                >
+                                  {startingSupplementary === `${quiz.id}:3` ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    "Start quiz 3"
+                                  )}
+                                </Button>
+                              )}
                             </div>
+                            {isMainModuleQuiz && sequence === 1 && progress && !progress.unlockedQuiz2 && (
+                              <p className="text-xs text-center text-muted-foreground">
+                                Score at least {progress.passingScore}% on quiz 1 to unlock quiz 2.
+                              </p>
+                            )}
+                            {isMainModuleQuiz && sequence === 2 && progress && !progress.unlockedQuiz3 && (
+                              <p className="text-xs text-center text-muted-foreground">
+                                Score at least {progress.passingScore}% on quiz 2 to unlock quiz 3.
+                              </p>
+                            )}
                           </div>
                         )}
                       </CardContent>
@@ -676,7 +996,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                         <CardHeader>
                           <CardTitle className="text-lg">Previous attempts</CardTitle>
                           <CardDescription>
-                            History of your attempts for this quiz
+                            Your attempt history for this quiz
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -688,24 +1008,24 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                             <div className="space-y-3">
                               {quizAttempts[quiz.id].map((attempt, index) => {
                                 const isPassed = attempt.passed ?? (attempt.score >= quiz.passingScore);
-                                const isExpanded = expandedAttemptId[quiz.id] === attempt.id;
-                                const formattedDate = new Intl.DateTimeFormat('en-CA', {
+                                const formattedDate = new Intl.DateTimeFormat('fr-CA', {
                                   year: 'numeric',
                                   month: 'long',
                                   day: 'numeric',
                                   hour: '2-digit',
                                   minute: '2-digit',
                                 }).format(attempt.completedAt);
+                                const isExpanded = expandedAttemptId[quiz.id] === attempt.id;
 
                                 return (
-                                  <div
-                                    key={attempt.id}
-                                    className={`rounded-lg border p-3 space-y-3 ${isPassed
-                                      ? 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800'
-                                      : 'bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800'
+                                  <div key={attempt.id} className="space-y-3">
+                                    <div
+                                      className={`flex items-center justify-between p-3 rounded-lg border ${
+                                        isPassed
+                                          ? 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800'
+                                          : 'bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800'
                                       }`}
-                                  >
-                                    <div className="flex items-center justify-between gap-3">
+                                    >
                                       <div className="flex items-center gap-3">
                                         {isPassed ? (
                                           <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -715,7 +1035,7 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                                         <div>
                                           <div className="flex items-center gap-2">
                                             <span className="font-semibold">
-                                              Attempt #{quizAttempts[quiz.id].length - index}
+                                              {attempt.label ?? `Quiz ${attempt.quizSequence ?? 1} · Attempt 1`}
                                             </span>
                                             <Badge
                                               variant={isPassed ? 'default' : 'destructive'}
@@ -750,7 +1070,17 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
 
                                     {isExpanded && (
                                       <div className="rounded-lg border bg-background p-4 space-y-4">
-                                        {quiz.questions.map((question, questionIndex) => {
+                                        {(
+                                          (attempt.quizSequence ?? 1) > 1 && attempt.questionsSnapshot?.length
+                                            ? attempt.questionsSnapshot
+                                            : quiz.questions.map((q) => ({
+                                                id: q.id,
+                                                question: q.question,
+                                                options: (q.options as Record<string, string>) || {},
+                                                correctAnswer: q.correctAnswer,
+                                                explanation: q.explanation,
+                                              }))
+                                        ).map((question, questionIndex) => {
                                           const options = question.options || {};
                                           const userAnswer = attempt.answers?.[question.id];
                                           const userDisplay = getAnswerDisplay(userAnswer, options);
@@ -758,30 +1088,48 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                                             question.correctAnswer,
                                             options
                                           );
-                                          const isCorrect = isAnswerCorrect(
-                                            {
-                                              type: "MULTIPLE_CHOICE",
-                                              correctAnswer: question.correctAnswer,
-                                              options,
-                                            },
-                                            userAnswer
+                                          const userIndex = resolveAnswerIndex(userAnswer, options);
+                                          const correctIndex = resolveAnswerIndex(
+                                            question.correctAnswer,
+                                            options
                                           );
+                                          const isCorrect =
+                                            userIndex !== null &&
+                                            correctIndex !== null &&
+                                            userIndex === correctIndex;
 
                                           return (
                                             <div key={question.id} className="space-y-2">
-                                              <div className="font-medium">{questionIndex + 1}. {question.question}</div>
+                                              <div className="font-medium">{questionIndex + 1}.</div>
+                                              <SanitizedHtmlBlock
+                                                html={question.question}
+                                                plainClassName="font-medium"
+                                                className="text-sm"
+                                              />
                                               <div className="text-sm">
                                                 <span
                                                   className={`font-semibold ${isCorrect ? "text-green-600" : "text-red-600"}`}
                                                 >
-                                                  Your answer:
+                                                  Votre réponse:
                                                 </span>
                                                 <span className="ml-2">{userDisplay.label}</span>
                                               </div>
                                               <div className="text-sm">
-                                                <span className="font-semibold">Correct answer:</span>
+                                                <span className="font-semibold">Réponse correcte:</span>
                                                 <span className="ml-2">{correctDisplay.label}</span>
                                               </div>
+                                              {"explanation" in question && question.explanation && (
+                                                <div className="text-sm text-muted-foreground mt-2">
+                                                  <span className="font-semibold">Explication:</span>
+                                                  <div className="mt-1">
+                                                    <SanitizedHtmlBlock
+                                                      html={question.explanation}
+                                                      plainClassName="whitespace-pre-wrap"
+                                                      className="prose-sm text-muted-foreground"
+                                                    />
+                                                  </div>
+                                                </div>
+                                              )}
                                             </div>
                                           );
                                         })}
@@ -809,11 +1157,11 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
               <StickyNote className="h-4 w-4" />
-              My notes
+              Mes notes
             </CardTitle>
             <div className="flex items-center gap-2">
               {noteSaved && (
-                <span className="text-xs text-muted-foreground">Saved</span>
+                <span className="text-xs text-muted-foreground">Sauvegardé</span>
               )}
               <Button
                 size="sm"
@@ -824,12 +1172,12 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
                 {savingNote ? (
                   <>
                     <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                    Saving...
+                    Sauvegarde...
                   </>
                 ) : (
                   <>
                     <Save className="h-3 w-3 mr-2" />
-                    Save
+                    Sauvegarder
                   </>
                 )}
               </Button>
@@ -840,17 +1188,17 @@ export function ModuleDetailPage({ courseId, moduleId, onBack, componentVisibili
           <Textarea
             value={studentNote}
             onChange={(e) => setStudentNote(e.target.value)}
-            placeholder="Take your notes here while you study this module..."
+            placeholder="Take your notes here while studying this module..."
             className="min-h-[120px] resize-y"
             rows={5}
           />
           <div className="flex items-center justify-between mt-2">
             <p className="text-xs text-muted-foreground">
-              Your notes are saved when you click "Save"
+              Vos notes sont sauvegardées lorsque vous cliquez sur "Sauvegarder"
             </p>
             {studentNote.length > 0 && (
               <p className="text-xs text-muted-foreground">
-                {studentNote.length} character{studentNote.length > 1 ? 's' : ''}
+                {studentNote.length} caractère{studentNote.length > 1 ? 's' : ''}
               </p>
             )}
           </div>

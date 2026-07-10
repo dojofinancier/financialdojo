@@ -24,7 +24,7 @@ import {
 } from "@/app/actions/orders";
 import { exportOrdersToCSV } from "@/lib/utils/csv-export";
 import { toast } from "sonner";
-import { Loader2, Eye, Download, FileText } from "lucide-react";
+import { Loader2, Eye, Download, FileDown } from "lucide-react";
 import { format } from "date-fns";
 import { enCA } from "date-fns/locale";
 import Link from "next/link";
@@ -64,6 +64,7 @@ export function OrderList() {
   const [dateTo, setDateTo] = useState("");
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
+  const [downloadingReceiptId, setDownloadingReceiptId] = useState<string | null>(null);
 
   const loadOrders = useCallback(async (cursor?: string | null) => {
     try {
@@ -93,6 +94,42 @@ export function OrderList() {
   useEffect(() => {
     loadOrders();
   }, [loadOrders]);
+
+
+  const handleDownloadReceipt = async (paymentIntentId: string) => {
+    setDownloadingReceiptId(paymentIntentId);
+    try {
+      const res = await fetch(`/api/admin/receipt/${paymentIntentId}`, {
+        method: "GET",
+        credentials: "same-origin",
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(
+          (err as { error?: string }).error ?? "Error downloading receipt"
+        );
+        return;
+      }
+
+      const blob = await res.blob();
+      const contentDisposition = res.headers.get("Content-Disposition");
+      const match = contentDisposition?.match(/filename="?([^";]+)"?/);
+      const filename = match?.[1] ?? `receipt-${paymentIntentId}.pdf`;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error("Error downloading receipt");
+    } finally {
+      setDownloadingReceiptId(null);
+    }
+  };
 
   const handleExportCSV = async () => {
     try {
@@ -254,17 +291,20 @@ export function OrderList() {
                           </Button>
                         </Link>
                         {order.paymentIntentId && (
-                          <a
-                            href={`/api/receipt/${order.paymentIntentId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-block"
-                          >
-                            <Button variant="ghost" size="icon" title="Download Receipt">
-                              <FileText className="h-4 w-4" />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDownloadReceipt(order.paymentIntentId!)}
+                              disabled={downloadingReceiptId === order.paymentIntentId}
+                              title="Download receipt"
+                            >
+                              {downloadingReceiptId === order.paymentIntentId ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <FileDown className="h-4 w-4" />
+                              )}
                             </Button>
-                          </a>
-                        )}
+                          )}
                       </TableCell>
                     </TableRow>
                   );
